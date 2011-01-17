@@ -1,0 +1,9 @@
+Thank you for downloading the Magic Carpet plugin! In order to enable it, just drop the .jar file into your plugins folder in your CraftBukkit directory.
+Then, just start your server like normal and enjoy!
+
+In order to use the magic carpet, type in the command /magiccarpet, or you can use /mc for short if you want. This will bring up a 5x5 area of glass underneath your feet
+that moves with you. Just put in the command again to remove it. However, you can now specify the size of the magic carpet! In order to do so, just put in either a 3, 5,
+or 7 after your /mc command. This will create either a 3x3, 5x5, or 7x7 carpet based on your input. When you put one of the sizes after the command when you already have a
+carpet out, if the size is the same as the carpet you have now, the carpet is removed. If it is different, the the carpet will change sizes.
+
+If you have any problems, don't hesitate to mention them at the bukkit forum thread for this plugin, or message my Bukkit account, Android, at the forums.

@@ -70,6 +70,7 @@ public class MagicPlayerListener extends PlayerListener {
     @Override
     //When the player inputs the mc command, it either puts the carpet in or removes it, depending on the previous state
     public void onPlayerCommand(PlayerChatEvent event) {
+    	int c = 5;
         String[] split = event.getMessage().split(" ");
         Player player = event.getPlayer();
         World world = player.getWorld();
@@ -77,14 +78,58 @@ public class MagicPlayerListener extends PlayerListener {
         	Carpet carpet = (Carpet)carpets.get(player.getName());
         	if (carpet == null)
         	{
-        		player.sendMessage("A glass carpet appears below your feet.");
-        		carpets.put(player.getName(), new Carpet());
+        		if (split.length < 2){
+        			player.sendMessage("A glass carpet appears below your feet.");
+        			Carpet newCarpet = new Carpet();
+        			newCarpet.size = 5;
+        			carpets.put(player.getName(), newCarpet);
+        		}else{
+        			try {
+        				c = Integer.valueOf(split[1]);
+        			} catch(NumberFormatException e) {
+        				player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, or 7!");
+        				return;
+        			}
+        			
+        			if (c != 3 && c != 5 && c != 7){
+        				player.sendMessage("The size can only be 3, 5, or 7. Please enter a proper number");
+        				return;
+        			}
+        			player.sendMessage("A glass carpet appears below your feet.");
+        			Carpet newCarpet = new Carpet();
+        			newCarpet.size = c;
+        			carpets.put(player.getName(), newCarpet);
+        		}
+        		
         	}
         	if (carpet != null)
         	{
-        		player.sendMessage("Poof! The magic carpet disappears.");
-        		carpets.remove(player.getName());
-        		carpet.removeCarpet(world);
+        		if(split.length > 1){
+        			try {
+        				c = Integer.valueOf(split[1]);
+        			} catch(NumberFormatException e) {
+        				player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, or 7!");
+        				return;
+        			}
+        			
+        			if (c != 3 && c != 5 && c != 7){
+        				player.sendMessage("The size can only be 3, 5, or 7. Please enter a proper number");
+        				return;
+        			}
+        			if(c != carpet.size){
+        				player.sendMessage("The carpet seems to react to your words, and suddenly changes shape!");
+        				carpet.changeCarpet(world, c);
+        			}else{
+        				player.sendMessage("Poof! The magic carpet disappears.");
+                		carpets.remove(player.getName());
+                		carpet.removeCarpet(world);
+        			}
+        		}else{
+        			player.sendMessage("Poof! The magic carpet disappears.");
+            		carpets.remove(player.getName());
+            		carpet.removeCarpet(world);
+        		}
+        		
         	}
         	event.setCancelled(true);
         }
@@ -105,7 +150,7 @@ public class MagicPlayerListener extends PlayerListener {
     		return;
     	carpet.removeCarpet(player.getWorld());
     		to.setY(to.getY()-1);
-    	if(from.getPitch() == 90)
+    	if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ()))
     		to.setY(to.getY()-1);
     	carpet.currentLoc = to.clone();
     	carpet.drawCarpet(player.getWorld());
