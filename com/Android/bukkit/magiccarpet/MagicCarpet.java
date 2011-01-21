@@ -46,6 +46,7 @@ public class MagicCarpet extends JavaPlugin {
         
 
         // EXAMPLE: Custom code, here we just output some info so we can check all is well
+    	playerListener.loadSettings();
         PluginDescriptionFile pdfFile = this.getDescription();
         System.out.println( "Take yourself wonder by wonder, using /magiccarpet or /mc. " + pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!" );
     }

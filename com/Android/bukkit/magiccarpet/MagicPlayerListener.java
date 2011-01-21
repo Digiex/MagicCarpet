@@ -1,8 +1,11 @@
 
 package com.Android.bukkit.magiccarpet;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.logging.Level;
+import java.util.Properties;
+import java.io.*;
 import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -42,9 +45,76 @@ public class MagicPlayerListener extends PlayerListener {
 	private final MagicCarpet plugin;
     private static Logger a = Logger.getLogger("Minecraft");
 	private Hashtable<String, Carpet> carpets = new Hashtable<String, Carpet>();
+	private ArrayList<String> owners = new ArrayList<String>();
+	private ArrayList<String> bums = new ArrayList<String>();
+	private boolean ignore = false;
 
     public MagicPlayerListener(MagicCarpet instance) {
         plugin = instance;
+    }
+    
+    private static String config_comment = "Magic Carpet permissions file";
+    
+    public void saveDefaultSettings(boolean trust){
+    		Properties props = new Properties();
+    		if(trust)
+    			props.setProperty("can-fly","trusted_users_here,maybe_here_too");
+    		else
+    			props.setProperty("cannot-fly","untrusted_users_here,maybe_here_too");
+    		try{
+    			OutputStream propOut = new FileOutputStream(new File("magiccarpet.properties"));
+    			props.store(propOut, config_comment);
+    		} catch (IOException ioe) {
+    			System.out.print(ioe.getMessage());
+    		}
+    }
+    
+    public void loadSettings(){
+    	Properties props = new Properties();
+    	try {
+    		props.load(new FileInputStream("magiccarpet.properties"));
+    		if (props.containsKey("can-fly")){
+    			String dreamers = props.getProperty("can-fly","");
+    			ignore = false;
+    			if(dreamers.length() > 0){
+    				String[] fliers = dreamers.toLowerCase().split(",");
+    				if (fliers.length > 0)
+    				{
+    					owners = new ArrayList<String>(Arrays.asList(fliers));
+    					for (String u : owners) {
+    						System.out.print("Magic Carpet: "+ u + " is about to take off.\n");
+    					}
+    				}else{
+    					this.saveDefaultSettings(true);
+    				}
+    			}else{
+    				this.saveDefaultSettings(true);
+    			}
+    		}else{
+    			if(props.containsKey("cannot-fly")){
+    				String paupers = props.getProperty("cannot-fly","");
+    				ignore = true;
+    				if(paupers.length() > 0){
+    					String[] penniless = paupers.toLowerCase().split(",");
+    					if (penniless.length > 0)
+    					{
+    						bums = new ArrayList<String>(Arrays.asList(penniless));
+    						for (String u : bums) {
+    							System.out.print("Magic Carpet: "+ u + " is about to take off.\n");
+    						}
+    					}else{
+    						this.saveDefaultSettings(false);
+    					}
+    				}else{
+    					this.saveDefaultSettings(false);
+    				}
+    			}else{
+    				this.saveDefaultSettings(true);
+    			}
+    		}
+    	} catch (IOException ioe) {
+    		this.saveDefaultSettings(true);
+    	}
     }
 
     @Override
@@ -76,62 +146,67 @@ public class MagicPlayerListener extends PlayerListener {
         World world = player.getWorld();
         if (!event.isCancelled() && (split[0].equalsIgnoreCase("/magiccarpet") || split[0].equalsIgnoreCase("/mc"))) {
         	Carpet carpet = (Carpet)carpets.get(player.getName());
-        	if (carpet == null)
-        	{
-        		if (split.length < 2){
-        			player.sendMessage("A glass carpet appears below your feet.");
-        			Carpet newCarpet = new Carpet();
-        			newCarpet.size = 5;
-        			carpets.put(player.getName(), newCarpet);
-        		}else{
-        			try {
-        				c = Integer.valueOf(split[1]);
-        			} catch(NumberFormatException e) {
-        				player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, or 7!");
-        				return;
-        			}
+        	if ((ignore && !bums.contains( player.getName().toLowerCase())) || (!ignore && owners.contains( player.getName().toLowerCase()))){
+        		if (carpet == null)
+        		{
+        			if (split.length < 2){
+        				player.sendMessage("A glass carpet appears below your feet.");
+        				Carpet newCarpet = new Carpet();
+        				newCarpet.size = 5;
+        				carpets.put(player.getName(), newCarpet);
+        			}else{
+        				try {
+        					c = Integer.valueOf(split[1]);
+        				} catch(NumberFormatException e) {
+        					player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, or 7!");
+        					return;
+        				}
         			
-        			if (c != 3 && c != 5 && c != 7){
-        				player.sendMessage("The size can only be 3, 5, or 7. Please enter a proper number");
-        				return;
+        				if (c != 3 && c != 5 && c != 7){
+        					player.sendMessage("The size can only be 3, 5, or 7. Please enter a proper number");
+        					return;
+        				}
+        				player.sendMessage("A glass carpet appears below your feet.");
+        				Carpet newCarpet = new Carpet();
+        				newCarpet.size = c;
+        				carpets.put(player.getName(), newCarpet);
         			}
-        			player.sendMessage("A glass carpet appears below your feet.");
-        			Carpet newCarpet = new Carpet();
-        			newCarpet.size = c;
-        			carpets.put(player.getName(), newCarpet);
-        		}
         		
-        	}
-        	if (carpet != null)
-        	{
-        		if(split.length > 1){
-        			try {
-        				c = Integer.valueOf(split[1]);
-        			} catch(NumberFormatException e) {
-        				player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, or 7!");
-        				return;
-        			}
+        		}
+        		if (carpet != null)
+        		{
+        			if(split.length > 1){
+        				try {
+        					c = Integer.valueOf(split[1]);
+        				} catch(NumberFormatException e) {
+        					player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, or 7!");
+        					return;
+        				}
         			
-        			if (c != 3 && c != 5 && c != 7){
-        				player.sendMessage("The size can only be 3, 5, or 7. Please enter a proper number");
-        				return;
-        			}
-        			if(c != carpet.size){
-        				player.sendMessage("The carpet seems to react to your words, and suddenly changes shape!");
-        				carpet.changeCarpet(world, c);
+        				if (c != 3 && c != 5 && c != 7){
+        					player.sendMessage("The size can only be 3, 5, or 7. Please enter a proper number");
+        					return;
+        				}
+        				if(c != carpet.size){
+        					player.sendMessage("The carpet seems to react to your words, and suddenly changes shape!");
+        					carpet.changeCarpet(world, c);
+        				}else{
+        					player.sendMessage("Poof! The magic carpet disappears.");
+                			carpets.remove(player.getName());
+                			carpet.removeCarpet(world);
+        				}
         			}else{
         				player.sendMessage("Poof! The magic carpet disappears.");
-                		carpets.remove(player.getName());
-                		carpet.removeCarpet(world);
+            			carpets.remove(player.getName());
+            			carpet.removeCarpet(world);
         			}
-        		}else{
-        			player.sendMessage("Poof! The magic carpet disappears.");
-            		carpets.remove(player.getName());
-            		carpet.removeCarpet(world);
-        		}
         		
+        		}
+        		event.setCancelled(true);
+        	}else{
+        		player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
+        		event.setCancelled(true);
         	}
-        	event.setCancelled(true);
         }
         else
         {
