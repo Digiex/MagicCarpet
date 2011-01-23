@@ -1,12 +1,7 @@
 
 package com.Android.bukkit.magiccarpet;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.Properties;
-import java.io.*;
-import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -14,6 +9,8 @@ import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
+
+import com.nijikokun.bukkit.Permissions.Permissions;
 
 /**
 * Magic Carpet 1.4
@@ -42,12 +39,12 @@ import org.bukkit.event.player.PlayerMoveEvent;
 * @author Android <spparr@gmail.com>
 */
 public class MagicPlayerListener extends PlayerListener {
-	private final MagicCarpet plugin;
-    private static Logger a = Logger.getLogger("Minecraft");
+	//private final MagicCarpet plugin; // not used
+    // private static Logger a = Logger.getLogger("Minecraft"); // not used
 	private Hashtable<String, Carpet> carpets = new Hashtable<String, Carpet>();
 	
 	public MagicPlayerListener(MagicCarpet instance){
-		plugin = instance;
+		// plugin = instance; // not used
 	}
 	
     @Override
@@ -79,13 +76,14 @@ public class MagicPlayerListener extends PlayerListener {
         World world = player.getWorld();
         if (!event.isCancelled() && (split[0].equalsIgnoreCase("/magiccarpet") || split[0].equalsIgnoreCase("/mc"))) {
         	Carpet carpet = (Carpet)carpets.get(player.getName());
-        	if (plugin.Permissions.Security.permission(player, "magiccarpet.mc")){
+        	if (Permissions.Security.permission(player, "magiccarpet.mc")){
         		if (carpet == null)
         		{
         			if (split.length < 2){
         				player.sendMessage("A glass carpet appears below your feet.");
         				Carpet newCarpet = new Carpet();
         				newCarpet.size = 5;
+        				newCarpet.currentLoc = player.getLocation();
         				carpets.put(player.getName(), newCarpet);
         			}else{
         				try {
@@ -102,6 +100,7 @@ public class MagicPlayerListener extends PlayerListener {
         				player.sendMessage("A glass carpet appears below your feet.");
         				Carpet newCarpet = new Carpet();
         				newCarpet.size = c;
+        				newCarpet.currentLoc = player.getLocation();
         				carpets.put(player.getName(), newCarpet);
         			}
         		
