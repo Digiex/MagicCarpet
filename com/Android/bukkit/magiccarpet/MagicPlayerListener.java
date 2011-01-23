@@ -16,7 +16,7 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 /**
-* Magic Carpet 1.0
+* Magic Carpet 1.4
 * Copyright (C) 2011 Android <spparr@gmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
@@ -45,78 +45,11 @@ public class MagicPlayerListener extends PlayerListener {
 	private final MagicCarpet plugin;
     private static Logger a = Logger.getLogger("Minecraft");
 	private Hashtable<String, Carpet> carpets = new Hashtable<String, Carpet>();
-	private ArrayList<String> owners = new ArrayList<String>();
-	private ArrayList<String> bums = new ArrayList<String>();
-	private boolean ignore = false;
-
-    public MagicPlayerListener(MagicCarpet instance) {
-        plugin = instance;
-    }
-    
-    private static String config_comment = "Magic Carpet permissions file";
-    
-    public void saveDefaultSettings(boolean trust){
-    		Properties props = new Properties();
-    		if(trust)
-    			props.setProperty("can-fly","trusted_users_here,maybe_here_too");
-    		else
-    			props.setProperty("cannot-fly","untrusted_users_here,maybe_here_too");
-    		try{
-    			OutputStream propOut = new FileOutputStream(new File("magiccarpet.properties"));
-    			props.store(propOut, config_comment);
-    		} catch (IOException ioe) {
-    			System.out.print(ioe.getMessage());
-    		}
-    }
-    
-    public void loadSettings(){
-    	Properties props = new Properties();
-    	try {
-    		props.load(new FileInputStream("magiccarpet.properties"));
-    		if (props.containsKey("can-fly")){
-    			String dreamers = props.getProperty("can-fly","");
-    			ignore = false;
-    			if(dreamers.length() > 0){
-    				String[] fliers = dreamers.toLowerCase().split(",");
-    				if (fliers.length > 0)
-    				{
-    					owners = new ArrayList<String>(Arrays.asList(fliers));
-    					for (String u : owners) {
-    						System.out.print("Magic Carpet: "+ u + " is about to take off.\n");
-    					}
-    				}else{
-    					this.saveDefaultSettings(true);
-    				}
-    			}else{
-    				this.saveDefaultSettings(true);
-    			}
-    		}else{
-    			if(props.containsKey("cannot-fly")){
-    				String paupers = props.getProperty("cannot-fly","");
-    				ignore = true;
-    				if(paupers.length() > 0){
-    					String[] penniless = paupers.toLowerCase().split(",");
-    					if (penniless.length > 0)
-    					{
-    						bums = new ArrayList<String>(Arrays.asList(penniless));
-    						for (String u : bums) {
-    							System.out.print("Magic Carpet: "+ u + " is about to take off.\n");
-    						}
-    					}else{
-    						this.saveDefaultSettings(false);
-    					}
-    				}else{
-    					this.saveDefaultSettings(false);
-    				}
-    			}else{
-    				this.saveDefaultSettings(true);
-    			}
-    		}
-    	} catch (IOException ioe) {
-    		this.saveDefaultSettings(true);
-    	}
-    }
-
+	
+	public MagicPlayerListener(MagicCarpet instance){
+		plugin = instance;
+	}
+	
     @Override
     //When a player joins the game, if they had a carpet when the logged out it puts it back.
     public void onPlayerJoin(PlayerEvent event) {
@@ -146,7 +79,7 @@ public class MagicPlayerListener extends PlayerListener {
         World world = player.getWorld();
         if (!event.isCancelled() && (split[0].equalsIgnoreCase("/magiccarpet") || split[0].equalsIgnoreCase("/mc"))) {
         	Carpet carpet = (Carpet)carpets.get(player.getName());
-        	if ((ignore && !bums.contains( player.getName().toLowerCase())) || (!ignore && owners.contains( player.getName().toLowerCase()))){
+        	if (plugin.Permissions.Security.permission(player, "magiccarpet.mc")){
         		if (carpet == null)
         		{
         			if (split.length < 2){

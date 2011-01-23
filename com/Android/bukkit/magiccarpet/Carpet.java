@@ -170,7 +170,11 @@ public class Carpet {
 		for(int i = 0; i < fibers.length; i++)
 		{
 			bl = wo.getBlockAt((int)Math.floor(currentLoc.getX()) + fibers[i].x, (int)Math.floor(currentLoc.getY()) - fibers[i].y, (int)Math.floor(currentLoc.getZ()) + fibers[i].z);
-			if (bl.getTypeId() == 0) {
+			if (bl.getTypeId() == 0 &&
+					wo.getBlockTypeIdAt(bl.getX()+1, bl.getY(), bl.getZ()) != 81 && // 81 is Cactus
+					wo.getBlockTypeIdAt(bl.getX()-1, bl.getY(), bl.getZ()) != 81 &&
+					wo.getBlockTypeIdAt(bl.getX(), bl.getY(), bl.getZ()+1) != 81 &&
+					wo.getBlockTypeIdAt(bl.getX(), bl.getY(), bl.getZ()-1) != 81) {
 				fibers[i].imadeit = true;
 				bl.setTypeId(fibers[i].type);
 			} else {

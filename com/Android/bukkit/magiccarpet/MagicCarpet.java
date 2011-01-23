@@ -3,17 +3,23 @@ package com.Android.bukkit.magiccarpet;
 import java.io.File;
 import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.logging.Logger;
+
 import org.bukkit.entity.Player;
 import org.bukkit.Server;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.nijikokun.bukkit.General.Messaging;
+import com.nijikokun.bukkit.Permissions.Permissions;
+
 
 /**
-* Magic Carpet 1.0
+* Magic Carpet 1.4
 * Copyright (C) 2011 Android <spparr@gmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
@@ -32,6 +38,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class MagicCarpet extends JavaPlugin {
 	private final MagicPlayerListener playerListener = new MagicPlayerListener(this);
+	public Permissions Permissions = null;
+	private static Logger log = Logger.getLogger("Minecraft");
+	private String name = "MagicCarpet";
 
 	public MagicCarpet(PluginLoader pluginLoader, Server instance,
 			PluginDescriptionFile desc, File folder, File plugin,
@@ -46,9 +55,10 @@ public class MagicCarpet extends JavaPlugin {
         
 
         // EXAMPLE: Custom code, here we just output some info so we can check all is well
-    	playerListener.loadSettings();
+    	setupPermissions();
         PluginDescriptionFile pdfFile = this.getDescription();
-        System.out.println( "Take yourself wonder by wonder, using /magiccarpet or /mc. " + pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!" );
+        if(Permissions != null)
+        	System.out.println( "Take yourself wonder by wonder, using /magiccarpet or /mc. " + pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!" );
     }
     public void onDisable() {
         // TODO: Place any custom disable code here
@@ -65,7 +75,7 @@ public class MagicCarpet extends JavaPlugin {
 		}
 		carpets.clear();
         // EXAMPLE: Custom code, here we just output some info so we can check all is well
-        System.out.println("Thanks for trying the plugin!");
+        System.out.println("Magic Carpet disabled. Thanks for trying the plugin!");
     }
     
     private void registerEvents(){
@@ -75,6 +85,21 @@ public class MagicCarpet extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
     }
+    
+    public void setupPermissions() {
+    	Plugin test = this.getServer().getPluginManager().getPlugin("Permissions");
+
+
+    	if(this.Permissions == null) {
+    	    if(test != null) {
+    		this.Permissions = (Permissions)test;
+    	    } else {
+    		log.info(Messaging.bracketize(name) + " Permission system not enabled. Disabling plugin.");
+    		this.getServer().getPluginManager().disablePlugin(this);
+    	    }
+    	}
+    }
+    
     public boolean isDebugging(final Player player) {
     	return false;
     }
