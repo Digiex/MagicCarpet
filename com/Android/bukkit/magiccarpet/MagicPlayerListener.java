@@ -165,11 +165,22 @@ public class MagicPlayerListener extends PlayerListener {
     public void onPlayerTeleport (PlayerMoveEvent event) {
     	Location to = event.getTo().clone();
     	Player player = event.getPlayer();
+    	
+    	// Check if the player has a carpet
     	Carpet carpet = (Carpet)carpets.get(player.getName());
     	if (carpet == null)
     		return;
+    	
+    	// Check if the player moved 1 block
+    	to.setY(to.getY()-1);
+    	Location last = carpet.currentLoc;
+    	if (last.getBlockX() == to.getBlockX() &&
+    		last.getBlockY() == to.getBlockY() &&
+    		last.getBlockZ() == to.getBlockZ())
+    		return;
+    	
+    	// Move the carpet
     	carpet.removeCarpet(player.getWorld());
-    		to.setY(to.getY()-1);
     	carpet.currentLoc = to.clone();
     	carpet.drawCarpet(player.getWorld());
     }
