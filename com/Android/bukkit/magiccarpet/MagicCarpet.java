@@ -14,7 +14,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.nijikokun.bukkit.General.Messaging;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
 
@@ -94,7 +93,7 @@ public class MagicCarpet extends JavaPlugin {
     	    if(test != null) {
     		this.Permissions = (Permissions)test;
     	    } else {
-    		log.info(Messaging.bracketize(name) + " Permission system not enabled. Disabling plugin.");
+    		log.info("[" + name + "] Permission system not enabled. Disabling plugin.");
     		this.getServer().getPluginManager().disablePlugin(this);
     	    }
     	}

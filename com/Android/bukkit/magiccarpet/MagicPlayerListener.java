@@ -10,8 +10,6 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import com.nijikokun.bukkit.Permissions.Permissions;
-
 /**
 * Magic Carpet 1.4
 * Copyright (C) 2011 Android <spparr@gmail.com>
@@ -39,12 +37,12 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 * @author Android <spparr@gmail.com>
 */
 public class MagicPlayerListener extends PlayerListener {
-	//private final MagicCarpet plugin; // not used
+	private final MagicCarpet plugin;
     // private static Logger a = Logger.getLogger("Minecraft"); // not used
 	private Hashtable<String, Carpet> carpets = new Hashtable<String, Carpet>();
 	
 	public MagicPlayerListener(MagicCarpet instance){
-		// plugin = instance; // not used
+		plugin = instance;
 	}
 	
     @Override
@@ -67,7 +65,8 @@ public class MagicPlayerListener extends PlayerListener {
 		carpet.removeCarpet(player.getWorld());
     }
 
-    @Override
+    @SuppressWarnings("static-access")
+	@Override
     //When the player inputs the mc command, it either puts the carpet in or removes it, depending on the previous state
     public void onPlayerCommand(PlayerChatEvent event) {
     	int c = 5;
@@ -76,7 +75,7 @@ public class MagicPlayerListener extends PlayerListener {
         World world = player.getWorld();
         if (!event.isCancelled() && (split[0].equalsIgnoreCase("/magiccarpet") || split[0].equalsIgnoreCase("/mc"))) {
         	Carpet carpet = (Carpet)carpets.get(player.getName());
-        	if (Permissions.Security.permission(player, "magiccarpet.mc")){
+        	if (plugin.Permissions.Security.permission(player, "magiccarpet.mc")){
         		if (carpet == null)
         		{
         			if (split.length < 2){
