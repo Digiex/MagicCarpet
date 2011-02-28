@@ -1,4 +1,11 @@
-name: Magic Carpet
+name: MagicCarpet
 
-main: com.Android.bukkit.magiccarpet.MagicCarpet
-version: 1.4
+main: com.Android.magiccarpet.MagicCarpet
+version: 1.4.3
+commands:
+  mc:
+    description:
+    usage:
+  magiccarpet:
+    description:
+    usage:
