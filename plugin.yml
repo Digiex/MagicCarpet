@@ -1,7 +1,7 @@
 name: MagicCarpet
 
 main: com.Android.magiccarpet.MagicCarpet
-version: 1.4.3
+version: 1.4.4
 commands:
   mc:
     description:

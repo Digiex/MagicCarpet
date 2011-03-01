@@ -1,15 +1,8 @@
 package com.Android.magiccarpet;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.Properties;
-import java.io.*;
-import java.util.logging.Logger;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -41,23 +34,17 @@ import org.bukkit.event.player.PlayerMoveEvent;
 * @author Android <spparr@gmail.com>
 */
 public class MagicPlayerListener extends PlayerListener {
-	private final MagicCarpet plugin;
-    private static Logger a = Logger.getLogger("Minecraft");
 	private Hashtable<String, Carpet> carpets = new Hashtable<String, Carpet>();
-	
-	public MagicPlayerListener(MagicCarpet instance){
-		plugin = instance;
-	}
-	
-    @Override
+		
+	@Override
     //When a player joins the game, if they had a carpet when the logged out it puts it back.
     public void onPlayerJoin(PlayerEvent event) {
     	Player player = event.getPlayer();
     	Carpet carpet = (Carpet)carpets.get(player.getName());
     	if (carpet == null)
     		return;
-    	carpet.drawCarpet(player.getWorld());
-    }
+    	carpet.drawCarpet();    
+	}
 
     @Override
     //When a player quits, it removes the carpet from the server
@@ -66,9 +53,8 @@ public class MagicPlayerListener extends PlayerListener {
     	Carpet carpet = (Carpet)carpets.get(player.getName());
 		if (carpet == null)
 			return;
-		carpet.removeCarpet(player.getWorld());
+		carpet.removeCarpet();
     }
-
 
     @Override
     //Lets the carpet move with the player
@@ -79,12 +65,12 @@ public class MagicPlayerListener extends PlayerListener {
     	Carpet carpet = (Carpet)carpets.get(player.getName());
     	if (carpet == null)
     		return;
-    	carpet.removeCarpet(player.getWorld());
-    		to.setY(to.getY()-1);
+    	carpet.removeCarpet();
+    	to.setY(to.getY()-1);
     	if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ()))
     		to.setY(to.getY()-1);
-    	carpet.currentLoc = to.clone();
-    	carpet.drawCarpet(player.getWorld());
+    	carpet.currentBlock = to.getBlock();
+    	carpet.drawCarpet();
     }
     
     public void onPlayerTeleport (PlayerMoveEvent event) {
@@ -97,12 +83,16 @@ public class MagicPlayerListener extends PlayerListener {
        
         // Check if the player moved 1 block
         to.setY(to.getY()-1);
-        Location last = carpet.currentLoc;
+        Location last = carpet.currentBlock.getLocation();
+        if (last.getBlockX() == to.getBlockX() &&
+        	last.getBlockY() == to.getBlockY() &&
+        	last.getBlockZ() == to.getBlockZ())
+        		return;
        
         // Move the carpet
-        carpet.removeCarpet(player.getWorld());
-    	carpet.currentLoc = to.clone();
-    	carpet.drawCarpet(player.getWorld());
+        carpet.removeCarpet();
+    	carpet.currentBlock = to.getBlock();
+    	carpet.drawCarpet();
     }
     
     public Hashtable<String, Carpet> getCarpets(){

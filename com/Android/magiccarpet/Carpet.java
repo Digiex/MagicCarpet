@@ -1,11 +1,10 @@
 package com.Android.magiccarpet;
 
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.Material;
 
 /**
-* Magic Carpet 1.0
+* Magic Carpet 1.4
 * Copyright (C) 2011 Android <spparr@gmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
@@ -31,10 +30,12 @@ import org.bukkit.block.Block;
 * @author Android <spparr@gmail.com>
 */
 public class Carpet {
-Location currentLoc = null;
-int size;
+	Block currentBlock;
+	int size = 0;
 
-public Carpet(){}
+	public Carpet() {
+		setSize(5);
+	}
 
 	public class CarpetFiber
 	{
@@ -46,146 +47,67 @@ public Carpet(){}
 			this.type = type;
 		}
 		int x,y,z,type = 0;
-		boolean imadeit = false;
+		Block block = null;
 	}
-	public CarpetFiber[] fibers3 = {
-			new CarpetFiber(1, 0, 1, 20),
-			new CarpetFiber(1, 0, 0, 20),
-			new CarpetFiber(1, 0, -1, 20),
-			new CarpetFiber(0, 0, 1, 20),
-			new CarpetFiber(0, 0, 0, 20),
-			new CarpetFiber(0, 0, -1, 20),
-			new CarpetFiber(-1, 0, 1, 20),
-			new CarpetFiber(-1, 0, 0, 20),
-			new CarpetFiber(-1, 0, -1, 20),
-	};
-	//The basic 5x5 array of carpet fibers, all made out of glass
-	public CarpetFiber[] fibers5 = {
-			new CarpetFiber(2, 0, 2, 20),
-			new CarpetFiber(2, 0, 1, 20),
-			new CarpetFiber(2, 0, 0, 20),
-			new CarpetFiber(2, 0, -1, 20),
-			new CarpetFiber(2, 0, -2, 20),
-			new CarpetFiber(1, 0, 2, 20),
-			new CarpetFiber(1, 0, 1, 20),
-			new CarpetFiber(1, 0, 0, 20),
-			new CarpetFiber(1, 0, -1, 20),
-			new CarpetFiber(1, 0, -2, 20),
-			new CarpetFiber(0, 0, 2, 20),
-			new CarpetFiber(0, 0, 1, 20),
-			new CarpetFiber(0, 0, 0, 20),
-			new CarpetFiber(0, 0, -1, 20),
-			new CarpetFiber(0, 0, -2, 20),
-			new CarpetFiber(-1, 0, 2, 20),
-			new CarpetFiber(-1, 0, 1, 20),
-			new CarpetFiber(-1, 0, 0, 20),
-			new CarpetFiber(-1, 0, -1, 20),
-			new CarpetFiber(-1, 0, -2, 20),
-			new CarpetFiber(-2, 0, 2, 20),
-			new CarpetFiber(-2, 0, 1, 20),
-			new CarpetFiber(-2, 0, 0, 20),
-			new CarpetFiber(-2, 0, -1, 20),
-			new CarpetFiber(-2, 0, -2, 20)
-	};
-	public CarpetFiber[] fibers7 = {
-			new CarpetFiber(3, 0, 3, 20),
-			new CarpetFiber(3, 0, 2, 20),
-			new CarpetFiber(3, 0, 1, 20),
-			new CarpetFiber(3, 0, 0, 20),
-			new CarpetFiber(3, 0, -1, 20),
-			new CarpetFiber(3, 0, -2, 20),
-			new CarpetFiber(3, 0, -3, 20),
-			new CarpetFiber(2, 0, 3, 20),
-			new CarpetFiber(2, 0, 2, 20),
-			new CarpetFiber(2, 0, 1, 20),
-			new CarpetFiber(2, 0, 0, 20),
-			new CarpetFiber(2, 0, -1, 20),
-			new CarpetFiber(2, 0, -2, 20),
-			new CarpetFiber(2, 0, -3, 20),
-			new CarpetFiber(1, 0, 3, 20),
-			new CarpetFiber(1, 0, 2, 20),
-			new CarpetFiber(1, 0, 1, 20),
-			new CarpetFiber(1, 0, 0, 20),
-			new CarpetFiber(1, 0, -1, 20),
-			new CarpetFiber(1, 0, -2, 20),
-			new CarpetFiber(1, 0, -3, 20),
-			new CarpetFiber(0, 0, 3, 20),
-			new CarpetFiber(0, 0, 2, 20),
-			new CarpetFiber(0, 0, 1, 20),
-			new CarpetFiber(0, 0, 0, 20),
-			new CarpetFiber(0, 0, -1, 20),
-			new CarpetFiber(0, 0, -2, 20),
-			new CarpetFiber(0, 0, -3, 20),
-			new CarpetFiber(-1, 0, 3, 20),
-			new CarpetFiber(-1, 0, 2, 20),
-			new CarpetFiber(-1, 0, 1, 20),
-			new CarpetFiber(-1, 0, 0, 20),
-			new CarpetFiber(-1, 0, -1, 20),
-			new CarpetFiber(-1, 0, -2, 20),
-			new CarpetFiber(-1, 0, -3, 20),
-			new CarpetFiber(-2, 0, 3, 20),
-			new CarpetFiber(-2, 0, 2, 20),
-			new CarpetFiber(-2, 0, 1, 20),
-			new CarpetFiber(-2, 0, 0, 20),
-			new CarpetFiber(-2, 0, -1, 20),
-			new CarpetFiber(-2, 0, -2, 20),
-			new CarpetFiber(-2, 0, -3, 20),
-			new CarpetFiber(-3, 0, 3, 20),
-			new CarpetFiber(-3, 0, 2, 20),
-			new CarpetFiber(-3, 0, 1, 20),
-			new CarpetFiber(-3, 0, 0, 20),
-			new CarpetFiber(-3, 0, -1, 20),
-			new CarpetFiber(-3, 0, -2, 20),
-			new CarpetFiber(-3, 0, -3, 20),
-	};
-	//Goes through a grid of the area underneath the player, and if the block is glass that is part of the magic carpet, it is removed
-	public void removeCarpet(World wo) {
-		CarpetFiber[] fibers;
-		if (currentLoc == null)
+
+	public CarpetFiber[] fibers;
+
+//Goes through a grid of the area underneath the player, and if the block is glass that is part of the magic carpet, it is removed
+	public void removeCarpet() {
+		Block bl;
+		if (currentBlock == null)
 			return;
-		switch(size){
-		case 3: fibers = fibers3.clone(); break;
-		case 5: fibers = fibers5.clone(); break;
-		case 7: fibers = fibers7.clone(); break;
-		default: fibers = fibers5.clone(); break;
-		}
 		for(int i = 0; i < fibers.length; i++)
 		{
-			Block bl = wo.getBlockAt((int)Math.floor(currentLoc.getX()) + fibers[i].x, (int)Math.floor(currentLoc.getY()) - fibers[i].y, (int)Math.floor(currentLoc.getZ()) + fibers[i].z);
-			if (fibers[i].imadeit && bl.getTypeId() == 20) bl.setTypeId(0);
-			fibers[i].imadeit = false;
+			bl = fibers[i].block;
+			if (fibers[i].block != null) bl.setType(Material.AIR);
+			fibers[i].block = null;
 		}
 	}
 
-	//Places glass in a 5x5 area underneath the player if the block was just air previously
-	public void drawCarpet(World wo) {
-		Block bl = null;
-		CarpetFiber[] fibers;
-		switch(size){
-		case 3: fibers = fibers3.clone(); break;
-		case 5: fibers = fibers5.clone(); break;
-		case 7: fibers = fibers7.clone(); break;
-		default: fibers = fibers5.clone(); break;
-		}
+//Places glass in a 5x5 area underneath the player if the block was just air previously
+	public void drawCarpet() {
+		Block bl;
 		for(int i = 0; i < fibers.length; i++)
 		{
-			bl = wo.getBlockAt((int)Math.floor(currentLoc.getX()) + fibers[i].x, (int)Math.floor(currentLoc.getY()) - fibers[i].y, (int)Math.floor(currentLoc.getZ()) + fibers[i].z);
-			if (bl.getTypeId() == 0 &&
-					wo.getBlockTypeIdAt(bl.getX()+1, bl.getY(), bl.getZ()) != 81 && // 81 is Cactus
-					wo.getBlockTypeIdAt(bl.getX()-1, bl.getY(), bl.getZ()) != 81 &&
-					wo.getBlockTypeIdAt(bl.getX(), bl.getY(), bl.getZ()+1) != 81 &&
-					wo.getBlockTypeIdAt(bl.getX(), bl.getY(), bl.getZ()-1) != 81) {
-				fibers[i].imadeit = true;
-				bl.setTypeId(fibers[i].type);
+			bl = currentBlock.getRelative(fibers[i].x,fibers[i].y,fibers[i].z);
+			if (bl.getType().equals(Material.AIR) &&
+					bl.getRelative(-1, 0, 0).getTypeId() != 81 && // 81 is Cactus
+					bl.getRelative( 1, 0, 0).getTypeId() != 81 &&
+					bl.getRelative( 0, 0, -1).getTypeId() != 81 &&
+					bl.getRelative( 0, 0, 1).getTypeId() != 81) {
+				fibers[i].block = bl;
+				bl.setType(Material.GLASS);
 			} else {
-				fibers[i].imadeit = false;
+				fibers[i].block = null;
 			}
 		}
 	}
 
-	public void changeCarpet(World wo, int si){
-		removeCarpet(wo);
-		size = si;
-		drawCarpet(wo);
+	public void changeCarpet(int si){
+		removeCarpet();
+		setSize(si);
+		drawCarpet();
 	}
-}
+
+// Changes the carpet size
+	protected void setSize(int size) {
+		if (size < 0) size -= size; // Sanity check
+		this.size = size;
+
+		fibers = new CarpetFiber[size*size];
+		switch(size){
+		case 3: size = 1; break;
+		case 5: size = 2; break;
+		case 7: size = 3; break;
+		default: size = 2; break;
+		}
+
+		int i = 0;
+		for (int x = -size; x <= size; x++)
+			for (int z = -size; z <= size; z++) {
+				fibers[i] = new CarpetFiber(x, 0, z, 20);
+				i++;
+			}
+		}
+	}

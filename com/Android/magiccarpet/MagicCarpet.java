@@ -1,19 +1,15 @@
 package com.Android.magiccarpet;
 
-import java.io.File;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.logging.Logger;
 
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
-import org.bukkit.Server;
-import org.bukkit.World;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.nijikokun.bukkit.Permissions.Permissions;
@@ -38,7 +34,7 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 */
 
 public class MagicCarpet extends JavaPlugin {
-	private final MagicPlayerListener playerListener = new MagicPlayerListener(this);
+	private final MagicPlayerListener playerListener = new MagicPlayerListener();
 	public Permissions Permissions = null;
 	private static Logger log = Logger.getLogger("Minecraft");
 	private String name = "MagicCarpet";
@@ -63,9 +59,8 @@ public class MagicCarpet extends JavaPlugin {
 		//iterate through Hashtable keys Enumeration
 		while(e.hasMoreElements()) {
 			String name = e.nextElement();
-			Player player = getServer().getPlayer(name);
 			Carpet c = carpets.get(name);
-			c.removeCarpet(player.getWorld());
+			c.removeCarpet();
 		}
 		carpets.clear();
         // EXAMPLE: Custom code, here we just output some info so we can check all is well
@@ -79,7 +74,8 @@ public class MagicCarpet extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
     }
     
-    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
+    @SuppressWarnings("static-access")
+	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
         String[] split = args;
         String commandName = command.getName().toLowerCase();
         int c = 5;
@@ -92,7 +88,6 @@ public class MagicCarpet extends JavaPlugin {
             }else{
             	return true;
             }
-            World world = player.getWorld();
         	Carpet carpet = (Carpet)carpets.get(player.getName());
         	if (Permissions.Security.permission(player, "magiccarpet.mc")){
         		if (carpet == null)
@@ -100,7 +95,7 @@ public class MagicCarpet extends JavaPlugin {
         			if (split.length < 1){
         				player.sendMessage("A glass carpet appears below your feet.");
         				Carpet newCarpet = new Carpet();
-        				newCarpet.size = 5;
+        				newCarpet.setSize(5);
         				carpets.put(player.getName(), newCarpet);
         				playerListener.setCarpets(carpets);
         			}else{
@@ -117,7 +112,7 @@ public class MagicCarpet extends JavaPlugin {
         				}
         				player.sendMessage("A glass carpet appears below your feet.");
         				Carpet newCarpet = new Carpet();
-        				newCarpet.size = c;
+        				newCarpet.setSize(c);
         				carpets.put(player.getName(), newCarpet);
         				playerListener.setCarpets(carpets);
         			}
@@ -139,17 +134,17 @@ public class MagicCarpet extends JavaPlugin {
         				}
         				if(c != carpet.size){
         					player.sendMessage("The carpet seems to react to your words, and suddenly changes shape!");
-        					carpet.changeCarpet(world, c);
+        					carpet.changeCarpet(c);
         				}else{
         					player.sendMessage("Poof! The magic carpet disappears.");
                 			carpets.remove(player.getName());
-                			carpet.removeCarpet(world);
+                			carpet.removeCarpet();
                 			playerListener.setCarpets(carpets);
         				}
         			}else{
         				player.sendMessage("Poof! The magic carpet disappears.");
             			carpets.remove(player.getName());
-            			carpet.removeCarpet(world);
+            			carpet.removeCarpet();
             			playerListener.setCarpets(carpets);
         			}
         		
