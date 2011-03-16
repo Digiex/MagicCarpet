@@ -1,11 +1,11 @@
 name: MagicCarpet
 
 main: com.Android.magiccarpet.MagicCarpet
-version: 1.4.4
+version: 1.4.5
 commands:
   mc:
-    description:
+    description: Take yourself wonder by wonder on a carpet made of glass.
     usage:
   magiccarpet:
-    description:
+    description: Take yourself wonder by wonder on a carpet made of glass.
     usage:

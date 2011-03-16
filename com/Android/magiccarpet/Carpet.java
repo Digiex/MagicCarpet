@@ -70,6 +70,7 @@ public class Carpet {
 		Block bl;
 		for(int i = 0; i < fibers.length; i++)
 		{
+			if (currentBlock != null){
 			bl = currentBlock.getRelative(fibers[i].x,fibers[i].y,fibers[i].z);
 			if (bl.getType().equals(Material.AIR) &&
 					bl.getRelative(-1, 0, 0).getTypeId() != 81 && // 81 is Cactus
@@ -81,6 +82,7 @@ public class Carpet {
 			} else {
 				fibers[i].block = null;
 			}
+		}
 		}
 	}
 

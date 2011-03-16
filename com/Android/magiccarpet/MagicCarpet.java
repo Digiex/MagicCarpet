@@ -72,6 +72,7 @@ public class MagicCarpet extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TOGGLE_SNEAK, playerListener, Priority.Normal, this);
     }
     
     @SuppressWarnings("static-access")
@@ -95,6 +96,7 @@ public class MagicCarpet extends JavaPlugin {
         			if (split.length < 1){
         				player.sendMessage("A glass carpet appears below your feet.");
         				Carpet newCarpet = new Carpet();
+        				newCarpet.currentBlock = player.getLocation().getBlock();
         				newCarpet.setSize(5);
         				carpets.put(player.getName(), newCarpet);
         				playerListener.setCarpets(carpets);
@@ -112,6 +114,7 @@ public class MagicCarpet extends JavaPlugin {
         				}
         				player.sendMessage("A glass carpet appears below your feet.");
         				Carpet newCarpet = new Carpet();
+        				newCarpet.currentBlock = player.getLocation().getBlock();
         				newCarpet.setSize(c);
         				carpets.put(player.getName(), newCarpet);
         				playerListener.setCarpets(carpets);

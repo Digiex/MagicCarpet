@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 /**
 * Magic Carpet 1.4
@@ -59,7 +60,6 @@ public class MagicPlayerListener extends PlayerListener {
     @Override
     //Lets the carpet move with the player
     public void onPlayerMove(PlayerMoveEvent event) {
-    	Location from = event.getFrom().clone();
     	Location to = event.getTo().clone();
     	Player player = event.getPlayer();
     	Carpet carpet = (Carpet)carpets.get(player.getName());
@@ -67,7 +67,7 @@ public class MagicPlayerListener extends PlayerListener {
     		return;
     	carpet.removeCarpet();
     	to.setY(to.getY()-1);
-    	if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ()))
+    	if(player.isSneaking())
     		to.setY(to.getY()-1);
     	carpet.currentBlock = to.getBlock();
     	carpet.drawCarpet();
@@ -93,6 +93,20 @@ public class MagicPlayerListener extends PlayerListener {
         carpet.removeCarpet();
     	carpet.currentBlock = to.getBlock();
     	carpet.drawCarpet();
+    }
+    
+    public void onPlayerToggleSneak(PlayerToggleSneakEvent event){
+    	Player player = event.getPlayer();
+    	// Check if the player has a carpet
+        Carpet carpet = (Carpet)carpets.get(player.getName());
+        if (carpet == null)
+        	return;
+        
+        if(!player.isSneaking()){
+        	carpet.removeCarpet();
+        	carpet.currentBlock = carpet.currentBlock.getRelative(0,-1,0);
+        	carpet.drawCarpet();
+        }
     }
     
     public Hashtable<String, Carpet> getCarpets(){
