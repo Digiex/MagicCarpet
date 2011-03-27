@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="magiccarpet">
+
+    <property name="bukkit-location" value="bukkit.jar"/>
+    <property name="perms-location" value="Permissions.jar"/>
+    <property name="output-jar" value="${ant.project.name}.jar"/>
+	
+    <property name="debuglevel" value="source,lines"/>
+	
+    <path id="classpath">
+        <pathelement location="bin"/>
+        <pathelement location="${bukkit-location}"/>
+        <pathelement location="${perms-location}"/>
+    </path>
+	
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy file="plugin.yml" todir="bin" />
+    </target>
+	
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+	
+    <target depends="init" name="build">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin">
+            <src path="./com"/>
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+	
+    <target name="jar" depends="build">
+        <jar destfile="${output-jar}" basedir="bin" />
+    </target>
+
+    <target name="dist" depends="clean,build,jar">
+        <fail unless="version" message="You need to specify a version number"/>
+        <property name="tarfile" value="${ant.project.name}_${version}.tar"/>
+        <tar destfile="${tarfile}" basedir="." includes="${output-jar} ${ant.project.name}/*" />
+        <gzip destfile="${tarfile}.gz" src="${tarfile}" />
+        <delete file="${tarfile}"/>
+    </target>
+</project>

@@ -4,7 +4,7 @@ import org.bukkit.block.Block;
 import org.bukkit.Material;
 
 /**
-* Magic Carpet 1.4
+* Magic Carpet 1.5
 * Copyright (C) 2011 Android <spparr@gmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
@@ -39,6 +39,7 @@ public class Carpet {
 
 	public class CarpetFiber
 	{
+	    @SuppressWarnings("hiding")
 		public CarpetFiber(int x, int y, int z, int type)
 		{
 			this.x = x;
@@ -93,6 +94,7 @@ public class Carpet {
 	}
 
 // Changes the carpet size
+	@SuppressWarnings("hiding")
 	protected void setSize(int size) {
 		if (size < 0) size -= size; // Sanity check
 		this.size = size;
