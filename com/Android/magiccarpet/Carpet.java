@@ -32,6 +32,7 @@ import org.bukkit.Material;
 public class Carpet {
 	Block currentBlock;
 	int size = 0;
+	int rad = 0;
 	boolean lights = false;
 
 	public Carpet() {
@@ -84,7 +85,7 @@ public class Carpet {
 						bl.getRelative( 0, 0, 1).getTypeId() != 81) {
 					fibers[i].block = bl;
 					if(lights){
-						if(fibers[i].x == size || fibers[i].x == -size || fibers[i].z == size || fibers[i].z == -size)
+						if(fibers[i].x == rad || fibers[i].x == -rad || fibers[i].z == rad || fibers[i].z == -rad)
 							bl.setType(Material.GLOWSTONE);
 						else
 							bl.setType(Material.GLASS);
@@ -130,6 +131,6 @@ public class Carpet {
 			}
 		}
 		
-		this.size = size;
+		this.rad = size;
 	}
 }

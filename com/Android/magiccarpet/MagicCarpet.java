@@ -264,6 +264,7 @@ private static String config_comment = "Magic Carpet permissions file";
     	if(this.permissions == null) {
     	     if(test != null) {
     	    	 this.permissions = (Permissions)test;
+    	    	 all_can_fly = false;
     	     } else {
     	    	 loadSettings();
     	     }
