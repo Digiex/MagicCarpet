@@ -3,13 +3,15 @@ package com.Android.magiccarpet;
 import java.util.Hashtable;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 /**
-* Magic Carpet 1.4
+* Magic Carpet 1.5
 * Copyright (C) 2011 Android <spparr@gmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
@@ -39,7 +41,7 @@ public class MagicPlayerListener extends PlayerListener {
 		
 	@Override
     //When a player joins the game, if they had a carpet when the logged out it puts it back.
-    public void onPlayerJoin(PlayerEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
     	Player player = event.getPlayer();
     	Carpet carpet = (Carpet)carpets.get(player.getName());
     	if (carpet == null)
@@ -49,7 +51,7 @@ public class MagicPlayerListener extends PlayerListener {
 
     @Override
     //When a player quits, it removes the carpet from the server
-    public void onPlayerQuit(PlayerEvent event) {
+    public void onPlayerQuit(PlayerQuitEvent event) {
     	Player player = event.getPlayer();
     	Carpet carpet = (Carpet)carpets.get(player.getName());
 		if (carpet == null)
@@ -73,7 +75,7 @@ public class MagicPlayerListener extends PlayerListener {
     	carpet.drawCarpet();
     }
     
-    public void onPlayerTeleport (PlayerMoveEvent event) {
+    public void onPlayerTeleport (PlayerTeleportEvent event) {
     	Location to = event.getTo().clone();
     	Player player = event.getPlayer();
     	// Check if the player has a carpet
@@ -93,6 +95,7 @@ public class MagicPlayerListener extends PlayerListener {
         carpet.removeCarpet();
     	carpet.currentBlock = to.getBlock();
     	carpet.drawCarpet();
+    	
     }
     
     public void onPlayerToggleSneak(PlayerToggleSneakEvent event){

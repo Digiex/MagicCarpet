@@ -1,8 +1,16 @@
 package com.Android.magiccarpet;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.logging.Logger;
+import java.util.Properties;
 
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -16,7 +24,7 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 
 
 /**
-* Magic Carpet 1.4
+* Magic Carpet 1.5
 * Copyright (C) 2011 Android <spparr@gmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
@@ -35,25 +43,27 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class MagicCarpet extends JavaPlugin {
 	private final MagicPlayerListener playerListener = new MagicPlayerListener();
-	public Permissions Permissions = null;
+	public Permissions permissions = null;
 	private static Logger log = Logger.getLogger("Minecraft");
-	private String name = "MagicCarpet";
+	private ArrayList<String> owners = new ArrayList<String>();
+	private ArrayList<String> bums = new ArrayList<String>();
+	private ArrayList<String> lights = new ArrayList<String>();
+	private boolean ignore = false;
+	private boolean all_can_fly = true;
 
     public void onEnable() {
-        // TODO: Place any custom enable code here including the registration of any events
-        
-
-        // EXAMPLE: Custom code, here we just output some info so we can check all is well
     	setupPermissions();
         PluginDescriptionFile pdfFile = this.getDescription();
-        if(Permissions != null)
-        	System.out.println( "Take yourself wonder by wonder, using /magiccarpet or /mc. " + pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!" );
+        String name = pdfFile.getName();
+        log.info( "[" + name + "] " + name + " version " + pdfFile.getVersion() + " is enabled!" );
+        log.info( "[" + name + "] Take yourself wonder by wonder, using /magiccarpet or /mc. " );
+        if(permissions != null) log.info("[" + name + "] Using Permissions.");
+        else if(all_can_fly) log.info("[" + name + "] Anyone can use the Magic Carpet.");
+        else if(ignore) log.info("[" + name + "] Ignore: " + bums.toString());
+        else log.info("[" + name + "] Restricted to: " + owners.toString());
         registerEvents();
     }
     public void onDisable() {
-        // TODO: Place any custom disable code here
-
-        // NOTE: All registered events are automatically unregistered when a plugin is disabled
     	Hashtable<String, Carpet> carpets = playerListener.getCarpets();
     	Enumeration<String> e = carpets.keys();
 		//iterate through Hashtable keys Enumeration
@@ -63,7 +73,6 @@ public class MagicCarpet extends JavaPlugin {
 			c.removeCarpet();
 		}
 		carpets.clear();
-        // EXAMPLE: Custom code, here we just output some info so we can check all is well
         System.out.println("Magic Carpet disabled. Thanks for trying the plugin!");
     }
     
@@ -75,22 +84,21 @@ public class MagicCarpet extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TOGGLE_SNEAK, playerListener, Priority.Normal, this);
     }
     
-    @SuppressWarnings("static-access")
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
         String[] split = args;
         String commandName = command.getName().toLowerCase();
         int c = 5;
         Hashtable<String, Carpet> carpets = playerListener.getCarpets();
         Player player;
+        if (sender instanceof Player){
+        	player = (Player)sender;
+        }else{
+        	return true;
+        }
+        Carpet carpet = (Carpet)carpets.get(player.getName());
 
         if (commandName.equals("mc") || commandName.equals("magiccarpet")) {
-        	if (sender instanceof Player){
-            	player = (Player)sender;
-            }else{
-            	return true;
-            }
-        	Carpet carpet = (Carpet)carpets.get(player.getName());
-        	if (Permissions.Security.permission(player, "magiccarpet.mc")){
+        	if (canFly(player)){
         		if (carpet == null)
         		{
         			if (split.length < 1){
@@ -98,6 +106,7 @@ public class MagicCarpet extends JavaPlugin {
         				Carpet newCarpet = new Carpet();
         				newCarpet.currentBlock = player.getLocation().getBlock();
         				newCarpet.setSize(5);
+        				newCarpet.setLights(lights.contains(player.getName()));
         				carpets.put(player.getName(), newCarpet);
         				playerListener.setCarpets(carpets);
         			}else{
@@ -116,6 +125,7 @@ public class MagicCarpet extends JavaPlugin {
         				Carpet newCarpet = new Carpet();
         				newCarpet.currentBlock = player.getLocation().getBlock();
         				newCarpet.setSize(c);
+        				newCarpet.setLights(lights.contains(player.getName()));
         				carpets.put(player.getName(), newCarpet);
         				playerListener.setCarpets(carpets);
         			}
@@ -157,32 +167,108 @@ public class MagicCarpet extends JavaPlugin {
         		player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
         		return true;
         	}
+        }else{
+        	if (commandName.equals("ml")) {
+        		if(lights.contains(player.getName())){
+        			lights.remove(player.getName());
+        			player.sendMessage("The lights on the carpet slowly fade away.");
+        			if(carpet != null)
+        				carpet.setLights(false);;
+        		}else{
+        			lights.add(player.getName());
+        			player.sendMessage("A bright flash shines as torches appear on the carpet.");
+        			if(carpet != null)
+        				carpet.setLights(true);
+        		}
+        		return true;
+        	}
+        	else
+        	{
+        		return false;
+        	}
         }
-        else
-        {
-        	return false;
-        }
+    }
+private boolean canFly(Player player) {
+    if(all_can_fly) return true;
+    if(permissions != null)
+        return Permissions.Security.permission(player, "magiccarpet.mc");
+    else if(ignore)
+        return !bums.contains( player.getName().toLowerCase());
+    else
+        return owners.contains( player.getName().toLowerCase());
+    }
+private static String config_comment = "Magic Carpet permissions file";
+    
+    public void saveDefaultSettings(boolean trust){
+    	Properties props = new Properties();
+    	if(trust)
+    		props.setProperty("can-fly","trusted_users_here,maybe_here_too");
+    	else
+    		props.setProperty("cannot-fly","untrusted_users_here,maybe_here_too");
+    	try{
+    		OutputStream propOut = new FileOutputStream(new File("magiccarpet.properties"));
+    		props.store(propOut, config_comment);
+    	} catch (IOException ioe) {
+    		System.out.print(ioe.getMessage());
+    	}
+    }
+    
+    public void loadSettings(){
+    	Properties props = new Properties();
+    	try {
+    		props.load(new FileInputStream("magiccarpet.properties"));
+    		if (props.containsKey("can-fly")){
+    			all_can_fly = false;
+    			String dreamers = props.getProperty("can-fly","");
+    			ignore = false;
+    			if(dreamers.length() > 0){
+    				String[] fliers = dreamers.toLowerCase().split(",");
+    				if (fliers.length > 0)
+    				{
+    					owners = new ArrayList<String>(Arrays.asList(fliers));
+    				}else{
+    					this.saveDefaultSettings(true);
+    				}
+    			}else{
+    				this.saveDefaultSettings(true);
+    			}
+    		}else{
+    			if(props.containsKey("cannot-fly")){
+    				all_can_fly = false;
+    				String paupers = props.getProperty("cannot-fly","");
+    				ignore = true;
+    				if(paupers.length() > 0){
+    					String[] penniless = paupers.toLowerCase().split(",");
+    					if (penniless.length > 0)
+    					{
+    						bums = new ArrayList<String>(Arrays.asList(penniless));
+    					}else{
+    						this.saveDefaultSettings(false);
+    					}
+    				}else{
+    					this.saveDefaultSettings(false);
+    				}
+    			}else{
+        			this.saveDefaultSettings(true);
+        		}
+    		}
+    	} catch (IOException ioe) {
+    		
+    	}
     }
     
     public void setupPermissions() {
     	Plugin test = this.getServer().getPluginManager().getPlugin("Permissions");
 
 
-    	if(this.Permissions == null) {
+    	if(this.permissions == null) {
     	     if(test != null) {
-    	    	 this.Permissions = (Permissions)test;
+    	    	 this.permissions = (Permissions)test;
     	     } else {
-    	    	 log.info("[" + name + "] Permission system not enabled. Disabling plugin.");
-    	    	 this.getServer().getPluginManager().disablePlugin(this);
+    	    	 loadSettings();
     	     }
     	}
     }
-    
-    public boolean isDebugging(final Player player) {
-    	return false;
-    }
-
-    public void setDebugging(final Player player, final boolean value) { }
 
 
 }

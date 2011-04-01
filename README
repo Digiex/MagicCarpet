@@ -6,7 +6,13 @@ that moves with you. Just put in the command again to remove it. However, you ca
 or 7 after your /mc command. This will create either a 3x3, 5x5, or 7x7 carpet based on your input. When you put one of the sizes after the command when you already have a
 carpet out, if the size is the same as the carpet you have now, the carpet is removed. If it is different, the the carpet will change sizes.
 
-This plugin requires the Permissions plugin to run. In order to specify the magic carpet plugin in the config.yml file, type 'magiccarpet.mc' like that in single quotes after
+This plugin has a permissions system that is based on the contents of the file magiccarpet.properties. If you don't mind who uses the carpet, you can do nothing, and all users
+are allowed ot use it. If you want to have permissions, create a text file and save it as magiccarpet.properties. Once you run the server the first time, it will set the
+file up for use. In order to allow a user to use the command, just put their username after the "can-fly=" in the properties file, seperating multiple users names with commas. 
+If it is easier for you to list who you do NOT want to use the command, just change the "can-fly=" in the properties file to "cannot-fly=", and put those who you do not want 
+to use the command after it seperated by commas.
+
+Alternatively, you can use the Permissions plugin. In order to specify the magic carpet plugin in the config.yml file, type 'magiccarpet.mc' like that in single quotes after
 the permissions area where you are trying to apply it.
 
 If you have any problems, don't hesitate to mention them at the bukkit forum thread for this plugin, or message my Bukkit account, Android, at the forums.
