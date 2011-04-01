@@ -171,12 +171,12 @@ public class MagicCarpet extends JavaPlugin {
         	if (commandName.equals("ml")) {
         		if(lights.contains(player.getName())){
         			lights.remove(player.getName());
-        			player.sendMessage("The lights on the carpet slowly fade away.");
+        			player.sendMessage("The luminous stones in the carpet slowly fade away.");
         			if(carpet != null)
         				carpet.setLights(false);;
         		}else{
         			lights.add(player.getName());
-        			player.sendMessage("A bright flash shines as torches appear on the carpet.");
+        			player.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
         			if(carpet != null)
         				carpet.setLights(true);
         		}
