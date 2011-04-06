@@ -43,6 +43,7 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class MagicCarpet extends JavaPlugin {
 	private final MagicPlayerListener playerListener = new MagicPlayerListener();
+	private final MagicBlockListener blockListener = new MagicBlockListener(playerListener);
 	public Permissions permissions = null;
 	private static Logger log = Logger.getLogger("Minecraft");
 	private ArrayList<String> owners = new ArrayList<String>();
@@ -82,6 +83,7 @@ public class MagicCarpet extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TOGGLE_SNEAK, playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK,blockListener, Priority.Normal, this);
     }
     
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
@@ -169,22 +171,36 @@ public class MagicCarpet extends JavaPlugin {
         	}
         }else{
         	if (commandName.equals("ml")) {
-        		if(lights.contains(player.getName())){
-        			lights.remove(player.getName());
-        			player.sendMessage("The luminous stones in the carpet slowly fade away.");
-        			if(carpet != null)
-        				carpet.setLights(false);;
-        		}else{
-        			lights.add(player.getName());
-        			player.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
-        			if(carpet != null)
-        				carpet.setLights(true);
+        		if(canFly(player)){
+        			if(lights.contains(player.getName())){
+        				lights.remove(player.getName());
+        				player.sendMessage("The luminous stones in the carpet slowly fade away.");
+        				if(carpet != null)
+        					carpet.setLights(false);;
+        			}else{
+        				lights.add(player.getName());
+        				player.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
+        				if(carpet != null)
+        					carpet.setLights(true);
+        			}
         		}
         		return true;
         	}
         	else
         	{
-        		return false;
+        		if (commandName.equals("carpetswitch")) {
+        			if(canFly(player)){
+        				boolean crouch = playerListener.CarpetSwitch(player.getName());
+            			if(crouch){
+            				player.sendMessage("You now crouch to descend");
+            			}else{
+            				player.sendMessage("You now look down to descend");
+            			}
+        			}
+            		return true;
+            	}else{
+            		return false;
+            	}
         	}
         }
     }

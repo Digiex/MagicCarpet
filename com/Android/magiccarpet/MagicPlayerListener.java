@@ -1,5 +1,6 @@
 package com.Android.magiccarpet;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -38,6 +39,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 */
 public class MagicPlayerListener extends PlayerListener {
 	private Hashtable<String, Carpet> carpets = new Hashtable<String, Carpet>();
+	private ArrayList<String> crouchers = new ArrayList<String>();
 		
 	@Override
     //When a player joins the game, if they had a carpet when the logged out it puts it back.
@@ -63,16 +65,29 @@ public class MagicPlayerListener extends PlayerListener {
     //Lets the carpet move with the player
     public void onPlayerMove(PlayerMoveEvent event) {
     	Location to = event.getTo().clone();
+    	Location from = event.getFrom().clone();
     	Player player = event.getPlayer();
     	Carpet carpet = (Carpet)carpets.get(player.getName());
     	if (carpet == null)
     		return;
-    	carpet.removeCarpet();
     	to.setY(to.getY()-1);
-    	if(player.isSneaking())
-    		to.setY(to.getY()-1);
+    	from.setY(from.getY()-1);
+    	if(crouchers.contains(player.getName())){
+    		if(player.isSneaking())
+    			to.setY(to.getY()-1);
+    	}else{
+    		if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ()))
+    			to.setY(to.getY()-1);
+    	}
+    	
+    	if (from.getBlockX() == to.getBlockX() &&
+    		     from.getBlockY() == to.getBlockY() &&
+    		     from.getBlockZ() == to.getBlockZ())
+    		     return;
+    	
+    	carpet.removeCarpet();
     	carpet.currentBlock = to.getBlock();
-    	carpet.drawCarpet();
+   		carpet.drawCarpet();
     }
     
     public void onPlayerTeleport (PlayerTeleportEvent event) {
@@ -105,10 +120,12 @@ public class MagicPlayerListener extends PlayerListener {
         if (carpet == null)
         	return;
         
-        if(!player.isSneaking()){
-        	carpet.removeCarpet();
-        	carpet.currentBlock = carpet.currentBlock.getRelative(0,-1,0);
-        	carpet.drawCarpet();
+        if(crouchers.contains(player.getName())){
+        	if(!player.isSneaking()){
+        		carpet.removeCarpet();
+        		carpet.currentBlock = carpet.currentBlock.getRelative(0,-1,0);
+        		carpet.drawCarpet();
+        	}
         }
     }
     
@@ -118,5 +135,15 @@ public class MagicPlayerListener extends PlayerListener {
     
     public void setCarpets(Hashtable<String, Carpet> carp){
     	carpets = carp;
+    }
+    
+    public boolean CarpetSwitch(String name){
+    	if(crouchers.contains(name)){
+    		crouchers.remove(name);
+    		return false;
+    	}else{
+    		crouchers.add(name);
+    		return true;
+    	}
     }
 }

@@ -34,6 +34,7 @@ public class Carpet {
 	int size = 0;
 	int rad = 0;
 	boolean lights = false;
+	boolean crouch = true;
 
 	public Carpet() {
 		setSize(5);
@@ -107,6 +108,20 @@ public class Carpet {
 	
 	public void setLights(boolean li){
 		lights = li;
+	}
+	
+	public boolean checkGlowstone(Block bl){
+		boolean sameBlock = false;
+		for(int i = 0; i < fibers.length; i++){
+			Block fiber = fibers[i].block;
+			if (fiber != null){
+				if (fiber.equals(bl))
+					sameBlock = true;
+			}
+				
+		}
+		
+		return sameBlock;
 	}
 
 	// Changes the carpet size
