@@ -43,10 +43,12 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class MagicCarpet extends JavaPlugin {
 	private final MagicPlayerListener playerListener = new MagicPlayerListener();
+	private final MagicBlockListener blockListener = new MagicBlockListener(playerListener);
 	public Permissions permissions = null;
 	private static Logger log = Logger.getLogger("Minecraft");
 	private ArrayList<String> owners = new ArrayList<String>();
 	private ArrayList<String> bums = new ArrayList<String>();
+	private ArrayList<String> lights = new ArrayList<String>();
 	private boolean ignore = false;
 	private boolean all_can_fly = true;
 
@@ -81,6 +83,7 @@ public class MagicCarpet extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TOGGLE_SNEAK, playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK,blockListener, Priority.Normal, this);
     }
     
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
@@ -89,14 +92,14 @@ public class MagicCarpet extends JavaPlugin {
         int c = 5;
         Hashtable<String, Carpet> carpets = playerListener.getCarpets();
         Player player;
+        if (sender instanceof Player){
+        	player = (Player)sender;
+        }else{
+        	return true;
+        }
+        Carpet carpet = (Carpet)carpets.get(player.getName());
 
         if (commandName.equals("mc") || commandName.equals("magiccarpet")) {
-        	if (sender instanceof Player){
-            	player = (Player)sender;
-            }else{
-            	return true;
-            }
-        	Carpet carpet = (Carpet)carpets.get(player.getName());
         	if (canFly(player)){
         		if (carpet == null)
         		{
@@ -105,6 +108,7 @@ public class MagicCarpet extends JavaPlugin {
         				Carpet newCarpet = new Carpet();
         				newCarpet.currentBlock = player.getLocation().getBlock();
         				newCarpet.setSize(5);
+        				newCarpet.setLights(lights.contains(player.getName()));
         				carpets.put(player.getName(), newCarpet);
         				playerListener.setCarpets(carpets);
         			}else{
@@ -123,6 +127,7 @@ public class MagicCarpet extends JavaPlugin {
         				Carpet newCarpet = new Carpet();
         				newCarpet.currentBlock = player.getLocation().getBlock();
         				newCarpet.setSize(c);
+        				newCarpet.setLights(lights.contains(player.getName()));
         				carpets.put(player.getName(), newCarpet);
         				playerListener.setCarpets(carpets);
         			}
@@ -164,10 +169,39 @@ public class MagicCarpet extends JavaPlugin {
         		player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
         		return true;
         	}
-        }
-        else
-        {
-        	return false;
+        }else{
+        	if (commandName.equals("ml")) {
+        		if(canFly(player)){
+        			if(lights.contains(player.getName())){
+        				lights.remove(player.getName());
+        				player.sendMessage("The luminous stones in the carpet slowly fade away.");
+        				if(carpet != null)
+        					carpet.setLights(false);;
+        			}else{
+        				lights.add(player.getName());
+        				player.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
+        				if(carpet != null)
+        					carpet.setLights(true);
+        			}
+        		}
+        		return true;
+        	}
+        	else
+        	{
+        		if (commandName.equals("carpetswitch")) {
+        			if(canFly(player)){
+        				boolean crouch = playerListener.CarpetSwitch(player.getName());
+            			if(crouch){
+            				player.sendMessage("You now crouch to descend");
+            			}else{
+            				player.sendMessage("You now look down to descend");
+            			}
+        			}
+            		return true;
+            	}else{
+            		return false;
+            	}
+        	}
         }
     }
 private boolean canFly(Player player) {
@@ -231,11 +265,11 @@ private static String config_comment = "Magic Carpet permissions file";
     					this.saveDefaultSettings(false);
     				}
     			}else{
-    				this.saveDefaultSettings(true);
-    			}
+        			this.saveDefaultSettings(true);
+        		}
     		}
     	} catch (IOException ioe) {
-    		this.saveDefaultSettings(true);
+    		
     	}
     }
     
@@ -246,6 +280,7 @@ private static String config_comment = "Magic Carpet permissions file";
     	if(this.permissions == null) {
     	     if(test != null) {
     	    	 this.permissions = (Permissions)test;
+    	    	 all_can_fly = false;
     	     } else {
     	    	 loadSettings();
     	     }

@@ -32,6 +32,9 @@ import org.bukkit.Material;
 public class Carpet {
 	Block currentBlock;
 	int size = 0;
+	int rad = 0;
+	boolean lights = false;
+	boolean crouch = true;
 
 	public Carpet() {
 		setSize(5);
@@ -39,21 +42,23 @@ public class Carpet {
 
 	public class CarpetFiber
 	{
-	    @SuppressWarnings("hiding")
-		public CarpetFiber(int x, int y, int z, int type)
+		@SuppressWarnings("hiding")
+		public CarpetFiber(int x, int y, int z, int type, boolean torch)
 		{
 			this.x = x;
 			this.y = y;
 			this.z = z;
 			this.type = type;
+			this.torch = torch;
 		}
 		int x,y,z,type = 0;
+		boolean torch = false;
 		Block block = null;
 	}
 
 	public CarpetFiber[] fibers;
 
-//Goes through a grid of the area underneath the player, and if the block is glass that is part of the magic carpet, it is removed
+	//Goes through a grid of the area underneath the player, and if the block is glass that is part of the magic carpet, it is removed
 	public void removeCarpet() {
 		Block bl;
 		if (currentBlock == null)
@@ -61,29 +66,37 @@ public class Carpet {
 		for(int i = 0; i < fibers.length; i++)
 		{
 			bl = fibers[i].block;
-			if (fibers[i].block != null) bl.setType(Material.AIR);
+			if (fibers[i].block != null && (fibers[i].block.getType().equals(Material.GLASS) || fibers[i].block.getType().equals(Material.GLOWSTONE)))
+					bl.setType(Material.AIR);
 			fibers[i].block = null;
 		}
 	}
 
-//Places glass in a 5x5 area underneath the player if the block was just air previously
+	//Places glass in a 5x5 area underneath the player if the block was just air previously
 	public void drawCarpet() {
 		Block bl;
 		for(int i = 0; i < fibers.length; i++)
 		{
 			if (currentBlock != null){
-			bl = currentBlock.getRelative(fibers[i].x,fibers[i].y,fibers[i].z);
-			if (bl.getType().equals(Material.AIR) &&
-					bl.getRelative(-1, 0, 0).getTypeId() != 81 && // 81 is Cactus
-					bl.getRelative( 1, 0, 0).getTypeId() != 81 &&
-					bl.getRelative( 0, 0, -1).getTypeId() != 81 &&
-					bl.getRelative( 0, 0, 1).getTypeId() != 81) {
-				fibers[i].block = bl;
-				bl.setType(Material.GLASS);
-			} else {
-				fibers[i].block = null;
+				bl = currentBlock.getRelative(fibers[i].x,fibers[i].y,fibers[i].z);
+				if (bl.getType().equals(Material.AIR) &&
+						bl.getRelative(-1, 0, 0).getTypeId() != 81 && // 81 is Cactus
+						bl.getRelative( 1, 0, 0).getTypeId() != 81 &&
+						bl.getRelative( 0, 0, -1).getTypeId() != 81 &&
+						bl.getRelative( 0, 0, 1).getTypeId() != 81) {
+					fibers[i].block = bl;
+					if(lights){
+						if(fibers[i].x == rad || fibers[i].x == -rad || fibers[i].z == rad || fibers[i].z == -rad)
+							bl.setType(Material.GLOWSTONE);
+						else
+							bl.setType(Material.GLASS);
+					}else{
+						bl.setType(Material.GLASS);
+					}
+				} else {
+					fibers[i].block = null;
+				}
 			}
-		}
 		}
 	}
 
@@ -92,8 +105,26 @@ public class Carpet {
 		setSize(si);
 		drawCarpet();
 	}
+	
+	public void setLights(boolean li){
+		lights = li;
+	}
+	
+	public boolean checkGlowstone(Block bl){
+		boolean sameBlock = false;
+		for(int i = 0; i < fibers.length; i++){
+			Block fiber = fibers[i].block;
+			if (fiber != null){
+				if (fiber.equals(bl))
+					sameBlock = true;
+			}
+				
+		}
+		
+		return sameBlock;
+	}
 
-// Changes the carpet size
+	// Changes the carpet size
 	@SuppressWarnings("hiding")
 	protected void setSize(int size) {
 		if (size < 0) size -= size; // Sanity check
@@ -108,10 +139,13 @@ public class Carpet {
 		}
 
 		int i = 0;
-		for (int x = -size; x <= size; x++)
+		for (int x = -size; x <= size; x++){
 			for (int z = -size; z <= size; z++) {
-				fibers[i] = new CarpetFiber(x, 0, z, 20);
+				fibers[i] = new CarpetFiber(x, 0, z, 20,false);
 				i++;
 			}
 		}
+		
+		this.rad = size;
 	}
+}
