@@ -34,9 +34,8 @@ public class Carpet {
 	int size = 0;
 	int rad = 0;
 	boolean lights = false;
-	boolean crouch = true;
 
-	public Carpet() {
+	public Carpet(){
 		setSize(5);
 	}
 

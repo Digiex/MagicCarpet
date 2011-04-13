@@ -40,6 +40,12 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 public class MagicPlayerListener extends PlayerListener {
 	private Hashtable<String, Carpet> carpets = new Hashtable<String, Carpet>();
 	private ArrayList<String> crouchers = new ArrayList<String>();
+	private MagicCarpet plugin = null;
+	boolean crouchDef = false;
+	
+	public MagicPlayerListener(MagicCarpet plug){
+		plugin = plug;
+	}
 		
 	@Override
     //When a player joins the game, if they had a carpet when the logged out it puts it back.
@@ -72,12 +78,22 @@ public class MagicPlayerListener extends PlayerListener {
     		return;
     	to.setY(to.getY()-1);
     	from.setY(from.getY()-1);
-    	if(crouchers.contains(player.getName())){
-    		if(player.isSneaking())
-    			to.setY(to.getY()-1);
+    	if (!crouchDef){
+    		if(crouchers.contains(player.getName())){
+    			if(player.isSneaking())
+    				to.setY(to.getY()-1);
+    		}else{
+    			if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ()))
+    				to.setY(to.getY()-1);
+    		}
     	}else{
-    		if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ()))
-    			to.setY(to.getY()-1);
+    		if(crouchers.contains(player.getName())){
+    			if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ()))
+    				to.setY(to.getY()-1);
+    		}else{
+    			if(player.isSneaking())
+    				to.setY(to.getY()-1);
+    		}
     	}
     	
     	if (from.getBlockX() == to.getBlockX() &&
@@ -108,8 +124,15 @@ public class MagicPlayerListener extends PlayerListener {
        
         // Move the carpet
         carpet.removeCarpet();
-    	carpet.currentBlock = to.getBlock();
-    	carpet.drawCarpet();
+        if(!to.getWorld().getName().equals(event.getFrom().getWorld().getName())){
+        	if(plugin.canFly(player)){
+        		carpet.currentBlock = to.getBlock();
+        		carpet.drawCarpet();
+        	}
+        }else{
+        	carpet.currentBlock = to.getBlock();
+    		carpet.drawCarpet();
+        }
     	
     }
     
@@ -119,12 +142,21 @@ public class MagicPlayerListener extends PlayerListener {
         Carpet carpet = (Carpet)carpets.get(player.getName());
         if (carpet == null)
         	return;
-        
-        if(crouchers.contains(player.getName())){
-        	if(!player.isSneaking()){
-        		carpet.removeCarpet();
-        		carpet.currentBlock = carpet.currentBlock.getRelative(0,-1,0);
-        		carpet.drawCarpet();
+        if(crouchDef){
+        	if(!crouchers.contains(player.getName())){
+        		if(!player.isSneaking()){
+        			carpet.removeCarpet();
+        			carpet.currentBlock = carpet.currentBlock.getRelative(0,-1,0);
+        			carpet.drawCarpet();
+        		}
+        	}
+        }else{
+        	if(crouchers.contains(player.getName())){
+        		if(!player.isSneaking()){
+        			carpet.removeCarpet();
+        			carpet.currentBlock = carpet.currentBlock.getRelative(0,-1,0);
+        			carpet.drawCarpet();
+        		}
         	}
         }
     }

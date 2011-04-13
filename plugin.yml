@@ -1,7 +1,7 @@
 name: MagicCarpet
 
 main: com.Android.magiccarpet.MagicCarpet
-version: 1.5.3
+version: 1.5.4
 commands:
   mc:
     description: Take yourself wonder by wonder on a carpet made of glass.
@@ -13,5 +13,8 @@ commands:
     description: A bright light for your carpet ride.
     usage:
   carpetswitch:
+    description: Allows the user to switch methods for going down with the carpet.
+    usage:
+  mcs:
     description: Allows the user to switch methods for going down with the carpet.
     usage:
