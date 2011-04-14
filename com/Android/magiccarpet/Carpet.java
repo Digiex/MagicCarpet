@@ -34,9 +34,11 @@ public class Carpet {
 	int size = 0;
 	int rad = 0;
 	boolean lights = false;
+	boolean glowCenter = false;
 
-	public Carpet(){
+	public Carpet(boolean cent){
 		setSize(5);
+		glowCenter = cent;
 	}
 
 	public class CarpetFiber
@@ -85,10 +87,18 @@ public class Carpet {
 						bl.getRelative( 0, 0, 1).getTypeId() != 81) {
 					fibers[i].block = bl;
 					if(lights){
-						if(fibers[i].x == rad || fibers[i].x == -rad || fibers[i].z == rad || fibers[i].z == -rad)
-							bl.setType(Material.GLOWSTONE);
-						else
-							bl.setType(Material.GLASS);
+						if(!glowCenter){
+							if(fibers[i].x == rad || fibers[i].x == -rad || fibers[i].z == rad || fibers[i].z == -rad)
+								bl.setType(Material.GLOWSTONE);
+							else
+								bl.setType(Material.GLASS);
+						}else{
+							if(fibers[i].x == 0 && fibers[i].z == 0){
+								bl.setType(Material.GLOWSTONE);
+							}else{
+								bl.setType(Material.GLASS);
+							}
+						}
 					}else{
 						bl.setType(Material.GLASS);
 					}

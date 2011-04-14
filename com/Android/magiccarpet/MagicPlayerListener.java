@@ -102,8 +102,12 @@ public class MagicPlayerListener extends PlayerListener {
     		     return;
     	
     	carpet.removeCarpet();
-    	carpet.currentBlock = to.getBlock();
-   		carpet.drawCarpet();
+    	if(plugin.canFly(player)){
+    		carpet.currentBlock = to.getBlock();
+    		carpet.drawCarpet();
+    	}else{
+    		carpets.remove(player.getName());
+    	}
     }
     
     public void onPlayerTeleport (PlayerTeleportEvent event) {
@@ -124,16 +128,8 @@ public class MagicPlayerListener extends PlayerListener {
        
         // Move the carpet
         carpet.removeCarpet();
-        if(!to.getWorld().getName().equals(event.getFrom().getWorld().getName())){
-        	if(plugin.canFly(player)){
-        		carpet.currentBlock = to.getBlock();
-        		carpet.drawCarpet();
-        	}
-        }else{
-        	carpet.currentBlock = to.getBlock();
-    		carpet.drawCarpet();
-        }
-    	
+        carpet.currentBlock = to.getBlock();
+        carpet.drawCarpet();    	
     }
     
     public void onPlayerToggleSneak(PlayerToggleSneakEvent event){

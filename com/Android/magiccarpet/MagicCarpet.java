@@ -56,6 +56,7 @@ public class MagicCarpet extends JavaPlugin {
 	private boolean ignore = false;
 	private boolean all_can_fly = true;
 	private boolean crouchDef = true;
+	private boolean glowCenter = true;
 
     public void onEnable() {
         PluginDescriptionFile pdfFile = this.getDescription();
@@ -81,12 +82,14 @@ public class MagicCarpet extends JavaPlugin {
         config.load();
         all_can_fly = config.getBoolean("Use Properties Permissions", false);
         crouchDef = config.getBoolean("Crouch Default", true);
+        glowCenter = config.getBoolean("Put glowstone for light in center", false);
         saveConfig();
     }
     
     public void saveConfig() {
         config.setProperty("Use Properties Permissions", all_can_fly);
         config.setProperty("Crouch Default", crouchDef);
+        config.setProperty("Put glowstone for light in center", glowCenter);
         playerListener.crouchDef = crouchDef;
         config.save();
     }
@@ -132,7 +135,7 @@ public class MagicCarpet extends JavaPlugin {
         		{
         			if (split.length < 1){
         				player.sendMessage("A glass carpet appears below your feet.");
-        				Carpet newCarpet = new Carpet();
+        				Carpet newCarpet = new Carpet(glowCenter);
         				newCarpet.currentBlock = player.getLocation().getBlock();
         				newCarpet.setSize(5);
         				newCarpet.setLights(lights.contains(player.getName()));
@@ -151,7 +154,7 @@ public class MagicCarpet extends JavaPlugin {
         					return false;
         				}
         				player.sendMessage("A glass carpet appears below your feet.");
-        				Carpet newCarpet = new Carpet();
+        				Carpet newCarpet = new Carpet(glowCenter);
         				newCarpet.currentBlock = player.getLocation().getBlock();
         				newCarpet.setSize(c);
         				newCarpet.setLights(lights.contains(player.getName()));
