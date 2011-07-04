@@ -80,7 +80,7 @@ public class Carpet {
 		{
 			if (currentBlock != null){
 				bl = currentBlock.getRelative(fibers[i].x,fibers[i].y,fibers[i].z);
-				if (bl.getType().equals(Material.AIR) &&
+				if (bl.getTypeId() == 0 &&
 						bl.getRelative(-1, 0, 0).getTypeId() != 81 && // 81 is Cactus
 						bl.getRelative( 1, 0, 0).getTypeId() != 81 &&
 						bl.getRelative( 0, 0, -1).getTypeId() != 81 &&

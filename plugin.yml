@@ -1,7 +1,7 @@
 name: MagicCarpet
 
 main: com.Android.magiccarpet.MagicCarpet
-version: 1.5.4
+version: 1.5.6
 commands:
   mc:
     description: Take yourself wonder by wonder on a carpet made of glass.

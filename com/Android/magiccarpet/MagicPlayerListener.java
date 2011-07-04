@@ -42,6 +42,7 @@ public class MagicPlayerListener extends PlayerListener {
 	private ArrayList<String> crouchers = new ArrayList<String>();
 	private MagicCarpet plugin = null;
 	boolean crouchDef = false;
+	boolean falling = false;
 	
 	public MagicPlayerListener(MagicCarpet plug){
 		plugin = plug;
@@ -70,6 +71,7 @@ public class MagicPlayerListener extends PlayerListener {
     @Override
     //Lets the carpet move with the player
     public void onPlayerMove(PlayerMoveEvent event) {
+    	falling = false;
     	Location to = event.getTo().clone();
     	Location from = event.getFrom().clone();
     	Player player = event.getPlayer();
@@ -80,26 +82,32 @@ public class MagicPlayerListener extends PlayerListener {
     	from.setY(from.getY()-1);
     	if (!crouchDef){
     		if(crouchers.contains(player.getName())){
-    			if(player.isSneaking())
+    			if(player.isSneaking()){
     				to.setY(to.getY()-1);
+    				falling = true;
+    			}
     		}else{
-    			if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ()))
+    			if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ())){
     				to.setY(to.getY()-1);
+    				falling = true;
+    			}
     		}
     	}else{
     		if(crouchers.contains(player.getName())){
-    			if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ()))
+    			if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ())){
     				to.setY(to.getY()-1);
+    				falling = true;
+    			}
     		}else{
-    			if(player.isSneaking())
+    			if(player.isSneaking()){
     				to.setY(to.getY()-1);
+    				falling = true;
+    			}
     		}
     	}
     	
-    	if (from.getBlockX() == to.getBlockX() &&
-    		     from.getBlockY() == to.getBlockY() &&
-    		     from.getBlockZ() == to.getBlockZ())
-    		     return;
+    	if (from.getY() > to.getY() && !falling)
+    	         to.setY(from.getY());
     	
     	carpet.removeCarpet();
     	if(plugin.canFly(player)){
