@@ -1,0 +1,23 @@
+name: MagicCarpet
+main: net.digiex.magiccarpet.MagicCarpet
+version: 1.5.7
+commands:
+  mc:
+    description: Take yourself wonder by wonder on a carpet made of glass.
+    usage:
+  magiccarpet:
+    description: Take yourself wonder by wonder on a carpet made of glass.
+    usage:
+  ml:
+    description: A bright light for your carpet ride.
+    usage:
+permissions:
+  magiccarpet.mc:
+    description: Is used to allow flight via MagicCarpet
+    default: false
+  magiccarpet.ml:
+    description: Is used to light up the MagicCarpet
+    default: false
+  magiccarpet.*:
+    description: Is used to give all magiccarpet commands to a player
+    default: op
