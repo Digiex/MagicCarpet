@@ -148,6 +148,9 @@ public class Carpet {
             case 7:
                 size = 3;
                 break;
+            case 9:
+                size = 4;
+                break;
             default:
                 size = 2;
                 break;

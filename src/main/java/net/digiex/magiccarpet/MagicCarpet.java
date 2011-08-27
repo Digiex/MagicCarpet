@@ -115,7 +115,7 @@ public class MagicCarpet extends JavaPlugin {
                         player.sendMessage("A glass carpet appears below your feet.");
                         Carpet newCarpet = new Carpet(glowCenter);
                         newCarpet.currentBlock = player.getLocation().getBlock();
-                        if (carpSize == 3 || carpSize == 5 || carpSize == 7) {
+                        if (carpSize == 3 || carpSize == 5 || carpSize == 7 || carpSize == 9) {
                             newCarpet.setSize(carpSize);
                         } else {
                             newCarpet.setSize(5);
@@ -127,12 +127,12 @@ public class MagicCarpet extends JavaPlugin {
                         try {
                             c = Integer.valueOf(split[0]);
                         } catch (NumberFormatException e) {
-                            player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, or 7!");
+                            player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, 7, or 9!");
                             return false;
                         }
 
-                        if (c != 3 && c != 5 && c != 7) {
-                            player.sendMessage("The size can only be 3, 5, or 7. Please enter a proper number");
+                        if (c != 3 && c != 5 && c != 7 && c != 9) {
+                            player.sendMessage("The size can only be 3, 5, 7, or 9. Please enter a proper number");
                             return false;
                         }
                         player.sendMessage("A glass carpet appears below your feet.");
@@ -150,12 +150,12 @@ public class MagicCarpet extends JavaPlugin {
                         try {
                             c = Integer.valueOf(split[0]);
                         } catch (NumberFormatException e) {
-                            player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, or 7!");
+                            player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, 7, or 9!");
                             return false;
                         }
 
-                        if (c != 3 && c != 5 && c != 7) {
-                            player.sendMessage("The size can only be 3, 5, or 7. Please enter a proper number");
+                        if (c != 3 && c != 5 && c != 7 && c != 9) {
+                            player.sendMessage("The size can only be 3, 5, 7, or 9. Please enter a proper number");
                             return false;
                         }
                         if (c != carpet.size) {
