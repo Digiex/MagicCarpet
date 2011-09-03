@@ -3,7 +3,6 @@ package net.digiex.magiccarpet;
 import java.util.Hashtable;
 
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockListener;
 

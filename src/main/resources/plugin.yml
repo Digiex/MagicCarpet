@@ -1,6 +1,7 @@
 name: MagicCarpet
 main: net.digiex.magiccarpet.MagicCarpet
 version: 1.5.8
+dev-url: http://dev.bukkit.org/server-mods/magiccarpet/
 commands:
   mc:
     description: Take yourself wonder by wonder on a carpet made of glass.
