@@ -1,6 +1,6 @@
 name: MagicCarpet
 main: net.digiex.magiccarpet.MagicCarpet
-version: 1.5.7
+version: 1.5.8
 commands:
   mc:
     description: Take yourself wonder by wonder on a carpet made of glass.

@@ -35,10 +35,10 @@ import org.bukkit.util.config.Configuration;
 public class MagicCarpet extends JavaPlugin {
 
     private final MagicPlayerListener playerListener = new MagicPlayerListener(this);
-    private final MagicBlockListener blockListener = new MagicBlockListener(playerListener);
+    private final MagicBlockListener blockListener = new MagicBlockListener(this, playerListener);
     private File file = new File("plugins" + File.separator + "MagicCarpet", "config.yml");
     private Configuration config = new Configuration(file);
-    private static final Logger log = Logger.getLogger("Minecraft");
+    public static final Logger log = Logger.getLogger("Minecraft");
     private ArrayList<String> lights = new ArrayList<String>();
     private boolean glowCenter = false;
     private int carpSize = 5;
@@ -89,9 +89,11 @@ public class MagicCarpet extends JavaPlugin {
     private void registerEvents() {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_KICK, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PISTON_RETRACT, blockListener, Priority.Normal, this);
     }
 
     @Override

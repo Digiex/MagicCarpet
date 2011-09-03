@@ -116,7 +116,7 @@ public class Carpet {
         lights = li;
     }
 
-    public boolean checkGlowstone(Block bl) {
+    public boolean checkBlock(Block bl) {
         boolean sameBlock = false;
         for (int i = 0; i < fibers.length; i++) {
             Block fiber = fibers[i].block;
@@ -127,7 +127,6 @@ public class Carpet {
             }
 
         }
-
         return sameBlock;
     }
 

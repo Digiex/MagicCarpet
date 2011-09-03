@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 /**
@@ -55,6 +56,16 @@ public class MagicPlayerListener extends PlayerListener {
 
     @Override
     public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        Carpet carpet = (Carpet) carpets.get(player.getName());
+        if (carpet == null) {
+            return;
+        }
+        carpet.removeCarpet();
+    }
+    
+    @Override
+    public void onPlayerKick(PlayerKickEvent event) {
         Player player = event.getPlayer();
         Carpet carpet = (Carpet) carpets.get(player.getName());
         if (carpet == null) {
