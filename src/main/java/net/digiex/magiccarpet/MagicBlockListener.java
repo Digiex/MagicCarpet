@@ -4,7 +4,6 @@ import java.util.Hashtable;
 
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
-import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockListener;
 
 public class MagicBlockListener extends BlockListener {

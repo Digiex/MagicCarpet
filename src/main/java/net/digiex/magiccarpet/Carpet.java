@@ -28,7 +28,6 @@ import org.bukkit.Material;
  *
  * @author Android <spparr@gmail.com>
  */
-
 public class Carpet {
 
     private MagicCarpet plugin;
@@ -37,7 +36,7 @@ public class Carpet {
     int rad = 0;
     boolean lights = false;
     boolean glowCenter = false;
-    
+
     public Carpet(MagicCarpet plugin, boolean cent) {
         this.plugin = plugin;
         setSize(5);
@@ -84,7 +83,6 @@ public class Carpet {
                         && bl.getRelative(0, 0, -1).getTypeId() != 81
                         && bl.getRelative(0, 0, 1).getTypeId() != 81) {
                     fibers[i].block = bl;
-                    
                     if (lights) {
                         if (!glowCenter) {
                             if (fibers[i].x == rad || fibers[i].x == -rad || fibers[i].z == rad || fibers[i].z == -rad) {
@@ -152,6 +150,15 @@ public class Carpet {
                 break;
             case 9:
                 size = 4;
+                break;
+            case 11:
+                size = 5;
+                break;
+            case 13:
+                size = 6;
+                break;
+            case 15:
+                size = 7;
                 break;
             default:
                 size = 2;

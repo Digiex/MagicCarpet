@@ -31,28 +31,25 @@ import org.bukkit.util.config.Configuration;
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 public class MagicCarpet extends JavaPlugin {
 
     private ArrayList<String> lights = new ArrayList<String>();
     private final MagicPlayerListener playerListener = new MagicPlayerListener(this);
     private final MagicBlockListener blockListener = new MagicBlockListener(this, playerListener);
-    
     public MagicCarpetLogging log = new MagicCarpetLogging();
-    
     private File file = new File("plugins" + File.separator + "MagicCarpet", "config.yml");
     private Configuration config = new Configuration(file);
-    
     private int carpSize = 5;
     private boolean glowCenter = false;
     public Material carpMaterial = Material.GLASS;
     public Material lightMaterial = Material.GLOWSTONE;
+    public boolean autoLight = false;
 
     @Override
     public void onEnable() {
         PluginDescriptionFile pdfFile = this.getDescription();
         String name = pdfFile.getName();
-        
+
         if (file.exists()) {
             loadConfig();
         } else {
@@ -77,6 +74,7 @@ public class MagicCarpet extends JavaPlugin {
         if (!acceptableMaterial(lightMaterial)) {
             lightMaterial = Material.GLOWSTONE;
         }
+        autoLight = config.getBoolean("Use expiremential lightning", autoLight);
     }
 
     public void saveConfig() {
@@ -85,6 +83,7 @@ public class MagicCarpet extends JavaPlugin {
         config.setProperty("Default size for carpet", carpSize);
         config.setProperty("Carpet Material", carpMaterial.getId());
         config.setProperty("Carpet Light Material", lightMaterial.getId());
+        config.setProperty("Use expiremential lighting", autoLight);
         config.save();
     }
 
@@ -132,7 +131,7 @@ public class MagicCarpet extends JavaPlugin {
                         player.sendMessage("A glass carpet appears below your feet.");
                         Carpet newCarpet = new Carpet(this, glowCenter);
                         newCarpet.currentBlock = player.getLocation().getBlock();
-                        if (carpSize == 3 || carpSize == 5 || carpSize == 7 || carpSize == 9) {
+                        if (carpSize == 3 || carpSize == 5 || carpSize == 7 || carpSize == 9 || carpSize == 11 || carpSize == 13 || carpSize == 15) {
                             newCarpet.setSize(carpSize);
                         } else {
                             newCarpet.setSize(5);
@@ -144,12 +143,12 @@ public class MagicCarpet extends JavaPlugin {
                         try {
                             c = Integer.valueOf(split[0]);
                         } catch (NumberFormatException e) {
-                            player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, 7, or 9!");
+                            player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, 7, 9, 11, 13, 15!");
                             return false;
                         }
 
-                        if (c != 3 && c != 5 && c != 7 && c != 9) {
-                            player.sendMessage("The size can only be 3, 5, 7, or 9. Please enter a proper number");
+                        if (c != 3 && c != 5 && c != 7 && c != 9 && c != 11 && c != 13 && c != 15) {
+                            player.sendMessage("The size can only be 3, 5, 7, 9, 11, 13, or 15. Please enter a proper number");
                             return false;
                         }
                         player.sendMessage("A glass carpet appears below your feet.");
@@ -167,12 +166,12 @@ public class MagicCarpet extends JavaPlugin {
                         try {
                             c = Integer.valueOf(split[0]);
                         } catch (NumberFormatException e) {
-                            player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, 7, or 9!");
+                            player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, 7, 9, 11, 13, 15!");
                             return false;
                         }
 
-                        if (c != 3 && c != 5 && c != 7 && c != 9) {
-                            player.sendMessage("The size can only be 3, 5, 7, or 9. Please enter a proper number");
+                        if (c != 3 && c != 5 && c != 7 && c != 9 && c != 11 && c != 13 && c != 15) {
+                            player.sendMessage("The size can only be 3, 5, 7, 9, 11, 13, 15!. Please enter a proper number");
                             return false;
                         }
                         if (c != carpet.size) {
@@ -196,25 +195,32 @@ public class MagicCarpet extends JavaPlugin {
                 player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
             }
         } else if (commandName.equals("ml")) {
-                if (canLight(player)) {
-                    if (lights.contains(player.getName())) {
-                        lights.remove(player.getName());
-                        player.sendMessage("The luminous stones in the carpet slowly fade away.");
-                        if (carpet != null) {
-                            carpet.setLights(false);
-                        }
-                    } else {
-                        lights.add(player.getName());
-                        player.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
-                        if (carpet != null) {
-                            carpet.setLights(true);
-                        }
+            if (canLight(player)) {
+                if (lights.contains(player.getName())) {
+                    lights.remove(player.getName());
+                    player.sendMessage("The luminous stones in the carpet slowly fade away.");
+                    if (carpet != null) {
+                        carpet.setLights(false);
                     }
                 } else {
-                    player.sendMessage("You do not have permission to use Magic Light!");
+                    lights.add(player.getName());
+                    player.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
+                    if (carpet != null) {
+                        carpet.setLights(true);
+                    }
                 }
+            } else {
+                player.sendMessage("You do not have permission to use Magic Light!");
+            }
         } else if (commandName.equals("mr")) {
             if (canReload(player)) {
+                Enumeration<String> e = carpets.keys();
+                while (e.hasMoreElements()) {
+                    String name = e.nextElement();
+                    Carpet cc = carpets.get(name);
+                    cc.removeCarpet();
+                }
+                carpets.clear();
                 loadConfig();
                 player.sendMessage("MagicCarpet reloaded!");
             } else {
@@ -237,17 +243,17 @@ public class MagicCarpet extends JavaPlugin {
         }
         return false;
     }
-    
+
     public boolean canReload(Player player) {
         if (player.hasPermission("magiccarpet.mr") || player.hasPermission("magiccarpet.*") || player.hasPermission("*")) {
             return true;
         }
         return false;
     }
-    
+
     public boolean acceptableMaterial(Material material) {
         int id = material.getId();
-        switch(id) {
+        switch (id) {
             case 1:
                 return true;
             case 2:
