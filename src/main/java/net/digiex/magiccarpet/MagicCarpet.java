@@ -71,7 +71,13 @@ public class MagicCarpet extends JavaPlugin {
         glowCenter = config.getBoolean("Put glowstone for light in center", glowCenter);
         carpSize = config.getInt("Default size for carpet", carpSize);
         carpMaterial = Material.getMaterial((Integer) config.getProperty("Carpet Material"));
+        if (!acceptableMaterial(carpMaterial)) {
+            carpMaterial = Material.GLASS;
+        }
         lightMaterial = Material.getMaterial((Integer) config.getProperty("Carpet Light Material"));
+        if (!acceptableMaterial(lightMaterial)) {
+            lightMaterial = Material.GLOWSTONE;
+        }
     }
 
     public void saveConfig() {
@@ -104,6 +110,7 @@ public class MagicCarpet extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PISTON_RETRACT, blockListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_FROMTO, blockListener, Priority.Normal, this);
     }
 
     @Override
@@ -238,5 +245,113 @@ public class MagicCarpet extends JavaPlugin {
             return true;
         }
         return false;
+    }
+    
+    public boolean acceptableMaterial(Material material) {
+        int id = material.getId();
+        switch(id) {
+            case 1:
+                return true;
+            case 2:
+                return true;
+            case 3:
+                return true;
+            case 4:
+                return true;
+            case 5:
+                return true;
+            case 7:
+                return true;
+            case 12:
+                return true;
+            case 13:
+                return true;
+            case 14:
+                return true;
+            case 15:
+                return true;
+            case 16:
+                return true;
+            case 17:
+                return true;
+            case 18:
+                return true;
+            case 19:
+                return true;
+            case 20:
+                return true;
+            case 21:
+                return true;
+            case 22:
+                return true;
+            case 23:
+                return true;
+            case 24:
+                return true;
+            case 25:
+                return true;
+            case 29:
+                return true;
+            case 33:
+                return true;
+            case 35:
+                return true;
+            case 41:
+                return true;
+            case 42:
+                return true;
+            case 43:
+                return true;
+            case 45:
+                return true;
+            case 46:
+                return true;
+            case 47:
+                return true;
+            case 48:
+                return true;
+            case 49:
+                return true;
+            case 54:
+                return true;
+            case 56:
+                return true;
+            case 57:
+                return true;
+            case 58:
+                return true;
+            case 60:
+                return true;
+            case 61:
+                return true;
+            case 62:
+                return true;
+            case 73:
+                return true;
+            case 74:
+                return true;
+            case 79:
+                return true;
+            case 80:
+                return true;
+            case 82:
+                return true;
+            case 84:
+                return true;
+            case 86:
+                return true;
+            case 87:
+                return true;
+            case 88:
+                return true;
+            case 89:
+                return true;
+            case 91:
+                return true;
+            case 95:
+                return true;
+            default:
+                return false;
+        }
     }
 }
