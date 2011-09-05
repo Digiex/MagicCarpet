@@ -49,20 +49,4 @@ public class MagicBlockListener extends BlockListener {
             }
         }
     }
-    
-    @Override
-    public void onBlockFromTo(BlockFromToEvent event) {
-        carpets = listener.getCarpets();
-        for (Carpet carpet : carpets.values()) {
-            if (carpet == null) {
-                return;
-            }
-
-            boolean test = carpet.checkBlock(event.getBlock());
-
-            if (test) {
-                event.setCancelled(true);
-            }
-        }
-    }
 }
