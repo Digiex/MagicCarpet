@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.logging.Logger;
 
+import org.bukkit.Material;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
@@ -34,14 +35,19 @@ import org.bukkit.util.config.Configuration;
 
 public class MagicCarpet extends JavaPlugin {
 
+    private ArrayList<String> lights = new ArrayList<String>();
     private final MagicPlayerListener playerListener = new MagicPlayerListener(this);
     private final MagicBlockListener blockListener = new MagicBlockListener(this, playerListener);
+    
+    public MagicCarpetLogging log = new MagicCarpetLogging();
+    
     private File file = new File("plugins" + File.separator + "MagicCarpet", "config.yml");
     private Configuration config = new Configuration(file);
-    public static final Logger log = Logger.getLogger("Minecraft");
-    private ArrayList<String> lights = new ArrayList<String>();
-    private boolean glowCenter = false;
+    
     private int carpSize = 5;
+    private boolean glowCenter = false;
+    public Material carpMaterial = Material.GLASS;
+    public Material lightMaterial = Material.GLOWSTONE;
 
     @Override
     public void onEnable() {
@@ -64,12 +70,16 @@ public class MagicCarpet extends JavaPlugin {
         config.load();
         glowCenter = config.getBoolean("Put glowstone for light in center", glowCenter);
         carpSize = config.getInt("Default size for carpet", carpSize);
+        carpMaterial = Material.getMaterial((Integer) config.getProperty("Carpet Material"));
+        lightMaterial = Material.getMaterial((Integer) config.getProperty("Carpet Light Material"));
     }
 
     public void saveConfig() {
         config.load();
         config.setProperty("Put glowstone for light in center", glowCenter);
         config.setProperty("Default size for carpet", carpSize);
+        config.setProperty("Carpet Material", carpMaterial.getId());
+        config.setProperty("Carpet Light Material", lightMaterial.getId());
         config.save();
     }
 
@@ -115,7 +125,7 @@ public class MagicCarpet extends JavaPlugin {
                 if (carpet == null) {
                     if (split.length < 1) {
                         player.sendMessage("A glass carpet appears below your feet.");
-                        Carpet newCarpet = new Carpet(glowCenter);
+                        Carpet newCarpet = new Carpet(this, glowCenter);
                         newCarpet.currentBlock = player.getLocation().getBlock();
                         if (carpSize == 3 || carpSize == 5 || carpSize == 7 || carpSize == 9) {
                             newCarpet.setSize(carpSize);
@@ -138,7 +148,7 @@ public class MagicCarpet extends JavaPlugin {
                             return false;
                         }
                         player.sendMessage("A glass carpet appears below your feet.");
-                        Carpet newCarpet = new Carpet(glowCenter);
+                        Carpet newCarpet = new Carpet(this, glowCenter);
                         newCarpet.currentBlock = player.getLocation().getBlock();
                         newCarpet.setSize(c);
                         newCarpet.setLights(lights.contains(player.getName()));
@@ -180,8 +190,7 @@ public class MagicCarpet extends JavaPlugin {
             } else {
                 player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
             }
-        } else {
-            if (commandName.equals("ml")) {
+        } else if (commandName.equals("ml")) {
                 if (canLight(player)) {
                     if (lights.contains(player.getName())) {
                         lights.remove(player.getName());
@@ -199,6 +208,12 @@ public class MagicCarpet extends JavaPlugin {
                 } else {
                     player.sendMessage("You do not have permission to use Magic Light!");
                 }
+        } else if (commandName.equals("mr")) {
+            if (canReload(player)) {
+                loadConfig();
+                player.sendMessage("MagicCarpet reloaded!");
+            } else {
+                player.sendMessage("You do not have permission to reload MagicCarpet");
             }
         }
         return true;
@@ -213,6 +228,13 @@ public class MagicCarpet extends JavaPlugin {
 
     public boolean canLight(Player player) {
         if (player.hasPermission("magiccarpet.ml") || player.hasPermission("magiccarpet.*") || player.hasPermission("*")) {
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean canReload(Player player) {
+        if (player.hasPermission("magiccarpet.mr") || player.hasPermission("magiccarpet.*") || player.hasPermission("*")) {
             return true;
         }
         return false;

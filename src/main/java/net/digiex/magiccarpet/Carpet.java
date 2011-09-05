@@ -31,13 +31,15 @@ import org.bukkit.Material;
 
 public class Carpet {
 
+    private MagicCarpet plugin;
     Block currentBlock;
     int size = 0;
     int rad = 0;
     boolean lights = false;
     boolean glowCenter = false;
-
-    public Carpet(boolean cent) {
+    
+    public Carpet(MagicCarpet plugin, boolean cent) {
+        this.plugin = plugin;
         setSize(5);
         glowCenter = cent;
     }
@@ -64,7 +66,7 @@ public class Carpet {
         }
         for (int i = 0; i < fibers.length; i++) {
             bl = fibers[i].block;
-            if (fibers[i].block != null && (fibers[i].block.getType().equals(Material.GLASS) || fibers[i].block.getType().equals(Material.GLOWSTONE))) {
+            if (fibers[i].block != null && (fibers[i].block.getType().equals(plugin.carpMaterial) || fibers[i].block.getType().equals(plugin.lightMaterial))) {
                 bl.setType(Material.AIR);
             }
             fibers[i].block = null;
@@ -82,22 +84,23 @@ public class Carpet {
                         && bl.getRelative(0, 0, -1).getTypeId() != 81
                         && bl.getRelative(0, 0, 1).getTypeId() != 81) {
                     fibers[i].block = bl;
+                    
                     if (lights) {
                         if (!glowCenter) {
                             if (fibers[i].x == rad || fibers[i].x == -rad || fibers[i].z == rad || fibers[i].z == -rad) {
-                                bl.setType(Material.GLOWSTONE);
+                                bl.setType(plugin.lightMaterial);
                             } else {
-                                bl.setType(Material.GLASS);
+                                bl.setType(plugin.carpMaterial);
                             }
                         } else {
                             if (fibers[i].x == 0 && fibers[i].z == 0) {
-                                bl.setType(Material.GLOWSTONE);
+                                bl.setType(plugin.lightMaterial);
                             } else {
-                                bl.setType(Material.GLASS);
+                                bl.setType(plugin.carpMaterial);
                             }
                         }
                     } else {
-                        bl.setType(Material.GLASS);
+                        bl.setType(plugin.carpMaterial);
                     }
                 } else {
                     fibers[i].block = null;
