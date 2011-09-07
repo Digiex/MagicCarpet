@@ -1,7 +1,7 @@
 name: MagicCarpet
-
 main: com.Android.magiccarpet.MagicCarpet
-version: 1.5.6
+version: 2.0
+authors: [Android, Celtic Minstrel]
 commands:
   magiccarpet:
     description: Take yourself wonder by wonder on a carpet made of glass.
@@ -25,3 +25,9 @@ permissions:
   magiccarpet.mcs:
     description: Allows the user to switch methods for going down with the carpet.
     default: op
+  magiccarpet.*:
+    description: Allows access to all MagicCarpet commands.
+    children:
+      magiccarpet.mc: true
+      magiccarpet.ml: true
+      magiccarpet.mcs: true

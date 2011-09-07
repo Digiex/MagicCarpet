@@ -11,8 +11,8 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 /**
-* Magic Carpet 1.5
-* Copyright (C) 2011 Android <spparr@gmail.com>
+* Magic Carpet 2.0
+* Copyright (C) 2011 Celtic Minstrel
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,14 +28,6 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
-* MagicPlayerListener.java
-* <br /><br />
-* Listens for calls for the magic carpet, makes a carpet when a player logs on, removes one when a player logs off,
-* and moves the carpet when the player moves.
-*
-* @author Android <spparr@gmail.com>
-*/
 public class MagicPlayerListener extends PlayerListener {
 	private ArrayList<String> crouchers = new ArrayList<String>();
 	private MagicCarpet plugin = null;
@@ -109,7 +101,7 @@ public class MagicPlayerListener extends PlayerListener {
     	
     	carpet.removeCarpet();
     	if(plugin.canFly(player)){
-    		carpet.currentBlock = to.getBlock();
+    		carpet.moveTo(to);
     		carpet.drawCarpet();
     	}else{
     		plugin.carpets.remove(player.getName());
@@ -127,7 +119,7 @@ public class MagicPlayerListener extends PlayerListener {
        
         // Check if the player moved 1 block
         to.setY(to.getY()-1);
-        Location last = carpet.currentBlock.getLocation();
+        Location last = carpet.getLocation();
         if (last.getBlockX() == to.getBlockX() &&
         	last.getBlockY() == to.getBlockY() &&
         	last.getBlockZ() == to.getBlockZ())
@@ -135,7 +127,7 @@ public class MagicPlayerListener extends PlayerListener {
        
         // Move the carpet
         carpet.removeCarpet();
-        carpet.currentBlock = to.getBlock();
+        carpet.moveTo(to);
         carpet.drawCarpet();    	
     }
     
@@ -150,7 +142,7 @@ public class MagicPlayerListener extends PlayerListener {
         	if(!crouchers.contains(player.getName())){
         		if(!player.isSneaking()){
         			carpet.removeCarpet();
-        			carpet.currentBlock = carpet.currentBlock.getRelative(0,-1,0);
+        			carpet.descend();
         			carpet.drawCarpet();
         		}
         	}
@@ -158,7 +150,7 @@ public class MagicPlayerListener extends PlayerListener {
         	if(crouchers.contains(player.getName())){
         		if(!player.isSneaking()){
         			carpet.removeCarpet();
-        			carpet.currentBlock = carpet.currentBlock.getRelative(0,-1,0);
+        			carpet.descend();
         			carpet.drawCarpet();
         		}
         	}

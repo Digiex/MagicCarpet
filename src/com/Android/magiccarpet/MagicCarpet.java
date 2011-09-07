@@ -1,8 +1,11 @@
 package com.Android.magiccarpet;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.bukkit.command.*;
@@ -15,8 +18,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
 /**
- * Magic Carpet 1.5
- * Copyright (C) 2011 Android <spparr@gmail.com>
+ * Magic Carpet 2.0
+ * Copyright (C) 2011 Celtic Minstrel
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,11 +37,12 @@ import org.bukkit.util.config.Configuration;
 
 public class MagicCarpet extends JavaPlugin {
 	private final MagicPlayerListener playerListener = new MagicPlayerListener(this);
-	private final MagicBlockListener blockListener = new MagicBlockListener(playerListener);
+	private final MagicBlockListener blockListener = new MagicBlockListener(this);
 	private Configuration config;
 	private static Logger log = Logger.getLogger("Minecraft");
-	ArrayList<String> lights = new ArrayList<String>();
-	Hashtable<String, Carpet> carpets = new Hashtable<String, Carpet>();
+	Map<String, Carpet.LightMode> lights = new HashMap<String, Carpet.LightMode>();
+	Map<String, Boolean> lightsOn = new HashMap<String, Boolean>();
+	Map<String, Carpet> carpets = new HashMap<String, Carpet>();
 	boolean crouchDef = true;
 	boolean glowCenter = true;
 	int carpSize = 5;
@@ -59,10 +63,13 @@ public class MagicCarpet extends JavaPlugin {
 	
 	public void loadConfig() {
 		config.load();
+		crouchDef = config.getBoolean("crouch-descent", config.getBoolean("Crouch Default", true));
+		glowCenter = config.getBoolean("center-light", config.getBoolean("Put glowstone for light in center", false));
+		carpSize = config.getInt("default-size", config.getInt("Default size for carpet", 5));
 		config.removeProperty("Use Properties Permissions");
-		crouchDef = config.getBoolean("Crouch Default", true);
-		glowCenter = config.getBoolean("Put glowstone for light in center", false);
-		carpSize = config.getInt("Default size for carpet", 5);
+		config.removeProperty("Crouch Default");
+		config.removeProperty("Put glowstone for light in center");
+		config.removeProperty("Default size for carpet");
 		saveConfig();
 	}
 	
@@ -75,10 +82,10 @@ public class MagicCarpet extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-		Enumeration<String> e = carpets.keys();
+		Iterator<String> e = carpets.keySet().iterator();
 		// iterate through Hashtable keys Enumeration
-		while(e.hasMoreElements()) {
-			String name = e.nextElement();
+		while(e.hasNext()) {
+			String name = e.next();
 			Carpet c = carpets.get(name);
 			c.removeCarpet();
 		}
@@ -111,14 +118,14 @@ public class MagicCarpet extends JavaPlugin {
 		
 			if(commandName.equals("ml")) {
 				if(canLight(player)) {
-					if(lights.contains(player.getName())) {
-						lights.remove(player.getName());
+					if(lightsOn.containsKey(player.getName())) {
+						lightsOn.remove(player.getName());
 						player.sendMessage("The luminous stones in the carpet slowly fade away.");
-						if(carpet != null) carpet.setLights(false);;
+						if(carpet != null) carpet.lightsOff();;
 					} else {
-						lights.add(player.getName());
+						lightsOn.put(player.getName(),true);
 						player.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
-						if(carpet != null) carpet.setLights(true);
+						if(carpet != null) carpet.lightsOn();
 					}
 				} else {
 					player.sendMessage("You do not have permission to use Magic Light!");
