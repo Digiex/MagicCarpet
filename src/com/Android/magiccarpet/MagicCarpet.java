@@ -1,22 +1,14 @@
 package com.Android.magiccarpet;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.logging.Logger;
-import java.util.Properties;
 
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
@@ -45,11 +37,11 @@ public class MagicCarpet extends JavaPlugin {
 	private Configuration config;
 	private static Logger log = Logger.getLogger("Minecraft");
 	private ArrayList<String> lights = new ArrayList<String>();
-	private boolean ignore = false;
 	boolean crouchDef = true;
 	private boolean glowCenter = true;
 	private int carpSize = 5;
 	
+	@Override
 	public void onEnable() {
 		PluginDescriptionFile pdfFile = this.getDescription();
 		String name = pdfFile.getName();
@@ -79,6 +71,7 @@ public class MagicCarpet extends JavaPlugin {
 		config.save();
 	}
 	
+	@Override
 	public void onDisable() {
 		Hashtable<String,Carpet> carpets = playerListener.getCarpets();
 		Enumeration<String> e = carpets.keys();
@@ -102,8 +95,8 @@ public class MagicCarpet extends JavaPlugin {
 		getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Normal, this);
 	}
 	
-	public boolean onCommand(CommandSender sender, Command command,
-		String commandLabel, String[] args) {
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
 		String[] split = args;
 		String commandName = command.getName().toLowerCase();
 		int c = 5;
@@ -114,7 +107,7 @@ public class MagicCarpet extends JavaPlugin {
 		} else {
 			return true;
 		}
-		Carpet carpet = (Carpet)carpets.get(player.getName());
+		Carpet carpet = carpets.get(player.getName());
 		
 		if(commandName.equals("mc") || commandName.equals("magiccarpet")) {
 			if(canFly(player)) {
