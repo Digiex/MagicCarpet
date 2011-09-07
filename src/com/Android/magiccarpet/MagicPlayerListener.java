@@ -38,116 +38,116 @@ public class MagicPlayerListener extends PlayerListener {
 	}
 		
 	@Override
-    //When a player joins the game, if they had a carpet when they logged out it puts it back.
-    public void onPlayerJoin(PlayerJoinEvent event) {
-    	Player player = event.getPlayer();
-    	Carpet carpet = plugin.carpets.get(player.getName());
-        if(!crouchers.contains(player.getName())) crouchers.add(player.getName());
-    	if (carpet == null) return;
-    	if(carpet.isVisible()) carpet.show();
+	//When a player joins the game, if they had a carpet when they logged out it puts it back.
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
+		Carpet carpet = plugin.carpets.get(player.getName());
+		if(!crouchers.contains(player.getName())) crouchers.add(player.getName());
+		if (carpet == null) return;
+		if(carpet.isVisible()) carpet.show();
 	}
 
-    @Override
-    //When a player quits, it removes the carpet from the server
-    public void onPlayerQuit(PlayerQuitEvent event) {
-    	Player player = event.getPlayer();
-    	Carpet carpet = plugin.carpets.get(player.getName());
+	@Override
+	//When a player quits, it removes the carpet from the server
+	public void onPlayerQuit(PlayerQuitEvent event) {
+		Player player = event.getPlayer();
+		Carpet carpet = plugin.carpets.get(player.getName());
 		if (carpet == null) return;
 		carpet.suppress();
-    }
+	}
 
-    @Override
-    //Lets the carpet move with the player
-    public void onPlayerMove(PlayerMoveEvent event) {
-    	falling = false;
-    	Location to = event.getTo().clone();
-    	Location from = event.getFrom().clone();
-    	Player player = event.getPlayer();
-    	Carpet carpet = plugin.carpets.get(player.getName());
-    	if (carpet == null)
-    		return;
-    	if(!plugin.canFly(player)) {
-    		carpet.suppress();
-    		return;
-    	}
-    	//to.setY(to.getY()-1);
-    	//from.setY(from.getY()-1);
-    	if (!plugin.crouchDef){
-    		if(crouchers.contains(player.getName())){
-    			if(player.isSneaking()){
-    				to.setY(to.getY()-1);
-    				falling = true;
-    			}
-    		}else{
-    			if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ())){
-    				to.setY(to.getY()-1);
-    				falling = true;
-    			}
-    		}
-    	}else{
-    		if(crouchers.contains(player.getName())){
-    			if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ())){
-    				to.setY(to.getY()-1);
-    				falling = true;
-    			}
-    		}else{
-    			if(player.isSneaking()){
-    				to.setY(to.getY()-1);
-    				falling = true;
-    			}
-    		}
-    	}
-    	
-    	if (from.getY() > to.getY() && !falling) to.setY(from.getY());
-    	carpet.moveTo(to);
-    }
-    
-    @Override
+	@Override
+	//Lets the carpet move with the player
+	public void onPlayerMove(PlayerMoveEvent event) {
+		falling = false;
+		Location to = event.getTo().clone();
+		Location from = event.getFrom().clone();
+		Player player = event.getPlayer();
+		Carpet carpet = plugin.carpets.get(player.getName());
+		if (carpet == null)
+			return;
+		if(!plugin.canFly(player)) {
+			carpet.suppress();
+			return;
+		}
+		//to.setY(to.getY()-1);
+		//from.setY(from.getY()-1);
+		if (!plugin.crouchDef){
+			if(crouchers.contains(player.getName())){
+				if(player.isSneaking()){
+					to.setY(to.getY()-1);
+					falling = true;
+				}
+			}else{
+				if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ())){
+					to.setY(to.getY()-1);
+					falling = true;
+				}
+			}
+		}else{
+			if(crouchers.contains(player.getName())){
+				if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ())){
+					to.setY(to.getY()-1);
+					falling = true;
+				}
+			}else{
+				if(player.isSneaking()){
+					to.setY(to.getY()-1);
+					falling = true;
+				}
+			}
+		}
+		
+		if (from.getY() > to.getY() && !falling) to.setY(from.getY());
+		carpet.moveTo(to);
+	}
+	
+	@Override
 	public void onPlayerTeleport (PlayerTeleportEvent event) {
-    	Location to = event.getTo().clone();
-    	Player player = event.getPlayer();
-    	// Check if the player has a carpet
-        Carpet carpet = plugin.carpets.get(player.getName());
-        if (carpet == null)
-        	return;
-       
-        // Check if the player moved 1 block
-        to.setY(to.getY()-1);
-        Location last = carpet.getLocation();
-        if (last.getBlockX() == to.getBlockX() &&
-        	last.getBlockY() == to.getBlockY() &&
-        	last.getBlockZ() == to.getBlockZ())
-        		return;
-       
-        // Move the carpet
-        carpet.moveTo(to);  	
-    }
-    
-    @Override
+		Location to = event.getTo().clone();
+		Player player = event.getPlayer();
+		// Check if the player has a carpet
+		Carpet carpet = plugin.carpets.get(player.getName());
+		if (carpet == null)
+			return;
+	   
+		// Check if the player moved 1 block
+		to.setY(to.getY()-1);
+		Location last = carpet.getLocation();
+		if (last.getBlockX() == to.getBlockX() &&
+			last.getBlockY() == to.getBlockY() &&
+			last.getBlockZ() == to.getBlockZ())
+				return;
+	   
+		// Move the carpet
+		carpet.moveTo(to);		
+	}
+	
+	@Override
 	public void onPlayerToggleSneak(PlayerToggleSneakEvent event){
-    	Player player = event.getPlayer();
-    	// Check if the player has a carpet
-        Carpet carpet = plugin.carpets.get(player.getName());
-        if (carpet == null)
-        	return;
-        if(plugin.crouchDef){
-        	if(!crouchers.contains(player.getName())){
-        		if(!player.isSneaking()) carpet.descend();
-        	}
-        } else {
-        	if(crouchers.contains(player.getName())){
-        		if(!player.isSneaking()) carpet.descend();
-        	}
-        }
-    }
-    
-    public boolean CarpetSwitch(String name){
-    	if(crouchers.contains(name)){
-    		crouchers.remove(name);
-    		return false;
-    	}else{
-    		crouchers.add(name);
-    		return true;
-    	}
-    }
+		Player player = event.getPlayer();
+		// Check if the player has a carpet
+		Carpet carpet = plugin.carpets.get(player.getName());
+		if (carpet == null)
+			return;
+		if(plugin.crouchDef){
+			if(!crouchers.contains(player.getName())){
+				if(!player.isSneaking()) carpet.descend();
+			}
+		} else {
+			if(crouchers.contains(player.getName())){
+				if(!player.isSneaking()) carpet.descend();
+			}
+		}
+	}
+	
+	public boolean CarpetSwitch(String name){
+		if(crouchers.contains(name)){
+			crouchers.remove(name);
+			return false;
+		}else{
+			crouchers.add(name);
+			return true;
+		}
+	}
 }
