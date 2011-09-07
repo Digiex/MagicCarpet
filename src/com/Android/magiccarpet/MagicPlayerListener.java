@@ -1,6 +1,5 @@
 package com.Android.magiccarpet;
 
-import java.util.ArrayList;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -29,7 +28,6 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 */
 
 public class MagicPlayerListener extends PlayerListener {
-	private ArrayList<String> crouchers = new ArrayList<String>();
 	private MagicCarpet plugin = null;
 	boolean falling = false;
 	
@@ -38,17 +36,18 @@ public class MagicPlayerListener extends PlayerListener {
 	}
 		
 	@Override
-	//TODO:When a player joins the game, if they had a carpet when they logged out it puts it back.
+	//When a player joins the game, if they had a carpet when they logged out it puts it back.
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		//Carpet.create(player, plugin).show();
+		if(plugin.carpets.has(player))
+			Carpet.create(player, plugin).show();
 	}
 
 	@Override
 	//When a player quits, it removes the carpet from the server
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		plugin.carpets.remove(player.getName());
+		plugin.carpets.remove(player);
 	}
 
 	@Override
@@ -58,9 +57,8 @@ public class MagicPlayerListener extends PlayerListener {
 		Location to = event.getTo().clone();
 		Location from = event.getFrom().clone();
 		Player player = event.getPlayer();
-		Carpet carpet = plugin.carpets.get(player.getName());
-		if (carpet == null)
-			return;
+		Carpet carpet = plugin.carpets.get(player);
+		if(carpet == null) return;
 		if(!plugin.canFly(player)) {
 			carpet.suppress();
 			return;
@@ -68,24 +66,24 @@ public class MagicPlayerListener extends PlayerListener {
 		//to.setY(to.getY()-1);
 		//from.setY(from.getY()-1);
 		if (!plugin.crouchDef){
-			if(crouchers.contains(player.getName())){
+			if(plugin.carpets.crouches(player)){
 				if(player.isSneaking()){
 					to.setY(to.getY()-1);
 					falling = true;
 				}
-			}else{
+			} else {
 				if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ())){
 					to.setY(to.getY()-1);
 					falling = true;
 				}
 			}
-		}else{
-			if(crouchers.contains(player.getName())){
+		} else {
+			if(plugin.carpets.crouches(player)){
 				if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ())){
 					to.setY(to.getY()-1);
 					falling = true;
 				}
-			}else{
+			} else {
 				if(player.isSneaking()){
 					to.setY(to.getY()-1);
 					falling = true;
@@ -102,12 +100,14 @@ public class MagicPlayerListener extends PlayerListener {
 		Location to = event.getTo().clone();
 		Player player = event.getPlayer();
 		// Check if the player has a carpet
-		Carpet carpet = plugin.carpets.get(player.getName());
-		if (carpet == null)
+		Carpet carpet = plugin.carpets.get(player);
+		if(carpet == null) return;
+		if(!plugin.canFly(player)) {
+			carpet.suppress();
 			return;
-	   
+		}
 		// Check if the player moved 1 block
-		to.setY(to.getY()-1);
+		//to.setY(to.getY()-1);
 		Location last = carpet.getLocation();
 		if (last.getBlockX() == to.getBlockX() &&
 			last.getBlockY() == to.getBlockY() &&
@@ -122,27 +122,16 @@ public class MagicPlayerListener extends PlayerListener {
 	public void onPlayerToggleSneak(PlayerToggleSneakEvent event){
 		Player player = event.getPlayer();
 		// Check if the player has a carpet
-		Carpet carpet = plugin.carpets.get(player.getName());
-		if (carpet == null)
-			return;
+		Carpet carpet = plugin.carpets.get(player);
+		if(carpet == null) return;
 		if(plugin.crouchDef){
-			if(!crouchers.contains(player.getName())){
+			if(!plugin.carpets.crouches(player)){
 				if(!player.isSneaking()) carpet.descend();
 			}
 		} else {
-			if(crouchers.contains(player.getName())){
+			if(plugin.carpets.crouches(player)){
 				if(!player.isSneaking()) carpet.descend();
 			}
-		}
-	}
-	
-	public boolean CarpetSwitch(String name){
-		if(crouchers.contains(name)){
-			crouchers.remove(name);
-			return false;
-		}else{
-			crouchers.add(name);
-			return true;
 		}
 	}
 }

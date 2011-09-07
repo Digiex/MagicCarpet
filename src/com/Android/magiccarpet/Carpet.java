@@ -56,10 +56,12 @@ public class Carpet {
 	private boolean suppressed;
 	
 	public static Carpet create(Player player, MagicCarpet plugin) {
-		String name = player.getName();
 		Location loc = player.getLocation();
-		Carpet carpet = new Carpet(loc, plugin.carpSize, plugin.lights.get(name), plugin.lightsOn.get(name));
-		plugin.carpets.put(name, carpet);
+		int sz = plugin.carpets.getLastSize(player);
+		boolean light = plugin.carpets.hasLight(player);
+		LightMode mode = plugin.carpets.getLightMode(player);
+		Carpet carpet = new Carpet(loc, sz, mode, light);
+		plugin.carpets.assign(player, carpet);
 		return carpet;
 	}
 	
@@ -212,5 +214,13 @@ public class Carpet {
 	public void suppress() {
 		if(!suppressed) removeCarpet();
 		suppressed = true;
+	}
+
+	public LightMode getLights() {
+		return lightMode;
+	}
+
+	public boolean hasLights() {
+		return lightsOn;
 	}
 }

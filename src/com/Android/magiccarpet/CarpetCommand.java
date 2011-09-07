@@ -42,8 +42,7 @@ public class CarpetCommand implements CommandExecutor {
 			return true;
 		}
 		int c = 5;
-		String name = player.getName();
-		Carpet carpet = plugin.carpets.get(name);
+		Carpet carpet = plugin.carpets.get(player);
 		if(carpet == null) carpet = Carpet.create(player, plugin);
 		if(args.length < 1) {
 			if(carpet.isVisible()) {
@@ -87,9 +86,9 @@ public class CarpetCommand implements CommandExecutor {
 				}
 				player.sendMessage("A glass carpet appears below your feet.");
 				carpet.show();
-				return true;
 			}
 		}
+		plugin.carpets.update(player);
 		return true;
 	}
 }

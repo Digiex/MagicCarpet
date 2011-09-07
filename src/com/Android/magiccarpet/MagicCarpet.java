@@ -1,8 +1,5 @@
 package com.Android.magiccarpet;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.bukkit.command.*;
@@ -37,9 +34,10 @@ public class MagicCarpet extends JavaPlugin {
 	private final MagicBlockListener blockListener = new MagicBlockListener(this);
 	private Configuration config;
 	private static Logger log = Logger.getLogger("Minecraft");
-	Map<String, Carpet.LightMode> lights = new HashMap<String, Carpet.LightMode>();
-	Map<String, Boolean> lightsOn = new HashMap<String, Boolean>();
-	Map<String, Carpet> carpets = new HashMap<String, Carpet>();
+	//Map<String, Carpet.LightMode> lights = new HashMap<String, Carpet.LightMode>();
+	//Map<String, Boolean> lightsOn = new HashMap<String, Boolean>();
+	//Map<String, Carpet> carpets = new HashMap<String, Carpet>();
+	CarpetStorage carpets = new CarpetStorage(this);
 	boolean crouchDef = true;
 	boolean glowCenter = true;
 	int carpSize = 5;
@@ -79,13 +77,13 @@ public class MagicCarpet extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-		Iterator<String> e = carpets.keySet().iterator();
-		// iterate through Hashtable keys Enumeration
-		while(e.hasNext()) {
-			String name = e.next();
-			Carpet c = carpets.get(name);
-			c.suppress();
-		}
+//		Iterator<String> e = carpets.keySet().iterator();
+//		// iterate through Hashtable keys Enumeration
+//		while(e.hasNext()) {
+//			String name = e.next();
+//			Carpet c = carpets.getCarpet(name);
+//			if(c != null) c.suppress();
+//		}
 		carpets.clear();
 		System.out.println("Magic Carpet disabled. Thanks for trying the plugin!");
 	}
@@ -110,19 +108,16 @@ public class MagicCarpet extends JavaPlugin {
 		} else {
 			return true;
 		}
-		Carpet carpet = carpets.get(player.getName());
 		
 		
 			if(commandName.equals("ml")) {
 				if(canLight(player)) {
-					if(lightsOn.containsKey(player.getName())) {
-						lightsOn.remove(player.getName());
+					if(carpets.hasLight(player)) {
+						carpets.lightOn(player);
 						player.sendMessage("The luminous stones in the carpet slowly fade away.");
-						if(carpet != null) carpet.lightsOff();;
 					} else {
-						lightsOn.put(player.getName(),true);
+						carpets.lightOff(player);
 						player.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
-						if(carpet != null) carpet.lightsOn();
 					}
 				} else {
 					player.sendMessage("You do not have permission to use Magic Light!");
@@ -132,19 +127,11 @@ public class MagicCarpet extends JavaPlugin {
 				if(commandName.equals("carpetswitch")
 					|| commandName.equals("mcs")) {
 					if(canFly(player)) {
-						boolean crouch = playerListener.CarpetSwitch(player.getName());
-						if( !crouchDef) {
-							if(crouch) {
-								player.sendMessage("You now crouch to descend");
-							} else {
-								player.sendMessage("You now look down to descend");
-							}
+						carpets.toggleCrouch(player);
+						if(carpets.crouches(player)) {
+							player.sendMessage("You now crouch to descend");
 						} else {
-							if( !crouch) {
-								player.sendMessage("You now crouch to descend");
-							} else {
-								player.sendMessage("You now look down to descend");
-							}
+							player.sendMessage("You now look down to descend");
 						}
 					}
 					return true;
