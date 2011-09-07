@@ -130,14 +130,14 @@ public class Carpet {
 	}
 	
 	public void lightsOn() {
-		lightsOn = true;
 		removeCarpet();
+		lightsOn = true;
 		drawCarpet();
 	}
 	
 	public void lightsOff() {
-		lightsOn = false;
 		removeCarpet();
+		lightsOn = false;
 		drawCarpet();
 	}
 
