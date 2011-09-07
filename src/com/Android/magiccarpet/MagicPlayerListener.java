@@ -38,22 +38,17 @@ public class MagicPlayerListener extends PlayerListener {
 	}
 		
 	@Override
-	//When a player joins the game, if they had a carpet when they logged out it puts it back.
+	//TODO:When a player joins the game, if they had a carpet when they logged out it puts it back.
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		Carpet carpet = plugin.carpets.get(player.getName());
-		if(!crouchers.contains(player.getName())) crouchers.add(player.getName());
-		if (carpet == null) return;
-		if(carpet.isVisible()) carpet.show();
+		//Carpet.create(player, plugin).show();
 	}
 
 	@Override
 	//When a player quits, it removes the carpet from the server
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		Carpet carpet = plugin.carpets.get(player.getName());
-		if (carpet == null) return;
-		carpet.suppress();
+		plugin.carpets.remove(player.getName());
 	}
 
 	@Override

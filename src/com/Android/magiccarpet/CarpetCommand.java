@@ -1,6 +1,5 @@
 package com.Android.magiccarpet;
 
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -45,11 +44,7 @@ public class CarpetCommand implements CommandExecutor {
 		int c = 5;
 		String name = player.getName();
 		Carpet carpet = plugin.carpets.get(name);
-		if(carpet == null) {
-			Location loc = player.getLocation();
-			carpet = new Carpet(loc, plugin.carpSize, plugin.lights.get(name), plugin.lightsOn.get(name));
-			plugin.carpets.put(name, carpet);
-		}
+		if(carpet == null) carpet = Carpet.create(player, plugin);
 		if(args.length < 1) {
 			if(carpet.isVisible()) {
 				player.sendMessage("Poof! The magic carpet disappears.");

@@ -4,6 +4,7 @@ import static java.lang.Math.abs;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.entity.Player;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -53,8 +54,16 @@ public class Carpet {
 	private boolean lightsOn;
 	private boolean hidden;
 	private boolean suppressed;
-
-	public Carpet(Location loc, int sz, LightMode lights, boolean on) {
+	
+	public static Carpet create(Player player, MagicCarpet plugin) {
+		String name = player.getName();
+		Location loc = player.getLocation();
+		Carpet carpet = new Carpet(loc, plugin.carpSize, plugin.lights.get(name), plugin.lightsOn.get(name));
+		plugin.carpets.put(name, carpet);
+		return carpet;
+	}
+	
+	private Carpet(Location loc, int sz, LightMode lights, boolean on) {
 		setSize(sz);
 		currentCentre = loc.getBlock();
 		lightMode = lights == null ? LightMode.RING : lights;
