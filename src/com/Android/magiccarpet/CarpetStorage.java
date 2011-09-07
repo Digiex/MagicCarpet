@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.bukkit.entity.Player;
 
-/**
+/*
 * Magic Carpet 2.0
 * Copyright (C) 2011 Celtic Minstrel
 *

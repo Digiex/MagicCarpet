@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-/**
+/*
 * Magic Carpet 2.0
 * Copyright (C) 2011 Celtic Minstrel
 *
@@ -159,7 +159,7 @@ public class Carpet {
 		int i = 0;
 		for (int x = -rad; x <= rad; x++){
 			for (int z = -rad; z <= rad; z++) {
-				fibres[i] = new CarpetFibre(x, 0, z);
+				fibres[i] = new CarpetFibre(x, -1, z);
 				i++;
 			}
 		}
@@ -222,5 +222,12 @@ public class Carpet {
 
 	public boolean hasLights() {
 		return lightsOn;
+	}
+
+	public boolean touches(Block block) {
+		if(currentCentre == null || block == null) return false;
+		if(block.getLocation().distanceSquared(currentCentre.getLocation()) >= radsq) return false;
+		if(abs(block.getY() - currentCentre.getY()) > 1) return false;
+		return true;
 	}
 }

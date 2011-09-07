@@ -11,7 +11,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
-/**
+/*
  * Magic Carpet 2.0
  * Copyright (C) 2011 Celtic Minstrel
  * 
@@ -87,6 +87,7 @@ public class MagicCarpet extends JavaPlugin {
 		pm.registerEvent(Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
 		pm.registerEvent(Type.PLAYER_TOGGLE_SNEAK, playerListener, Priority.Normal, this);
 		pm.registerEvent(Type.BLOCK_BREAK, damageListener, damageListener.executor, Priority.Normal, this);
+		pm.registerEvent(Type.BLOCK_PHYSICS, damageListener, damageListener.executor, Priority.Normal, this);
 		pm.registerEvent(Type.ENTITY_DAMAGE, damageListener, damageListener.executor, Priority.Normal, this);
 		getCommand("magiccarpet").setExecutor(new CarpetCommand(this));
 		getCommand("magiclight").setExecutor(new LightCommand(this));

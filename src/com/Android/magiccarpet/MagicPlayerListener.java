@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
-/**
+/*
 * Magic Carpet 2.0
 * Copyright (C) 2011 Celtic Minstrel
 *
@@ -58,36 +58,22 @@ public class MagicPlayerListener extends PlayerListener {
 		Location from = event.getFrom().clone();
 		Player player = event.getPlayer();
 		Carpet carpet = plugin.carpets.get(player);
-		if(carpet == null) return;
+		if(carpet == null || !carpet.isVisible()) return;
 		if(!plugin.canFly(player)) {
 			carpet.suppress();
 			return;
 		}
 		//to.setY(to.getY()-1);
 		//from.setY(from.getY()-1);
-		if (!plugin.crouchDef){
-			if(plugin.carpets.crouches(player)){
-				if(player.isSneaking()){
-					to.setY(to.getY()-1);
-					falling = true;
-				}
-			} else {
-				if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ())){
-					to.setY(to.getY()-1);
-					falling = true;
-				}
+		if(plugin.carpets.crouches(player)){
+			if(player.isSneaking()){
+				to.setY(to.getY()-1);
+				falling = true;
 			}
 		} else {
-			if(plugin.carpets.crouches(player)){
-				if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ())){
-					to.setY(to.getY()-1);
-					falling = true;
-				}
-			} else {
-				if(player.isSneaking()){
-					to.setY(to.getY()-1);
-					falling = true;
-				}
+			if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ())){
+				to.setY(to.getY()-1);
+				falling = true;
 			}
 		}
 		
@@ -101,7 +87,7 @@ public class MagicPlayerListener extends PlayerListener {
 		Player player = event.getPlayer();
 		// Check if the player has a carpet
 		Carpet carpet = plugin.carpets.get(player);
-		if(carpet == null) return;
+		if(carpet == null || !carpet.isVisible()) return;
 		if(!plugin.canFly(player)) {
 			carpet.suppress();
 			return;
@@ -123,15 +109,8 @@ public class MagicPlayerListener extends PlayerListener {
 		Player player = event.getPlayer();
 		// Check if the player has a carpet
 		Carpet carpet = plugin.carpets.get(player);
-		if(carpet == null) return;
-		if(plugin.crouchDef){
-			if(!plugin.carpets.crouches(player)){
-				if(!player.isSneaking()) carpet.descend();
-			}
-		} else {
-			if(plugin.carpets.crouches(player)){
-				if(!player.isSneaking()) carpet.descend();
-			}
-		}
+		if(carpet == null || !carpet.isVisible()) return;
+		if(!plugin.carpets.crouches(player)) return;
+		if(player.isSneaking()) carpet.descend();
 	}
 }

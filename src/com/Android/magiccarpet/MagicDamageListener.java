@@ -1,15 +1,17 @@
 package com.Android.magiccarpet;
 
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.plugin.EventExecutor;
 
-/**
+/*
 * Magic Carpet 2.0
 * Copyright (C) 2011 Celtic Minstrel
 *
@@ -38,6 +40,9 @@ public class MagicDamageListener implements Listener {
 			case ENTITY_DAMAGE:
 				((MagicDamageListener)listener).onEntityDamage((EntityDamageEvent)event);
 				break;
+			case BLOCK_PHYSICS:
+				((MagicDamageListener)listener).onBlockPhysics((BlockPhysicsEvent)event);
+				break;
 			}
 		}
 	};
@@ -63,6 +68,27 @@ public class MagicDamageListener implements Listener {
 		for(Carpet carpet : plugin.carpets.all()){
 			if(carpet == null || !carpet.isVisible()) continue;
 			if(carpet.isCovering(block)) event.setCancelled(true);
+		}
+	}
+	
+	// Prevent carpets from affecting things they pass such as cacti and floating sand
+	public void onBlockPhysics(BlockPhysicsEvent event) {
+		//System.out.println("Block physics: " + event.getBlock().getType() + "; changed " + event.getChangedType());
+		for(Carpet carpet : plugin.carpets.all()){
+			if(carpet == null || !carpet.isVisible()) continue;
+			if(carpet.touches(event.getBlock())) {
+				event.setCancelled(true);
+				return;
+			}
+//			if(!carpet.touches(event.getBlock())) continue;
+//			for(BlockFace face : BlockFace.values()) {
+//				if(face.getModX() > 1 || face.getModX() < -1 || face.getModY() > 1 || face.getModY() < -1) continue;
+//				Block block = event.getBlock().getRelative(face);
+//				if(carpet.isCovering(block)) {
+//					event.setCancelled(true);
+//					return;
+//				}
+//			}
 		}
 	}
 }

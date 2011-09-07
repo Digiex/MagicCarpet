@@ -2,7 +2,6 @@
 <project basedir="." default="build" name="magiccarpet">
 
     <property name="bukkit-location" value="../lib/bukkit.jar"/>
-    <property name="perms-location" value="../lib/Permissions.jar"/>
     <property name="output-jar" value="${ant.project.name}.jar"/>
 	
     <property name="debuglevel" value="source,lines"/>
@@ -10,8 +9,19 @@
     <path id="classpath">
         <pathelement location="bin"/>
         <pathelement location="${bukkit-location}"/>
-        <pathelement location="${perms-location}"/>
     </path>
+	
+	<loadfile srcFile="plugin.yml" property="version">
+		<filterchain>
+			<linecontainsregexp>
+				<regexp pattern="^version:\s*.*$"/>
+			</linecontainsregexp>
+			<tokenfilter>
+				<replaceregex pattern="^version:\s*(.*)$" replace="\1"/>
+			</tokenfilter>
+			<striplinebreaks/>
+		</filterchain>
+	</loadfile>
 	
     <target name="init">
         <mkdir dir="bin"/>
@@ -25,7 +35,7 @@
 	
     <target depends="init" name="build">
         <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin">
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false">
             <src path="./src/"/>
             <classpath refid="classpath"/>
         </javac>
