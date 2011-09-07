@@ -34,19 +34,6 @@ import org.bukkit.Material;
 * @author Android <spparr@gmail.com>
 */
 public class Carpet {
-	public enum LightMode {RING, CENTRE, BOTH};
-	private Block currentCentre;
-	private int edge = 0, area = 0, rad = 0, radsq = 0;
-	private LightMode lightMode;
-	private boolean lightsOn;
-
-	public Carpet(Location loc, int sz, LightMode lights, boolean on) {
-		setSize(sz);
-		currentCentre = loc.getBlock();
-		lightMode = lights == null ? LightMode.RING : lights;
-		lightsOn = on;
-	}
-
 	private class CarpetFibre {
 		@SuppressWarnings("hiding")
 		public CarpetFibre(int dx, int dy, int dz)
@@ -58,11 +45,27 @@ public class Carpet {
 		int dx,dy,dz;
 		BlockState block;
 	}
+	public enum LightMode {RING, CENTRE, BOTH};
+	private CarpetFibre[] fibres;
+	private Block currentCentre;
+	private int edge = 0, area = 0, rad = 0, radsq = 0;
+	private LightMode lightMode;
+	private boolean lightsOn;
+	private boolean hidden;
+	private boolean suppressed;
 
-	public CarpetFibre[] fibres;
+	public Carpet(Location loc, int sz, LightMode lights, boolean on) {
+		setSize(sz);
+		currentCentre = loc.getBlock();
+		lightMode = lights == null ? LightMode.RING : lights;
+		lightsOn = on;
+		hidden = true;
+		suppressed = false;
+	}
+
 
 	//Goes through a grid of the area underneath the player, and if the block is glass that is part of the magic carpet, it is removed
-	public void removeCarpet() {
+	private void removeCarpet() {
 		if (currentCentre == null)
 			return;
 		for(int i = 0; i < fibres.length; i++) {
@@ -72,7 +75,8 @@ public class Carpet {
 	}
 
 	//Places glass in a 5x5 area underneath the player if the block was just air previously
-	public void drawCarpet() {
+	private void drawCarpet() {
+		suppressed = false;
 		Block bl;
 		for(int i = 0; i < fibres.length; i++) {
 			if (currentCentre != null) {
@@ -166,7 +170,9 @@ public class Carpet {
 	}
 
 	public void moveTo(Location to) {
+		removeCarpet();
 		currentCentre = to.getBlock();
+		drawCarpet();
 	}
 
 	public Location getLocation() {
@@ -174,6 +180,28 @@ public class Carpet {
 	}
 
 	public void descend() {
+		removeCarpet();
 		currentCentre = currentCentre.getRelative(0,-1,0);
+		drawCarpet();
+	}
+
+	public void hide() {
+		if(!hidden && !suppressed) removeCarpet();
+		hidden = true;
+	}
+
+	public void show() {
+		if(hidden || suppressed) drawCarpet();
+		hidden = false;
+	}
+	
+	public boolean isVisible() {
+		return !hidden;
+	}
+
+
+	public void suppress() {
+		if(!suppressed) removeCarpet();
+		suppressed = true;
 	}
 }

@@ -32,7 +32,7 @@ public class MagicBlockListener extends BlockListener {
     //When a player joins the game, if they had a carpet when the logged out it puts it back.
     public void onBlockBreak(BlockBreakEvent event) {
     	for(Carpet carpet : plugin.carpets.values()){
-    		if(carpet == null) continue;
+    		if(carpet == null || !carpet.isVisible()) continue;
     		if(carpet.isCovering(event.getBlock())) event.setCancelled(true);
     	}
 	}

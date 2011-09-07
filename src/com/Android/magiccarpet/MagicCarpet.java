@@ -1,9 +1,6 @@
 package com.Android.magiccarpet;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -87,7 +84,7 @@ public class MagicCarpet extends JavaPlugin {
 		while(e.hasNext()) {
 			String name = e.next();
 			Carpet c = carpets.get(name);
-			c.removeCarpet();
+			c.suppress();
 		}
 		carpets.clear();
 		System.out.println("Magic Carpet disabled. Thanks for trying the plugin!");

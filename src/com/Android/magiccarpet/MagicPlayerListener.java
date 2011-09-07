@@ -38,14 +38,13 @@ public class MagicPlayerListener extends PlayerListener {
 	}
 		
 	@Override
-    //When a player joins the game, if they had a carpet when the logged out it puts it back.
+    //When a player joins the game, if they had a carpet when they logged out it puts it back.
     public void onPlayerJoin(PlayerJoinEvent event) {
     	Player player = event.getPlayer();
     	Carpet carpet = plugin.carpets.get(player.getName());
         if(!crouchers.contains(player.getName())) crouchers.add(player.getName());
-    	if (carpet == null)
-    		return;
-    	carpet.drawCarpet();
+    	if (carpet == null) return;
+    	if(carpet.isVisible()) carpet.show();
 	}
 
     @Override
@@ -53,9 +52,8 @@ public class MagicPlayerListener extends PlayerListener {
     public void onPlayerQuit(PlayerQuitEvent event) {
     	Player player = event.getPlayer();
     	Carpet carpet = plugin.carpets.get(player.getName());
-		if (carpet == null)
-			return;
-		carpet.removeCarpet();
+		if (carpet == null) return;
+		carpet.suppress();
     }
 
     @Override
@@ -68,8 +66,12 @@ public class MagicPlayerListener extends PlayerListener {
     	Carpet carpet = plugin.carpets.get(player.getName());
     	if (carpet == null)
     		return;
-    	to.setY(to.getY()-1);
-    	from.setY(from.getY()-1);
+    	if(!plugin.canFly(player)) {
+    		carpet.suppress();
+    		return;
+    	}
+    	//to.setY(to.getY()-1);
+    	//from.setY(from.getY()-1);
     	if (!plugin.crouchDef){
     		if(crouchers.contains(player.getName())){
     			if(player.isSneaking()){
@@ -96,16 +98,8 @@ public class MagicPlayerListener extends PlayerListener {
     		}
     	}
     	
-    	if (from.getY() > to.getY() && !falling)
-    	         to.setY(from.getY());
-    	
-    	carpet.removeCarpet();
-    	if(plugin.canFly(player)){
-    		carpet.moveTo(to);
-    		carpet.drawCarpet();
-    	}else{
-    		plugin.carpets.remove(player.getName());
-    	}
+    	if (from.getY() > to.getY() && !falling) to.setY(from.getY());
+    	carpet.moveTo(to);
     }
     
     @Override
@@ -126,9 +120,7 @@ public class MagicPlayerListener extends PlayerListener {
         		return;
        
         // Move the carpet
-        carpet.removeCarpet();
-        carpet.moveTo(to);
-        carpet.drawCarpet();    	
+        carpet.moveTo(to);  	
     }
     
     @Override
@@ -140,19 +132,11 @@ public class MagicPlayerListener extends PlayerListener {
         	return;
         if(plugin.crouchDef){
         	if(!crouchers.contains(player.getName())){
-        		if(!player.isSneaking()){
-        			carpet.removeCarpet();
-        			carpet.descend();
-        			carpet.drawCarpet();
-        		}
+        		if(!player.isSneaking()) carpet.descend();
         	}
-        }else{
+        } else {
         	if(crouchers.contains(player.getName())){
-        		if(!player.isSneaking()){
-        			carpet.removeCarpet();
-        			carpet.descend();
-        			carpet.drawCarpet();
-        		}
+        		if(!player.isSneaking()) carpet.descend();
         	}
         }
     }
