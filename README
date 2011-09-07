@@ -4,15 +4,16 @@ Then, just start your server like normal and enjoy!
 In order to use the magic carpet, type in the command /magiccarpet, or you can use /mc for short if you want. This will bring up a 5x5 area of glass underneath your feet
 that moves with you. Just put in the command again to remove it. However, you can now specify the size of the magic carpet! In order to do so, just put in either a 3, 5,
 or 7 after your /mc command. This will create either a 3x3, 5x5, or 7x7 carpet based on your input. When you put one of the sizes after the command when you already have a
-carpet out, if the size is the same as the carpet you have now, the carpet is removed. If it is different, the the carpet will change sizes.
+carpet out, if the size is the same as the carpet you have now, the carpet is removed. If it is different, the the carpet will change sizes. You can also use the MagicLight,
+which is a border of glowstone that surrounds the carpet. You use it by simply typing /ml. You can also switch between methods of going down by using /carpetswitch or /mcs.
 
-This plugin has a permissions system that is based on the contents of the file magiccarpet.properties. If you don't mind who uses the carpet, you can do nothing, and all users
-are allowed ot use it. If you want to have permissions, create a text file and save it as magiccarpet.properties. Once you run the server the first time, it will set the
-file up for use. In order to allow a user to use the command, just put their username after the "can-fly=" in the properties file, seperating multiple users names with commas. 
-If it is easier for you to list who you do NOT want to use the command, just change the "can-fly=" in the properties file to "cannot-fly=", and put those who you do not want 
-to use the command after it seperated by commas.
+This plugin creates a two files in its own folder in the plugin folder, one called "config.yml" and one called "magiccarpet.properties". The config file contains three properties
+you can edit; the ability to set crouch as the default method to go down, the ability to set the center block in the carpet to turn to glowstone when using Magic Light,
+and the ability to get permissions from the "magiccarpet.properties" file. On intialization, they are set to true, false, and false, respectively. You can change them as you wish.
+The properties file can be used to give permissions to users for the carpet, either by putting the names of the people you want to use the carpet after the "can-fly=", or change 
+it to "can't-fly=" and put those who you do not want to be able to use it.
 
 Alternatively, you can use the Permissions plugin. In order to specify the magic carpet plugin in the config.yml file, type 'magiccarpet.mc' like that in single quotes after
-the permissions area where you are trying to apply it.
+the permissions area where you are trying to apply it. If you want to use MagicLight while using Permissions, you must use the permissions node 'magiccarpet.ml'.
 
 If you have any problems, don't hesitate to mention them at the bukkit forum thread for this plugin, or message my Bukkit account, Android, at the forums.

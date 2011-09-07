@@ -19,8 +19,10 @@ import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.config.Configuration;
 
 import com.nijikokun.bukkit.Permissions.Permissions;
+import com.nijiko.permissions.PermissionHandler;
 
 
 /**
@@ -42,28 +44,59 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 */
 
 public class MagicCarpet extends JavaPlugin {
-	private final MagicPlayerListener playerListener = new MagicPlayerListener();
+	private final MagicPlayerListener playerListener = new MagicPlayerListener(this);
 	private final MagicBlockListener blockListener = new MagicBlockListener(playerListener);
-	public Permissions permissions = null;
+	public PermissionHandler permissions = null;
+    private Configuration config;
+    private String fileName = "";
 	private static Logger log = Logger.getLogger("Minecraft");
 	private ArrayList<String> owners = new ArrayList<String>();
 	private ArrayList<String> bums = new ArrayList<String>();
 	private ArrayList<String> lights = new ArrayList<String>();
 	private boolean ignore = false;
 	private boolean all_can_fly = true;
+	private boolean crouchDef = true;
+	private boolean glowCenter = true;
+	private int carpSize = 5;
 
     public void onEnable() {
-    	setupPermissions();
         PluginDescriptionFile pdfFile = this.getDescription();
         String name = pdfFile.getName();
+        config = getConfiguration();
+        
+        loadConfig();
+        if (!getDataFolder().exists()) getDataFolder().mkdirs();
+        fileName = getDataFolder().getPath() + File.separator + "magiccarpet.properties";
+        
+        setupPermissions();
+        
         log.info( "[" + name + "] " + name + " version " + pdfFile.getVersion() + " is enabled!" );
         log.info( "[" + name + "] Take yourself wonder by wonder, using /magiccarpet or /mc. " );
         if(permissions != null) log.info("[" + name + "] Using Permissions.");
-        else if(all_can_fly) log.info("[" + name + "] Anyone can use the Magic Carpet.");
+        else if(!all_can_fly) log.info("[" + name + "] Anyone can use the Magic Carpet.");
         else if(ignore) log.info("[" + name + "] Ignore: " + bums.toString());
         else log.info("[" + name + "] Restricted to: " + owners.toString());
         registerEvents();
     }
+    
+    public void loadConfig() {
+        config.load();
+        all_can_fly = config.getBoolean("Use Properties Permissions", false);
+        crouchDef = config.getBoolean("Crouch Default", true);
+        glowCenter = config.getBoolean("Put glowstone for light in center", false);
+        carpSize = config.getInt("Default size for carpet", 5);
+        saveConfig();
+    }
+    
+    public void saveConfig() {
+        config.setProperty("Use Properties Permissions", all_can_fly);
+        config.setProperty("Crouch Default", crouchDef);
+        config.setProperty("Put glowstone for light in center", glowCenter);
+        config.setProperty("Default size for carpet", carpSize);
+        playerListener.crouchDef = crouchDef;
+        config.save();
+    }
+    
     public void onDisable() {
     	Hashtable<String, Carpet> carpets = playerListener.getCarpets();
     	Enumeration<String> e = carpets.keys();
@@ -105,9 +138,12 @@ public class MagicCarpet extends JavaPlugin {
         		{
         			if (split.length < 1){
         				player.sendMessage("A glass carpet appears below your feet.");
-        				Carpet newCarpet = new Carpet();
+        				Carpet newCarpet = new Carpet(glowCenter);
         				newCarpet.currentBlock = player.getLocation().getBlock();
-        				newCarpet.setSize(5);
+        				if (carpSize == 3 || carpSize == 5 || carpSize == 7)
+        					newCarpet.setSize(carpSize);
+        				else
+        					newCarpet.setSize(5);
         				newCarpet.setLights(lights.contains(player.getName()));
         				carpets.put(player.getName(), newCarpet);
         				playerListener.setCarpets(carpets);
@@ -124,7 +160,7 @@ public class MagicCarpet extends JavaPlugin {
         					return false;
         				}
         				player.sendMessage("A glass carpet appears below your feet.");
-        				Carpet newCarpet = new Carpet();
+        				Carpet newCarpet = new Carpet(glowCenter);
         				newCarpet.currentBlock = player.getLocation().getBlock();
         				newCarpet.setSize(c);
         				newCarpet.setLights(lights.contains(player.getName()));
@@ -171,7 +207,7 @@ public class MagicCarpet extends JavaPlugin {
         	}
         }else{
         	if (commandName.equals("ml")) {
-        		if(canFly(player)){
+        		if(canLight(player)){
         			if(lights.contains(player.getName())){
         				lights.remove(player.getName());
         				player.sendMessage("The luminous stones in the carpet slowly fade away.");
@@ -183,19 +219,29 @@ public class MagicCarpet extends JavaPlugin {
         				if(carpet != null)
         					carpet.setLights(true);
         			}
+        		}else{
+        			player.sendMessage("You do not have permission to use Magic Light!");
         		}
         		return true;
         	}
         	else
         	{
-        		if (commandName.equals("carpetswitch")) {
+        		if (commandName.equals("carpetswitch") || commandName.equals("mcs")) {
         			if(canFly(player)){
         				boolean crouch = playerListener.CarpetSwitch(player.getName());
-            			if(crouch){
-            				player.sendMessage("You now crouch to descend");
-            			}else{
-            				player.sendMessage("You now look down to descend");
-            			}
+        				if(!crouchDef){
+        					if(crouch){
+        						player.sendMessage("You now crouch to descend");
+        					}else{
+        						player.sendMessage("You now look down to descend");
+        					}
+        				}else{
+        					if(!crouch){
+        						player.sendMessage("You now crouch to descend");
+        					}else{
+        						player.sendMessage("You now look down to descend");
+        					}
+        				}
         			}
             		return true;
             	}else{
@@ -204,15 +250,23 @@ public class MagicCarpet extends JavaPlugin {
         	}
         }
     }
-private boolean canFly(Player player) {
-    if(all_can_fly) return true;
+public boolean canFly(Player player) {
+    if(!all_can_fly) return true;
     if(permissions != null)
-        return Permissions.Security.permission(player, "magiccarpet.mc");
+        return permissions.has(player, "magiccarpet.mc");
     else if(ignore)
         return !bums.contains( player.getName().toLowerCase());
     else
         return owners.contains( player.getName().toLowerCase());
     }
+
+private boolean canLight(Player player) {
+    if(permissions != null)
+        return permissions.has(player, "magiccarpet.ml");
+    else
+        return true;
+    }
+
 private static String config_comment = "Magic Carpet permissions file";
     
     public void saveDefaultSettings(boolean trust){
@@ -222,8 +276,9 @@ private static String config_comment = "Magic Carpet permissions file";
     	else
     		props.setProperty("cannot-fly","untrusted_users_here,maybe_here_too");
     	try{
-    		OutputStream propOut = new FileOutputStream(new File("magiccarpet.properties"));
+    		OutputStream propOut = new FileOutputStream(new File(fileName));
     		props.store(propOut, config_comment);
+    		
     	} catch (IOException ioe) {
     		System.out.print(ioe.getMessage());
     	}
@@ -232,46 +287,49 @@ private static String config_comment = "Magic Carpet permissions file";
     public void loadSettings(){
     	Properties props = new Properties();
     	try {
-    		props.load(new FileInputStream("magiccarpet.properties"));
-    		if (props.containsKey("can-fly")){
-    			all_can_fly = false;
-    			String dreamers = props.getProperty("can-fly","");
-    			ignore = false;
-    			if(dreamers.length() > 0){
-    				String[] fliers = dreamers.toLowerCase().split(",");
-    				if (fliers.length > 0)
-    				{
-    					owners = new ArrayList<String>(Arrays.asList(fliers));
+    		props.load(new FileInputStream(fileName));
+    		if(all_can_fly){
+    			if (props.containsKey("can-fly")){
+    				String dreamers = props.getProperty("can-fly","");
+    				ignore = false;
+    				if(dreamers.length() > 0){
+    					String[] fliers = dreamers.toLowerCase().split(",");
+    					if (fliers.length > 0)
+    					{
+    						owners = new ArrayList<String>(Arrays.asList(fliers));
+    					}else{
+    						this.saveDefaultSettings(true);
+    					}
     				}else{
     					this.saveDefaultSettings(true);
     				}
     			}else{
-    				this.saveDefaultSettings(true);
-    			}
-    		}else{
-    			if(props.containsKey("cannot-fly")){
-    				all_can_fly = false;
-    				String paupers = props.getProperty("cannot-fly","");
-    				ignore = true;
-    				if(paupers.length() > 0){
-    					String[] penniless = paupers.toLowerCase().split(",");
-    					if (penniless.length > 0)
-    					{
-    						bums = new ArrayList<String>(Arrays.asList(penniless));
+    				if(props.containsKey("cannot-fly")){
+    					String paupers = props.getProperty("cannot-fly","");
+    					ignore = true;
+    					if(paupers.length() > 0){
+    						String[] penniless = paupers.toLowerCase().split(",");
+    						if (penniless.length > 0)
+    						{
+    							bums = new ArrayList<String>(Arrays.asList(penniless));
+    						}else{
+    							this.saveDefaultSettings(false);
+    						}
     					}else{
     						this.saveDefaultSettings(false);
     					}
     				}else{
-    					this.saveDefaultSettings(false);
-    				}
-    			}else{
-        			this.saveDefaultSettings(true);
-        		}
+        				this.saveDefaultSettings(true);
+        			}
+    			}
+    		}else{
+    			this.saveDefaultSettings(true);
     		}
     	} catch (IOException ioe) {
-    		
+    		this.saveDefaultSettings(true);
     	}
     }
+    
     
     public void setupPermissions() {
     	Plugin test = this.getServer().getPluginManager().getPlugin("Permissions");
@@ -279,8 +337,8 @@ private static String config_comment = "Magic Carpet permissions file";
 
     	if(this.permissions == null) {
     	     if(test != null) {
-    	    	 this.permissions = (Permissions)test;
-    	    	 all_can_fly = false;
+    	    	 this.permissions = ((Permissions)test).getHandler();
+    	    	 all_can_fly = true;
     	     } else {
     	    	 loadSettings();
     	     }
