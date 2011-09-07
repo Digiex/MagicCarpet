@@ -1,2 +1,7 @@
 .DS_STORE
 test.sh
+.classpath
+.eclipse-build/
+bin/
+magiccarpet.jar
+.project
