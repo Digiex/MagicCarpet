@@ -46,9 +46,10 @@ public class MagicPlayerListener extends PlayerListener {
     public void onPlayerJoin(PlayerJoinEvent event) {
     	Player player = event.getPlayer();
     	Carpet carpet = (Carpet)carpets.get(player.getName());
+        if(!crouchers.contains(player.getName())) crouchers.add(player.getName());
     	if (carpet == null)
     		return;
-    	carpet.drawCarpet();    
+    	carpet.drawCarpet();
 	}
 
     @Override
@@ -119,7 +120,7 @@ public class MagicPlayerListener extends PlayerListener {
         Carpet carpet = (Carpet)carpets.get(player.getName());
         if (carpet == null)
         	return;
-        
+
         if(crouchers.contains(player.getName())){
         	if(!player.isSneaking()){
         		carpet.removeCarpet();
