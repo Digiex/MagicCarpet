@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
@@ -36,10 +37,11 @@ public class MagicCarpet extends JavaPlugin {
 	private final MagicBlockListener blockListener = new MagicBlockListener(playerListener);
 	private Configuration config;
 	private static Logger log = Logger.getLogger("Minecraft");
-	private ArrayList<String> lights = new ArrayList<String>();
+	ArrayList<String> lights = new ArrayList<String>();
+	Hashtable<String, Carpet> carpets = new Hashtable<String, Carpet>();
 	boolean crouchDef = true;
-	private boolean glowCenter = true;
-	private int carpSize = 5;
+	boolean glowCenter = true;
+	int carpSize = 5;
 	
 	@Override
 	public void onEnable() {
@@ -73,7 +75,6 @@ public class MagicCarpet extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-		Hashtable<String,Carpet> carpets = playerListener.getCarpets();
 		Enumeration<String> e = carpets.keys();
 		// iterate through Hashtable keys Enumeration
 		while(e.hasMoreElements()) {
@@ -82,25 +83,23 @@ public class MagicCarpet extends JavaPlugin {
 			c.removeCarpet();
 		}
 		carpets.clear();
-		System.out
-			.println("Magic Carpet disabled. Thanks for trying the plugin!");
+		System.out.println("Magic Carpet disabled. Thanks for trying the plugin!");
 	}
 	
 	private void registerEvents() {
-		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
-		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
-		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
-		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
-		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TOGGLE_SNEAK, playerListener, Priority.Normal, this);
-		getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Normal, this);
+		PluginManager pm = getServer().getPluginManager();
+		pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.PLAYER_TOGGLE_SNEAK, playerListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Normal, this);
+		getCommand("magiccarpet").setExecutor(new CarpetCommand(this));
 	}
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
-		String[] split = args;
 		String commandName = command.getName().toLowerCase();
-		int c = 5;
-		Hashtable<String,Carpet> carpets = playerListener.getCarpets();
 		Player player;
 		if(sender instanceof Player) {
 			player = (Player)sender;
@@ -109,76 +108,7 @@ public class MagicCarpet extends JavaPlugin {
 		}
 		Carpet carpet = carpets.get(player.getName());
 		
-		if(commandName.equals("mc") || commandName.equals("magiccarpet")) {
-			if(canFly(player)) {
-				if(carpet == null) {
-					if(split.length < 1) {
-						player.sendMessage("A glass carpet appears below your feet.");
-						Carpet newCarpet = new Carpet(glowCenter);
-						newCarpet.currentBlock = player.getLocation().getBlock();
-						if(carpSize == 3 || carpSize == 5 || carpSize == 7) newCarpet.setSize(carpSize);
-						else newCarpet.setSize(5);
-						newCarpet.setLights(lights.contains(player.getName()));
-						carpets.put(player.getName(), newCarpet);
-						playerListener.setCarpets(carpets);
-					} else {
-						try {
-							c = Integer.valueOf(split[0]);
-						} catch(NumberFormatException e) {
-							player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, or 7!");
-							return false;
-						}
-						
-						if(c != 3 && c != 5 && c != 7) {
-							player.sendMessage("The size can only be 3, 5, or 7. Please enter a proper number");
-							return false;
-						}
-						player.sendMessage("A glass carpet appears below your feet.");
-						Carpet newCarpet = new Carpet(glowCenter);
-						newCarpet.currentBlock = player.getLocation().getBlock();
-						newCarpet.setSize(c);
-						newCarpet.setLights(lights.contains(player.getName()));
-						carpets.put(player.getName(), newCarpet);
-						playerListener.setCarpets(carpets);
-					}
-					
-				}
-				if(carpet != null) {
-					if(split.length == 1) {
-						try {
-							c = Integer.valueOf(split[0]);
-						} catch(NumberFormatException e) {
-							player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, or 7!");
-							return false;
-						}
-						
-						if(c != 3 && c != 5 && c != 7) {
-							player.sendMessage("The size can only be 3, 5, or 7. Please enter a proper number");
-							return false;
-						}
-						if(c != carpet.size) {
-							player.sendMessage("The carpet seems to react to your words, and suddenly changes shape!");
-							carpet.changeCarpet(c);
-						} else {
-							player.sendMessage("Poof! The magic carpet disappears.");
-							carpets.remove(player.getName());
-							carpet.removeCarpet();
-							playerListener.setCarpets(carpets);
-						}
-					} else {
-						player.sendMessage("Poof! The magic carpet disappears.");
-						carpets.remove(player.getName());
-						carpet.removeCarpet();
-						playerListener.setCarpets(carpets);
-					}
-					
-				}
-				return true;
-			} else {
-				player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
-				return true;
-			}
-		} else {
+		
 			if(commandName.equals("ml")) {
 				if(canLight(player)) {
 					if(lights.contains(player.getName())) {
@@ -218,7 +148,6 @@ public class MagicCarpet extends JavaPlugin {
 					return false;
 				}
 			}
-		}
 	}
 	
 	public boolean canFly(Player player) {

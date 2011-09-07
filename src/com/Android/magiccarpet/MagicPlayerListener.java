@@ -1,7 +1,6 @@
 package com.Android.magiccarpet;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -38,7 +37,6 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 * @author Android <spparr@gmail.com>
 */
 public class MagicPlayerListener extends PlayerListener {
-	private Hashtable<String, Carpet> carpets = new Hashtable<String, Carpet>();
 	private ArrayList<String> crouchers = new ArrayList<String>();
 	private MagicCarpet plugin = null;
 	boolean falling = false;
@@ -51,7 +49,7 @@ public class MagicPlayerListener extends PlayerListener {
     //When a player joins the game, if they had a carpet when the logged out it puts it back.
     public void onPlayerJoin(PlayerJoinEvent event) {
     	Player player = event.getPlayer();
-    	Carpet carpet = carpets.get(player.getName());
+    	Carpet carpet = plugin.carpets.get(player.getName());
         if(!crouchers.contains(player.getName())) crouchers.add(player.getName());
     	if (carpet == null)
     		return;
@@ -62,7 +60,7 @@ public class MagicPlayerListener extends PlayerListener {
     //When a player quits, it removes the carpet from the server
     public void onPlayerQuit(PlayerQuitEvent event) {
     	Player player = event.getPlayer();
-    	Carpet carpet = carpets.get(player.getName());
+    	Carpet carpet = plugin.carpets.get(player.getName());
 		if (carpet == null)
 			return;
 		carpet.removeCarpet();
@@ -75,7 +73,7 @@ public class MagicPlayerListener extends PlayerListener {
     	Location to = event.getTo().clone();
     	Location from = event.getFrom().clone();
     	Player player = event.getPlayer();
-    	Carpet carpet = carpets.get(player.getName());
+    	Carpet carpet = plugin.carpets.get(player.getName());
     	if (carpet == null)
     		return;
     	to.setY(to.getY()-1);
@@ -114,7 +112,7 @@ public class MagicPlayerListener extends PlayerListener {
     		carpet.currentBlock = to.getBlock();
     		carpet.drawCarpet();
     	}else{
-    		carpets.remove(player.getName());
+    		plugin.carpets.remove(player.getName());
     	}
     }
     
@@ -123,7 +121,7 @@ public class MagicPlayerListener extends PlayerListener {
     	Location to = event.getTo().clone();
     	Player player = event.getPlayer();
     	// Check if the player has a carpet
-        Carpet carpet = carpets.get(player.getName());
+        Carpet carpet = plugin.carpets.get(player.getName());
         if (carpet == null)
         	return;
        
@@ -145,7 +143,7 @@ public class MagicPlayerListener extends PlayerListener {
 	public void onPlayerToggleSneak(PlayerToggleSneakEvent event){
     	Player player = event.getPlayer();
     	// Check if the player has a carpet
-        Carpet carpet = carpets.get(player.getName());
+        Carpet carpet = plugin.carpets.get(player.getName());
         if (carpet == null)
         	return;
         if(plugin.crouchDef){
@@ -165,14 +163,6 @@ public class MagicPlayerListener extends PlayerListener {
         		}
         	}
         }
-    }
-    
-    public Hashtable<String, Carpet> getCarpets(){
-    	return carpets;
-    }
-    
-    public void setCarpets(Hashtable<String, Carpet> carp){
-    	carpets = carp;
     }
     
     public boolean CarpetSwitch(String name){
