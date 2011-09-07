@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event;
+import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,7 +31,7 @@ import org.bukkit.util.config.Configuration;
 
 public class MagicCarpet extends JavaPlugin {
 	private final MagicPlayerListener playerListener = new MagicPlayerListener(this);
-	private final MagicBlockListener blockListener = new MagicBlockListener(this);
+	private final MagicDamageListener damageListener = new MagicDamageListener(this);
 	private Configuration config;
 	private static Logger log = Logger.getLogger("Minecraft");
 	CarpetStorage carpets = new CarpetStorage(this);
@@ -81,12 +81,13 @@ public class MagicCarpet extends JavaPlugin {
 	
 	private void registerEvents() {
 		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.PLAYER_TOGGLE_SNEAK, playerListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Normal, this);
+		pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
+		pm.registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
+		pm.registerEvent(Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
+		pm.registerEvent(Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
+		pm.registerEvent(Type.PLAYER_TOGGLE_SNEAK, playerListener, Priority.Normal, this);
+		pm.registerEvent(Type.BLOCK_BREAK, damageListener, damageListener.executor, Priority.Normal, this);
+		pm.registerEvent(Type.ENTITY_DAMAGE, damageListener, damageListener.executor, Priority.Normal, this);
 		getCommand("magiccarpet").setExecutor(new CarpetCommand(this));
 		getCommand("magiclight").setExecutor(new LightCommand(this));
 		getCommand("carpetswitch").setExecutor(new SwitchCommand(this));
