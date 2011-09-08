@@ -61,6 +61,14 @@ public class Carpet {
 				who.sendBlockChange(loc, material, (byte)0);
 			} else bl.setTypeId(material.getId(), false);
 		}
+
+		public boolean shouldGlow() {
+			if(!lightsOn) return false;
+			if(dx == 0 && dy == 0) return lightMode != LightMode.RING;
+			if(dx == rad || dx == -rad || dz == rad || dz == -rad)
+				return lightMode != LightMode.CENTRE;
+			return false;
+		}
 	}
 	public enum LightMode {RING, CENTRE, BOTH};
 	private CarpetFibre[] fibres;
@@ -123,12 +131,7 @@ public class Carpet {
 				else fibre.fake = false;
 				// End cactus hack
 				fibre.block = bl.getState();
-				if(lightsOn && (lightMode == LightMode.CENTRE || lightMode == LightMode.BOTH) &&
-					(fibre.dx == 0 && fibre.dz == 0))
-						fibre.set(bl, Material.GLOWSTONE);
-				else if(lightsOn && (lightMode == LightMode.RING || lightMode == LightMode.BOTH) &&
-					(fibre.dx == rad || fibre.dx == -rad || fibre.dz == rad || fibre.dz == -rad))
-						fibre.set(bl, Material.GLOWSTONE);
+				if(fibre.shouldGlow()) fibre.set(bl, Material.GLOWSTONE);
 				else fibre.set(bl, Material.GLASS);
 			}
 		}

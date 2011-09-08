@@ -39,10 +39,10 @@ public class LightCommand implements CommandExecutor {
 		Player player = (Player)sender;
 		if(plugin.canFly(player) && plugin.canLight(player)) {
 			if(plugin.carpets.hasLight(player)) {
-				plugin.carpets.lightOn(player);
+				plugin.carpets.lightOff(player);
 				player.sendMessage("The luminous stones in the carpet slowly fade away.");
 			} else {
-				plugin.carpets.lightOff(player);
+				plugin.carpets.lightOn(player);
 				player.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
 			}
 		} else {
