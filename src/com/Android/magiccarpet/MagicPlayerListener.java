@@ -80,6 +80,24 @@ public class MagicPlayerListener extends PlayerListener {
 		}
 		//to.setY(to.getY()-1);
 		//from.setY(from.getY()-1);
+		
+		// FIXME: hacky fix from andrew http://forums.bukkit.org/posts/348324
+        if (from.getX() > to.getX()) {
+            to.setX(to.getX() - .5);
+            from.setX(from.getX() - .5);
+        } else {
+            to.setX(to.getX() + .5);
+            from.setX(from.getX() + .5);
+        }
+        if (from.getZ() > to.getZ()) {
+            to.setZ(to.getZ() - .5);
+            from.setZ(from.getZ() - .5);
+        } else {
+            to.setZ(to.getZ() + .5);
+            from.setZ(from.getZ() + .5);
+        }
+        //</andrew>
+        
 		if(plugin.carpets.crouches(player)){
 			if(player.isSneaking()){
 				to.setY(to.getY()-1);
