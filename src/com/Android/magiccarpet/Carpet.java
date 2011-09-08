@@ -142,7 +142,7 @@ public class Carpet {
 	}
 
 	// Changes the carpet size
-	protected void setSize(int size) {
+	private void setSize(int size) {
 		if (size < 0) size = abs(size); // Sanity check
 		this.edge = size;
 		this.area = size*size;

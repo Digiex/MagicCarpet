@@ -30,7 +30,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 public class MagicPlayerListener extends PlayerListener {
 	private MagicCarpet plugin = null;
-	boolean falling = false;
+	private boolean falling = false;
 	
 	public MagicPlayerListener(MagicCarpet plug){
 		plugin = plug;
@@ -68,7 +68,6 @@ public class MagicPlayerListener extends PlayerListener {
 	@Override
 	//Lets the carpet move with the player
 	public void onPlayerMove(PlayerMoveEvent event) {
-		falling = false;
 		Location to = event.getTo().clone();
 		Location from = event.getFrom().clone();
 		Player player = event.getPlayer();
@@ -100,17 +99,18 @@ public class MagicPlayerListener extends PlayerListener {
         
 		if(plugin.carpets.crouches(player)){
 			if(player.isSneaking()){
-				to.setY(to.getY()-1);
+				if(!falling) to.setY(to.getY()-1);
 				falling = true;
 			}
 		} else {
 			if(from.getPitch() == 90 && (to.getX() != from.getX() || to.getZ() != from.getZ())){
-				to.setY(to.getY()-1);
+				if(!falling) to.setY(to.getY()-1);
 				falling = true;
 			}
 		}
 		
 		if (from.getY() > to.getY() && !falling) to.setY(from.getY());
+		falling = false;
 		carpet.moveTo(to);
 	}
 	
@@ -144,6 +144,9 @@ public class MagicPlayerListener extends PlayerListener {
 		Carpet carpet = plugin.carpets.get(player);
 		if(carpet == null || !carpet.isVisible()) return;
 		if(!plugin.carpets.crouches(player)) return;
-		if(player.isSneaking()) carpet.descend();
+		if(event.isSneaking()) {
+			falling = true;
+			carpet.descend();
+		}
 	}
 }
