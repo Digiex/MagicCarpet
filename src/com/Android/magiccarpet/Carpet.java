@@ -3,6 +3,7 @@ package com.Android.magiccarpet;
 import static java.lang.Math.abs;
 
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
@@ -44,8 +45,22 @@ public class Carpet {
 			this.dz = dz;
 		}
 		int dx,dy,dz;
-		boolean fake;
+		boolean fake = false;
 		BlockState block;
+		
+		void update() {
+			if(fake) {
+				Location loc = currentCentre.getRelative(dx, dy, dz).getLocation();
+				who.sendBlockChange(loc, block.getType(), block.getRawData());
+			} else block.update(true);
+		}
+		
+		void set(Block bl, Material material) {
+			if(fake) {
+				Location loc = currentCentre.getRelative(dx, dy, dz).getLocation();
+				who.sendBlockChange(loc, material, (byte)0);
+			} else bl.setTypeId(material.getId(), false);
+		}
 	}
 	public enum LightMode {RING, CENTRE, BOTH};
 	private CarpetFibre[] fibres;
@@ -55,20 +70,21 @@ public class Carpet {
 	private boolean lightsOn;
 	private boolean hidden;
 	private boolean suppressed;
+	private Player who;
 	
 	public static Carpet create(Player player, MagicCarpet plugin) {
-		Location loc = player.getLocation();
 		int sz = plugin.carpets.getLastSize(player);
 		boolean light = plugin.carpets.hasLight(player);
 		LightMode mode = plugin.carpets.getLightMode(player);
-		Carpet carpet = new Carpet(loc, sz, mode, light);
+		Carpet carpet = new Carpet(player, sz, mode, light);
 		plugin.carpets.assign(player, carpet);
 		return carpet;
 	}
 	
-	private Carpet(Location loc, int sz, LightMode lights, boolean on) {
+	private Carpet(Player player, int sz, LightMode lights, boolean on) {
 		setSize(sz);
-		currentCentre = loc.getBlock();
+		who = player;
+		currentCentre = player.getLocation().getBlock();
 		lightMode = lights == null ? LightMode.RING : lights;
 		lightsOn = on;
 		hidden = true;
@@ -81,7 +97,7 @@ public class Carpet {
 		if (currentCentre == null)
 			return;
 		for(CarpetFibre fibre : fibres) {
-			if(fibre.block != null) fibre.block.update(true);
+			if(fibre.block != null) fibre.update();
 			fibre.block = null;
 		}
 	}
@@ -98,14 +114,22 @@ public class Carpet {
 					fibre.block = null;
 					continue;
 				}
+				// FIXME: Cactus hack
+				if(bl.getRelative(BlockFace.NORTH).getType() == Material.CACTUS ||
+					bl.getRelative(BlockFace.SOUTH).getType() == Material.CACTUS ||
+					bl.getRelative(BlockFace.EAST).getType() == Material.CACTUS ||
+					bl.getRelative(BlockFace.WEST).getType() == Material.CACTUS)
+						fibre.fake = true;
+				else fibre.fake = false;
+				// End cactus hack
 				fibre.block = bl.getState();
 				if(lightsOn && (lightMode == LightMode.CENTRE || lightMode == LightMode.BOTH) &&
 					(fibre.dx == 0 && fibre.dz == 0))
-						bl.setTypeId(Material.GLOWSTONE.getId(), false);
+						fibre.set(bl, Material.GLOWSTONE);
 				else if(lightsOn && (lightMode == LightMode.RING || lightMode == LightMode.BOTH) &&
 					(fibre.dx == rad || fibre.dx == -rad || fibre.dz == rad || fibre.dz == -rad))
-						bl.setTypeId(Material.GLOWSTONE.getId(), false);
-				else bl.setTypeId(Material.GLASS.getId(), false);
+						fibre.set(bl, Material.GLOWSTONE);
+				else fibre.set(bl, Material.GLASS);
 			}
 		}
 	}
