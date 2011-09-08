@@ -44,6 +44,7 @@ public class Carpet {
 			this.dz = dz;
 		}
 		int dx,dy,dz;
+		boolean fake;
 		BlockState block;
 	}
 	public enum LightMode {RING, CENTRE, BOTH};
@@ -79,9 +80,9 @@ public class Carpet {
 	private void removeCarpet() {
 		if (currentCentre == null)
 			return;
-		for(int i = 0; i < fibres.length; i++) {
-			if(fibres[i].block != null) fibres[i].block.update(true);
-			fibres[i].block = null;
+		for(CarpetFibre fibre : fibres) {
+			if(fibre.block != null) fibre.block.update(true);
+			fibre.block = null;
 		}
 	}
 
@@ -89,20 +90,20 @@ public class Carpet {
 	private void drawCarpet() {
 		suppressed = false;
 		Block bl;
-		for(int i = 0; i < fibres.length; i++) {
+		for(CarpetFibre fibre : fibres) {
 			if (currentCentre != null) {
-				bl = currentCentre.getRelative(fibres[i].dx,fibres[i].dy,fibres[i].dz);
+				bl = currentCentre.getRelative(fibre.dx,fibre.dy,fibre.dz);
 				Material type = bl.getType();
 				if(!isAirOrFluid(type)) {
-					fibres[i].block = null;
+					fibre.block = null;
 					continue;
 				}
-				fibres[i].block = bl.getState();
+				fibre.block = bl.getState();
 				if(lightsOn && (lightMode == LightMode.CENTRE || lightMode == LightMode.BOTH) &&
-					(fibres[i].dx == 0 && fibres[i].dz == 0))
+					(fibre.dx == 0 && fibre.dz == 0))
 						bl.setTypeId(Material.GLOWSTONE.getId(), false);
 				else if(lightsOn && (lightMode == LightMode.RING || lightMode == LightMode.BOTH) &&
-					(fibres[i].dx == rad || fibres[i].dx == -rad || fibres[i].dz == rad || fibres[i].dz == -rad))
+					(fibre.dx == rad || fibre.dx == -rad || fibre.dz == rad || fibre.dz == -rad))
 						bl.setTypeId(Material.GLOWSTONE.getId(), false);
 				else bl.setTypeId(Material.GLASS.getId(), false);
 			}
