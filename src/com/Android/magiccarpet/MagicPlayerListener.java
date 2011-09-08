@@ -3,6 +3,7 @@ package com.Android.magiccarpet;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -41,6 +42,20 @@ public class MagicPlayerListener extends PlayerListener {
 		Player player = event.getPlayer();
 		if(plugin.carpets.has(player))
 			Carpet.create(player, plugin).show();
+	}
+	
+	@Override
+	//Don't allow kicking for flying while descending
+	public void onPlayerKick(PlayerKickEvent event) {
+		// TODO: This is hacky and likely won't work in all cases
+		Player who = event.getPlayer();
+		Carpet carpet = plugin.carpets.get(who);
+		if (carpet != null) {
+			String reason = event.getReason();
+			if (reason != null && reason.equals("Flying is not enabled on this server") && who.isSneaking()) {
+				event.setCancelled(true);
+			}
+		}
 	}
 
 	@Override
