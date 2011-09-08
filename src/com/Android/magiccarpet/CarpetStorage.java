@@ -98,6 +98,16 @@ public class CarpetStorage implements Serializable {
 	}
 	
 	// Mutators
+	public void lightOn(Player player, Carpet.LightMode mode) {
+		CarpetEntry entry = entry(player);
+		entry.lightsOn = true;
+		entry.lightsMode = mode;
+		if(entry.hasCarpet && entry.carpet != null) {
+			if(!entry.carpet.hasLights()) entry.carpet.lightsOn();
+			entry.carpet.setLights(mode);
+		}
+	}
+	
 	public void lightOn(Player player) {
 		CarpetEntry entry = entry(player);
 		entry.lightsOn = true;

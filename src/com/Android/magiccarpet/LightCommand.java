@@ -38,12 +38,15 @@ public class LightCommand implements CommandExecutor {
 		}
 		Player player = (Player)sender;
 		if(plugin.canFly(player) && plugin.canLight(player)) {
-			if(plugin.carpets.hasLight(player)) {
-				plugin.carpets.lightOff(player);
-				player.sendMessage("The luminous stones in the carpet slowly fade away.");
-			} else {
-				plugin.carpets.lightOn(player);
-				player.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
+			if(args.length < 1) hideOrShow(player);
+			else {
+				Carpet.LightMode mode = parseMode(args, player);
+				if(mode == null) return false;
+				if(mode == plugin.carpets.getLightMode(player)) hideOrShow(player);
+				else {
+					player.sendMessage("The carpet seems to react to your words, and suddenly glows in different places!");
+					plugin.carpets.lightOn(player, mode);
+				}
 			}
 		} else {
 			if(plugin.canFly(player))
@@ -52,5 +55,48 @@ public class LightCommand implements CommandExecutor {
 		}
 		return true;
 	}
-	
+
+	private void hideOrShow(Player player) {
+		if(plugin.carpets.hasLight(player)) {
+			plugin.carpets.lightOff(player);
+			player.sendMessage("The luminous stones in the carpet slowly fade away.");
+		} else {
+			plugin.carpets.lightOn(player);
+			player.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
+		}
+	}
+
+	private Carpet.LightMode parseMode(String[] args, Player player) {
+		Carpet.LightMode mode;
+		if(args[0].equalsIgnoreCase("ring")) mode = Carpet.LightMode.RING;
+		else if(args[0].equalsIgnoreCase("centre")) mode = Carpet.LightMode.CENTRE;
+		else if(args[0].equalsIgnoreCase("center")) mode = Carpet.LightMode.CENTRE;
+		else if(args[0].equalsIgnoreCase("both")) mode = Carpet.LightMode.BOTH;
+		else {
+			player.sendMessage("Invalid light mode '" + args[0] + "'");
+			return null;
+		}
+		if(args.length > 1) {
+			if(mode != Carpet.LightMode.BOTH) {
+				if(mode == Carpet.LightMode.CENTRE && args[1].equalsIgnoreCase("ring"))
+					mode = Carpet.LightMode.BOTH;
+				else if(mode == Carpet.LightMode.RING && args[1].equalsIgnoreCase("centre"))
+					mode = Carpet.LightMode.BOTH;
+				else if(mode == Carpet.LightMode.RING && args[1].equalsIgnoreCase("center"))
+					mode = Carpet.LightMode.BOTH;
+				else {
+					player.sendMessage("Invalid light mode '" + args[1] + "'");
+					return null;
+				}
+			} else {
+				player.sendMessage("Invalid light mode '" + args[1] + "'");
+				return null;
+			}
+			if(args.length > 2) {
+				player.sendMessage("Too many arguments!");
+				return null;
+			}
+		}
+		return mode;
+	}
 }
