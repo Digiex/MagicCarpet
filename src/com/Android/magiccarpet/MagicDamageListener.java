@@ -64,14 +64,21 @@ public class MagicDamageListener implements Listener {
 	public void onEntityDamage(EntityDamageEvent event) {
 		if(event.getCause() != DamageCause.SUFFOCATION) return;
 		if(!(event.getEntity() instanceof LivingEntity)) return;
-		Block block = ((LivingEntity)event.getEntity()).getEyeLocation().getBlock();
+		Block eyes = ((LivingEntity)event.getEntity()).getEyeLocation().getBlock();
+		Block block = event.getEntity().getLocation().getBlock();
 		for(Carpet carpet : plugin.carpets.all()){
 			if(carpet == null || !carpet.isVisible()) continue;
-			if(carpet.isCovering(block)) event.setCancelled(true);
+			if(carpet.touches(eyes)) {
+				event.setCancelled(true);
+				return;
+			} else if(carpet.touches(block)) {
+				event.setCancelled(true);
+				return;
+			}
 		}
 	}
 	
-	// Prevent carpets from affecting things they pass such as cacti and floating sand
+	// Prevent carpets from affecting things they pass such as floating sand
 	public void onBlockPhysics(BlockPhysicsEvent event) {
 		//System.out.println("Block physics: " + event.getBlock().getType() + "; changed " + event.getChangedType());
 		for(Carpet carpet : plugin.carpets.all()){

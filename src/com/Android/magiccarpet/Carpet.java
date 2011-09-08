@@ -73,7 +73,7 @@ public class Carpet {
 	public enum LightMode {RING, CENTRE, BOTH};
 	private CarpetFibre[] fibres;
 	private Block currentCentre;
-	private int edge = 0, area = 0, rad = 0, radsq = 0;
+	private int edge = 0, area = 0, rad = 0, radsq = 0, radplsq = 0;
 	private LightMode lightMode;
 	private boolean lightsOn;
 	private boolean hidden;
@@ -183,6 +183,7 @@ public class Carpet {
 		default: this.rad = 2; break;
 		}
 		this.radsq = rad*rad;
+		this.radplsq = (rad+1)*(rad+1);
 
 		int i = 0;
 		for (int x = -rad; x <= rad; x++){
@@ -254,7 +255,7 @@ public class Carpet {
 
 	public boolean touches(Block block) {
 		if(currentCentre == null || block == null) return false;
-		if(block.getLocation().distanceSquared(currentCentre.getLocation()) >= radsq) return false;
+		if(block.getLocation().distanceSquared(currentCentre.getLocation()) > radplsq) return false;
 		if(abs(block.getY() - currentCentre.getY()) > 1) return false;
 		return true;
 	}
