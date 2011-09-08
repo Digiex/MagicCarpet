@@ -1,5 +1,7 @@
 package com.Android.magiccarpet;
 
+import com.Android.magiccarpet.Carpet.LightMode;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -40,7 +42,7 @@ public class LightCommand implements CommandExecutor {
 		if(plugin.canFly(player) && plugin.canLight(player)) {
 			if(args.length < 1) hideOrShow(player);
 			else {
-				Carpet.LightMode mode = parseMode(args, player);
+				LightMode mode = parseMode(args, player);
 				if(mode == null) return false;
 				if(mode == plugin.carpets.getLightMode(player)) hideOrShow(player);
 				else {
@@ -66,24 +68,24 @@ public class LightCommand implements CommandExecutor {
 		}
 	}
 
-	private Carpet.LightMode parseMode(String[] args, Player player) {
-		Carpet.LightMode mode;
-		if(args[0].equalsIgnoreCase("ring")) mode = Carpet.LightMode.RING;
-		else if(args[0].equalsIgnoreCase("centre")) mode = Carpet.LightMode.CENTRE;
-		else if(args[0].equalsIgnoreCase("center")) mode = Carpet.LightMode.CENTRE;
-		else if(args[0].equalsIgnoreCase("both")) mode = Carpet.LightMode.BOTH;
+	private LightMode parseMode(String[] args, Player player) {
+		LightMode mode;
+		if(args[0].equalsIgnoreCase("ring")) mode = LightMode.RING;
+		else if(args[0].equalsIgnoreCase("centre")) mode = LightMode.CENTRE;
+		else if(args[0].equalsIgnoreCase("center")) mode = LightMode.CENTRE;
+		else if(args[0].equalsIgnoreCase("both")) mode = LightMode.BOTH;
 		else {
 			player.sendMessage("Invalid light mode '" + args[0] + "'");
 			return null;
 		}
 		if(args.length > 1) {
-			if(mode != Carpet.LightMode.BOTH) {
-				if(mode == Carpet.LightMode.CENTRE && args[1].equalsIgnoreCase("ring"))
-					mode = Carpet.LightMode.BOTH;
-				else if(mode == Carpet.LightMode.RING && args[1].equalsIgnoreCase("centre"))
-					mode = Carpet.LightMode.BOTH;
-				else if(mode == Carpet.LightMode.RING && args[1].equalsIgnoreCase("center"))
-					mode = Carpet.LightMode.BOTH;
+			if(mode != LightMode.BOTH) {
+				if(mode == LightMode.CENTRE && args[1].equalsIgnoreCase("ring"))
+					mode = LightMode.BOTH;
+				else if(mode == LightMode.RING && args[1].equalsIgnoreCase("centre"))
+					mode = LightMode.BOTH;
+				else if(mode == LightMode.RING && args[1].equalsIgnoreCase("center"))
+					mode = LightMode.BOTH;
 				else {
 					player.sendMessage("Invalid light mode '" + args[1] + "'");
 					return null;

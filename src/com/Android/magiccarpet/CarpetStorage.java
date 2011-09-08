@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.Android.magiccarpet.Carpet.LightMode;
+
 import org.bukkit.entity.Player;
 
 /*
@@ -31,7 +33,7 @@ public class CarpetStorage implements Serializable {
 		public boolean lightsOn = false;
 		public boolean hasCarpet = false;
 		public boolean crouch = plugin.crouchDef;
-		public Carpet.LightMode lightsMode = plugin.glowCenter ? Carpet.LightMode.CENTRE : Carpet.LightMode.RING;
+		public LightMode lightsMode = plugin.glowCenter ? LightMode.CENTRE : LightMode.RING;
 		public transient Carpet carpet;
 	}
 	private transient MagicCarpet plugin;
@@ -62,7 +64,7 @@ public class CarpetStorage implements Serializable {
 		return entry(player).hasCarpet;
 	}
 
-	public Carpet.LightMode getLightMode(Player player) {
+	public LightMode getLightMode(Player player) {
 		return entry(player).lightsMode;
 	}
 
@@ -98,7 +100,7 @@ public class CarpetStorage implements Serializable {
 	}
 	
 	// Mutators
-	public void lightOn(Player player, Carpet.LightMode mode) {
+	public void lightOn(Player player, LightMode mode) {
 		CarpetEntry entry = entry(player);
 		entry.lightsOn = true;
 		entry.lightsMode = mode;
