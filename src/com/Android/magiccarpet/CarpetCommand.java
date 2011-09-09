@@ -37,14 +37,14 @@ public class CarpetCommand implements CommandExecutor {
 			return true;
 		}
 		Player player = (Player)sender;
-		if(!plugin.canFly(player)) {
+		Carpet carpet = plugin.carpets.get(player);
+		if(!canFly(player, carpet)) {
 			player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
 			return true;
 		}
 		int c = 5;
-		Carpet carpet = plugin.carpets.get(player);
 		if(carpet == null) carpet = Carpet.create(player, plugin);
-		if(args.length < 1) {
+		if(args.length < 1 || !plugin.canFly(player)) {
 			if(carpet.isVisible()) {
 				player.sendMessage("Poof! The magic carpet disappears.");
 				carpet.hide();
@@ -90,5 +90,11 @@ public class CarpetCommand implements CommandExecutor {
 		}
 		plugin.carpets.update(player);
 		return true;
+	}
+
+	private boolean canFly(Player player, Carpet carpet) {
+		if(plugin.canFly(player)) return true;
+		if(carpet != null && carpet.isVisible()) return true;
+		return false;
 	}
 }
