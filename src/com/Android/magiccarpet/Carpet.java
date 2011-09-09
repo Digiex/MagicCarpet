@@ -64,7 +64,7 @@ public class Carpet {
 
 		public boolean shouldGlow() {
 			if(!lightsOn) return false;
-			if(dx == 0 && dy == 0) return lightMode != LightMode.RING;
+			if(dx == 0 && dz == 0) return lightMode != LightMode.RING;
 			if(dx == rad || dx == -rad || dz == rad || dz == -rad)
 				return lightMode != LightMode.CENTRE;
 			return false;
