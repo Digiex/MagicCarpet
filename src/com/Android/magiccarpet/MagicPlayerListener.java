@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.util.Vector;
 
 /*
 * Magic Carpet 2.0
@@ -79,6 +80,10 @@ public class MagicPlayerListener extends PlayerListener {
 		}
 		//to.setY(to.getY()-1);
 		//from.setY(from.getY()-1);
+		
+		if(player.getLocation().getBlock().isLiquid() && !player.getEyeLocation().getBlock().isLiquid()
+			&& to.getY() > from.getY())
+				player.setVelocity(player.getVelocity().add(new Vector(0,0.1,0)));
 		
 		// FIXME: hacky fix from andrew http://forums.bukkit.org/posts/348324
         if (from.getX() > to.getX()) {

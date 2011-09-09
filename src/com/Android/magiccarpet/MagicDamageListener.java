@@ -3,6 +3,7 @@ package com.Android.magiccarpet;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -62,19 +63,24 @@ public class MagicDamageListener implements Listener {
 	
 	// Prevent carpets from suffocating players (and mobs too!)
 	public void onEntityDamage(EntityDamageEvent event) {
-		if(event.getCause() != DamageCause.SUFFOCATION) return;
-		if(!(event.getEntity() instanceof LivingEntity)) return;
-		Block eyes = ((LivingEntity)event.getEntity()).getEyeLocation().getBlock();
-		Block block = event.getEntity().getLocation().getBlock();
-		for(Carpet carpet : plugin.carpets.all()){
-			if(carpet == null || !carpet.isVisible()) continue;
-			if(carpet.touches(eyes)) {
-				event.setCancelled(true);
-				return;
-			} else if(carpet.touches(block)) {
-				event.setCancelled(true);
-				return;
+		if(event.getCause() == DamageCause.SUFFOCATION) {
+			if(!(event.getEntity() instanceof LivingEntity)) return;
+			Block eyes = ((LivingEntity)event.getEntity()).getEyeLocation().getBlock();
+			Block block = event.getEntity().getLocation().getBlock();
+			for(Carpet carpet : plugin.carpets.all()){
+				if(carpet == null || !carpet.isVisible()) continue;
+				if(carpet.touches(eyes)) {
+					event.setCancelled(true);
+					return;
+				} else if(carpet.touches(block)) {
+					event.setCancelled(true);
+					return;
+				}
 			}
+		} else if(event.getCause() == DamageCause.FALL) {
+			if(!(event.getEntity() instanceof Player)) return;
+			if(plugin.carpets.has((Player)event.getEntity())) event.setCancelled(true);
+			System.out.println("Cancelled fall damage? " + event.isCancelled());
 		}
 	}
 	
