@@ -3,6 +3,8 @@
 
     <property name="bukkit-location" value="../lib/bukkit.jar"/>
     <property name="output-jar" value="${ant.project.name}.jar"/>
+	<property name="src" value="src/main/java"/>
+	<property name="rsrc" value="src/main/resources"/>
 	
     <property name="debuglevel" value="source,lines"/>
 	
@@ -11,7 +13,7 @@
         <pathelement location="${bukkit-location}"/>
     </path>
 	
-	<loadfile srcFile="plugin.yml" property="version">
+	<loadfile srcFile="${rsrc}/plugin.yml" property="version">
 		<filterchain>
 			<linecontainsregexp>
 				<regexp pattern="^version:\s*.*$"/>
@@ -25,7 +27,7 @@
 	
     <target name="init">
         <mkdir dir="bin"/>
-        <copy file="plugin.yml" todir="bin" />
+        <copy file="${rsrc}/plugin.yml" todir="bin" />
     </target>
 	
     <target name="clean">
@@ -36,20 +38,12 @@
     <target depends="init" name="build">
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false">
-            <src path="./src/"/>
+            <src path="${src}"/>
             <classpath refid="classpath"/>
         </javac>
     </target>
 	
-    <target name="jar" depends="build">
+    <target name="dist" depends="build">
         <jar destfile="${output-jar}" basedir="bin" />
-    </target>
-
-    <target name="dist" depends="clean,build,jar">
-        <fail unless="version" message="You need to specify a version number"/>
-        <property name="tarfile" value="${ant.project.name}_${version}.tar"/>
-        <tar destfile="${tarfile}" basedir="." includes="${output-jar} ${ant.project.name}/*" />
-        <gzip destfile="${tarfile}.gz" src="${tarfile}" />
-        <delete file="${tarfile}"/>
     </target>
 </project>
