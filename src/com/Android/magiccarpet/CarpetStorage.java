@@ -27,8 +27,13 @@ import org.bukkit.entity.Player;
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+// NOTE: If any non-transient variables in here are added, removed, or changed in any way,
+// be sure to change the serialVersionUID.
+// Even better, don't change, add, or remove any non-transient variables
 public class CarpetStorage implements Serializable {
+	private static final long serialVersionUID = -3032497655167520562L;
 	private class CarpetEntry implements Serializable {
+		private static final long serialVersionUID = -1018038015899892219L;
 		public int lastSize = plugin.carpSize;
 		public boolean lightsOn = false;
 		public boolean hasCarpet = false;
@@ -37,10 +42,11 @@ public class CarpetStorage implements Serializable {
 		public transient Carpet carpet;
 	}
 	private transient MagicCarpet plugin;
-	private Map<String,CarpetEntry> carpets = new HashMap<String,CarpetEntry>();
+	private HashMap<String,CarpetEntry> carpets = new HashMap<String,CarpetEntry>();
 	
-	public CarpetStorage(MagicCarpet plug) {
+	public CarpetStorage attach(MagicCarpet plug) {
 		plugin = plug;
+		return this;
 	}
 	
 	private CarpetEntry entry(Player player) {
@@ -137,7 +143,6 @@ public class CarpetStorage implements Serializable {
 		if(entry.carpet != null)
 			entry.carpet.suppress();
 		entry.carpet = null;
-		entry.hasCarpet = false;
 	}
 
 	public void assign(Player player, Carpet carpet) {

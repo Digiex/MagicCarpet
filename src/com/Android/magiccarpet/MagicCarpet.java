@@ -1,5 +1,11 @@
 package com.Android.magiccarpet;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.logging.Logger;
 
 import org.bukkit.command.*;
@@ -34,7 +40,7 @@ public class MagicCarpet extends JavaPlugin {
 	private final MagicDamageListener damageListener = new MagicDamageListener(this);
 	private Configuration config;
 	private static Logger log = Logger.getLogger("Minecraft");
-	CarpetStorage carpets = new CarpetStorage(this);
+	CarpetStorage carpets = new CarpetStorage().attach(this);
 	boolean crouchDef = true;
 	boolean glowCenter = true;
 	int carpSize = 5;
@@ -43,10 +49,10 @@ public class MagicCarpet extends JavaPlugin {
 	public void onEnable() {
 		PluginDescriptionFile pdfFile = this.getDescription();
 		String name = pdfFile.getName();
-		config = getConfiguration();
-		
-		loadConfig();
 		if( !getDataFolder().exists()) getDataFolder().mkdirs();
+		config = getConfiguration();
+		loadConfig();
+		loadCarpets();
 		
 		log.info("[" + name + "] " + name + " version " + pdfFile.getVersion() + " is enabled!");
 		log.info("[" + name + "] Take yourself wonder by wonder, using /magiccarpet or /mc. ");
@@ -72,9 +78,46 @@ public class MagicCarpet extends JavaPlugin {
 		config.save();
 	}
 	
+	private File carpetsFile() {
+		return new File(getDataFolder(), "carpets.dat");
+	}
+	
+	public void loadCarpets() {
+		File carpetDat = carpetsFile();
+		if(!carpetDat.exists()) return;
+		log.info("Loading saved carpets...");
+		try {
+			FileInputStream file = new FileInputStream(carpetDat);
+			ObjectInputStream in = new ObjectInputStream(file);
+			carpets = (CarpetStorage)in.readObject();
+			carpets.attach(this);
+			in.close();
+		} catch(IOException e) {
+			log.warning("Error writing to carpets.dat; carpets data has not been saved!");
+			e.printStackTrace();
+		} catch(ClassNotFoundException e) {
+			log.severe("CarpetStorage class not found! This should never happen!");
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveCarpets() {
+		File carpetDat = carpetsFile();
+		log.info("Saving carpets...");
+		try {
+			FileOutputStream file = new FileOutputStream(carpetDat);
+			ObjectOutputStream out = new ObjectOutputStream(file);
+			out.writeObject(carpets);
+			out.close();
+		} catch(IOException e) {
+			log.warning("Error writing to carpets.dat; carpets data has not been saved!");
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	public void onDisable() {
-		// TODO: Save carpets (and load them in onEnable)
+		saveCarpets();
 		carpets.clear();
 		System.out.println("Magic Carpet disabled. Thanks for trying the plugin!");
 	}
