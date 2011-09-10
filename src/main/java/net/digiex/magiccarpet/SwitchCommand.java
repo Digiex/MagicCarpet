@@ -1,4 +1,4 @@
-package com.Android.magiccarpet;
+package net.digiex.magiccarpet;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

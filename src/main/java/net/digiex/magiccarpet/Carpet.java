@@ -1,4 +1,4 @@
-package com.Android.magiccarpet;
+package net.digiex.magiccarpet;
 
 import static java.lang.Math.abs;
 

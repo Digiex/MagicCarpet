@@ -1,6 +1,6 @@
-package com.Android.magiccarpet;
+package net.digiex.magiccarpet;
 
-import com.Android.magiccarpet.Carpet.LightMode;
+import net.digiex.magiccarpet.Carpet.LightMode;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

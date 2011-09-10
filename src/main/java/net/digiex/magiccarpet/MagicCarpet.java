@@ -1,4 +1,4 @@
-package com.Android.magiccarpet;
+package net.digiex.magiccarpet;
 
 import java.io.File;
 import java.io.FileInputStream;
