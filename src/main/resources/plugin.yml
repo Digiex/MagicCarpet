@@ -3,7 +3,7 @@ main: net.digiex.magiccarpet.MagicCarpet
 main: com.Android.magiccarpet.MagicCarpet
 version: 2.0
 dev-url: http://dev.bukkit.org/server-mods/magiccarpet/
-authors: [Android, Celtic Minstrel]
+authors: [Android, Celtic Minstrel, xzKinGzxBuRnzx]
 commands:
   magiccarpet:
     description: Take yourself wonder by wonder on a carpet made of glass.

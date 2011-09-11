@@ -6,7 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.logging.Logger;
+import java.util.EnumSet;
+
+import static org.bukkit.Material.*;
 
 import org.bukkit.Material;
 import org.bukkit.command.*;
@@ -20,7 +22,7 @@ import org.bukkit.util.config.Configuration;
 
 /*
  * Magic Carpet 2.0
- * Copyright (C) 2011 Celtic Minstrel
+ * Copyright (C) 2011 Android, Celtic Minstrel, xzKinGzxBuRnzx
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,26 +39,34 @@ import org.bukkit.util.config.Configuration;
  */
 
 public class MagicCarpet extends JavaPlugin {
+	private static final EnumSet<Material> acceptableMaterial = EnumSet.of(
+		STONE, GRASS, DIRT, COBBLESTONE, WOOD, BEDROCK, SAND, GRAVEL, GOLD_ORE, IRON_ORE, COAL_ORE, LOG,
+		LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK, /*DISPENSER,*/ SANDSTONE, NOTE_BLOCK, PISTON_STICKY_BASE,
+		PISTON_BASE, WOOL, GOLD_BLOCK, IRON_BLOCK, DOUBLE_STEP, STEP, BRICK, TNT, BOOKSHELF, MOSSY_COBBLESTONE,
+		OBSIDIAN, /*CHEST,*/ DIAMOND_ORE, DIAMOND_BLOCK, WORKBENCH, SOIL, /*FURNACE,*/ REDSTONE_ORE, ICE, SNOW_BLOCK,
+		CLAY, JUKEBOX, PUMPKIN, NETHERRACK, SOUL_SAND, GLOWSTONE, JACK_O_LANTERN/*, LOCKED_CHEST*/
+	);
 	private final MagicPlayerListener playerListener = new MagicPlayerListener(this);
 	private final MagicDamageListener damageListener = new MagicDamageListener(this);
 	private Configuration config;
     public MagicCarpetLogging log = new MagicCarpetLogging();
-    private File file = new File("plugins" + File.separator + "MagicCarpet", "config.yml");
 	CarpetStorage carpets = new CarpetStorage().attach(this);
 	boolean crouchDef = true;
 	boolean glowCenter = true;
 	int carpSize = 5;
-    public Material carpMaterial = Material.GLASS;
-    public Material lightMaterial = Material.GLOWSTONE;
-    public boolean autoLight = false;
-	
+    Material carpMaterial = GLASS;
+    Material lightMaterial = GLOWSTONE;
+    boolean autoLight = false;
+    
 	@Override
 	public void onEnable() {
 		PluginDescriptionFile pdfFile = this.getDescription();
 		String name = pdfFile.getName();
-		if( !getDataFolder().exists()) getDataFolder().mkdirs();
+		if(!getDataFolder().exists()) getDataFolder().mkdirs();
 		config = getConfiguration();
-		loadConfig();
+		
+		if(new File(getDataFolder(), "config.yml").exists()) loadConfig();
+		else saveConfig();
 		loadCarpets();
 		
 		log.info("[" + name + "] " + name + " version " + pdfFile.getVersion() + " is enabled!");
@@ -69,26 +79,31 @@ public class MagicCarpet extends JavaPlugin {
 		crouchDef = config.getBoolean("crouch-descent", config.getBoolean("Crouch Default", true));
 		glowCenter = config.getBoolean("center-light", config.getBoolean("Put glowstone for light in center", false));
 		carpSize = config.getInt("default-size", config.getInt("Default size for carpet", 5));
-        carpMaterial = Material.getMaterial((Integer) config.getProperty("Carpet Material"));
-        if (!acceptableMaterial(carpMaterial)) {
-            carpMaterial = Material.GLASS;
+        carpMaterial = Material.getMaterial(config.getInt("carpet", config.getInt("Carpet Material", GLASS.getId())));
+        if (!acceptableMaterial.contains(carpMaterial)) {
+            carpMaterial = GLASS;
         }
-        lightMaterial = Material.getMaterial((Integer) config.getProperty("Carpet Light Material"));
-        if (!acceptableMaterial(lightMaterial)) {
-            lightMaterial = Material.GLOWSTONE;
+        lightMaterial = Material.getMaterial(config.getInt("carpet-light", config.getInt("Carpet Light Material", GLOWSTONE.getId())));
+        if (!acceptableMaterial.contains(lightMaterial)) {
+            lightMaterial = GLOWSTONE;
         }
-        autoLight = config.getBoolean("Use expiremential lightning", autoLight);
+        autoLight = config.getBoolean("auto-light", config.getBoolean("Use expiremential lightning", autoLight));
 		config.removeProperty("Use Properties Permissions");
 		config.removeProperty("Crouch Default");
 		config.removeProperty("Put glowstone for light in center");
 		config.removeProperty("Default size for carpet");
+		config.removeProperty("Carpet Material");
+		config.removeProperty("Carpet Light Material");
+		config.removeProperty("Use expiremential lightning");
 		saveConfig();
 	}
 	
 	public void saveConfig() {
-		config.setProperty("Crouch Default", crouchDef);
-		config.setProperty("Put glowstone for light in center", glowCenter);
-		config.setProperty("Default size for carpet", carpSize);
+		config.setProperty("crouch-descent", crouchDef);
+		config.setProperty("center-light", glowCenter);
+		config.setProperty("default-size", carpSize);
+		config.setProperty("carpet", carpMaterial.getId());
+		config.setProperty("carpet-light", lightMaterial.getId());
 		config.save();
 	}
 	
@@ -146,7 +161,7 @@ public class MagicCarpet extends JavaPlugin {
 		pm.registerEvent(Type.BLOCK_BREAK, damageListener, damageListener.executor, Priority.Normal, this);
 		pm.registerEvent(Type.BLOCK_PHYSICS, damageListener, damageListener.executor, Priority.Normal, this);
 		pm.registerEvent(Type.ENTITY_DAMAGE, damageListener, damageListener.executor, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PISTON_RETRACT, blockListener, Priority.Normal, this);
+        pm.registerEvent(Type.BLOCK_PISTON_RETRACT, damageListener, damageListener.executor, Priority.Normal, this);
 		getCommand("magiccarpet").setExecutor(new CarpetCommand(this));
 		getCommand("magiclight").setExecutor(new LightCommand(this));
 		getCommand("carpetswitch").setExecutor(new SwitchCommand(this));
@@ -154,20 +169,12 @@ public class MagicCarpet extends JavaPlugin {
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
-		if (commandName.equals("mr")) {
-            if (canReload(player)) {
-                Enumeration<String> e = carpets.keys();
-                while (e.hasMoreElements()) {
-                    String name = e.nextElement();
-                    Carpet cc = carpets.get(name);
-                    cc.removeCarpet();
-                }
-                carpets.clear();
+		if(command.getName().equalsIgnoreCase("mr")) {
+            if(sender.hasPermission("magiccarpet.mr")) {
                 loadConfig();
-                player.sendMessage("MagicCarpet reloaded!");
-            } else {
-                player.sendMessage("You do not have permission to reload MagicCarpet");
-            }
+                sender.sendMessage("MagicCarpet reloaded!");
+            } else sender.sendMessage("You do not have permission to reload MagicCarpet.");
+            return true;
         }
 		sender.sendMessage("Error: unexpected command '" + command.getName() + "'; please report!");
 		return false;
@@ -190,113 +197,5 @@ public class MagicCarpet extends JavaPlugin {
             return true;
         }
         return false;
-    }
-
-    public boolean acceptableMaterial(Material material) {
-        int id = material.getId();
-        switch (id) {
-            case 1:
-                return true;
-            case 2:
-                return true;
-            case 3:
-                return true;
-            case 4:
-                return true;
-            case 5:
-                return true;
-            case 7:
-                return true;
-            case 12:
-                return true;
-            case 13:
-                return true;
-            case 14:
-                return true;
-            case 15:
-                return true;
-            case 16:
-                return true;
-            case 17:
-                return true;
-            case 18:
-                return true;
-            case 19:
-                return true;
-            case 20:
-                return true;
-            case 21:
-                return true;
-            case 22:
-                return true;
-            case 23:
-                return true;
-            case 24:
-                return true;
-            case 25:
-                return true;
-            case 29:
-                return true;
-            case 33:
-                return true;
-            case 35:
-                return true;
-            case 41:
-                return true;
-            case 42:
-                return true;
-            case 43:
-                return true;
-            case 45:
-                return true;
-            case 46:
-                return true;
-            case 47:
-                return true;
-            case 48:
-                return true;
-            case 49:
-                return true;
-            case 54:
-                return true;
-            case 56:
-                return true;
-            case 57:
-                return true;
-            case 58:
-                return true;
-            case 60:
-                return true;
-            case 61:
-                return true;
-            case 62:
-                return true;
-            case 73:
-                return true;
-            case 74:
-                return true;
-            case 79:
-                return true;
-            case 80:
-                return true;
-            case 82:
-                return true;
-            case 84:
-                return true;
-            case 86:
-                return true;
-            case 87:
-                return true;
-            case 88:
-                return true;
-            case 89:
-                return true;
-            case 91:
-                return true;
-            case 95:
-                return true;
-            default:
-                return false;
-        }
     }
 }

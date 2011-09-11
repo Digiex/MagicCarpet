@@ -13,7 +13,7 @@ import org.bukkit.util.Vector;
 
 /*
 * Magic Carpet 2.0
-* Copyright (C) 2011 Celtic Minstrel
+* Copyright (C) 2011 Android, Celtic Minstrel, xzKinGzxBuRnzx
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by

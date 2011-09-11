@@ -7,13 +7,14 @@ import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.plugin.EventExecutor;
 
 /*
 * Magic Carpet 2.0
-* Copyright (C) 2011 Celtic Minstrel
+* Copyright (C) 2011 Android, Celtic Minstrel, xzKinGzxBuRnzx
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,9 @@ public class MagicDamageListener implements Listener {
 				break;
 			case BLOCK_PHYSICS:
 				((MagicDamageListener)listener).onBlockPhysics((BlockPhysicsEvent)event);
+				break;
+			case BLOCK_PISTON_RETRACT:
+				((MagicDamageListener)listener).onBlockPistonRetract((BlockPistonRetractEvent)event);
 				break;
 			}
 		}
@@ -104,19 +108,13 @@ public class MagicDamageListener implements Listener {
 		}
 	}
     
-    @Override
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
-        carpets = listener.getCarpets();
-        for (Carpet carpet : carpets.values()) {
-            if (carpet == null) {
-                return;
-            }
+        for(Carpet carpet : plugin.carpets.all()) {
+            if(carpet == null) continue;
 
-            boolean test = carpet.checkBlock(event.getRetractLocation().getBlock());
+            boolean test = carpet.isCovering(event.getRetractLocation().getBlock());
 
-            if (test) {
-                event.setCancelled(true);
-            }
+            if(test) event.setCancelled(true);
         }
     }
 }
