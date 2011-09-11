@@ -5,3 +5,5 @@ test.sh
 bin/
 magiccarpet.jar
 .project
+.settings/
+.svn

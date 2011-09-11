@@ -103,4 +103,20 @@ public class MagicDamageListener implements Listener {
 //			}
 		}
 	}
+    
+    @Override
+    public void onBlockPistonRetract(BlockPistonRetractEvent event) {
+        carpets = listener.getCarpets();
+        for (Carpet carpet : carpets.values()) {
+            if (carpet == null) {
+                return;
+            }
+
+            boolean test = carpet.checkBlock(event.getRetractLocation().getBlock());
+
+            if (test) {
+                event.setCancelled(true);
+            }
+        }
+    }
 }

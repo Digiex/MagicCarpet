@@ -180,6 +180,17 @@ public class Carpet {
 		case 3: this.rad = 1; break;
 		case 5: this.rad = 2; break;
 		case 7: this.rad = 3; break;
+        case 9:
+            size = 4;
+            break;
+        case 11:
+            size = 5;
+            break;
+        case 13:
+            size = 6;
+            break;
+        case 15:
+            size = 7;
 		default: this.rad = 2; break;
 		}
 		this.radsq = rad*rad;
