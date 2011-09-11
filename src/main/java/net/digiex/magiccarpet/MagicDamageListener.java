@@ -7,9 +7,11 @@ import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.material.Redstone;
 import org.bukkit.plugin.EventExecutor;
 
 /*
@@ -46,6 +48,9 @@ public class MagicDamageListener implements Listener {
 				break;
 			case BLOCK_PISTON_RETRACT:
 				((MagicDamageListener)listener).onBlockPistonRetract((BlockPistonRetractEvent)event);
+				break;
+			case BLOCK_PISTON_EXTEND:
+				((MagicDamageListener)listener).onBlockPistonExtend((BlockPistonExtendEvent)event);
 				break;
 			}
 		}
@@ -90,6 +95,7 @@ public class MagicDamageListener implements Listener {
 	// Prevent carpets from affecting things they pass such as floating sand
 	public void onBlockPhysics(BlockPhysicsEvent event) {
 		//System.out.println("Block physics: " + event.getBlock().getType() + "; changed " + event.getChangedType());
+		if(event.getChangedType().getNewData((byte)0) instanceof Redstone) return;
 		for(Carpet carpet : plugin.carpets.all()){
 			if(carpet == null || !carpet.isVisible()) continue;
 			if(carpet.touches(event.getBlock())) {
@@ -109,12 +115,32 @@ public class MagicDamageListener implements Listener {
 	}
     
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
+    	//System.out.println("Piston retract...");
+    	if(event.isSticky()) {
+	        for(Carpet carpet : plugin.carpets.all()) {
+	            if(carpet == null) continue;
+	            if(carpet.isCovering(event.getRetractLocation().getBlock())) {
+	            	event.setCancelled(true);
+	        		//System.out.println("Cancelled piston retract!");
+	            	return;
+	            }
+	        }
+    	}
+		//System.out.println("Allowed piston retract!");
+    }
+    
+    public void onBlockPistonExtend(BlockPistonExtendEvent event) {
+    	//System.out.println("Piston extend...");
         for(Carpet carpet : plugin.carpets.all()) {
             if(carpet == null) continue;
-
-            boolean test = carpet.isCovering(event.getRetractLocation().getBlock());
-
-            if(test) event.setCancelled(true);
+            for(Block block : event.getBlocks()) {
+            	if(carpet.isCovering(block)) {
+            		event.setCancelled(true);
+            		//System.out.println("Cancelled piston extend!");
+            		return;
+            	}
+            }
         }
+		//System.out.println("Allowed piston extend!");
     }
 }

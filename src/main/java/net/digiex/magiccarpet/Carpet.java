@@ -47,8 +47,10 @@ public class Carpet {
 		int dx,dy,dz;
 		boolean fake = false;
 		BlockState block;
+		Material strand;
 		
 		void update() {
+			if(block.getBlock().getType() != strand) return;
 			if(fake) {
 				Location loc = currentCentre.getRelative(dx, dy, dz).getLocation();
 				who.sendBlockChange(loc, block.getType(), block.getRawData());
@@ -60,6 +62,8 @@ public class Carpet {
 				Location loc = currentCentre.getRelative(dx, dy, dz).getLocation();
 				who.sendBlockChange(loc, material, (byte)0);
 			} else bl.setTypeId(material.getId(), false);
+			strand = material;
+			
 		}
 
 		public boolean shouldGlow() {
@@ -203,8 +207,8 @@ public class Carpet {
         case 15:this.rad = 7; break;
 		default:this.rad = 2; break;
 		}
-		this.radsq = rad*rad;
-		this.radplsq = (rad+1)*(rad+1);
+		this.radsq = rad*rad*2;
+		this.radplsq = (rad+1)*(rad+1)*2;
 
 		int i = 0;
 		for (int x = -rad; x <= rad; x++){
