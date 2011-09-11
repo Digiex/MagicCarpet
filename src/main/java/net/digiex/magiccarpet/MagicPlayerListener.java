@@ -53,9 +53,9 @@ public class MagicPlayerListener extends PlayerListener {
         }
         carpet.drawCarpet();
     }
-
+    
     @Override
-    public void onPlayerQuit(PlayerQuitEvent event) {
+    public void onPlayerKick(PlayerKickEvent event) {
         Player player = event.getPlayer();
         Carpet carpet = (Carpet) carpets.get(player.getName());
         if (carpet == null) {
@@ -63,9 +63,9 @@ public class MagicPlayerListener extends PlayerListener {
         }
         carpet.removeCarpet();
     }
-    
+
     @Override
-    public void onPlayerKick(PlayerKickEvent event) {
+    public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         Carpet carpet = (Carpet) carpets.get(player.getName());
         if (carpet == null) {

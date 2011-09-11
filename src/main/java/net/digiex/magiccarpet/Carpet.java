@@ -30,19 +30,6 @@ import org.bukkit.Material;
  */
 public class Carpet {
 
-    private MagicCarpet plugin;
-    Block currentBlock;
-    int size = 0;
-    int rad = 0;
-    boolean lights = false;
-    boolean glowCenter = false;
-
-    public Carpet(MagicCarpet plugin, boolean cent) {
-        this.plugin = plugin;
-        setSize(5);
-        glowCenter = cent;
-    }
-
     public class CarpetFiber {
 
         public CarpetFiber(int x, int y, int z, int type, boolean torch) {
@@ -55,6 +42,19 @@ public class Carpet {
         int x, y, z, type = 0;
         boolean torch = false;
         Block block = null;
+    }
+
+    private MagicCarpet plugin;
+    Block currentBlock;
+    int size = 0;
+    int rad = 0;
+    boolean lights = false;
+    boolean glowCenter = false;
+
+    public Carpet(MagicCarpet plugin, boolean cent) {
+        this.plugin = plugin;
+        setSize(5);
+        glowCenter = cent;
     }
     public CarpetFiber[] fibers;
 
