@@ -35,7 +35,7 @@ public class MagicCarpet extends JavaPlugin {
 
     private ArrayList<String> lights = new ArrayList<String>();
     private final MagicPlayerListener playerListener = new MagicPlayerListener(this);
-    private final MagicBlockListener blockListener = new MagicBlockListener(this, playerListener);
+    private final MagicDamageListener blockListener = new MagicDamageListener(this, playerListener);
     public MagicCarpetLogging log = new MagicCarpetLogging();
     private File file = new File("plugins" + File.separator + "MagicCarpet", "config.yml");
     private Configuration config = new Configuration(file);

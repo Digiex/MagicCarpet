@@ -6,13 +6,13 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockListener;
 
-public class MagicBlockListener extends BlockListener {
+public class MagicDamageListener extends BlockListener {
 
     private MagicCarpet parent;
     MagicPlayerListener listener;
     Hashtable<String, Carpet> carpets;
 
-    public MagicBlockListener(MagicCarpet parent, MagicPlayerListener play) {
+    public MagicDamageListener(MagicCarpet parent, MagicPlayerListener play) {
         this.parent = parent;
         listener = play;
     }
