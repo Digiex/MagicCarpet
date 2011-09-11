@@ -2,6 +2,7 @@ package net.digiex.magiccarpet;
 
 import net.digiex.magiccarpet.Carpet.LightMode;
 
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -43,7 +44,19 @@ public class LightCommand implements CommandExecutor {
 			if(args.length < 1) hideOrShow(player);
 			else {
 				LightMode mode = parseMode(args, player);
-				if(mode == null) return false;
+				if(mode == null) {
+					Material material = Material.getMaterial(args[0]);
+					if(material == null || !MagicCarpet.acceptableMaterial.contains(material)) {
+						player.sendMessage("A carpet of that material would not support you!");
+					} else {
+						Carpet carpet = plugin.carpets.get(player);
+						carpet.setLights(material);
+						plugin.carpets.update(player);
+						player.sendMessage("The carpet seems to react to your words, and suddenly changes material!");
+						return true;
+					}
+					return false;
+				}
 				if(mode == plugin.carpets.getLightMode(player)) hideOrShow(player);
 				else {
 					player.sendMessage("The carpet seems to react to your words, and suddenly glows in different places!");

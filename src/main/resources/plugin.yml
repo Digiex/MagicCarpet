@@ -1,8 +1,8 @@
 name: MagicCarpet
 main: net.digiex.magiccarpet.MagicCarpet
-main: com.Android.magiccarpet.MagicCarpet
 version: 2.0
 dev-url: http://dev.bukkit.org/server-mods/magiccarpet/
+website: http://dev.bukkit.org/server-mods/magiccarpet/
 authors: [Android, Celtic Minstrel, xzKinGzxBuRnzx]
 commands:
   magiccarpet:
@@ -13,9 +13,10 @@ commands:
     description: A bright light for your carpet ride.
     aliases: [ml]
     usage: /<command> [ring|centre|center]
-  mr:
-    description: Reloads MagicCarpet
-    usage:
+  magicreload:
+    description: Reloads the MagicCarpet config file.
+    aliases: [mr]
+    usage: /<command>
   carpetswitch:
     description: Allows the user to switch methods for going down with the carpet.
     aliases: [mcs]
@@ -31,11 +32,12 @@ permissions:
     description: Allows the user to switch methods for going down with the carpet.
     default: op
   magiccarpet.mr:
-    description: Is used to reload MagicCarpet
-    default: false
+    description: Allows reloading of the config file.
+    default: op
   magiccarpet.*:
     description: Allows access to all MagicCarpet commands.
     children:
       magiccarpet.mc: true
       magiccarpet.ml: true
       magiccarpet.mcs: true
+      magiccarpet.mr: true

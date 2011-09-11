@@ -1,5 +1,6 @@
 package net.digiex.magiccarpet;
 
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -57,12 +58,21 @@ public class CarpetCommand implements CommandExecutor {
 				try {
 					c = Integer.valueOf(args[0]);
 				} catch(NumberFormatException e) {
-					player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, or 7!");
+					Material material = Material.getMaterial(args[0]);
+					if(material == null) {
+						player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, or 7!");
+					} else if(!MagicCarpet.acceptableMaterial.contains(material)) {
+						player.sendMessage("A carpet of that material would not support you!");
+					} else {
+						carpet.changeCarpet(material);
+						player.sendMessage("The carpet seems to react to your words, and suddenly changes material!");
+						return true;
+					}
 					return false;
 				}
 				
-				if(c != 3 && c != 5 && c != 7) {
-					player.sendMessage("The size can only be 3, 5, or 7. Please enter a proper number");
+				if(c % 2 == 0 || c < 3 || c > 15) {
+					player.sendMessage("The size must be an odd number from 3 to 15.");
 					return false;
 				}
 				if(c != carpet.getSize()) {

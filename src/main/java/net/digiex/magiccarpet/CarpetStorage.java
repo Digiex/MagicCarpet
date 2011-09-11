@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import net.digiex.magiccarpet.Carpet.LightMode;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 /*
@@ -30,15 +31,18 @@ import org.bukkit.entity.Player;
 // be sure to change the serialVersionUID.
 // Even better, don't change, add, or remove any non-transient variables
 public class CarpetStorage implements Serializable {
-	private static final long serialVersionUID = -3032497655167520562L;
+	private static final long serialVersionUID = 3473328596573869349L;
+
 	private class CarpetEntry implements Serializable {
-		private static final long serialVersionUID = -1018038015899892219L;
+		private static final long serialVersionUID = -2545128791365724987L;
 		public int lastSize = plugin.carpSize;
 		public boolean lightsOn = false;
 		public boolean hasCarpet = false;
 		public boolean crouch = plugin.crouchDef;
 		public LightMode lightsMode = plugin.glowCenter ? LightMode.CENTRE : LightMode.RING;
 		public transient Carpet carpet;
+		public Material thread = plugin.carpMaterial;
+		public Material light = plugin.lightMaterial;
 	}
 	private transient MagicCarpet plugin;
 	private HashMap<String,CarpetEntry> carpets = new HashMap<String,CarpetEntry>();
@@ -79,6 +83,14 @@ public class CarpetStorage implements Serializable {
 
 	public boolean crouches(Player player) {
 		return entry(player).crouch;
+	}
+	
+	public Material getMaterial(Player player) {
+		return entry(player).thread;
+	}
+	
+	public Material getLightMaterial(Player player) {
+		return entry(player).light;
 	}
 
 	public Iterable<Carpet> all() {
@@ -165,5 +177,7 @@ public class CarpetStorage implements Serializable {
 		entry.hasCarpet = entry.carpet.isVisible();
 		entry.lightsMode = entry.carpet.getLights();
 		entry.lightsOn = entry.carpet.hasLights();
+		entry.thread = entry.carpet.getThread();
+		entry.light = entry.carpet.getShine();
 	}
 }

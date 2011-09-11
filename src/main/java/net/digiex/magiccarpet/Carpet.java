@@ -79,17 +79,20 @@ public class Carpet {
 	private boolean hidden;
 	private boolean suppressed;
 	private Player who;
+	private Material thread, shine;
 	
 	public static Carpet create(Player player, MagicCarpet plugin) {
 		int sz = plugin.carpets.getLastSize(player);
 		boolean light = plugin.carpets.hasLight(player);
 		LightMode mode = plugin.carpets.getLightMode(player);
-		Carpet carpet = new Carpet(player, sz, mode, light);
+		Material thread = plugin.carpets.getMaterial(player);
+		Material shine = plugin.carpets.getLightMaterial(player);
+		Carpet carpet = new Carpet(player, sz, mode, light, thread, shine);
 		plugin.carpets.assign(player, carpet);
 		return carpet;
 	}
 	
-	private Carpet(Player player, int sz, LightMode lights, boolean on) {
+	private Carpet(Player player, int sz, LightMode lights, boolean on, Material mat, Material light) {
 		setSize(sz);
 		who = player;
 		currentCentre = player.getLocation().getBlock();
@@ -97,6 +100,8 @@ public class Carpet {
 		lightsOn = on;
 		hidden = true;
 		suppressed = false;
+		thread = mat;
+		shine = light;
 	}
 
 
@@ -131,8 +136,8 @@ public class Carpet {
 				else fibre.fake = false;
 				// End cactus hack
 				fibre.block = bl.getState();
-				if(fibre.shouldGlow()) fibre.set(bl, Material.GLOWSTONE);
-				else fibre.set(bl, Material.GLASS);
+				if(fibre.shouldGlow()) fibre.set(bl, shine);
+				else fibre.set(bl, thread);
 			}
 		}
 	}
@@ -146,15 +151,27 @@ public class Carpet {
 		return false;
 	}
 
-	public void changeCarpet(int si){
+	public void changeCarpet(int sz){
 		removeCarpet();
-		setSize(si);
+		setSize(sz);
+		drawCarpet();
+	}
+
+	public void changeCarpet(Material material){
+		removeCarpet();
+		thread = material;
 		drawCarpet();
 	}
 	
 	public void setLights(LightMode mode){
 		lightMode = mode;
 		lightsOn();
+	}
+	
+	public void setLights(Material material) {
+		removeCarpet();
+		shine = material;
+		drawCarpet();
 	}
 	
 	public void lightsOn() {
@@ -180,18 +197,11 @@ public class Carpet {
 		case 3: this.rad = 1; break;
 		case 5: this.rad = 2; break;
 		case 7: this.rad = 3; break;
-        case 9:
-            size = 4;
-            break;
-        case 11:
-            size = 5;
-            break;
-        case 13:
-            size = 6;
-            break;
-        case 15:
-            size = 7;
-		default: this.rad = 2; break;
+        case 9: this.rad = 4;  break;
+        case 11:this.rad = 5; break;
+        case 13:this.rad = 6; break;
+        case 15:this.rad = 7; break;
+		default:this.rad = 2; break;
 		}
 		this.radsq = rad*rad;
 		this.radplsq = (rad+1)*(rad+1);
@@ -269,5 +279,13 @@ public class Carpet {
 		if(block.getLocation().distanceSquared(currentCentre.getLocation()) > radplsq) return false;
 		if(abs(block.getY() - currentCentre.getY()) > 1) return false;
 		return true;
+	}
+
+	public Material getThread() {
+		return thread;
+	}
+
+	public Material getShine() {
+		return shine;
 	}
 }
