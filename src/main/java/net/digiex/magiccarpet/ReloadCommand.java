@@ -37,13 +37,13 @@ public class ReloadCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
         if (!(sender instanceof Player)) {
             plugin.loadConfig();
-            log.info("MagicCarpet has been reloaded!");
+            log.info("has been reloaded!");
             return true;
         } else if (sender instanceof Player) {
             Player player = (Player) sender;
             if (plugin.canReload(player)) {
                 plugin.loadConfig();
-                player.sendMessage("MagicCarpet has been reloaded!");
+                player.sendMessage("has been reloaded!");
             } else {
                 player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
             }
