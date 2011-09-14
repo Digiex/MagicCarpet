@@ -1,5 +1,6 @@
 package net.digiex.magiccarpet;
 
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -22,35 +23,33 @@ import org.bukkit.entity.Player;
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class SwitchCommand implements CommandExecutor {
+public class ReloadCommand implements CommandExecutor {
 
     private MagicCarpet plugin;
+    private MagicCarpetLogging log;
 
-    public SwitchCommand(MagicCarpet plug) {
+    public ReloadCommand(MagicCarpet plug) {
         plugin = plug;
+        log = plug.log;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("Sorry, only players can use the carpet!");
+            plugin.loadConfig();
+            log.info("MagicCarpet has been reloaded!");
+            return true;
+        } else if (sender instanceof Player) {
+            Player player = (Player) sender;
+            if (plugin.canReload(player)) {
+                plugin.loadConfig();
+                player.sendMessage("MagicCarpet has been reloaded!");
+            } else {
+                player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
+            }
             return true;
         }
-        Player player = (Player) sender;
-        if (plugin.canFly(player) && plugin.canSwitch(player)) {
-            plugin.carpets.toggleCrouch(player);
-            if (plugin.carpets.crouches(player)) {
-                player.sendMessage("You now crouch to descend");
-            } else {
-                player.sendMessage("You now look down to descend");
-            }
-        } else {
-            if (plugin.canFly(player)) {
-                player.sendMessage("You don't have permission to switch your mode of descent.");
-            } else {
-                player.sendMessage("You aren't allowed to use the magic carpet!");
-            }
-        }
-        return true;
+        sender.sendMessage("Error: unexpected command '" + command.getName() + "'; please report!");
+        return false;
     }
 }

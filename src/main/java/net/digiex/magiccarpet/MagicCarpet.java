@@ -11,7 +11,6 @@ import java.util.EnumSet;
 import static org.bukkit.Material.*;
 
 import org.bukkit.Material;
-import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -37,15 +36,14 @@ import org.bukkit.util.config.Configuration;
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 public class MagicCarpet extends JavaPlugin {
+
     static final EnumSet<Material> acceptableMaterial = EnumSet.of(
-        STONE, GRASS, DIRT, COBBLESTONE, WOOD, BEDROCK, SAND, GRAVEL, GOLD_ORE, IRON_ORE, COAL_ORE, LOG,
-        LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK, /*DISPENSER,*/ SANDSTONE, NOTE_BLOCK, PISTON_STICKY_BASE,
-        PISTON_BASE, WOOL, GOLD_BLOCK, IRON_BLOCK, DOUBLE_STEP, /*STEP,*/ BRICK, TNT, BOOKSHELF, MOSSY_COBBLESTONE,
-        OBSIDIAN, /*CHEST,*/ DIAMOND_ORE, DIAMOND_BLOCK, WORKBENCH, SOIL, /*FURNACE,*/ REDSTONE_ORE, ICE, SNOW_BLOCK,
-        CLAY, /*JUKEBOX,*/ PUMPKIN, NETHERRACK, SOUL_SAND, GLOWSTONE, JACK_O_LANTERN/*, LOCKED_CHEST*/
-    );
+            STONE, GRASS, DIRT, COBBLESTONE, WOOD, BEDROCK, SAND, GRAVEL, GOLD_ORE, IRON_ORE, COAL_ORE, LOG,
+            LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK, /*DISPENSER,*/ SANDSTONE, NOTE_BLOCK, PISTON_STICKY_BASE,
+            PISTON_BASE, WOOL, GOLD_BLOCK, IRON_BLOCK, DOUBLE_STEP, /*STEP,*/ BRICK, TNT, BOOKSHELF, MOSSY_COBBLESTONE,
+            OBSIDIAN, /*CHEST,*/ DIAMOND_ORE, DIAMOND_BLOCK, WORKBENCH, SOIL, /*FURNACE,*/ REDSTONE_ORE, ICE, SNOW_BLOCK,
+            CLAY, /*JUKEBOX,*/ PUMPKIN, NETHERRACK, SOUL_SAND, GLOWSTONE, JACK_O_LANTERN/*, LOCKED_CHEST*/);
     private final MagicPlayerListener playerListener = new MagicPlayerListener(this);
     private final MagicDamageListener damageListener = new MagicDamageListener(this);
     private Configuration config;
@@ -56,24 +54,29 @@ public class MagicCarpet extends JavaPlugin {
     int carpSize = 5;
     Material carpMaterial = GLASS;
     Material lightMaterial = GLOWSTONE;
-    boolean autoLight = false;
-    
+
     @Override
     public void onEnable() {
         PluginDescriptionFile pdfFile = this.getDescription();
         String name = pdfFile.getName();
-        if(!getDataFolder().exists()) getDataFolder().mkdirs();
+        if (!getDataFolder().exists()) {
+            getDataFolder().mkdirs();
+        }
         config = getConfiguration();
-        
-        if(new File(getDataFolder(), "config.yml").exists()) loadConfig();
-        else saveConfig();
+
+        if (new File(getDataFolder(), "config.yml").exists()) {
+            loadConfig();
+        } else {
+            saveConfig();
+        }
         loadCarpets();
-        
-        log.info("[" + name + "] " + name + " version " + pdfFile.getVersion() + " is enabled!");
-        log.info("[" + name + "] Take yourself wonder by wonder, using /magiccarpet or /mc. ");
         registerEvents();
+        registerCommands();
+
+        log.info("version " + pdfFile.getVersion() + " is enabled!");
+        log.info("Take yourself wonder by wonder, using /magiccarpet or /mc. ");
     }
-    
+
     public void loadConfig() {
         config.load();
         crouchDef = config.getBoolean("crouch-descent", config.getBoolean("Crouch Default", true));
@@ -86,18 +89,8 @@ public class MagicCarpet extends JavaPlugin {
         lightMaterial = Material.getMaterial(config.getInt("carpet-light", config.getInt("Carpet Light Material", GLOWSTONE.getId())));
         if (!acceptableMaterial.contains(lightMaterial)) {
             lightMaterial = GLOWSTONE;
-        }
-        autoLight = config.getBoolean("auto-light", config.getBoolean("Use expiremential lightning", autoLight));
-        config.removeProperty("Use Properties Permissions");
-        config.removeProperty("Crouch Default");
-        config.removeProperty("Put glowstone for light in center");
-        config.removeProperty("Default size for carpet");
-        config.removeProperty("Carpet Material");
-        config.removeProperty("Carpet Light Material");
-        config.removeProperty("Use expiremential lightning");
-        saveConfig();
     }
-    
+
     public void saveConfig() {
         config.setProperty("crouch-descent", crouchDef);
         config.setProperty("center-light", glowCenter);
@@ -106,30 +99,32 @@ public class MagicCarpet extends JavaPlugin {
         config.setProperty("carpet-light", lightMaterial.getId());
         config.save();
     }
-    
+
     private File carpetsFile() {
         return new File(getDataFolder(), "carpets.dat");
     }
-    
+
     public void loadCarpets() {
         File carpetDat = carpetsFile();
-        if(!carpetDat.exists()) return;
+        if (!carpetDat.exists()) {
+            return;
+        }
         log.info("Loading saved carpets...");
         try {
             FileInputStream file = new FileInputStream(carpetDat);
             ObjectInputStream in = new ObjectInputStream(file);
-            carpets = (CarpetStorage)in.readObject();
+            carpets = (CarpetStorage) in.readObject();
             carpets.attach(this);
             in.close();
-        } catch(IOException e) {
+        } catch (IOException e) {
             log.warning("Error writing to carpets.dat; carpets data has not been saved!");
             e.printStackTrace();
-        } catch(ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             log.severe("CarpetStorage class not found! This should never happen!");
             e.printStackTrace();
         }
     }
-    
+
     public void saveCarpets() {
         File carpetDat = carpetsFile();
         log.info("Saving carpets...");
@@ -138,19 +133,19 @@ public class MagicCarpet extends JavaPlugin {
             ObjectOutputStream out = new ObjectOutputStream(file);
             out.writeObject(carpets);
             out.close();
-        } catch(IOException e) {
+        } catch (IOException e) {
             log.warning("Error writing to carpets.dat; carpets data has not been saved!");
             e.printStackTrace();
         }
     }
-    
+
     @Override
     public void onDisable() {
         saveCarpets();
         carpets.clear();
         System.out.println("Magic Carpet disabled. Thanks for trying the plugin!");
     }
-    
+
     private void registerEvents() {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
@@ -163,40 +158,28 @@ public class MagicCarpet extends JavaPlugin {
         pm.registerEvent(Type.ENTITY_DAMAGE, damageListener, damageListener.executor, Priority.Normal, this);
         pm.registerEvent(Type.BLOCK_PISTON_RETRACT, damageListener, damageListener.executor, Priority.Normal, this);
         pm.registerEvent(Type.BLOCK_PISTON_EXTEND, damageListener, damageListener.executor, Priority.Normal, this);
+    }
+
+    private void registerCommands() {
         getCommand("magiccarpet").setExecutor(new CarpetCommand(this));
         getCommand("magiclight").setExecutor(new LightCommand(this));
         getCommand("carpetswitch").setExecutor(new SwitchCommand(this));
+        getCommand("magicreload").setExecutor(new ReloadCommand(this));
     }
-    
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
-        if(command.getName().equalsIgnoreCase("mr")) {
-            if(sender.hasPermission("magiccarpet.mr")) {
-                loadConfig();
-                sender.sendMessage("MagicCarpet reloaded!");
-            } else sender.sendMessage("You do not have permission to reload MagicCarpet.");
-            return true;
-        }
-        sender.sendMessage("Error: unexpected command '" + command.getName() + "'; please report!");
-        return false;
-    }
-    
+
     public boolean canFly(Player player) {
         return player.hasPermission("magiccarpet.mc");
     }
-    
+
     public boolean canLight(Player player) {
         return player.hasPermission("magiccarpet.ml");
     }
-    
+
     public boolean canSwitch(Player player) {
         return player.hasPermission("magiccarpet.mcs");
     }
 
     public boolean canReload(Player player) {
-        if (player.hasPermission("magiccarpet.mr") || player.hasPermission("magiccarpet.*") || player.hasPermission("*")) {
-            return true;
-        }
-        return false;
+        return player.hasPermission("magiccarpet.mr");
     }
 }
