@@ -43,13 +43,12 @@ public class ReloadCommand implements CommandExecutor {
             Player player = (Player) sender;
             if (plugin.canReload(player)) {
                 plugin.loadConfig();
-                player.sendMessage("has been reloaded!");
+                player.sendMessage("MagicCarpet has been reloaded!");
             } else {
                 player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
             }
             return true;
         }
-        sender.sendMessage("Error: unexpected command '" + command.getName() + "'; please report!");
         return false;
     }
 }
