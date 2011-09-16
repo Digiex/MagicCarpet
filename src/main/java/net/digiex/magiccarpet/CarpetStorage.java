@@ -81,6 +81,9 @@ public class CarpetStorage implements Serializable {
     }
 
     public int getLastSize(Player player) {
+        if (entry(player).lastSize > plugin.maxCarpSize) {
+            return plugin.carpSize;
+        }
         return entry(player).lastSize;
     }
 

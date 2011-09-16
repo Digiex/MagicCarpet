@@ -54,6 +54,7 @@ public class MagicCarpet extends JavaPlugin {
     int carpSize = 5;
     Material carpMaterial = GLASS;
     Material lightMaterial = GLOWSTONE;
+    int maxCarpSize = 15;
 
     @Override
     public void onEnable() {
@@ -89,6 +90,8 @@ public class MagicCarpet extends JavaPlugin {
         lightMaterial = Material.getMaterial(config.getInt("carpet-light", config.getInt("Carpet Light Material", GLOWSTONE.getId())));
         if (!acceptableMaterial.contains(lightMaterial)) {
             lightMaterial = GLOWSTONE;
+        }
+        maxCarpSize = config.getInt("max-size", 15);
     }
 
     public void saveConfig() {
@@ -97,6 +100,7 @@ public class MagicCarpet extends JavaPlugin {
         config.setProperty("default-size", carpSize);
         config.setProperty("carpet", carpMaterial.getId());
         config.setProperty("carpet-light", lightMaterial.getId());
+        config.setProperty("max-size", maxCarpSize);
         config.save();
     }
 

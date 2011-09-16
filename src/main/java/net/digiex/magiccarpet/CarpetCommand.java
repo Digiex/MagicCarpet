@@ -77,6 +77,10 @@ public class CarpetCommand implements CommandExecutor {
                     return false;
                 }
                 if (c != carpet.getSize()) {
+                    if (c > plugin.maxCarpSize) {
+                        player.sendMessage("A carpet of that size is not allowed.");
+                        return false;
+                    }
                     player.sendMessage("The carpet seems to react to your words, and suddenly changes size!");
                     carpet.changeCarpet(c);
                 } else {
@@ -92,6 +96,10 @@ public class CarpetCommand implements CommandExecutor {
                 }
                 if (c % 2 == 0 || c < 3 || c > 15) {
                     player.sendMessage("The size can only be an odd number from 3 to 15. Please enter a proper number");
+                    return false;
+                }
+                if (c > plugin.maxCarpSize) {
+                    player.sendMessage("A carpet of that size is not allowed.");
                     return false;
                 }
                 player.sendMessage("A glass carpet appears below your feet.");
