@@ -25,86 +25,86 @@ import org.bukkit.entity.Player;
 */
 
 public class CarpetCommand implements CommandExecutor {
-	private MagicCarpet plugin;
+    private MagicCarpet plugin;
 
-	public CarpetCommand(MagicCarpet plug) {
-		plugin = plug;
-	}
-	
-	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if(!(sender instanceof Player)) {
-			sender.sendMessage("Sorry, only players can use the carpet!");
-			return true;
-		}
-		Player player = (Player)sender;
-		Carpet carpet = plugin.carpets.get(player);
-		if(!canFly(player, carpet)) {
-			player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
-			return true;
-		}
-		int c = 5;
-		if(carpet == null) carpet = Carpet.create(player, plugin);
-		if(args.length < 1 || !plugin.canFly(player)) {
-			if(carpet.isVisible()) {
-				player.sendMessage("Poof! The magic carpet disappears.");
-				carpet.hide();
-			} else {
-				player.sendMessage("A glass carpet appears below your feet.");
-				carpet.show();
-			}
-		} else {
-			if(carpet.isVisible()) {
-				try {
-					c = Integer.valueOf(args[0]);
-				} catch(NumberFormatException e) {
-					Material material = Material.getMaterial(args[0]);
-					if(material == null) {
-						player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, or 7!");
-					} else if(!MagicCarpet.acceptableMaterial.contains(material)) {
-						player.sendMessage("A carpet of that material would not support you!");
-					} else {
-						carpet.changeCarpet(material);
-						player.sendMessage("The carpet seems to react to your words, and suddenly changes material!");
-						return true;
-					}
-					return false;
-				}
-				
-				if(c % 2 == 0 || c < 3 || c > 15) {
-					player.sendMessage("The size must be an odd number from 3 to 15.");
-					return false;
-				}
-				if(c != carpet.getSize()) {
-					player.sendMessage("The carpet seems to react to your words, and suddenly changes size!");
-					carpet.changeCarpet(c);
-				} else {
-					player.sendMessage("Poof! The magic carpet disappears.");
-					carpet.hide();
-				}
-			} else {
-				try {
-					c = Integer.valueOf(args[0]);
-				} catch(NumberFormatException e) {
-					player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, or 7!");
-					return false;
-				}
-				
-				if(c != 3 && c != 5 && c != 7) {
-					player.sendMessage("The size can only be 3, 5, or 7. Please enter a proper number");
-					return false;
-				}
-				player.sendMessage("A glass carpet appears below your feet.");
-				carpet.show();
-			}
-		}
-		plugin.carpets.update(player);
-		return true;
-	}
+    public CarpetCommand(MagicCarpet plug) {
+        plugin = plug;
+    }
+    
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if(!(sender instanceof Player)) {
+            sender.sendMessage("Sorry, only players can use the carpet!");
+            return true;
+        }
+        Player player = (Player)sender;
+        Carpet carpet = plugin.carpets.get(player);
+        if(!canFly(player, carpet)) {
+            player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
+            return true;
+        }
+        int c = 5;
+        if(carpet == null) carpet = Carpet.create(player, plugin);
+        if(args.length < 1 || !plugin.canFly(player)) {
+            if(carpet.isVisible()) {
+                player.sendMessage("Poof! The magic carpet disappears.");
+                carpet.hide();
+            } else {
+                player.sendMessage("A glass carpet appears below your feet.");
+                carpet.show();
+            }
+        } else {
+            if(carpet.isVisible()) {
+                try {
+                    c = Integer.valueOf(args[0]);
+                } catch(NumberFormatException e) {
+                    Material material = Material.getMaterial(args[0]);
+                    if(material == null) {
+                        player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, or 7!");
+                    } else if(!MagicCarpet.acceptableMaterial.contains(material)) {
+                        player.sendMessage("A carpet of that material would not support you!");
+                    } else {
+                        carpet.changeCarpet(material);
+                        player.sendMessage("The carpet seems to react to your words, and suddenly changes material!");
+                        return true;
+                    }
+                    return false;
+                }
+                
+                if(c % 2 == 0 || c < 3 || c > 15) {
+                    player.sendMessage("The size must be an odd number from 3 to 15.");
+                    return false;
+                }
+                if(c != carpet.getSize()) {
+                    player.sendMessage("The carpet seems to react to your words, and suddenly changes size!");
+                    carpet.changeCarpet(c);
+                } else {
+                    player.sendMessage("Poof! The magic carpet disappears.");
+                    carpet.hide();
+                }
+            } else {
+                try {
+                    c = Integer.valueOf(args[0]);
+                } catch(NumberFormatException e) {
+                    player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be 3, 5, or 7!");
+                    return false;
+                }
+                
+                if(c != 3 && c != 5 && c != 7) {
+                    player.sendMessage("The size can only be 3, 5, or 7. Please enter a proper number");
+                    return false;
+                }
+                player.sendMessage("A glass carpet appears below your feet.");
+                carpet.show();
+            }
+        }
+        plugin.carpets.update(player);
+        return true;
+    }
 
-	private boolean canFly(Player player, Carpet carpet) {
-		if(plugin.canFly(player)) return true;
-		if(carpet != null && carpet.isVisible()) return true;
-		return false;
-	}
+    private boolean canFly(Player player, Carpet carpet) {
+        if(plugin.canFly(player)) return true;
+        if(carpet != null && carpet.isVisible()) return true;
+        return false;
+    }
 }

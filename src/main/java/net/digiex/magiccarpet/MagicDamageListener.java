@@ -33,114 +33,114 @@ import org.bukkit.plugin.EventExecutor;
 */
 
 public class MagicDamageListener implements Listener {
-	public EventExecutor executor = new EventExecutor() {
-		@Override@SuppressWarnings("incomplete-switch")
-		public void execute(Listener listener, Event event) {
-			switch(event.getType()) {
-			case BLOCK_BREAK:
-				((MagicDamageListener)listener).onBlockBreak((BlockBreakEvent)event);
-				break;
-			case ENTITY_DAMAGE:
-				((MagicDamageListener)listener).onEntityDamage((EntityDamageEvent)event);
-				break;
-			case BLOCK_PHYSICS:
-				((MagicDamageListener)listener).onBlockPhysics((BlockPhysicsEvent)event);
-				break;
-			case BLOCK_PISTON_RETRACT:
-				((MagicDamageListener)listener).onBlockPistonRetract((BlockPistonRetractEvent)event);
-				break;
-			case BLOCK_PISTON_EXTEND:
-				((MagicDamageListener)listener).onBlockPistonExtend((BlockPistonExtendEvent)event);
-				break;
-			}
-		}
-	};
-	private MagicCarpet plugin;
-	
-	public MagicDamageListener(MagicCarpet plug) {
-		plugin = plug;
-	}
-	
-	//When a player joins the game, if they had a carpet when the logged out it puts it back.
-	public void onBlockBreak(BlockBreakEvent event) {
-		for(Carpet carpet : plugin.carpets.all()){
-			if(carpet == null || !carpet.isVisible()) continue;
-			if(carpet.isCovering(event.getBlock())) event.setCancelled(true);
-		}
-	}
-	
-	// Prevent carpets from suffocating players (and mobs too!)
-	public void onEntityDamage(EntityDamageEvent event) {
-		if(event.getCause() == DamageCause.SUFFOCATION) {
-			if(!(event.getEntity() instanceof LivingEntity)) return;
-			Block eyes = ((LivingEntity)event.getEntity()).getEyeLocation().getBlock();
-			Block block = event.getEntity().getLocation().getBlock();
-			for(Carpet carpet : plugin.carpets.all()){
-				if(carpet == null || !carpet.isVisible()) continue;
-				if(carpet.touches(eyes)) {
-					event.setCancelled(true);
-					return;
-				} else if(carpet.touches(block)) {
-					event.setCancelled(true);
-					return;
-				}
-			}
-		} else if(event.getCause() == DamageCause.FALL) {
-			if(!(event.getEntity() instanceof Player)) return;
-			if(plugin.carpets.has((Player)event.getEntity())) event.setCancelled(true);
-			System.out.println("Cancelled fall damage? " + event.isCancelled());
-		}
-	}
-	
-	// Prevent carpets from affecting things they pass such as floating sand
-	public void onBlockPhysics(BlockPhysicsEvent event) {
-		//System.out.println("Block physics: " + event.getBlock().getType() + "; changed " + event.getChangedType());
-		if(event.getChangedType().getNewData((byte)0) instanceof Redstone) return;
-		for(Carpet carpet : plugin.carpets.all()){
-			if(carpet == null || !carpet.isVisible()) continue;
-			if(carpet.touches(event.getBlock())) {
-				event.setCancelled(true);
-				return;
-			}
-//			if(!carpet.touches(event.getBlock())) continue;
-//			for(BlockFace face : BlockFace.values()) {
-//				if(face.getModX() > 1 || face.getModX() < -1 || face.getModY() > 1 || face.getModY() < -1) continue;
-//				Block block = event.getBlock().getRelative(face);
-//				if(carpet.isCovering(block)) {
-//					event.setCancelled(true);
-//					return;
-//				}
-//			}
-		}
-	}
+    public EventExecutor executor = new EventExecutor() {
+        @Override@SuppressWarnings("incomplete-switch")
+        public void execute(Listener listener, Event event) {
+            switch(event.getType()) {
+            case BLOCK_BREAK:
+                ((MagicDamageListener)listener).onBlockBreak((BlockBreakEvent)event);
+                break;
+            case ENTITY_DAMAGE:
+                ((MagicDamageListener)listener).onEntityDamage((EntityDamageEvent)event);
+                break;
+            case BLOCK_PHYSICS:
+                ((MagicDamageListener)listener).onBlockPhysics((BlockPhysicsEvent)event);
+                break;
+            case BLOCK_PISTON_RETRACT:
+                ((MagicDamageListener)listener).onBlockPistonRetract((BlockPistonRetractEvent)event);
+                break;
+            case BLOCK_PISTON_EXTEND:
+                ((MagicDamageListener)listener).onBlockPistonExtend((BlockPistonExtendEvent)event);
+                break;
+            }
+        }
+    };
+    private MagicCarpet plugin;
+    
+    public MagicDamageListener(MagicCarpet plug) {
+        plugin = plug;
+    }
+    
+    //When a player joins the game, if they had a carpet when the logged out it puts it back.
+    public void onBlockBreak(BlockBreakEvent event) {
+        for(Carpet carpet : plugin.carpets.all()){
+            if(carpet == null || !carpet.isVisible()) continue;
+            if(carpet.isCovering(event.getBlock())) event.setCancelled(true);
+        }
+    }
+    
+    // Prevent carpets from suffocating players (and mobs too!)
+    public void onEntityDamage(EntityDamageEvent event) {
+        if(event.getCause() == DamageCause.SUFFOCATION) {
+            if(!(event.getEntity() instanceof LivingEntity)) return;
+            Block eyes = ((LivingEntity)event.getEntity()).getEyeLocation().getBlock();
+            Block block = event.getEntity().getLocation().getBlock();
+            for(Carpet carpet : plugin.carpets.all()){
+                if(carpet == null || !carpet.isVisible()) continue;
+                if(carpet.touches(eyes)) {
+                    event.setCancelled(true);
+                    return;
+                } else if(carpet.touches(block)) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        } else if(event.getCause() == DamageCause.FALL) {
+            if(!(event.getEntity() instanceof Player)) return;
+            if(plugin.carpets.has((Player)event.getEntity())) event.setCancelled(true);
+            System.out.println("Cancelled fall damage? " + event.isCancelled());
+        }
+    }
+    
+    // Prevent carpets from affecting things they pass such as floating sand
+    public void onBlockPhysics(BlockPhysicsEvent event) {
+        //System.out.println("Block physics: " + event.getBlock().getType() + "; changed " + event.getChangedType());
+        if(event.getChangedType().getNewData((byte)0) instanceof Redstone) return;
+        for(Carpet carpet : plugin.carpets.all()){
+            if(carpet == null || !carpet.isVisible()) continue;
+            if(carpet.touches(event.getBlock())) {
+                event.setCancelled(true);
+                return;
+            }
+//          if(!carpet.touches(event.getBlock())) continue;
+//          for(BlockFace face : BlockFace.values()) {
+//              if(face.getModX() > 1 || face.getModX() < -1 || face.getModY() > 1 || face.getModY() < -1) continue;
+//              Block block = event.getBlock().getRelative(face);
+//              if(carpet.isCovering(block)) {
+//                  event.setCancelled(true);
+//                  return;
+//              }
+//          }
+        }
+    }
     
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
-    	//System.out.println("Piston retract...");
-    	if(event.isSticky()) {
-	        for(Carpet carpet : plugin.carpets.all()) {
-	            if(carpet == null) continue;
-	            if(carpet.isCovering(event.getRetractLocation().getBlock())) {
-	            	event.setCancelled(true);
-	        		//System.out.println("Cancelled piston retract!");
-	            	return;
-	            }
-	        }
-    	}
-		//System.out.println("Allowed piston retract!");
+        //System.out.println("Piston retract...");
+        if(event.isSticky()) {
+            for(Carpet carpet : plugin.carpets.all()) {
+                if(carpet == null) continue;
+                if(carpet.isCovering(event.getRetractLocation().getBlock())) {
+                    event.setCancelled(true);
+                    //System.out.println("Cancelled piston retract!");
+                    return;
+                }
+            }
+        }
+        //System.out.println("Allowed piston retract!");
     }
     
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
-    	//System.out.println("Piston extend...");
+        //System.out.println("Piston extend...");
         for(Carpet carpet : plugin.carpets.all()) {
             if(carpet == null) continue;
             for(Block block : event.getBlocks()) {
-            	if(carpet.isCovering(block)) {
-            		event.setCancelled(true);
-            		//System.out.println("Cancelled piston extend!");
-            		return;
-            	}
+                if(carpet.isCovering(block)) {
+                    event.setCancelled(true);
+                    //System.out.println("Cancelled piston extend!");
+                    return;
+                }
             }
         }
-		//System.out.println("Allowed piston extend!");
+        //System.out.println("Allowed piston extend!");
     }
 }

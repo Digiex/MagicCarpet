@@ -24,32 +24,32 @@ import org.bukkit.entity.Player;
 */
 
 public class SwitchCommand implements CommandExecutor {
-	private MagicCarpet plugin;
-	
-	public SwitchCommand(MagicCarpet plug) {
-		plugin = plug;
-	}
-	
-	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if(!(sender instanceof Player)) {
-			sender.sendMessage("Sorry, only players can use the carpet!");
-			return true;
-		}
-		Player player = (Player)sender;
-		if(plugin.canFly(player) && plugin.canSwitch(player)) {
-			plugin.carpets.toggleCrouch(player);
-			if(plugin.carpets.crouches(player)) {
-				player.sendMessage("You now crouch to descend");
-			} else {
-				player.sendMessage("You now look down to descend");
-			}
-		} else {
-			if(plugin.canFly(player))
-				player.sendMessage("You don't have permission to switch your mode of descent.");
-			else player.sendMessage("You aren't allowed to use the magic carpet!");
-		}
-		return true;
-	}
-	
+    private MagicCarpet plugin;
+    
+    public SwitchCommand(MagicCarpet plug) {
+        plugin = plug;
+    }
+    
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if(!(sender instanceof Player)) {
+            sender.sendMessage("Sorry, only players can use the carpet!");
+            return true;
+        }
+        Player player = (Player)sender;
+        if(plugin.canFly(player) && plugin.canSwitch(player)) {
+            plugin.carpets.toggleCrouch(player);
+            if(plugin.carpets.crouches(player)) {
+                player.sendMessage("You now crouch to descend");
+            } else {
+                player.sendMessage("You now look down to descend");
+            }
+        } else {
+            if(plugin.canFly(player))
+                player.sendMessage("You don't have permission to switch your mode of descent.");
+            else player.sendMessage("You aren't allowed to use the magic carpet!");
+        }
+        return true;
+    }
+    
 }
