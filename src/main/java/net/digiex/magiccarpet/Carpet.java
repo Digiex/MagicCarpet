@@ -278,7 +278,10 @@ public class Carpet {
         if (currentCentre == null || block == null) {
             return false;
         }
-        if (block.getLocation().distanceSquared(currentCentre.getLocation()) > radsq) {
+        if (block.getLocation().getWorld() != getLocation().getWorld()) {
+            return false;
+        }
+        if (block.getLocation().distanceSquared(getLocation()) > radsq) {
             return false;
         }
         for (CarpetFibre fibre : fibres) {
@@ -345,7 +348,10 @@ public class Carpet {
         if (currentCentre == null || block == null) {
             return false;
         }
-        if (block.getLocation().distanceSquared(currentCentre.getLocation()) > radplsq) {
+        if (block.getLocation().getWorld() != getLocation().getWorld()) {
+            return false;
+        }
+        if (block.getLocation().distanceSquared(getLocation()) > radplsq) {
             return false;
         }
         if (abs(block.getY() - currentCentre.getY()) > 1) {
