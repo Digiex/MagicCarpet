@@ -1,6 +1,7 @@
 package net.digiex.magiccarpet;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.min;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -30,7 +31,6 @@ import org.bukkit.Material;
  * Carpet.java
  * <br /><br />
  * Defines the basic 5x5 carpet object that is placed underneath the player.
- *
  *
  * @author Android <spparr@gmail.com>
  */
@@ -87,9 +87,10 @@ public class Carpet {
     }
 
     public enum LightMode {
-
         RING, CENTRE, BOTH
     };
+    private static final int MAX_SUPPORTED_SIZE = 15;
+    private static int defaultSize = 5, maxSize = MAX_SUPPORTED_SIZE;
     private CarpetFibre[] fibres;
     private Block currentCentre;
     private int edge = 0, area = 0, rad = 0, radsq = 0, radplsq = 0;
@@ -108,6 +109,8 @@ public class Carpet {
         Material shine = plugin.carpets.getLightMaterial(player);
         Carpet carpet = new Carpet(player, sz, mode, light, thread, shine);
         plugin.carpets.assign(player, carpet);
+        defaultSize = plugin.carpSize;
+        maxSize = min(plugin.maxCarpSize, MAX_SUPPORTED_SIZE);
         return carpet;
     }
 
@@ -226,39 +229,13 @@ public class Carpet {
     private void setSize(int size) {
         if (size < 0) {
             size = abs(size); // Sanity check
-        }
-        this.edge = size;
-        this.area = size * size;
-
+        } else if(size > maxSize) size = defaultSize;
+        edge = size;
+        area = size * size;
         fibres = new CarpetFibre[area];
-        switch (size) {
-            case 3:
-                this.rad = 1;
-                break;
-            case 5:
-                this.rad = 2;
-                break;
-            case 7:
-                this.rad = 3;
-                break;
-            case 9:
-                this.rad = 4;
-                break;
-            case 11:
-                this.rad = 5;
-                break;
-            case 13:
-                this.rad = 6;
-                break;
-            case 15:
-                this.rad = 7;
-                break;
-            default:
-                this.rad = 2;
-                break;
-        }
-        this.radsq = rad * rad * 2;
-        this.radplsq = (rad + 1) * (rad + 1) * 2;
+        rad = (size - 1) / 2;
+        radsq = rad * rad * 2;
+        radplsq = (rad + 1) * (rad + 1) * 2;
 
         int i = 0;
         for (int x = -rad; x <= rad; x++) {

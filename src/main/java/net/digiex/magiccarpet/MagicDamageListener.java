@@ -120,15 +120,6 @@ public class MagicDamageListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-//			if(!carpet.touches(event.getBlock())) continue;
-//			for(BlockFace face : BlockFace.values()) {
-//				if(face.getModX() > 1 || face.getModX() < -1 || face.getModY() > 1 || face.getModY() < -1) continue;
-//				Block block = event.getBlock().getRelative(face);
-//				if(carpet.isCovering(block)) {
-//					event.setCancelled(true);
-//					return;
-//				}
-//			}
         }
     }
 

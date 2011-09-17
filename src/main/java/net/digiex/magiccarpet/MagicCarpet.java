@@ -59,7 +59,6 @@ public class MagicCarpet extends JavaPlugin {
     @Override
     public void onEnable() {
         PluginDescriptionFile pdfFile = this.getDescription();
-        String name = pdfFile.getName();
         if (!getDataFolder().exists()) {
             getDataFolder().mkdirs();
         }
