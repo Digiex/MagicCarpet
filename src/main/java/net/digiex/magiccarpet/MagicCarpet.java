@@ -39,10 +39,10 @@ import org.bukkit.util.config.Configuration;
 public class MagicCarpet extends JavaPlugin {
 
     static final EnumSet<Material> acceptableMaterial = EnumSet.of(
-            STONE, GRASS, DIRT, COBBLESTONE, WOOD, BEDROCK, SAND, GRAVEL, GOLD_ORE, IRON_ORE, COAL_ORE, LOG,
+            STONE, GRASS, DIRT, COBBLESTONE, WOOD, BEDROCK, GRAVEL, GOLD_ORE, IRON_ORE, COAL_ORE, LOG,
             LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK, /*DISPENSER,*/ SANDSTONE, NOTE_BLOCK, PISTON_STICKY_BASE,
             PISTON_BASE, WOOL, GOLD_BLOCK, IRON_BLOCK, DOUBLE_STEP, /*STEP,*/ BRICK, TNT, BOOKSHELF, MOSSY_COBBLESTONE,
-            OBSIDIAN, /*CHEST,*/ DIAMOND_ORE, DIAMOND_BLOCK, WORKBENCH, SOIL, /*FURNACE,*/ REDSTONE_ORE, ICE, SNOW_BLOCK,
+            OBSIDIAN, /*CHEST,*/ DIAMOND_ORE, DIAMOND_BLOCK, WORKBENCH, SOIL, /*FURNACE,*/ REDSTONE_ORE, SNOW_BLOCK,
             CLAY, /*JUKEBOX,*/ PUMPKIN, NETHERRACK, SOUL_SAND, GLOWSTONE, JACK_O_LANTERN/*, LOCKED_CHEST*/);
     private final MagicPlayerListener playerListener = new MagicPlayerListener(this);
     private final MagicDamageListener damageListener = new MagicDamageListener(this);
