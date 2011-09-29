@@ -40,10 +40,10 @@ public class MagicCarpet extends JavaPlugin {
 
     static final EnumSet<Material> acceptableMaterial = EnumSet.of(
             STONE, GRASS, DIRT, COBBLESTONE, WOOD, BEDROCK, GRAVEL, GOLD_ORE, IRON_ORE, COAL_ORE, LOG,
-            LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK, /*DISPENSER,*/ SANDSTONE, NOTE_BLOCK, PISTON_STICKY_BASE,
-            PISTON_BASE, WOOL, GOLD_BLOCK, IRON_BLOCK, DOUBLE_STEP, /*STEP,*/ BRICK, TNT, BOOKSHELF, MOSSY_COBBLESTONE,
-            OBSIDIAN, /*CHEST,*/ DIAMOND_ORE, DIAMOND_BLOCK, WORKBENCH, SOIL, /*FURNACE,*/ REDSTONE_ORE, SNOW_BLOCK,
-            CLAY, /*JUKEBOX,*/ PUMPKIN, NETHERRACK, SOUL_SAND, GLOWSTONE, JACK_O_LANTERN/*, LOCKED_CHEST*/);
+            LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK, SANDSTONE, NOTE_BLOCK, WOOL, GOLD_BLOCK, 
+            IRON_BLOCK, DOUBLE_STEP, BRICK, TNT, BOOKSHELF, MOSSY_COBBLESTONE,
+            OBSIDIAN, DIAMOND_ORE, DIAMOND_BLOCK, WORKBENCH, SOIL, REDSTONE_ORE, SNOW_BLOCK,
+            CLAY, PUMPKIN, NETHERRACK, SOUL_SAND, GLOWSTONE, JACK_O_LANTERN);
     private final MagicPlayerListener playerListener = new MagicPlayerListener(this);
     private final MagicDamageListener damageListener = new MagicDamageListener(this);
     private Configuration config;
@@ -55,6 +55,7 @@ public class MagicCarpet extends JavaPlugin {
     Material carpMaterial = GLASS;
     Material lightMaterial = GLOWSTONE;
     int maxCarpSize = 15;
+    String allowedmaterial;
 
     @Override
     public void onEnable() {
@@ -91,6 +92,7 @@ public class MagicCarpet extends JavaPlugin {
             lightMaterial = GLOWSTONE;
         }
         maxCarpSize = config.getInt("max-size", 15);
+        allowedmaterial = (String) config.getProperty("allowed-material");
     }
 
     public void saveConfig() {
@@ -100,6 +102,7 @@ public class MagicCarpet extends JavaPlugin {
         config.setProperty("carpet", carpMaterial.getId());
         config.setProperty("carpet-light", lightMaterial.getId());
         config.setProperty("max-size", maxCarpSize);
+        config.setProperty("allowed-material", acceptableMaterial.toString());
         config.save();
     }
 

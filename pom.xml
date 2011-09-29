@@ -18,7 +18,7 @@
     <repositories>
         <repository>
             <id>bukkit-repo</id>
-            <url>http://artifactory.xzkingzxburnzx.tk/repo/</url>
+            <url>http://xzkingzxburnzx.tk/artifactory/repo/</url>
         </repository>
     </repositories>
     

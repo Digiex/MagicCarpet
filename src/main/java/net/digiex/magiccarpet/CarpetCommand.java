@@ -63,12 +63,12 @@ public class CarpetCommand implements CommandExecutor {
                     Material material = Material.getMaterial(args[0]);
                     if (material == null) {
                         player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be an odd number from 3 to 15.");
-                    } else if (!MagicCarpet.acceptableMaterial.contains(material)) {
-                        player.sendMessage("A carpet of that material would not support you!");
-                    } else {
+                    } else if (MagicCarpet.acceptableMaterial.contains(material) && plugin.allowedmaterial.contains(material.toString())) {
                         carpet.changeCarpet(material);
                         player.sendMessage("The carpet seems to react to your words, and suddenly changes material!");
                         return true;
+                    } else {
+                        player.sendMessage("A carpet of that material would not support you!");
                     }
                     return false;
                 }
