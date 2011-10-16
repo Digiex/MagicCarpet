@@ -2,6 +2,7 @@ package net.digiex.magiccarpet;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,13 +12,14 @@ import java.util.EnumSet;
 import static org.bukkit.Material.*;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.config.Configuration;
 
 /*
  * Magic Carpet 2.0
@@ -46,7 +48,8 @@ public class MagicCarpet extends JavaPlugin {
             CLAY, /*JUKEBOX,*/ PUMPKIN, NETHERRACK, SOUL_SAND, GLOWSTONE, JACK_O_LANTERN/*, LOCKED_CHEST*/);
     private final MagicPlayerListener playerListener = new MagicPlayerListener(this);
     private final MagicDamageListener damageListener = new MagicDamageListener(this);
-    private Configuration config;
+    private FileConfiguration config;
+    private File configFile;
     public MagicCarpetLogging log = new MagicCarpetLogging();
     CarpetStorage carpets = new CarpetStorage().attach(this);
     boolean crouchDef = true;
@@ -62,12 +65,13 @@ public class MagicCarpet extends JavaPlugin {
         if (!getDataFolder().exists()) {
             getDataFolder().mkdirs();
         }
-        config = getConfiguration();
+        config = getConfig();
 
-        if (new File(getDataFolder(), "config.yml").exists()) {
-            loadConfig();
+        configFile = new File(getDataFolder(), "config.yml");
+		if (configFile.exists()) {
+            loadSettings();
         } else {
-            saveConfig();
+            saveSettings();
         }
         loadCarpets();
         registerEvents();
@@ -77,8 +81,19 @@ public class MagicCarpet extends JavaPlugin {
         log.info("Take yourself wonder by wonder, using /magiccarpet or /mc. ");
     }
 
-    public void loadConfig() {
-        config.load();
+    public void loadSettings() {
+        try {
+			config.load(configFile);
+		} catch(FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(InvalidConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         crouchDef = config.getBoolean("crouch-descent", config.getBoolean("Crouch Default", true));
         glowCenter = config.getBoolean("center-light", config.getBoolean("Put glowstone for light in center", false));
         carpSize = config.getInt("default-size", config.getInt("Default size for carpet", 5));
@@ -93,14 +108,19 @@ public class MagicCarpet extends JavaPlugin {
         maxCarpSize = config.getInt("max-size", 15);
     }
 
-    public void saveConfig() {
-        config.setProperty("crouch-descent", crouchDef);
-        config.setProperty("center-light", glowCenter);
-        config.setProperty("default-size", carpSize);
-        config.setProperty("carpet", carpMaterial.getId());
-        config.setProperty("carpet-light", lightMaterial.getId());
-        config.setProperty("max-size", maxCarpSize);
-        config.save();
+	public void saveSettings() {
+        config.set("crouch-descent", crouchDef);
+        config.set("center-light", glowCenter);
+        config.set("default-size", carpSize);
+        config.set("carpet", carpMaterial.getId());
+        config.set("carpet-light", lightMaterial.getId());
+        config.set("max-size", maxCarpSize);
+        try {
+			config.save(configFile);
+		} catch(IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     private File carpetsFile() {
