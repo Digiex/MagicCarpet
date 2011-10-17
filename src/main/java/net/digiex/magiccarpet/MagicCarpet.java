@@ -118,7 +118,7 @@ public class MagicCarpet extends JavaPlugin {
         config.set("carpet-light", lightMaterial.getId());
         config.set("max-size", maxCarpSize);
         config.set("allowed-material", acceptableMaterial.toString());
-        config.options().header("Note: allowed-material is for informative purposes only and is not currently used" +
+        config.options().header("# Note: allowed-material is for informative purposes only and is not currently used" +
         		" by the plugin!");
         try {
 			config.save(configFile);
