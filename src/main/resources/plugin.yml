@@ -1,6 +1,6 @@
 name: MagicCarpet
 main: net.digiex.magiccarpet.MagicCarpet
-version: 2.0.3
+version: 2.0.4
 dev-url: http://dev.bukkit.org/server-mods/magiccarpet/
 website: http://dev.bukkit.org/server-mods/magiccarpet/
 authors: [Android, Celtic Minstrel, xzKinGzxBuRnzx]
@@ -34,6 +34,9 @@ permissions:
   magiccarpet.mr:
     description: Allows reloading of the config file.
     default: op
+  magiccarpet.tp:
+    description: Allows the carpet to move when teleporting while active
+    default: op
   magiccarpet.*:
     description: Allows access to all MagicCarpet commands.
     children:
@@ -41,3 +44,4 @@ permissions:
       magiccarpet.ml: true
       magiccarpet.mcs: true
       magiccarpet.mr: true
+      magiccarpet.tp: true

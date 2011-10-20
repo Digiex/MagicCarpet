@@ -210,4 +210,8 @@ public class MagicCarpet extends JavaPlugin {
     public boolean canReload(Player player) {
         return player.hasPermission("magiccarpet.mr");
     }
+    
+    public boolean canTeleFly(Player player) {
+        return player.hasPermission("magiccarpet.tp");
+    }
 }

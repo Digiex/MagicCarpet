@@ -150,6 +150,11 @@ public class MagicPlayerListener extends PlayerListener {
                 && last.getBlockZ() == to.getBlockZ()) {
             return;
         }
+        
+        //Check if the player is allowed to move the carpet via teleport
+        if (!plugin.canTeleFly(player)) {
+            return;
+        }
 
         // Move the carpet
         carpet.moveTo(to);
