@@ -1,5 +1,6 @@
 package net.digiex.magiccarpet;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -112,11 +113,16 @@ public class MagicDamageListener implements Listener {
         if (event.getChangedType().getNewData((byte) 0) instanceof Redstone) {
             return;
         }
+
         for (Carpet carpet : plugin.carpets.all()) {
             if (carpet == null || !carpet.isVisible()) {
                 continue;
             }
             if (carpet.touches(event.getBlock())) {
+                //Prevent players from creating floating torches
+                if (event.getBlock().getType().equals(Material.TORCH)) {
+                    return;
+                }
                 event.setCancelled(true);
                 return;
             }
