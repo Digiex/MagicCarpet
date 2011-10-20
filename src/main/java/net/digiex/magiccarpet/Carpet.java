@@ -45,7 +45,6 @@ public class Carpet {
             this.dz = dz;
         }
         int dx, dy, dz;
-        boolean fake = false;
         BlockState block;
         Material strand;
 
@@ -53,21 +52,11 @@ public class Carpet {
             if (block.getBlock().getType() != strand) {
                 return;
             }
-            if (fake) {
-                Location loc = currentCentre.getRelative(dx, dy, dz).getLocation();
-                who.sendBlockChange(loc, block.getType(), block.getRawData());
-            } else {
-                block.update(true);
-            }
+            block.update(true);
         }
 
         void set(Block bl, Material material) {
-            if (fake) {
-                Location loc = currentCentre.getRelative(dx, dy, dz).getLocation();
-                who.sendBlockChange(loc, material, (byte) 0);
-            } else {
-                bl.setTypeId(material.getId(), false);
-            }
+            bl.setTypeId(material.getId(), false);
             strand = material;
 
         }
@@ -87,6 +76,7 @@ public class Carpet {
     }
 
     public enum LightMode {
+
         RING, CENTRE, BOTH
     };
     private static final int MAX_SUPPORTED_SIZE = 15;
@@ -151,16 +141,6 @@ public class Carpet {
                     fibre.block = null;
                     continue;
                 }
-                // FIXME: Cactus hack
-                if (bl.getRelative(BlockFace.NORTH).getType() == Material.CACTUS
-                        || bl.getRelative(BlockFace.SOUTH).getType() == Material.CACTUS
-                        || bl.getRelative(BlockFace.EAST).getType() == Material.CACTUS
-                        || bl.getRelative(BlockFace.WEST).getType() == Material.CACTUS) {
-                    fibre.fake = true;
-                } else {
-                    fibre.fake = false;
-                }
-                // End cactus hack
                 fibre.block = bl.getState();
                 if (fibre.shouldGlow()) {
                     fibre.set(bl, shine);
@@ -229,7 +209,9 @@ public class Carpet {
     private void setSize(int size) {
         if (size < 0) {
             size = abs(size); // Sanity check
-        } else if(size > maxSize) size = defaultSize;
+        } else if (size > maxSize) {
+            size = defaultSize;
+        }
         edge = size;
         area = size * size;
         fibres = new CarpetFibre[area];
