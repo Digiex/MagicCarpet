@@ -153,6 +153,8 @@ public class MagicPlayerListener extends PlayerListener {
         
         //Check if the player is allowed to move the carpet via teleport
         if (!plugin.canTeleFly(player)) {
+            player.sendMessage("Your carpet cannot follow you there!");
+            carpet.suppress();
             return;
         }
 
