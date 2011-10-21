@@ -118,11 +118,11 @@ public class MagicDamageListener implements Listener {
             if (carpet == null || !carpet.isVisible()) {
                 continue;
             }
+            //Prevent players from creating floating torches
+            if (event.getBlock().getType().equals(Material.TORCH)) {
+                return;
+            }
             if (carpet.touches(event.getBlock())) {
-                //Prevent players from creating floating torches
-                if (event.getBlock().getType().equals(Material.TORCH)) {
-                    return;
-                }
                 event.setCancelled(true);
                 return;
             }
