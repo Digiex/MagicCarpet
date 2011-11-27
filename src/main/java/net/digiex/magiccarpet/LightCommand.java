@@ -1,7 +1,5 @@
 package net.digiex.magiccarpet;
 
-import net.digiex.magiccarpet.Carpet.LightMode;
-
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -44,26 +42,17 @@ public class LightCommand implements CommandExecutor {
             if (args.length < 1) {
                 hideOrShow(player);
             } else {
-                LightMode mode = parseMode(args, player);
-                if (mode == null) {
-                    Material material = Material.getMaterial(args[0]);
-                    if (material == null || !MagicCarpet.acceptableMaterial.contains(material)) {
-                        player.sendMessage("A carpet of that material would not support you!");
-                    } else {
-                        Carpet carpet = plugin.carpets.get(player);
-                        carpet.setLights(material);
-                        plugin.carpets.update(player);
-                        player.sendMessage("The carpet seems to react to your words, and suddenly changes material!");
-                        return true;
-                    }
-                    return false;
-                }
-                if (mode == plugin.carpets.getLightMode(player)) {
-                    hideOrShow(player);
+                Material material = Material.getMaterial(args[0]);
+                if (material == null || !MagicCarpet.acceptableLight.contains(material)) {
+                    player.sendMessage("A carpet of that material would not support you!");
                 } else {
-                    player.sendMessage("The carpet seems to react to your words, and suddenly glows in different places!");
-                    plugin.carpets.lightOn(player, mode);
+                    Carpet carpet = plugin.carpets.get(player);
+                    carpet.setLights(material);
+                    plugin.carpets.update(player);
+                    player.sendMessage("The carpet seems to react to your words, and suddenly changes material!");
+                    return true;
                 }
+                return false;
             }
         } else {
             if (plugin.canFly(player)) {
@@ -83,43 +72,5 @@ public class LightCommand implements CommandExecutor {
             plugin.carpets.lightOn(player);
             player.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
         }
-    }
-
-    private LightMode parseMode(String[] args, Player player) {
-        LightMode mode;
-        if (args[0].equalsIgnoreCase("ring")) {
-            mode = LightMode.RING;
-        } else if (args[0].equalsIgnoreCase("centre")) {
-            mode = LightMode.CENTRE;
-        } else if (args[0].equalsIgnoreCase("center")) {
-            mode = LightMode.CENTRE;
-        } else if (args[0].equalsIgnoreCase("both")) {
-            mode = LightMode.BOTH;
-        } else {
-            player.sendMessage("Invalid light mode '" + args[0] + "'");
-            return null;
-        }
-        if (args.length > 1) {
-            if (mode != LightMode.BOTH) {
-                if (mode == LightMode.CENTRE && args[1].equalsIgnoreCase("ring")) {
-                    mode = LightMode.BOTH;
-                } else if (mode == LightMode.RING && args[1].equalsIgnoreCase("centre")) {
-                    mode = LightMode.BOTH;
-                } else if (mode == LightMode.RING && args[1].equalsIgnoreCase("center")) {
-                    mode = LightMode.BOTH;
-                } else {
-                    player.sendMessage("Invalid light mode '" + args[1] + "'");
-                    return null;
-                }
-            } else {
-                player.sendMessage("Invalid light mode '" + args[1] + "'");
-                return null;
-            }
-            if (args.length > 2) {
-                player.sendMessage("Too many arguments!");
-                return null;
-            }
-        }
-        return mode;
     }
 }

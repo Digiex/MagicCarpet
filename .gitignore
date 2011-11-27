@@ -7,3 +7,5 @@ magiccarpet.jar
 .project
 .settings/
 .svn
+target/
+._*

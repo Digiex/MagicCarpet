@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import net.digiex.magiccarpet.Carpet.LightMode;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -40,7 +38,6 @@ public class CarpetStorage implements Serializable {
         public boolean lightsOn = false;
         public boolean hasCarpet = false;
         public boolean crouch = plugin.crouchDef;
-        public LightMode lightsMode = plugin.glowCenter ? LightMode.CENTRE : LightMode.RING;
         public transient Carpet carpet;
         public Material thread = plugin.carpMaterial;
         public Material light = plugin.lightMaterial;
@@ -74,10 +71,6 @@ public class CarpetStorage implements Serializable {
 
     public boolean has(Player player) {
         return entry(player).hasCarpet;
-    }
-
-    public LightMode getLightMode(Player player) {
-        return entry(player).lightsMode;
     }
 
     public int getLastSize(Player player) {
@@ -135,19 +128,6 @@ public class CarpetStorage implements Serializable {
         };
     }
 
-    // Mutators
-    public void lightOn(Player player, LightMode mode) {
-        CarpetEntry entry = entry(player);
-        entry.lightsOn = true;
-        entry.lightsMode = mode;
-        if (entry.hasCarpet && entry.carpet != null) {
-            if (!entry.carpet.hasLights()) {
-                entry.carpet.lightsOn();
-            }
-            entry.carpet.setLights(mode);
-        }
-    }
-
     public void lightOn(Player player) {
         CarpetEntry entry = entry(player);
         entry.lightsOn = true;
@@ -203,7 +183,6 @@ public class CarpetStorage implements Serializable {
         }
         entry.lastSize = entry.carpet.getSize();
         entry.hasCarpet = entry.carpet.isVisible();
-        entry.lightsMode = entry.carpet.getLights();
         entry.lightsOn = entry.carpet.hasLights();
         entry.thread = entry.carpet.getThread();
         entry.light = entry.carpet.getShine();

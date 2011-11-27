@@ -5,7 +5,7 @@
 
     <groupId>net.digiex</groupId>
     <artifactId>MagicCarpet</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>dev-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>MagicCarpet</name>
@@ -30,8 +30,8 @@
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <artifactId>bukkit</artifactId>
+            <version>1.0.0-R1-SNAPSHOT</version>
         </dependency>
     </dependencies>
     

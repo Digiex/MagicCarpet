@@ -62,8 +62,8 @@ public class CarpetCommand implements CommandExecutor {
                 } catch (NumberFormatException e) {
                     Material material = Material.getMaterial(args[0]);
                     if (material == null) {
-                        player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be an odd number from 3 to 15.");
-                    } else if (MagicCarpet.acceptableMaterial.contains(material) && plugin.allowedmaterial.contains(material.toString())) {
+                        player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be an odd number from 3 to 9.");
+                    } else if (MagicCarpet.acceptableCarpet.contains(material)) {
                         carpet.changeCarpet(material);
                         player.sendMessage("The carpet seems to react to your words, and suddenly changes material!");
                         return true;
@@ -72,8 +72,8 @@ public class CarpetCommand implements CommandExecutor {
                     }
                     return false;
                 }
-                if (c % 2 == 0 || c < 3 || c > 15) {
-                    player.sendMessage("The size must be an odd number from 3 to 15.");
+                if (c % 2 == 0 || c < 3 || c > 9) {
+                    player.sendMessage("The size must be an odd number from 3 to 9.");
                     return false;
                 }
                 if (c != carpet.getSize()) {
@@ -91,11 +91,11 @@ public class CarpetCommand implements CommandExecutor {
                 try {
                     c = Integer.valueOf(args[0]);
                 } catch (NumberFormatException e) {
-                    player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be an odd number from 3 to 15.");
+                    player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be an odd number from 3 to 9.");
                     return false;
                 }
-                if (c % 2 == 0 || c < 3 || c > 15) {
-                    player.sendMessage("The size can only be an odd number from 3 to 15. Please enter a proper number");
+                if (c % 2 == 0 || c < 3 || c > 9) {
+                    player.sendMessage("The size can only be an odd number from 3 to 9. Please enter a proper number");
                     return false;
                 }
                 if (c > plugin.maxCarpSize) {

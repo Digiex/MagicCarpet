@@ -40,12 +40,14 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class MagicCarpet extends JavaPlugin {
 
-    static final EnumSet<Material> acceptableMaterial = EnumSet.of(
+    static final EnumSet<Material> acceptableCarpet = EnumSet.of(
             STONE, GRASS, DIRT, COBBLESTONE, WOOD, BEDROCK, GRAVEL, GOLD_ORE, IRON_ORE, COAL_ORE, LOG,
             LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK, SANDSTONE, NOTE_BLOCK, WOOL, GOLD_BLOCK, 
             IRON_BLOCK, DOUBLE_STEP, BRICK, TNT, BOOKSHELF, MOSSY_COBBLESTONE,
-            OBSIDIAN, DIAMOND_ORE, DIAMOND_BLOCK, WORKBENCH, SOIL, REDSTONE_ORE, SNOW_BLOCK,
-            CLAY, PUMPKIN, NETHERRACK, SOUL_SAND, GLOWSTONE, JACK_O_LANTERN);
+            OBSIDIAN, DIAMOND_ORE, DIAMOND_BLOCK, WORKBENCH, SOIL, SNOW_BLOCK,
+            CLAY, PUMPKIN, NETHERRACK, SOUL_SAND);
+    static final EnumSet<Material> acceptableLight = EnumSet.of(
+            GLOWSTONE, JACK_O_LANTERN);
     private final MagicPlayerListener playerListener = new MagicPlayerListener(this);
     private final MagicDamageListener damageListener = new MagicDamageListener(this);
     private FileConfiguration config;
@@ -57,8 +59,9 @@ public class MagicCarpet extends JavaPlugin {
     int carpSize = 5;
     Material carpMaterial = GLASS;
     Material lightMaterial = GLOWSTONE;
-    int maxCarpSize = 15;
+    int maxCarpSize = 9;
     String allowedmaterial;
+    boolean teleportBlock = false;
 
     @Override
     public void onEnable() {
@@ -99,15 +102,15 @@ public class MagicCarpet extends JavaPlugin {
         glowCenter = config.getBoolean("center-light", config.getBoolean("Put glowstone for light in center", false));
         carpSize = config.getInt("default-size", config.getInt("Default size for carpet", 5));
         carpMaterial = Material.getMaterial(config.getInt("carpet", config.getInt("Carpet Material", GLASS.getId())));
-        if (!acceptableMaterial.contains(carpMaterial)) {
+        if (!acceptableCarpet.contains(carpMaterial)) {
             carpMaterial = GLASS;
         }
         lightMaterial = Material.getMaterial(config.getInt("carpet-light", config.getInt("Carpet Light Material", GLOWSTONE.getId())));
-        if (!acceptableMaterial.contains(lightMaterial)) {
+        if (!acceptableLight.contains(lightMaterial)) {
             lightMaterial = GLOWSTONE;
         }
-        maxCarpSize = config.getInt("max-size", 15);
-        allowedmaterial = config.getString("allowed-material");
+        maxCarpSize = config.getInt("max-size", 9);
+        teleportBlock = config.getBoolean("teleport-block");
     }
 
 	public void saveSettings() {
@@ -117,9 +120,7 @@ public class MagicCarpet extends JavaPlugin {
         config.set("carpet", carpMaterial.getId());
         config.set("carpet-light", lightMaterial.getId());
         config.set("max-size", maxCarpSize);
-        config.set("allowed-material", acceptableMaterial.toString());
-        config.options().header("# Note: allowed-material is for informative purposes only and is not currently used" +
-        		" by the plugin!");
+        config.set("teleport-block", teleportBlock);
         try {
 			config.save(configFile);
 		} catch(IOException e) {

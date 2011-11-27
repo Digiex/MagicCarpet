@@ -4,7 +4,6 @@ import static java.lang.Math.abs;
 import static java.lang.Math.min;
 
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
@@ -60,31 +59,23 @@ public class Carpet {
             strand = material;
 
         }
-
+        
         public boolean shouldGlow() {
             if (!lightsOn) {
                 return false;
             }
             if (dx == 0 && dz == 0) {
-                return lightMode != LightMode.RING;
-            }
-            if (dx == rad || dx == -rad || dz == rad || dz == -rad) {
-                return lightMode != LightMode.CENTRE;
+                return true;
             }
             return false;
         }
     }
-
-    public enum LightMode {
-
-        RING, CENTRE, BOTH
-    };
-    private static final int MAX_SUPPORTED_SIZE = 15;
+    
+    private static final int MAX_SUPPORTED_SIZE = 9;
     private static int defaultSize = 5, maxSize = MAX_SUPPORTED_SIZE;
     private CarpetFibre[] fibres;
     private Block currentCentre;
     private int edge = 0, area = 0, rad = 0, radsq = 0, radplsq = 0;
-    private LightMode lightMode;
     private boolean lightsOn;
     private boolean hidden;
     private boolean suppressed;
@@ -94,21 +85,19 @@ public class Carpet {
     public static Carpet create(Player player, MagicCarpet plugin) {
         int sz = plugin.carpets.getLastSize(player);
         boolean light = plugin.carpets.hasLight(player);
-        LightMode mode = plugin.carpets.getLightMode(player);
         Material thread = plugin.carpets.getMaterial(player);
         Material shine = plugin.carpets.getLightMaterial(player);
-        Carpet carpet = new Carpet(player, sz, mode, light, thread, shine);
+        Carpet carpet = new Carpet(player, sz, light, thread, shine);
         plugin.carpets.assign(player, carpet);
         defaultSize = plugin.carpSize;
         maxSize = min(plugin.maxCarpSize, MAX_SUPPORTED_SIZE);
         return carpet;
     }
 
-    private Carpet(Player player, int sz, LightMode lights, boolean on, Material mat, Material light) {
+    private Carpet(Player player, int sz, boolean on, Material mat, Material light) {
         setSize(sz);
         who = player;
         currentCentre = player.getLocation().getBlock();
-        lightMode = lights == null ? LightMode.RING : lights;
         lightsOn = on;
         hidden = true;
         suppressed = false;
@@ -180,11 +169,6 @@ public class Carpet {
         removeCarpet();
         thread = material;
         drawCarpet();
-    }
-
-    public void setLights(LightMode mode) {
-        lightMode = mode;
-        lightsOn();
     }
 
     public void setLights(Material material) {
@@ -293,10 +277,6 @@ public class Carpet {
             removeCarpet();
         }
         suppressed = true;
-    }
-
-    public LightMode getLights() {
-        return lightMode;
     }
 
     public boolean hasLights() {
