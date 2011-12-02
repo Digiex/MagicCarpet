@@ -28,13 +28,11 @@ import org.bukkit.entity.Player;
 // be sure to change the serialVersionUID.
 // Even better, don't change, add, or remove any non-transient variables
 public class CarpetStorage implements Serializable {
+	private static final long serialVersionUID = 1168884913848994599L;
 
-    private static final long serialVersionUID = 3473328596573869349L;
-
-    private class CarpetEntry implements Serializable {
-
-        private static final long serialVersionUID = -2545128791365724987L;
-        public int lastSize = plugin.carpSize;
+	private class CarpetEntry implements Serializable {
+		private static final long serialVersionUID = -7853484578047997719L;
+		public int lastSize = plugin.carpSize;
         public boolean lightsOn = false;
         public boolean hasCarpet = false;
         public boolean crouch = plugin.crouchDef;
