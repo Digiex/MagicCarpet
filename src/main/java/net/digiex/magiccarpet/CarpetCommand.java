@@ -113,11 +113,11 @@ public class CarpetCommand implements CommandExecutor {
                     return false;
                 }
                 if (plugin.canFlyAt(player, c)) {
-                    player.sendMessage("The carpet seems to react to your words, and suddenly changes size!");
-                    carpet.changeCarpet(c);
+                    player.sendMessage("A glass carpet appears below your feet.");
                     carpet.show();
+                    carpet.changeCarpet(c);
                 } else {
-                    player.sendMessage("The carpet failed to expand, no permission.");
+                    player.sendMessage("A carpet of that size is not allowed.");
                     return true;
                 }
             }
