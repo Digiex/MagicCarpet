@@ -60,7 +60,7 @@ public class Carpet {
 
         }
         
-        public boolean shouldGlow() {
+        boolean shouldGlow() {
             if (!lightsOn) {
                 return false;
             }
@@ -131,7 +131,7 @@ public class Carpet {
                     continue;
                 }
                 fibre.block = bl.getState();
-                if (fibre.shouldGlow()) {
+                if (fibre.shouldGlow() && shouldChange()) {
                     fibre.set(bl, shine);
                 } else {
                     fibre.set(bl, thread);
@@ -154,6 +154,15 @@ public class Carpet {
             return true;
         }
         if (type == Material.STATIONARY_LAVA) {
+            return true;
+        }
+        return false;
+    }
+    
+    //Prevent lag while using /ml with custom carpets.
+    private boolean shouldChange() {
+        if (thread == Material.GLASS || thread == Material.LEAVES) {
+            //glass is best, however leaves does work without noticable lag.
             return true;
         }
         return false;

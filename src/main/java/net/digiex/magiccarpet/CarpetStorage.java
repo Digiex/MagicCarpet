@@ -33,7 +33,7 @@ public class CarpetStorage implements Serializable {
 	private class CarpetEntry implements Serializable {
 		private static final long serialVersionUID = -7853484578047997719L;
 		public int lastSize = plugin.carpSize;
-        public boolean lightsOn = false;
+        public boolean lightsOn = plugin.glowCenter;
         public boolean hasCarpet = false;
         public boolean crouch = plugin.crouchDef;
         public transient Carpet carpet;
@@ -72,9 +72,6 @@ public class CarpetStorage implements Serializable {
     }
 
     public int getLastSize(Player player) {
-        if (entry(player).lastSize > plugin.maxCarpSize) {
-            return plugin.carpSize;
-        }
         return entry(player).lastSize;
     }
 

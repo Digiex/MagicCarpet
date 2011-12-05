@@ -62,6 +62,7 @@ public class MagicCarpet extends JavaPlugin {
     int maxCarpSize = 9;
     String allowedmaterial;
     boolean teleportBlock = false;
+    boolean customCarpets = true;
 
     @Override
     public void onEnable() {
@@ -82,7 +83,6 @@ public class MagicCarpet extends JavaPlugin {
         registerCommands();
 
         log.info("version " + pdfFile.getVersion() + " is enabled!");
-        log.info("Take yourself wonder by wonder, using /magiccarpet or /mc. ");
     }
 
     public void loadSettings() {
@@ -111,6 +111,7 @@ public class MagicCarpet extends JavaPlugin {
         }
         maxCarpSize = config.getInt("max-size", 9);
         teleportBlock = config.getBoolean("teleport-block");
+        customCarpets = config.getBoolean("allow-custom");
     }
 
 	public void saveSettings() {
@@ -121,6 +122,7 @@ public class MagicCarpet extends JavaPlugin {
         config.set("carpet-light", lightMaterial.getId());
         config.set("max-size", maxCarpSize);
         config.set("teleport-block", teleportBlock);
+        config.set("allow-custom", customCarpets);
         try {
 			config.save(configFile);
 		} catch(IOException e) {
@@ -172,7 +174,6 @@ public class MagicCarpet extends JavaPlugin {
     public void onDisable() {
         saveCarpets();
         carpets.clear();
-        System.out.println("Magic Carpet disabled. Thanks for trying the plugin!");
     }
 
     private void registerEvents() {
@@ -193,7 +194,6 @@ public class MagicCarpet extends JavaPlugin {
         getCommand("magiccarpet").setExecutor(new CarpetCommand(this));
         getCommand("magiclight").setExecutor(new LightCommand(this));
         getCommand("carpetswitch").setExecutor(new SwitchCommand(this));
-        getCommand("magicreload").setExecutor(new ReloadCommand(this));
     }
 
     public boolean canFly(Player player) {
@@ -207,12 +207,12 @@ public class MagicCarpet extends JavaPlugin {
     public boolean canSwitch(Player player) {
         return player.hasPermission("magiccarpet.mcs");
     }
-
-    public boolean canReload(Player player) {
-        return player.hasPermission("magiccarpet.mr");
-    }
     
     public boolean canTeleFly(Player player) {
         return player.hasPermission("magiccarpet.tp");
+    }
+    
+    public boolean canFlyAt(Player player, Integer i) {
+        return player.hasPermission("magiccarpet.mc." + i);
     }
 }

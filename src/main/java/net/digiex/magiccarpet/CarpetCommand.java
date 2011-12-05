@@ -47,7 +47,7 @@ public class CarpetCommand implements CommandExecutor {
         if (carpet == null) {
             carpet = Carpet.create(player, plugin);
         }
-        if (args.length < 1 || !plugin.canFly(player)) {
+        if (args.length < 1) {
             if (carpet.isVisible()) {
                 player.sendMessage("Poof! The magic carpet disappears.");
                 carpet.hide();
@@ -60,17 +60,22 @@ public class CarpetCommand implements CommandExecutor {
                 try {
                     c = Integer.valueOf(args[0]);
                 } catch (NumberFormatException e) {
-                    Material material = Material.getMaterial(args[0]);
-                    if (material == null) {
-                        player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be an odd number from 3 to 9.");
-                    } else if (MagicCarpet.acceptableCarpet.contains(material)) {
-                        carpet.changeCarpet(material);
-                        player.sendMessage("The carpet seems to react to your words, and suddenly changes material!");
-                        return true;
+                    if (plugin.customCarpets) {
+                        Material material = Material.getMaterial(args[0]);
+                        if (material == null) {
+                            player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be an odd number from 3 to 9.");
+                        } else if (MagicCarpet.acceptableCarpet.contains(material)) {
+                            carpet.changeCarpet(material);
+                            player.sendMessage("The carpet seems to react to your words, and suddenly changes material!");
+                            return true;
+                        } else {
+                            player.sendMessage("A carpet of that material would not support you!");
+                        }
+                        return false;
                     } else {
-                        player.sendMessage("A carpet of that material would not support you!");
+                        player.sendMessage("The carpet isn't allowed to change.");
+                        return true;
                     }
-                    return false;
                 }
                 if (c % 2 == 0 || c < 3 || c > 9) {
                     player.sendMessage("The size must be an odd number from 3 to 9.");
@@ -81,8 +86,13 @@ public class CarpetCommand implements CommandExecutor {
                         player.sendMessage("A carpet of that size is not allowed.");
                         return false;
                     }
-                    player.sendMessage("The carpet seems to react to your words, and suddenly changes size!");
-                    carpet.changeCarpet(c);
+                    if (plugin.canFlyAt(player, c)) {
+                        player.sendMessage("The carpet seems to react to your words, and suddenly changes size!");
+                        carpet.changeCarpet(c);
+                    } else {
+                        player.sendMessage("The carpet failed to expand, no permission.");
+                        return true;
+                    }
                 } else {
                     player.sendMessage("Poof! The magic carpet disappears.");
                     carpet.hide();
@@ -102,8 +112,14 @@ public class CarpetCommand implements CommandExecutor {
                     player.sendMessage("A carpet of that size is not allowed.");
                     return false;
                 }
-                player.sendMessage("A glass carpet appears below your feet.");
-                carpet.show();
+                if (plugin.canFlyAt(player, c)) {
+                    player.sendMessage("The carpet seems to react to your words, and suddenly changes size!");
+                    carpet.changeCarpet(c);
+                    carpet.show();
+                } else {
+                    player.sendMessage("The carpet failed to expand, no permission.");
+                    return true;
+                }
             }
         }
         plugin.carpets.update(player);
