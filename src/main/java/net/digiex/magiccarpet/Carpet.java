@@ -75,6 +75,7 @@ public class Carpet {
 
 	private static final int MAX_SUPPORTED_SIZE = 9;
         private static int defaultSize = 5, maxSize = MAX_SUPPORTED_SIZE;
+        private static MagicCarpet p;
 
 	public static Carpet create(Player player, MagicCarpet plugin) {
 		int sz = plugin.carpets.getLastSize(player);
@@ -85,6 +86,7 @@ public class Carpet {
 		plugin.carpets.assign(player, carpet);
 		defaultSize = plugin.carpSize;
 		maxSize = min(plugin.maxCarpSize, MAX_SUPPORTED_SIZE);
+                p = plugin;
 		return carpet;
 	}
 
@@ -293,7 +295,7 @@ public class Carpet {
     }
     
     private boolean lightWater(Block b) {
-        if (touches(b) && isFluid(b.getType())) {
+        if (!p.allowWaterLight && touches(b) && isFluid(b.getType())) {
             return true;
         }
         return false;
