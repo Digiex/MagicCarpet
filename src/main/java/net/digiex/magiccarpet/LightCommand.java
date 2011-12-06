@@ -25,52 +25,54 @@ import org.bukkit.entity.Player;
  */
 public class LightCommand implements CommandExecutor {
 
-    private MagicCarpet plugin;
+	private MagicCarpet plugin;
 
-    public LightCommand(MagicCarpet plug) {
-        plugin = plug;
-    }
+	public LightCommand(MagicCarpet plug) {
+		plugin = plug;
+	}
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("Sorry, only players can use the carpet!");
-            return true;
-        }
-        Player player = (Player) sender;
-        if (plugin.canFly(player) && plugin.canLight(player)) {
-            if (args.length < 1) {
-                hideOrShow(player);
-            } else {
-                Material material = Material.getMaterial(args[0]);
-                if (material == null || !MagicCarpet.acceptableLight.contains(material)) {
-                    player.sendMessage("A carpet of that material would not support you!");
-                } else {
-                    Carpet carpet = plugin.carpets.get(player);
-                    carpet.setLights(material);
-                    plugin.carpets.update(player);
-                    player.sendMessage("The carpet seems to react to your words, and suddenly changes material!");
-                    return true;
-                }
-                return false;
-            }
-        } else {
-            if (plugin.canFly(player)) {
-                player.sendMessage("You do not have permission to use Magic Light!");
-            } else {
-                player.sendMessage("You aren't allowed to use the magic carpet!");
-            }
-        }
-        return true;
-    }
+	@Override
+	public boolean onCommand(CommandSender sender, Command command,
+			String label, String[] args) {
+		if (!(sender instanceof Player)) {
+			sender.sendMessage("Sorry, only players can use the carpet!");
+			return true;
+		}
+		Player player = (Player) sender;
+		if (plugin.canFly(player) && plugin.canLight(player)) {
+			if (args.length < 1) {
+				hideOrShow(player);
+			} else {
+				Material material = Material.getMaterial(args[0]);
+				if (material == null
+						|| !MagicCarpet.acceptableLight.contains(material)) {
+					player.sendMessage("A carpet of that material would not support you!");
+				} else {
+					Carpet carpet = plugin.carpets.get(player);
+					carpet.setLights(material);
+					plugin.carpets.update(player);
+					player.sendMessage("The carpet seems to react to your words, and suddenly changes material!");
+					return true;
+				}
+				return false;
+			}
+		} else {
+			if (plugin.canFly(player)) {
+				player.sendMessage("You do not have permission to use Magic Light!");
+			} else {
+				player.sendMessage("You aren't allowed to use the magic carpet!");
+			}
+		}
+		return true;
+	}
 
-    private void hideOrShow(Player player) {
-        if (plugin.carpets.hasLight(player)) {
-            plugin.carpets.lightOff(player);
-            player.sendMessage("The luminous stones in the carpet slowly fade away.");
-        } else {
-            plugin.carpets.lightOn(player);
-            player.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
-        }
-    }
+	private void hideOrShow(Player player) {
+		if (plugin.carpets.hasLight(player)) {
+			plugin.carpets.lightOff(player);
+			player.sendMessage("The luminous stones in the carpet slowly fade away.");
+		} else {
+			plugin.carpets.lightOn(player);
+			player.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
+		}
+	}
 }

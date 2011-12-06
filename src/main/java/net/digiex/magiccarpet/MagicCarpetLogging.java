@@ -22,17 +22,17 @@ import java.util.logging.Logger;
  */
 public class MagicCarpetLogging {
 
-    private static final Logger logger = Logger.getLogger("Minecraft");
+	private static final Logger logger = Logger.getLogger("Minecraft");
 
-    public void info(String s) {
-        logger.log(Level.INFO, "[MagicCarpet] " + s);
-    }
+	public void info(String s) {
+		logger.log(Level.INFO, "[MagicCarpet] " + s);
+	}
 
-    public void severe(String s) {
-        logger.log(Level.SEVERE, "[MagicCarpet] " + s);
-    }
+	public void severe(String s) {
+		logger.log(Level.SEVERE, "[MagicCarpet] " + s);
+	}
 
-    public void warning(String s) {
-        logger.log(Level.WARNING, "[MagicCarpet] " + s);
-    }
+	public void warning(String s) {
+		logger.log(Level.WARNING, "[MagicCarpet] " + s);
+	}
 }

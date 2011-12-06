@@ -1,5 +1,7 @@
 package net.digiex.magiccarpet;
 
+import static org.bukkit.Material.*;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,8 +10,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.EnumSet;
-
-import static org.bukkit.Material.*;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -40,196 +40,215 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class MagicCarpet extends JavaPlugin {
 
-    static final EnumSet<Material> acceptableCarpet = EnumSet.of(
-            STONE, GRASS, DIRT, COBBLESTONE, WOOD, BEDROCK, GRAVEL, GOLD_ORE, IRON_ORE, COAL_ORE, LOG,
-            LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK, SANDSTONE, NOTE_BLOCK, WOOL, GOLD_BLOCK,
-            IRON_BLOCK, DOUBLE_STEP, BRICK, TNT, BOOKSHELF, MOSSY_COBBLESTONE,
-            OBSIDIAN, DIAMOND_ORE, DIAMOND_BLOCK, WORKBENCH, SOIL, SNOW_BLOCK,
-            CLAY, PUMPKIN, NETHERRACK, SOUL_SAND);
-    static final EnumSet<Material> acceptableLight = EnumSet.of(
-            GLOWSTONE, JACK_O_LANTERN);
-    private final MagicPlayerListener playerListener = new MagicPlayerListener(this);
-    private final MagicDamageListener damageListener = new MagicDamageListener(this);
-    private FileConfiguration config;
-    private File configFile;
-    public MagicCarpetLogging log = new MagicCarpetLogging();
-    CarpetStorage carpets = new CarpetStorage().attach(this);
-    boolean crouchDef = true;
-    boolean glowCenter = false;
-    int carpSize = 5;
-    Material carpMaterial = GLASS;
-    Material lightMaterial = GLOWSTONE;
-    int maxCarpSize = 9;
-    String allowedmaterial;
-    boolean teleportBlock = false;
-    boolean customCarpets = true;
+	static final EnumSet<Material> acceptableCarpet = EnumSet.of(STONE, GRASS,
+			DIRT, COBBLESTONE, WOOD, BEDROCK, GRAVEL, GOLD_ORE, IRON_ORE,
+			COAL_ORE, LOG, LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK,
+			SANDSTONE, NOTE_BLOCK, WOOL, GOLD_BLOCK, IRON_BLOCK, DOUBLE_STEP,
+			BRICK, TNT, BOOKSHELF, MOSSY_COBBLESTONE, OBSIDIAN, DIAMOND_ORE,
+			DIAMOND_BLOCK, WORKBENCH, SOIL, SNOW_BLOCK, CLAY, PUMPKIN,
+			NETHERRACK, SOUL_SAND);
+	static final EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE,
+			JACK_O_LANTERN);
+	public MagicCarpetLogging log = new MagicCarpetLogging();
+	private FileConfiguration config;
+	private File configFile;
+	private final MagicDamageListener damageListener = new MagicDamageListener(
+			this);
+	private final MagicPlayerListener playerListener = new MagicPlayerListener(
+			this);
+	String allowedmaterial;
+	CarpetStorage carpets = new CarpetStorage().attach(this);
+	Material carpMaterial = GLASS;
+	int carpSize = 5;
+	boolean crouchDef = true;
+	boolean customCarpets = true;
+	boolean glowCenter = false;
+	Material lightMaterial = GLOWSTONE;
+	int maxCarpSize = 9;
+	boolean teleportBlock = false;
 
-    @Override
-    public void onEnable() {
-        PluginDescriptionFile pdfFile = this.getDescription();
-        if (!getDataFolder().exists()) {
-            getDataFolder().mkdirs();
-        }
-        config = getConfig();
+	public boolean canFly(Player player) {
+		return player.hasPermission("magiccarpet.mc");
+	}
 
-        configFile = new File(getDataFolder(), "config.yml");
-        if (configFile.exists()) {
-            loadSettings();
-        } else {
-            saveSettings();
-        }
-        loadCarpets();
-        registerEvents();
-        registerCommands();
+	public boolean canFlyAt(Player player, Integer i) {
+		return player.hasPermission("magiccarpet.mc." + i);
+	}
 
-        log.info("version " + pdfFile.getVersion() + " is enabled!");
-    }
+	public boolean canLight(Player player) {
+		return player.hasPermission("magiccarpet.ml");
+	}
 
-    public void loadSettings() {
-        try {
-            config.load(configFile);
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvalidConfigurationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        crouchDef = config.getBoolean("crouch-descent", config.getBoolean("Crouch Default", true));
-        glowCenter = config.getBoolean("center-light", config.getBoolean("Put glowstone for light in center", false));
-        carpSize = config.getInt("default-size", config.getInt("Default size for carpet", 5));
-        carpMaterial = Material.getMaterial(config.getInt("carpet", config.getInt("Carpet Material", GLASS.getId())));
-        if (!acceptableCarpet.contains(carpMaterial)) {
-            carpMaterial = GLASS;
-        }
-        lightMaterial = Material.getMaterial(config.getInt("carpet-light", config.getInt("Carpet Light Material", GLOWSTONE.getId())));
-        if (!acceptableLight.contains(lightMaterial)) {
-            lightMaterial = GLOWSTONE;
-        }
-        maxCarpSize = config.getInt("max-size", 9);
-        teleportBlock = config.getBoolean("teleport-block", false);
-        customCarpets = config.getBoolean("allow-custom", true);
-    }
+	public boolean canReload(Player player) {
+		return player.hasPermission("magiccarpet.mr");
+	}
 
-    public void saveSettings() {
-        config.set("crouch-descent", crouchDef);
-        config.set("center-light", glowCenter);
-        config.set("default-size", carpSize);
-        config.set("carpet", carpMaterial.getId());
-        config.set("carpet-light", lightMaterial.getId());
-        config.set("max-size", maxCarpSize);
-        config.set("teleport-block", teleportBlock);
-        config.set("allow-custom", customCarpets);
-        config.options().header("Be sure to use /mr if you change any settings here.");
-        try {
-            config.save(configFile);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+	public boolean canSwitch(Player player) {
+		return player.hasPermission("magiccarpet.mcs");
+	}
 
-    private File carpetsFile() {
-        return new File(getDataFolder(), "carpets.dat");
-    }
+	public boolean canTeleFly(Player player) {
+		return player.hasPermission("magiccarpet.tp");
+	}
 
-    public void loadCarpets() {
-        File carpetDat = carpetsFile();
-        if (!carpetDat.exists()) {
-            return;
-        }
-        log.info("Loading saved carpets...");
-        try {
-            FileInputStream file = new FileInputStream(carpetDat);
-            ObjectInputStream in = new ObjectInputStream(file);
-            carpets = (CarpetStorage) in.readObject();
-            carpets.attach(this);
-            in.close();
-        } catch (IOException e) {
-            log.warning("Error writing to carpets.dat; carpets data has not been saved!");
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            log.severe("CarpetStorage class not found! This should never happen!");
-            e.printStackTrace();
-        }
-    }
+	public void checkCarpet(Carpet carpet) {
+		if (carpet.getSize() > maxCarpSize) {
+			carpet.changeCarpet(carpSize);
+		}
+		if (carpet.isCustom() && !customCarpets) {
+			carpet.changeCarpet(carpMaterial);
+			carpet.setLights(lightMaterial);
+		}
+		carpets.update(carpet.getPlayer());
+	}
 
-    public void saveCarpets() {
-        File carpetDat = carpetsFile();
-        log.info("Saving carpets...");
-        try {
-            FileOutputStream file = new FileOutputStream(carpetDat);
-            ObjectOutputStream out = new ObjectOutputStream(file);
-            out.writeObject(carpets);
-            out.close();
-        } catch (IOException e) {
-            log.warning("Error writing to carpets.dat; carpets data has not been saved!");
-            e.printStackTrace();
-        }
-    }
+	public void loadCarpets() {
+		File carpetDat = carpetsFile();
+		if (!carpetDat.exists()) {
+			return;
+		}
+		log.info("Loading saved carpets...");
+		try {
+			FileInputStream file = new FileInputStream(carpetDat);
+			ObjectInputStream in = new ObjectInputStream(file);
+			carpets = (CarpetStorage) in.readObject();
+			carpets.attach(this);
+			in.close();
+		} catch (IOException e) {
+			log.warning("Error writing to carpets.dat; carpets data has not been saved!");
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			log.severe("CarpetStorage class not found! This should never happen!");
+			e.printStackTrace();
+		}
+	}
 
-    @Override
-    public void onDisable() {
-        saveCarpets();
-        carpets.clear();
-    }
+	public void loadSettings() {
+		try {
+			config.load(configFile);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		crouchDef = config.getBoolean("crouch-descent",
+				config.getBoolean("Crouch Default", true));
+		glowCenter = config.getBoolean("center-light",
+				config.getBoolean("Put glowstone for light in center", false));
+		carpSize = config.getInt("default-size",
+				config.getInt("Default size for carpet", 5));
+		carpMaterial = Material.getMaterial(config.getInt("carpet",
+				config.getInt("Carpet Material", GLASS.getId())));
+		if (!acceptableCarpet.contains(carpMaterial)) {
+			carpMaterial = GLASS;
+		}
+		lightMaterial = Material.getMaterial(config.getInt("carpet-light",
+				config.getInt("Carpet Light Material", GLOWSTONE.getId())));
+		if (!acceptableLight.contains(lightMaterial)) {
+			lightMaterial = GLOWSTONE;
+		}
+		maxCarpSize = config.getInt("max-size", 9);
+		teleportBlock = config.getBoolean("teleport-block", false);
+		customCarpets = config.getBoolean("allow-custom", true);
+	}
 
-    private void registerEvents() {
-        PluginManager pm = getServer().getPluginManager();
-        pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
-        pm.registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
-        pm.registerEvent(Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
-        pm.registerEvent(Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
-        pm.registerEvent(Type.PLAYER_TOGGLE_SNEAK, playerListener, Priority.Normal, this);
-        pm.registerEvent(Type.BLOCK_BREAK, damageListener, damageListener.executor, Priority.Normal, this);
-        pm.registerEvent(Type.BLOCK_PHYSICS, damageListener, damageListener.executor, Priority.Normal, this);
-        pm.registerEvent(Type.ENTITY_DAMAGE, damageListener, damageListener.executor, Priority.Normal, this);
-        pm.registerEvent(Type.BLOCK_PISTON_RETRACT, damageListener, damageListener.executor, Priority.Normal, this);
-        pm.registerEvent(Type.BLOCK_PISTON_EXTEND, damageListener, damageListener.executor, Priority.Normal, this);
-    }
+	@Override
+	public void onDisable() {
+		saveCarpets();
+		carpets.clear();
+	}
 
-    private void registerCommands() {
-        getCommand("magiccarpet").setExecutor(new CarpetCommand(this));
-        getCommand("magiclight").setExecutor(new LightCommand(this));
-        getCommand("carpetswitch").setExecutor(new SwitchCommand(this));
-        getCommand("magicreload").setExecutor(new ReloadCommand(this));
-    }
+	@Override
+	public void onEnable() {
+		PluginDescriptionFile pdfFile = this.getDescription();
+		if (!getDataFolder().exists()) {
+			getDataFolder().mkdirs();
+		}
+		config = getConfig();
 
-    public void checkCarpet(Carpet carpet) {
-        if (carpet.getSize() > maxCarpSize) {
-            carpet.changeCarpet(carpSize);
-        }
-        if (carpet.isCustom() && !customCarpets) {
-            carpet.changeCarpet(carpMaterial);
-            carpet.setLights(lightMaterial);
-        }
-        carpets.update(carpet.getPlayer());
-    }
+		configFile = new File(getDataFolder(), "config.yml");
+		if (configFile.exists()) {
+			loadSettings();
+		} else {
+			saveSettings();
+		}
+		loadCarpets();
+		registerEvents();
+		registerCommands();
 
-    public boolean canFly(Player player) {
-        return player.hasPermission("magiccarpet.mc");
-    }
+		log.info("version " + pdfFile.getVersion() + " is enabled!");
+	}
 
-    public boolean canLight(Player player) {
-        return player.hasPermission("magiccarpet.ml");
-    }
+	public void saveCarpets() {
+		File carpetDat = carpetsFile();
+		log.info("Saving carpets...");
+		try {
+			FileOutputStream file = new FileOutputStream(carpetDat);
+			ObjectOutputStream out = new ObjectOutputStream(file);
+			out.writeObject(carpets);
+			out.close();
+		} catch (IOException e) {
+			log.warning("Error writing to carpets.dat; carpets data has not been saved!");
+			e.printStackTrace();
+		}
+	}
 
-    public boolean canSwitch(Player player) {
-        return player.hasPermission("magiccarpet.mcs");
-    }
+	public void saveSettings() {
+		config.set("crouch-descent", crouchDef);
+		config.set("center-light", glowCenter);
+		config.set("default-size", carpSize);
+		config.set("carpet", carpMaterial.getId());
+		config.set("carpet-light", lightMaterial.getId());
+		config.set("max-size", maxCarpSize);
+		config.set("teleport-block", teleportBlock);
+		config.set("allow-custom", customCarpets);
+		config.options().header(
+				"Be sure to use /mr if you change any settings here.");
+		try {
+			config.save(configFile);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
-    public boolean canTeleFly(Player player) {
-        return player.hasPermission("magiccarpet.tp");
-    }
+	private File carpetsFile() {
+		return new File(getDataFolder(), "carpets.dat");
+	}
 
-    public boolean canFlyAt(Player player, Integer i) {
-        return player.hasPermission("magiccarpet.mc." + i);
-    }
+	private void registerCommands() {
+		getCommand("magiccarpet").setExecutor(new CarpetCommand(this));
+		getCommand("magiclight").setExecutor(new LightCommand(this));
+		getCommand("carpetswitch").setExecutor(new SwitchCommand(this));
+		getCommand("magicreload").setExecutor(new ReloadCommand(this));
+	}
 
-    public boolean canReload(Player player) {
-        return player.hasPermission("magiccarpet.mr");
-    }
+	private void registerEvents() {
+		PluginManager pm = getServer().getPluginManager();
+		pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Normal,
+				this);
+		pm.registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Normal,
+				this);
+		pm.registerEvent(Type.PLAYER_MOVE, playerListener, Priority.Normal,
+				this);
+		pm.registerEvent(Type.PLAYER_TELEPORT, playerListener, Priority.Normal,
+				this);
+		pm.registerEvent(Type.PLAYER_TOGGLE_SNEAK, playerListener,
+				Priority.Normal, this);
+		pm.registerEvent(Type.BLOCK_BREAK, damageListener,
+				damageListener.executor, Priority.Normal, this);
+		pm.registerEvent(Type.BLOCK_PHYSICS, damageListener,
+				damageListener.executor, Priority.Normal, this);
+		pm.registerEvent(Type.ENTITY_DAMAGE, damageListener,
+				damageListener.executor, Priority.Normal, this);
+		pm.registerEvent(Type.BLOCK_PISTON_RETRACT, damageListener,
+				damageListener.executor, Priority.Normal, this);
+		pm.registerEvent(Type.BLOCK_PISTON_EXTEND, damageListener,
+				damageListener.executor, Priority.Normal, this);
+	}
 }

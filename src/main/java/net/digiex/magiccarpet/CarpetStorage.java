@@ -28,158 +28,162 @@ import org.bukkit.entity.Player;
 // be sure to change the serialVersionUID.
 // Even better, don't change, add, or remove any non-transient variables
 public class CarpetStorage implements Serializable {
-	private static final long serialVersionUID = 1168884913848994599L;
 
 	private class CarpetEntry implements Serializable {
+
 		private static final long serialVersionUID = -7853484578047997719L;
+		public transient Carpet carpet;
+		public boolean crouch = plugin.crouchDef;
+		public boolean hasCarpet = false;
 		public int lastSize = plugin.carpSize;
-        public boolean lightsOn = plugin.glowCenter;
-        public boolean hasCarpet = false;
-        public boolean crouch = plugin.crouchDef;
-        public transient Carpet carpet;
-        public Material thread = plugin.carpMaterial;
-        public Material light = plugin.lightMaterial;
-    }
-    private transient MagicCarpet plugin;
-    private HashMap<String, CarpetEntry> carpets = new HashMap<String, CarpetEntry>();
+		public Material light = plugin.lightMaterial;
+		public boolean lightsOn = plugin.glowCenter;
+		public Material thread = plugin.carpMaterial;
+	}
 
-    public CarpetStorage attach(MagicCarpet plug) {
-        plugin = plug;
-        return this;
-    }
+	private static final long serialVersionUID = 1168884913848994599L;
 
-    private CarpetEntry entry(Player player) {
-        if (!carpets.containsKey(player.getName())) {
-            carpets.put(player.getName(), new CarpetEntry());
-        }
-        return carpets.get(player.getName());
-    }
+	private HashMap<String, CarpetEntry> carpets = new HashMap<String, CarpetEntry>();
+	private transient MagicCarpet plugin;
 
-    // Accessors
-    public Carpet get(Player player) {
-        if (carpets.containsKey(player.getName())) {
-            return carpets.get(player.getName()).carpet;
-        }
-        return null;
-    }
+	public Iterable<Carpet> all() {
+		return new Iterable<Carpet>() {
 
-    public boolean hasLight(Player player) {
-        return entry(player).lightsOn;
-    }
+			@Override
+			public Iterator<Carpet> iterator() {
+				return new Iterator<Carpet>() {
 
-    public boolean has(Player player) {
-        return entry(player).hasCarpet;
-    }
+					private Iterator<CarpetEntry> iter = carpets.values()
+							.iterator();
+					private CarpetEntry toRemove = null;
 
-    public int getLastSize(Player player) {
-        return entry(player).lastSize;
-    }
+					@Override
+					public boolean hasNext() {
+						return iter.hasNext();
+					}
 
-    public boolean crouches(Player player) {
-        return entry(player).crouch;
-    }
+					@Override
+					public Carpet next() {
+						toRemove = iter.next();
+						return toRemove.carpet;
+					}
 
-    public Material getMaterial(Player player) {
-        return entry(player).thread;
-    }
+					@Override
+					public void remove() {
+						if (toRemove == null) {
+							throw new IllegalStateException();
+						}
+						if (toRemove.carpet != null) {
+							toRemove.carpet.suppress();
+						}
+						toRemove.carpet = null;
+					}
+				};
+			}
+		};
+	}
 
-    public Material getLightMaterial(Player player) {
-        return entry(player).light;
-    }
+	public void assign(Player player, Carpet carpet) {
+		CarpetEntry entry = entry(player);
+		if (entry.carpet != null) {
+			entry.carpet.suppress();
+		}
+		entry.carpet = carpet;
+	}
 
-    public Iterable<Carpet> all() {
-        return new Iterable<Carpet>() {
+	public CarpetStorage attach(MagicCarpet plug) {
+		plugin = plug;
+		return this;
+	}
 
-            @Override
-            public Iterator<Carpet> iterator() {
-                return new Iterator<Carpet>() {
+	public void clear() {
+		for (CarpetEntry entry : carpets.values()) {
+			if (entry.carpet == null) {
+				continue;
+			}
+			entry.carpet.suppress();
+		}
+		carpets.clear();
+	}
 
-                    private Iterator<CarpetEntry> iter = carpets.values().iterator();
-                    private CarpetEntry toRemove = null;
+	public boolean crouches(Player player) {
+		return entry(player).crouch;
+	}
 
-                    @Override
-                    public boolean hasNext() {
-                        return iter.hasNext();
-                    }
+	// Accessors
+	public Carpet get(Player player) {
+		if (carpets.containsKey(player.getName())) {
+			return carpets.get(player.getName()).carpet;
+		}
+		return null;
+	}
 
-                    @Override
-                    public Carpet next() {
-                        toRemove = iter.next();
-                        return toRemove.carpet;
-                    }
+	public int getLastSize(Player player) {
+		return entry(player).lastSize;
+	}
 
-                    @Override
-                    public void remove() {
-                        if (toRemove == null) {
-                            throw new IllegalStateException();
-                        }
-                        if (toRemove.carpet != null) {
-                            toRemove.carpet.suppress();
-                        }
-                        toRemove.carpet = null;
-                    }
-                };
-            }
-        };
-    }
+	public Material getLightMaterial(Player player) {
+		return entry(player).light;
+	}
 
-    public void lightOn(Player player) {
-        CarpetEntry entry = entry(player);
-        entry.lightsOn = true;
-        if (entry.hasCarpet && entry.carpet != null) {
-            entry.carpet.lightsOn();
-        }
-    }
+	public Material getMaterial(Player player) {
+		return entry(player).thread;
+	}
 
-    public void lightOff(Player player) {
-        CarpetEntry entry = entry(player);
-        entry.lightsOn = false;
-        if (entry.hasCarpet && entry.carpet != null) {
-            entry.carpet.lightsOff();
-        }
-    }
+	public boolean has(Player player) {
+		return entry(player).hasCarpet;
+	}
 
-    public void clear() {
-        for (CarpetEntry entry : carpets.values()) {
-            if (entry.carpet == null) {
-                continue;
-            }
-            entry.carpet.suppress();
-        }
-        carpets.clear();
-    }
+	public boolean hasLight(Player player) {
+		return entry(player).lightsOn;
+	}
 
-    public void remove(Player player) {
-        CarpetEntry entry = entry(player);
-        if (entry.carpet != null) {
-            entry.carpet.suppress();
-        }
-        entry.carpet = null;
-    }
+	public void lightOff(Player player) {
+		CarpetEntry entry = entry(player);
+		entry.lightsOn = false;
+		if (entry.hasCarpet && entry.carpet != null) {
+			entry.carpet.lightsOff();
+		}
+	}
 
-    public void assign(Player player, Carpet carpet) {
-        CarpetEntry entry = entry(player);
-        if (entry.carpet != null) {
-            entry.carpet.suppress();
-        }
-        entry.carpet = carpet;
-    }
+	public void lightOn(Player player) {
+		CarpetEntry entry = entry(player);
+		entry.lightsOn = true;
+		if (entry.hasCarpet && entry.carpet != null) {
+			entry.carpet.lightsOn();
+		}
+	}
 
-    public void toggleCrouch(Player player) {
-        CarpetEntry entry = entry(player);
-        entry.crouch = !entry.crouch;
-    }
+	public void remove(Player player) {
+		CarpetEntry entry = entry(player);
+		if (entry.carpet != null) {
+			entry.carpet.suppress();
+		}
+		entry.carpet = null;
+	}
 
-    public void update(Player player) {
-        CarpetEntry entry = entry(player);
-        if (entry.carpet == null) {
-            entry.hasCarpet = false;
-            return;
-        }
-        entry.lastSize = entry.carpet.getSize();
-        entry.hasCarpet = entry.carpet.isVisible();
-        entry.lightsOn = entry.carpet.hasLights();
-        entry.thread = entry.carpet.getThread();
-        entry.light = entry.carpet.getShine();
-    }
+	public void toggleCrouch(Player player) {
+		CarpetEntry entry = entry(player);
+		entry.crouch = !entry.crouch;
+	}
+
+	public void update(Player player) {
+		CarpetEntry entry = entry(player);
+		if (entry.carpet == null) {
+			entry.hasCarpet = false;
+			return;
+		}
+		entry.lastSize = entry.carpet.getSize();
+		entry.hasCarpet = entry.carpet.isVisible();
+		entry.lightsOn = entry.carpet.hasLights();
+		entry.thread = entry.carpet.getThread();
+		entry.light = entry.carpet.getShine();
+	}
+
+	private CarpetEntry entry(Player player) {
+		if (!carpets.containsKey(player.getName())) {
+			carpets.put(player.getName(), new CarpetEntry());
+		}
+		return carpets.get(player.getName());
+	}
 }

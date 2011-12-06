@@ -3,11 +3,11 @@ package net.digiex.magiccarpet;
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
 
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
-import org.bukkit.Location;
-import org.bukkit.Material;
 
 /*
  * Magic Carpet 2.0
@@ -27,301 +27,309 @@ import org.bukkit.Material;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Carpet.java
- * <br /><br />
+ * Carpet.java <br />
+ * <br />
  * Defines the basic 5x5 carpet object that is placed underneath the player.
- *
+ * 
  * @author Android <spparr@gmail.com>
  */
 public class Carpet {
 
-    private class CarpetFibre {
+	private class CarpetFibre {
 
-        @SuppressWarnings("hiding")
-        public CarpetFibre(int dx, int dy, int dz) {
-            this.dx = dx;
-            this.dy = dy;
-            this.dz = dz;
-        }
-        int dx, dy, dz;
-        BlockState block;
-        Material strand;
+		BlockState block;
 
-        void update() {
-            if (block.getBlock().getType() != strand) {
-                return;
-            }
-            block.update(true);
-        }
+		int dx, dy, dz;
+		Material strand;
 
-        void set(Block bl, Material material) {
-            bl.setTypeId(material.getId(), false);
-            strand = material;
+		@SuppressWarnings("hiding")
+		public CarpetFibre(int dx, int dy, int dz) {
+			this.dx = dx;
+			this.dy = dy;
+			this.dz = dz;
+		}
 
-        }
-        
-        boolean shouldGlow() {
-            if (!lightsOn) {
-                return false;
-            }
-            if (dx == 0 && dz == 0) {
-                return true;
-            }
-            return false;
-        }
-    }
-    
-    private static final int MAX_SUPPORTED_SIZE = 9;
-    private static int defaultSize = 5, maxSize = MAX_SUPPORTED_SIZE;
-    private CarpetFibre[] fibres;
-    private Block currentCentre;
-    private int edge = 0, area = 0, rad = 0, radsq = 0, radplsq = 0;
-    private boolean lightsOn;
-    private boolean hidden;
-    private boolean suppressed;
-    private Player who;
-    private Material thread, shine;
+		void set(Block bl, Material material) {
+			bl.setTypeId(material.getId(), false);
+			strand = material;
 
-    public static Carpet create(Player player, MagicCarpet plugin) {
-        int sz = plugin.carpets.getLastSize(player);
-        boolean light = plugin.carpets.hasLight(player);
-        Material thread = plugin.carpets.getMaterial(player);
-        Material shine = plugin.carpets.getLightMaterial(player);
-        Carpet carpet = new Carpet(player, sz, light, thread, shine);
-        plugin.carpets.assign(player, carpet);
-        defaultSize = plugin.carpSize;
-        maxSize = min(plugin.maxCarpSize, MAX_SUPPORTED_SIZE);
-        return carpet;
-    }
+		}
 
-    private Carpet(Player player, int sz, boolean on, Material mat, Material light) {
-        setSize(sz);
-        who = player;
-        currentCentre = player.getLocation().getBlock();
-        lightsOn = on;
-        hidden = true;
-        suppressed = false;
-        thread = mat;
-        shine = light;
-    }
+		boolean shouldGlow() {
+			if (!lightsOn) {
+				return false;
+			}
+			if (dx == 0 && dz == 0) {
+				return true;
+			}
+			return false;
+		}
 
-    //Goes through a grid of the area underneath the player, and if the block is glass that is part of the magic carpet, it is removed
-    private void removeCarpet() {
-        if (currentCentre == null) {
-            return;
-        }
-        for (CarpetFibre fibre : fibres) {
-            if (fibre.block != null) {
-                fibre.update();
-            }
-            fibre.block = null;
-        }
-    }
+		void update() {
+			if (block.getBlock().getType() != strand) {
+				return;
+			}
+			block.update(true);
+		}
+	}
 
-    //Places glass in a 5x5 area underneath the player if the block was just air previously
-    private void drawCarpet() {
-        suppressed = false;
-        Block bl;
-        for (CarpetFibre fibre : fibres) {
-            if (currentCentre != null) {
-                bl = currentCentre.getRelative(fibre.dx, fibre.dy, fibre.dz);
-                Material type = bl.getType();
-                if (!isAirOrFluid(type)) {
-                    fibre.block = null;
-                    continue;
-                }
-                fibre.block = bl.getState();
-                if (fibre.shouldGlow() && shouldChange()) {
-                    fibre.set(bl, getShine());
-                } else {
-                    fibre.set(bl, getThread());
-                }
-            }
-        }
-    }
+	private static final int MAX_SUPPORTED_SIZE = 9;
+        private static int defaultSize = 5, maxSize = MAX_SUPPORTED_SIZE;
 
-    private boolean isAirOrFluid(Material type) {
-        if (type == Material.AIR) {
-            return true;
-        }
-        if (type == Material.WATER) {
-            return true;
-        }
-        if (type == Material.STATIONARY_WATER) {
-            return true;
-        }
-        if (type == Material.LAVA) {
-            return true;
-        }
-        if (type == Material.STATIONARY_LAVA) {
-            return true;
-        }
-        return false;
-    }
+	public static Carpet create(Player player, MagicCarpet plugin) {
+		int sz = plugin.carpets.getLastSize(player);
+		boolean light = plugin.carpets.hasLight(player);
+		Material thread = plugin.carpets.getMaterial(player);
+		Material shine = plugin.carpets.getLightMaterial(player);
+		Carpet carpet = new Carpet(player, sz, light, thread, shine);
+		plugin.carpets.assign(player, carpet);
+		defaultSize = plugin.carpSize;
+		maxSize = min(plugin.maxCarpSize, MAX_SUPPORTED_SIZE);
+		return carpet;
+	}
 
-    public void changeCarpet(int sz) {
-        removeCarpet();
-        setSize(sz);
-        drawCarpet();
-    }
+	private Block currentCentre;
+	private int edge = 0, area = 0, rad = 0, radsq = 0, radplsq = 0;
+	private CarpetFibre[] fibres;
+	private boolean hidden;
+	private boolean lightsOn;
+	private boolean suppressed;
+	private Material thread, shine;
 
-    public void changeCarpet(Material material) {
-        removeCarpet();
-        thread = material;
-        drawCarpet();
-    }
+	private Player who;
 
-    public void setLights(Material material) {
-        removeCarpet();
-        shine = material;
-        drawCarpet();
-    }
+	private Carpet(Player player, int sz, boolean on, Material mat,
+			Material light) {
+		setSize(sz);
+		who = player;
+		currentCentre = player.getLocation().getBlock();
+		lightsOn = on;
+		hidden = true;
+		suppressed = false;
+		thread = mat;
+		shine = light;
+	}
 
-    public void lightsOn() {
-        removeCarpet();
-        lightsOn = true;
-        drawCarpet();
-    }
+	public void changeCarpet(int sz) {
+		removeCarpet();
+		setSize(sz);
+		drawCarpet();
+	}
 
-    public void lightsOff() {
-        removeCarpet();
-        lightsOn = false;
-        drawCarpet();
-    }
+	public void changeCarpet(Material material) {
+		removeCarpet();
+		thread = material;
+		drawCarpet();
+	}
 
-    // Changes the carpet size
-    private void setSize(int size) {
-        if (size < 0) {
-            size = abs(size); // Sanity check
-        } else if (size > maxSize) {
-            size = defaultSize;
-        }
-        edge = size;
-        area = size * size;
-        fibres = new CarpetFibre[area];
-        rad = (size - 1) / 2;
-        radsq = rad * rad * 2;
-        radplsq = (rad + 1) * (rad + 1) * 2;
+	public void descend() {
+		removeCarpet();
+		currentCentre = currentCentre.getRelative(0, -1, 0);
+		drawCarpet();
+	}
 
-        int i = 0;
-        for (int x = -rad; x <= rad; x++) {
-            for (int z = -rad; z <= rad; z++) {
-                fibres[i] = new CarpetFibre(x, -1, z);
-                i++;
-            }
-        }
-    }
+	public Location getLocation() {
+		return currentCentre.getLocation();
+	}
 
-    public int getSize() {
-        return edge;
-    }
+	public Player getPlayer() {
+		return who;
+	}
 
-    public boolean isCovering(Block block) {
-        // TODO: Is the distance between adjacent blocks 1?
-        if (currentCentre == null || block == null) {
-            return false;
-        }
-        if (block.getLocation().getWorld() != getLocation().getWorld()) {
-            return false;
-        }
-        if (block.getLocation().distanceSquared(getLocation()) > radsq) {
-            return false;
-        }
-        for (CarpetFibre fibre : fibres) {
-            if (fibre.block == null) {
-                continue;
-            }
-            if (fibre.block.getBlock().getLocation().equals(block.getLocation())) {
-                return true;
-            }
-        }
-        return false;
-    }
+	public Material getShine() {
+		return shine;
+	}
 
-    public void moveTo(Location to) {
-        removeCarpet();
-        currentCentre = to.getBlock();
-        drawCarpet();
-    }
+	public int getSize() {
+		return edge;
+	}
 
-    public Location getLocation() {
-        return currentCentre.getLocation();
-    }
+	public Material getThread() {
+		return thread;
+	}
 
-    public void descend() {
-        removeCarpet();
-        currentCentre = currentCentre.getRelative(0, -1, 0);
-        drawCarpet();
-    }
+	public boolean hasLights() {
+		return lightsOn;
+	}
 
-    public void hide() {
-        if (!hidden && !suppressed) {
-            removeCarpet();
-        }
-        hidden = true;
-    }
+	public void hide() {
+		if (!hidden && !suppressed) {
+			removeCarpet();
+		}
+		hidden = true;
+	}
 
-    public void show() {
-        if (hidden || suppressed) {
-            drawCarpet();
-        }
-        hidden = false;
-    }
+	public boolean isCovering(Block block) {
+		// TODO: Is the distance between adjacent blocks 1?
+		if (currentCentre == null || block == null) {
+			return false;
+		}
+		if (block.getLocation().getWorld() != getLocation().getWorld()) {
+			return false;
+		}
+		if (block.getLocation().distanceSquared(getLocation()) > radsq) {
+			return false;
+		}
+		for (CarpetFibre fibre : fibres) {
+			if (fibre.block == null) {
+				continue;
+			}
+			if (fibre.block.getBlock().getLocation()
+					.equals(block.getLocation())) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    public boolean isVisible() {
-        return !hidden;
-    }
+	public boolean isCustom() {
+		if (getThread() != Material.GLASS || getShine() != Material.GLOWSTONE) {
+			return true;
+		}
+		return false;
+	}
 
-    public void suppress() {
-        if (!suppressed) {
-            removeCarpet();
-        }
-        suppressed = true;
-    }
+	public boolean isVisible() {
+		return !hidden;
+	}
 
-    public boolean hasLights() {
-        return lightsOn;
-    }
+	public void lightsOff() {
+		removeCarpet();
+		lightsOn = false;
+		drawCarpet();
+	}
 
-    public boolean touches(Block block) {
-        if (currentCentre == null || block == null) {
-            return false;
-        }
-        if (block.getLocation().getWorld() != getLocation().getWorld()) {
-            return false;
-        }
-        if (block.getLocation().distanceSquared(getLocation()) > radplsq) {
-            return false;
-        }
-        if (abs(block.getY() - currentCentre.getY()) > 1) {
-            return false;
-        }
-        return true;
-    }
+	public void lightsOn() {
+		removeCarpet();
+		lightsOn = true;
+		drawCarpet();
+	}
 
-    public Material getThread() {
-        return thread;
-    }
+	public void moveTo(Location to) {
+		removeCarpet();
+		currentCentre = to.getBlock();
+		drawCarpet();
+	}
 
-    public Material getShine() {
-        return shine;
-    }
-    
-    private boolean shouldChange() {
-        if (getThread() == Material.GLASS || getShine() == Material.LEAVES) {
-            return true;
-        }
-        return false;
-    }
-    
-    public Player getPlayer() {
-        return who;
-    }
-    
-    public boolean isCustom() {
-        if (getThread() != Material.GLASS || getShine() != Material.GLOWSTONE) {
-            return true;
-        }
-        return false;
-    }
+	public void setLights(Material material) {
+		removeCarpet();
+		shine = material;
+		drawCarpet();
+	}
+
+	public void show() {
+		if (hidden || suppressed) {
+			drawCarpet();
+		}
+		hidden = false;
+	}
+
+	public void suppress() {
+		if (!suppressed) {
+			removeCarpet();
+		}
+		suppressed = true;
+	}
+
+	public boolean touches(Block block) {
+		if (currentCentre == null || block == null) {
+			return false;
+		}
+		if (block.getLocation().getWorld() != getLocation().getWorld()) {
+			return false;
+		}
+		if (block.getLocation().distanceSquared(getLocation()) > radplsq) {
+			return false;
+		}
+		if (abs(block.getY() - currentCentre.getY()) > 1) {
+			return false;
+		}
+		return true;
+	}
+
+	// Places glass in a 5x5 area underneath the player if the block was just
+	// air previously
+	private void drawCarpet() {
+		suppressed = false;
+		Block bl;
+		for (CarpetFibre fibre : fibres) {
+			if (currentCentre != null) {
+				bl = currentCentre.getRelative(fibre.dx, fibre.dy, fibre.dz);
+				Material type = bl.getType();
+				if (!isAirOrFluid(type)) {
+					fibre.block = null;
+					continue;
+				}
+				fibre.block = bl.getState();
+				if (fibre.shouldGlow() && shouldChange()) {
+					fibre.set(bl, getShine());
+				} else {
+					fibre.set(bl, getThread());
+				}
+			}
+		}
+	}
+
+	private boolean isAirOrFluid(Material type) {
+		if (type == Material.AIR) {
+			return true;
+		}
+		if (type == Material.WATER) {
+			return true;
+		}
+		if (type == Material.STATIONARY_WATER) {
+			return true;
+		}
+		if (type == Material.LAVA) {
+			return true;
+		}
+		if (type == Material.STATIONARY_LAVA) {
+			return true;
+		}
+		return false;
+	}
+
+	// Goes through a grid of the area underneath the player, and if the block
+	// is glass that is part of the magic carpet, it is removed
+	private void removeCarpet() {
+		if (currentCentre == null) {
+			return;
+		}
+		for (CarpetFibre fibre : fibres) {
+			if (fibre.block != null) {
+				fibre.update();
+			}
+			fibre.block = null;
+		}
+	}
+
+	// Changes the carpet size
+	private void setSize(int size) {
+		if (size < 0) {
+			size = abs(size); // Sanity check
+		} else if (size > maxSize) {
+			size = defaultSize;
+		}
+		edge = size;
+		area = size * size;
+		fibres = new CarpetFibre[area];
+		rad = (size - 1) / 2;
+		radsq = rad * rad * 2;
+		radplsq = (rad + 1) * (rad + 1) * 2;
+
+		int i = 0;
+		for (int x = -rad; x <= rad; x++) {
+			for (int z = -rad; z <= rad; z++) {
+				fibres[i] = new CarpetFibre(x, -1, z);
+				i++;
+			}
+		}
+	}
+
+	private boolean shouldChange() {
+		if (getThread() == Material.GLASS || getShine() == Material.LEAVES) {
+			return true;
+		}
+		return false;
+	}
 }

@@ -1,6 +1,5 @@
 package net.digiex.magiccarpet;
 
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,54 +24,55 @@ import org.bukkit.entity.Player;
  */
 public class ReloadCommand implements CommandExecutor {
 
-    private MagicCarpet plugin;
-    private MagicCarpetLogging log;
+	private MagicCarpetLogging log;
+	private MagicCarpet plugin;
 
-    public ReloadCommand(MagicCarpet plug) {
-        plugin = plug;
-        log = plug.log;
-    }
+	public ReloadCommand(MagicCarpet plug) {
+		plugin = plug;
+		log = plug.log;
+	}
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
-        if (!(sender instanceof Player)) {
-            for (Carpet c : plugin.carpets.all()) {
-                c.suppress();
-            }
-            plugin.carpets.clear();
-            plugin.loadSettings();
-            plugin.loadCarpets();
-            for (Player p : plugin.getServer().getOnlinePlayers()) {
-                if (plugin.carpets.has(p)) {
-                    Carpet.create(p, plugin).show();
-                    Carpet c = plugin.carpets.get(p);
-                    plugin.checkCarpet(c);
-                }
-            }
-            log.info("has been reloaded!");
-            return true;
-        } else if (sender instanceof Player) {
-            Player player = (Player) sender;
-            if (plugin.canReload(player)) {
-                for (Carpet c : plugin.carpets.all()) {
-                    c.suppress();
-                }
-                plugin.carpets.clear();
-                plugin.loadSettings();
-                plugin.loadCarpets();
-                for (Player p : plugin.getServer().getOnlinePlayers()) {
-                    if (plugin.carpets.has(p)) {
-                        Carpet.create(p, plugin).show();
-                        Carpet c = plugin.carpets.get(p);
-                        plugin.checkCarpet(c);
-                    }
-                }
-                player.sendMessage("MagicCarpet has been reloaded!");
-            } else {
-                player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
-            }
-            return true;
-        }
-        return false;
-    }
+	@Override
+	public boolean onCommand(CommandSender sender, Command command,
+			String commandLabel, String[] args) {
+		if (!(sender instanceof Player)) {
+			for (Carpet c : plugin.carpets.all()) {
+				c.suppress();
+			}
+			plugin.carpets.clear();
+			plugin.loadSettings();
+			plugin.loadCarpets();
+			for (Player p : plugin.getServer().getOnlinePlayers()) {
+				if (plugin.carpets.has(p)) {
+					Carpet.create(p, plugin).show();
+					Carpet c = plugin.carpets.get(p);
+					plugin.checkCarpet(c);
+				}
+			}
+			log.info("has been reloaded!");
+			return true;
+		} else if (sender instanceof Player) {
+			Player player = (Player) sender;
+			if (plugin.canReload(player)) {
+				for (Carpet c : plugin.carpets.all()) {
+					c.suppress();
+				}
+				plugin.carpets.clear();
+				plugin.loadSettings();
+				plugin.loadCarpets();
+				for (Player p : plugin.getServer().getOnlinePlayers()) {
+					if (plugin.carpets.has(p)) {
+						Carpet.create(p, plugin).show();
+						Carpet c = plugin.carpets.get(p);
+						plugin.checkCarpet(c);
+					}
+				}
+				player.sendMessage("MagicCarpet has been reloaded!");
+			} else {
+				player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
+			}
+			return true;
+		}
+		return false;
+	}
 }
