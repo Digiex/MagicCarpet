@@ -40,6 +40,13 @@ public class LightCommand implements CommandExecutor {
 		}
 		Player player = (Player) sender;
 		if (plugin.canFly(player) && plugin.canLight(player)) {
+                        Carpet carpet = plugin.carpets.get(player);
+                        if (carpet != null && carpet.isVisible()) {
+                                plugin.checkCarpet(carpet);
+                        } else {
+                            player.sendMessage("You don't have a carpet yet, use /mc!");
+                            return true;
+                        }
 			if (args.length < 1) {
 				hideOrShow(player);
 			} else {
@@ -48,7 +55,6 @@ public class LightCommand implements CommandExecutor {
 						|| !MagicCarpet.acceptableLight.contains(material)) {
 					player.sendMessage("A carpet of that material would not support you!");
 				} else {
-					Carpet carpet = plugin.carpets.get(player);
 					carpet.setLights(material);
 					plugin.carpets.update(player);
 					player.sendMessage("The carpet seems to react to your words, and suddenly changes material!");

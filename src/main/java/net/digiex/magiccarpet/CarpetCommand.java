@@ -48,7 +48,6 @@ public class CarpetCommand implements CommandExecutor {
 		if (carpet == null) {
 			carpet = Carpet.create(player, plugin);
 		}
-		plugin.checkCarpet(carpet);
 		if (args.length < 1) {
 			if (carpet.isVisible()) {
 				player.sendMessage("Poof! The magic carpet disappears.");
@@ -59,6 +58,7 @@ public class CarpetCommand implements CommandExecutor {
 			}
 		} else {
 			if (carpet.isVisible()) {
+                                plugin.checkCarpet(carpet);
 				try {
 					c = Integer.valueOf(args[0]);
 				} catch (NumberFormatException e) {
