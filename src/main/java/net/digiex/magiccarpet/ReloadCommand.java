@@ -33,8 +33,7 @@ public class ReloadCommand implements CommandExecutor {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
-			String commandLabel, String[] args) {
+	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
 		if (!(sender instanceof Player)) {
 			for (Carpet c : plugin.carpets.all()) {
 				c.suppress();

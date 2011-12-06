@@ -98,8 +98,7 @@ public class Carpet {
 
 	private Player who;
 
-	private Carpet(Player player, int sz, boolean on, Material mat,
-			Material light) {
+	private Carpet(Player player, int sz, boolean on, Material mat, Material light) {
 		setSize(sz);
 		who = player;
 		currentCentre = player.getLocation().getBlock();
@@ -277,9 +276,9 @@ public class Carpet {
 		return false;
 	}
         
-        private boolean isFluid(Material type) {
-                if (type == Material.WATER) {
-			return true;
+    private boolean isFluid(Material type) {
+        if (type == Material.WATER) {
+        	return true;
 		}
 		if (type == Material.STATIONARY_WATER) {
 			return true;
@@ -291,14 +290,14 @@ public class Carpet {
 			return true;
 		}
 		return false;
+    }
+    
+    private boolean lightWater(Block b) {
+        if (touches(b) && isFluid(b.getType())) {
+            return true;
         }
-        
-        private boolean lightWater(Block b) {
-                if (touches(b) && isFluid(b.getType())) {
-                        return true;
-                }
-                return false;
-        }
+        return false;
+    }
 
 	// Goes through a grid of the area underneath the player, and if the block
 	// is glass that is part of the magic carpet, it is removed

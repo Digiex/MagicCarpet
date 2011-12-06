@@ -30,7 +30,6 @@ import org.bukkit.entity.Player;
 public class CarpetStorage implements Serializable {
 
 	private class CarpetEntry implements Serializable {
-
 		private static final long serialVersionUID = -7853484578047997719L;
 		public transient Carpet carpet;
 		public boolean crouch = plugin.crouchDef;
@@ -53,8 +52,7 @@ public class CarpetStorage implements Serializable {
 			public Iterator<Carpet> iterator() {
 				return new Iterator<Carpet>() {
 
-					private Iterator<CarpetEntry> iter = carpets.values()
-							.iterator();
+					private Iterator<CarpetEntry> iter = carpets.values().iterator();
 					private CarpetEntry toRemove = null;
 
 					@Override

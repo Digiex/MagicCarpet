@@ -47,15 +47,12 @@ public class MagicCarpet extends JavaPlugin {
 			BRICK, TNT, BOOKSHELF, MOSSY_COBBLESTONE, OBSIDIAN, DIAMOND_ORE,
 			DIAMOND_BLOCK, WORKBENCH, SOIL, SNOW_BLOCK, CLAY, PUMPKIN,
 			NETHERRACK, SOUL_SAND);
-	static final EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE,
-			JACK_O_LANTERN);
+	static final EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE, JACK_O_LANTERN);
 	public MagicCarpetLogging log = new MagicCarpetLogging();
 	private FileConfiguration config;
 	private File configFile;
-	private final MagicDamageListener damageListener = new MagicDamageListener(
-			this);
-	private final MagicPlayerListener playerListener = new MagicPlayerListener(
-			this);
+	private final MagicDamageListener damageListener = new MagicDamageListener(this);
+	private final MagicPlayerListener playerListener = new MagicPlayerListener(this);
 	String allowedmaterial;
 	CarpetStorage carpets = new CarpetStorage().attach(this);
 	Material carpMaterial = GLASS;
@@ -71,7 +68,7 @@ public class MagicCarpet extends JavaPlugin {
 		return player.hasPermission("magiccarpet.mc");
 	}
 
-	public boolean canFlyAt(Player player, Integer i) {
+	public boolean canFlyAt(Player player, int i) {
 		return player.hasPermission("magiccarpet.mc." + i);
 	}
 
@@ -208,7 +205,7 @@ public class MagicCarpet extends JavaPlugin {
 		config.set("teleport-block", teleportBlock);
 		config.set("allow-custom", customCarpets);
 		config.options().header(
-				"Be sure to use /mr if you change any settings here.");
+				"Be sure to use /mr if you change any settings here while the server is running.");
 		try {
 			config.save(configFile);
 		} catch (IOException e) {
@@ -230,25 +227,15 @@ public class MagicCarpet extends JavaPlugin {
 
 	private void registerEvents() {
 		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Normal,
-				this);
-		pm.registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Normal,
-				this);
-		pm.registerEvent(Type.PLAYER_MOVE, playerListener, Priority.Normal,
-				this);
-		pm.registerEvent(Type.PLAYER_TELEPORT, playerListener, Priority.Normal,
-				this);
-		pm.registerEvent(Type.PLAYER_TOGGLE_SNEAK, playerListener,
-				Priority.Normal, this);
-		pm.registerEvent(Type.BLOCK_BREAK, damageListener,
-				damageListener.executor, Priority.Normal, this);
-		pm.registerEvent(Type.BLOCK_PHYSICS, damageListener,
-				damageListener.executor, Priority.Normal, this);
-		pm.registerEvent(Type.ENTITY_DAMAGE, damageListener,
-				damageListener.executor, Priority.Normal, this);
-		pm.registerEvent(Type.BLOCK_PISTON_RETRACT, damageListener,
-				damageListener.executor, Priority.Normal, this);
-		pm.registerEvent(Type.BLOCK_PISTON_EXTEND, damageListener,
-				damageListener.executor, Priority.Normal, this);
+		pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
+		pm.registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
+		pm.registerEvent(Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
+		pm.registerEvent(Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
+		pm.registerEvent(Type.PLAYER_TOGGLE_SNEAK, playerListener, Priority.Normal, this);
+		pm.registerEvent(Type.BLOCK_BREAK, damageListener, damageListener.executor, Priority.Normal, this);
+		pm.registerEvent(Type.BLOCK_PHYSICS, damageListener, damageListener.executor, Priority.Normal, this);
+		pm.registerEvent(Type.ENTITY_DAMAGE, damageListener, damageListener.executor, Priority.Normal, this);
+		pm.registerEvent(Type.BLOCK_PISTON_RETRACT, damageListener, damageListener.executor, Priority.Normal, this);
+		pm.registerEvent(Type.BLOCK_PISTON_EXTEND, damageListener, damageListener.executor, Priority.Normal, this);
 	}
 }

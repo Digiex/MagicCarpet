@@ -41,24 +41,19 @@ public class MagicDamageListener implements Listener {
 		public void execute(Listener listener, Event event) {
 			switch (event.getType()) {
 			case BLOCK_BREAK:
-				((MagicDamageListener) listener)
-						.onBlockBreak((BlockBreakEvent) event);
+				((MagicDamageListener) listener).onBlockBreak((BlockBreakEvent) event);
 				break;
 			case ENTITY_DAMAGE:
-				((MagicDamageListener) listener)
-						.onEntityDamage((EntityDamageEvent) event);
+				((MagicDamageListener) listener).onEntityDamage((EntityDamageEvent) event);
 				break;
 			case BLOCK_PHYSICS:
-				((MagicDamageListener) listener)
-						.onBlockPhysics((BlockPhysicsEvent) event);
+				((MagicDamageListener) listener).onBlockPhysics((BlockPhysicsEvent) event);
 				break;
 			case BLOCK_PISTON_RETRACT:
-				((MagicDamageListener) listener)
-						.onBlockPistonRetract((BlockPistonRetractEvent) event);
+				((MagicDamageListener) listener).onBlockPistonRetract((BlockPistonRetractEvent) event);
 				break;
 			case BLOCK_PISTON_EXTEND:
-				((MagicDamageListener) listener)
-						.onBlockPistonExtend((BlockPistonExtendEvent) event);
+				((MagicDamageListener) listener).onBlockPistonExtend((BlockPistonExtendEvent) event);
 				break;
 			}
 		}
@@ -145,8 +140,7 @@ public class MagicDamageListener implements Listener {
 			if (!(event.getEntity() instanceof LivingEntity)) {
 				return;
 			}
-			Block eyes = ((LivingEntity) event.getEntity()).getEyeLocation()
-					.getBlock();
+			Block eyes = ((LivingEntity) event.getEntity()).getEyeLocation().getBlock();
 			Block block = event.getEntity().getLocation().getBlock();
 			for (Carpet carpet : plugin.carpets.all()) {
 				if (carpet == null || !carpet.isVisible()) {

@@ -57,9 +57,7 @@ public class MagicPlayerListener extends PlayerListener {
 		Carpet carpet = plugin.carpets.get(who);
 		if (carpet != null && carpet.isVisible()) {
 			String reason = event.getReason();
-			if (reason != null
-					&& reason.equals("Flying is not enabled on this server")
-					&& who.isSneaking()) {
+			if (reason != null && reason.equals("Flying is not enabled on this server") && who.isSneaking()) {
 				event.setCancelled(true);
 			}
 		}

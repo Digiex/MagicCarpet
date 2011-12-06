@@ -32,8 +32,7 @@ public class CarpetCommand implements CommandExecutor {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
-			String label, String[] args) {
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (!(sender instanceof Player)) {
 			sender.sendMessage("Sorry, only players can use the carpet!");
 			return true;
@@ -58,7 +57,7 @@ public class CarpetCommand implements CommandExecutor {
 			}
 		} else {
 			if (carpet.isVisible()) {
-                                plugin.checkCarpet(carpet);
+                plugin.checkCarpet(carpet);
 				try {
 					c = Integer.valueOf(args[0]);
 				} catch (NumberFormatException e) {
@@ -66,8 +65,7 @@ public class CarpetCommand implements CommandExecutor {
 						Material material = Material.getMaterial(args[0]);
 						if (material == null) {
 							player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be an odd number from 3 to 9.");
-						} else if (MagicCarpet.acceptableCarpet
-								.contains(material)) {
+						} else if (MagicCarpet.acceptableCarpet.contains(material)) {
 							carpet.changeCarpet(material);
 							player.sendMessage("The carpet seems to react to your words, and suddenly changes material!");
 							return true;

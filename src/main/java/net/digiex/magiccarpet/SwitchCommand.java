@@ -31,21 +31,20 @@ public class SwitchCommand implements CommandExecutor {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
-			String label, String[] args) {
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (!(sender instanceof Player)) {
 			sender.sendMessage("Sorry, only players can use the carpet!");
 			return true;
 		}
 		Player player = (Player) sender;
 		if (plugin.canFly(player) && plugin.canSwitch(player)) {
-                        Carpet carpet = plugin.carpets.get(player);
-                        if (carpet != null && carpet.isVisible()) {
-                                plugin.checkCarpet(carpet);
-                        } else {
-                                player.sendMessage("You don't have a carpet yet, use /mc!");
-                                return true;
-                        }
+            Carpet carpet = plugin.carpets.get(player);
+            if (carpet != null && carpet.isVisible()) {
+                plugin.checkCarpet(carpet);
+            } else {
+                player.sendMessage("You don't have a carpet yet, use /mc!");
+                return true;
+            }
 			plugin.carpets.toggleCrouch(player);
 			if (plugin.carpets.crouches(player)) {
 				player.sendMessage("You now crouch to descend");
