@@ -338,7 +338,7 @@ public class Carpet {
 	}
 
 	private boolean shouldChange() {
-		if (getThread() == Material.GLASS || getShine() == Material.LEAVES) {
+		if (getThread() == Material.GLASS || getThread() == Material.LEAVES) {
 			return true;
 		}
 		return false;
