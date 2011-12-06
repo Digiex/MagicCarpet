@@ -181,7 +181,7 @@ public class MagicCarpet extends JavaPlugin {
 		registerEvents();
 		registerCommands();
 
-		log.info("version " + pdfFile.getVersion() + " is enabled!");
+		log.info("Version " + pdfFile.getVersion() + " is enabled!");
 	}
 
 	public void saveCarpets() {
