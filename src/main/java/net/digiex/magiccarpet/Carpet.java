@@ -256,12 +256,12 @@ public class Carpet {
 			if (currentCentre != null) {
 				bl = currentCentre.getRelative(fibre.dx, fibre.dy, fibre.dz);
 				Material type = bl.getType();
-				if (!isAirOrFluid(type)) {
+				if (!isAir(type) && !isFluid(type)) {
 					fibre.block = null;
 					continue;
 				}
 				fibre.block = bl.getState();
-				if (fibre.shouldGlow() && shouldChange()) {
+				if (fibre.shouldGlow() && shouldChange() && !lightWater(bl)) {
 					fibre.set(bl, getShine());
 				} else {
 					fibre.set(bl, getThread());
@@ -270,11 +270,15 @@ public class Carpet {
 		}
 	}
 
-	private boolean isAirOrFluid(Material type) {
+	private boolean isAir(Material type) {
 		if (type == Material.AIR) {
 			return true;
 		}
-		if (type == Material.WATER) {
+		return false;
+	}
+        
+        private boolean isFluid(Material type) {
+                if (type == Material.WATER) {
 			return true;
 		}
 		if (type == Material.STATIONARY_WATER) {
@@ -287,7 +291,14 @@ public class Carpet {
 			return true;
 		}
 		return false;
-	}
+        }
+        
+        private boolean lightWater(Block b) {
+                if (touches(b) && isFluid(b.getType())) {
+                        return true;
+                }
+                return false;
+        }
 
 	// Goes through a grid of the area underneath the player, and if the block
 	// is glass that is part of the magic carpet, it is removed

@@ -44,8 +44,8 @@ public class LightCommand implements CommandExecutor {
                         if (carpet != null && carpet.isVisible()) {
                                 plugin.checkCarpet(carpet);
                         } else {
-                            player.sendMessage("You don't have a carpet yet, use /mc!");
-                            return true;
+                                player.sendMessage("You don't have a carpet yet, use /mc!");
+                                return true;
                         }
 			if (args.length < 1) {
 				hideOrShow(player);
