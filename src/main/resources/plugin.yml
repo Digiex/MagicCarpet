@@ -19,6 +19,10 @@ commands:
     description: Allows the user to switch methods for going down with the carpet.
     aliases: [mcs]
     usage: /<command>
+  magicreload:
+    description: Reloads MagicCarpet.
+    aliases: [mr]
+    usage: /<command>
 permissions:
   magiccarpet.mc:
     description: Take yourself wonder by wonder on a carpet made of glass.
@@ -27,7 +31,7 @@ permissions:
     description: Allows a bright light for your carpet ride.
     default: op
   magiccarpet.mcs:
-    description: Allows the user to switch methods for going down with the carpet.
+    description: Allows the player to switch methods for going down with the carpet.
     default: op
   magiccarpet.tp:
     description: Allows the carpet to move when teleporting while active.
@@ -44,6 +48,9 @@ permissions:
   magiccarpet.mc.9:
     description: Allows the carpet to operate at 9.
     default: op
+  magiccarpet.mr:
+    description: Allows the player to reload MagicCarpet.
+    default: op
   magiccarpet.*:
     description: Allows access to all MagicCarpet commands.
     children:
@@ -55,3 +62,4 @@ permissions:
       magiccarpet.mc.5: true
       magiccarpet.mc.7: true
       magiccarpet.mc.9: true
+      magiccarpet.mr: true

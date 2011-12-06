@@ -43,6 +43,8 @@ public class MagicPlayerListener extends PlayerListener {
         Player player = event.getPlayer();
         if (plugin.carpets.has(player)) {
             Carpet.create(player, plugin).show();
+            Carpet c = plugin.carpets.get(player);
+            plugin.checkCarpet(c);
         }
     }
 
@@ -52,7 +54,7 @@ public class MagicPlayerListener extends PlayerListener {
         // TODO: This is hacky and likely won't work in all cases
         Player who = event.getPlayer();
         Carpet carpet = plugin.carpets.get(who);
-        if (carpet != null) {
+        if (carpet != null && carpet.isVisible()) {
             String reason = event.getReason();
             if (reason != null && reason.equals("Flying is not enabled on this server") && who.isSneaking()) {
                 event.setCancelled(true);
@@ -80,6 +82,10 @@ public class MagicPlayerListener extends PlayerListener {
         if (!plugin.canFly(player)) {
             carpet.suppress();
             return;
+        }
+        if (!plugin.canFlyAt(player, carpet.getSize())) {
+            carpet.changeCarpet(plugin.carpSize);
+            plugin.carpets.update(player);
         }
         //to.setY(to.getY()-1);
         //from.setY(from.getY()-1);

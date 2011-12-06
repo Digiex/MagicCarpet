@@ -42,7 +42,7 @@ public class MagicCarpet extends JavaPlugin {
 
     static final EnumSet<Material> acceptableCarpet = EnumSet.of(
             STONE, GRASS, DIRT, COBBLESTONE, WOOD, BEDROCK, GRAVEL, GOLD_ORE, IRON_ORE, COAL_ORE, LOG,
-            LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK, SANDSTONE, NOTE_BLOCK, WOOL, GOLD_BLOCK, 
+            LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK, SANDSTONE, NOTE_BLOCK, WOOL, GOLD_BLOCK,
             IRON_BLOCK, DOUBLE_STEP, BRICK, TNT, BOOKSHELF, MOSSY_COBBLESTONE,
             OBSIDIAN, DIAMOND_ORE, DIAMOND_BLOCK, WORKBENCH, SOIL, SNOW_BLOCK,
             CLAY, PUMPKIN, NETHERRACK, SOUL_SAND);
@@ -55,7 +55,7 @@ public class MagicCarpet extends JavaPlugin {
     public MagicCarpetLogging log = new MagicCarpetLogging();
     CarpetStorage carpets = new CarpetStorage().attach(this);
     boolean crouchDef = true;
-    boolean glowCenter = true;
+    boolean glowCenter = false;
     int carpSize = 5;
     Material carpMaterial = GLASS;
     Material lightMaterial = GLOWSTONE;
@@ -73,7 +73,7 @@ public class MagicCarpet extends JavaPlugin {
         config = getConfig();
 
         configFile = new File(getDataFolder(), "config.yml");
-		if (configFile.exists()) {
+        if (configFile.exists()) {
             loadSettings();
         } else {
             saveSettings();
@@ -87,17 +87,17 @@ public class MagicCarpet extends JavaPlugin {
 
     public void loadSettings() {
         try {
-			config.load(configFile);
-		} catch(FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch(IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch(InvalidConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            config.load(configFile);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InvalidConfigurationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         crouchDef = config.getBoolean("crouch-descent", config.getBoolean("Crouch Default", true));
         glowCenter = config.getBoolean("center-light", config.getBoolean("Put glowstone for light in center", false));
         carpSize = config.getInt("default-size", config.getInt("Default size for carpet", 5));
@@ -110,11 +110,11 @@ public class MagicCarpet extends JavaPlugin {
             lightMaterial = GLOWSTONE;
         }
         maxCarpSize = config.getInt("max-size", 9);
-        teleportBlock = config.getBoolean("teleport-block");
-        customCarpets = config.getBoolean("allow-custom");
+        teleportBlock = config.getBoolean("teleport-block", false);
+        customCarpets = config.getBoolean("allow-custom", true);
     }
 
-	public void saveSettings() {
+    public void saveSettings() {
         config.set("crouch-descent", crouchDef);
         config.set("center-light", glowCenter);
         config.set("default-size", carpSize);
@@ -123,12 +123,13 @@ public class MagicCarpet extends JavaPlugin {
         config.set("max-size", maxCarpSize);
         config.set("teleport-block", teleportBlock);
         config.set("allow-custom", customCarpets);
+        config.options().header("Be sure to use /mr if you change any settings here.");
         try {
-			config.save(configFile);
-		} catch(IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            config.save(configFile);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     private File carpetsFile() {
@@ -194,6 +195,18 @@ public class MagicCarpet extends JavaPlugin {
         getCommand("magiccarpet").setExecutor(new CarpetCommand(this));
         getCommand("magiclight").setExecutor(new LightCommand(this));
         getCommand("carpetswitch").setExecutor(new SwitchCommand(this));
+        getCommand("magicreload").setExecutor(new ReloadCommand(this));
+    }
+
+    public void checkCarpet(Carpet carpet) {
+        if (carpet.getSize() > maxCarpSize) {
+            carpet.changeCarpet(carpSize);
+        }
+        if (carpet.isCustom() && !customCarpets) {
+            carpet.changeCarpet(carpMaterial);
+            carpet.setLights(lightMaterial);
+        }
+        carpets.update(carpet.getPlayer());
     }
 
     public boolean canFly(Player player) {
@@ -207,12 +220,16 @@ public class MagicCarpet extends JavaPlugin {
     public boolean canSwitch(Player player) {
         return player.hasPermission("magiccarpet.mcs");
     }
-    
+
     public boolean canTeleFly(Player player) {
         return player.hasPermission("magiccarpet.tp");
     }
-    
+
     public boolean canFlyAt(Player player, Integer i) {
         return player.hasPermission("magiccarpet.mc." + i);
+    }
+
+    public boolean canReload(Player player) {
+        return player.hasPermission("magiccarpet.mr");
     }
 }

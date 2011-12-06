@@ -132,9 +132,9 @@ public class Carpet {
                 }
                 fibre.block = bl.getState();
                 if (fibre.shouldGlow() && shouldChange()) {
-                    fibre.set(bl, shine);
+                    fibre.set(bl, getShine());
                 } else {
-                    fibre.set(bl, thread);
+                    fibre.set(bl, getThread());
                 }
             }
         }
@@ -154,15 +154,6 @@ public class Carpet {
             return true;
         }
         if (type == Material.STATIONARY_LAVA) {
-            return true;
-        }
-        return false;
-    }
-    
-    //Prevent lag while using /ml with custom carpets.
-    private boolean shouldChange() {
-        if (thread == Material.GLASS || thread == Material.LEAVES) {
-            //glass is best, however leaves does work without noticable lag.
             return true;
         }
         return false;
@@ -314,5 +305,23 @@ public class Carpet {
 
     public Material getShine() {
         return shine;
+    }
+    
+    private boolean shouldChange() {
+        if (getThread() == Material.GLASS || getShine() == Material.LEAVES) {
+            return true;
+        }
+        return false;
+    }
+    
+    public Player getPlayer() {
+        return who;
+    }
+    
+    public boolean isCustom() {
+        if (getThread() != Material.GLASS || getShine() != Material.GLOWSTONE) {
+            return true;
+        }
+        return false;
     }
 }

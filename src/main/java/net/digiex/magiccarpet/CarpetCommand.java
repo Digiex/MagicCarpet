@@ -43,10 +43,11 @@ public class CarpetCommand implements CommandExecutor {
             player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
             return true;
         }
-        int c = 5;
+        int c = plugin.carpSize;
         if (carpet == null) {
             carpet = Carpet.create(player, plugin);
         }
+        plugin.checkCarpet(carpet);
         if (args.length < 1) {
             if (carpet.isVisible()) {
                 player.sendMessage("Poof! The magic carpet disappears.");
