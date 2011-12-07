@@ -262,11 +262,22 @@ public class Carpet {
 					continue;
 				}
 				fibre.block = bl.getState();
-				if (fibre.shouldGlow() && shouldChange() && !lightWater(bl)) {
-					fibre.set(bl, getShine());
-				} else {
-					fibre.set(bl, getThread());
-				}
+                                // stop water carpets and stop custom carpets when not allowed.
+                                if (fibre.shouldGlow() && p.allowWaterLight && shouldLightWater(bl)) {
+                                        fibre.set(bl, getShine());
+                                } else if(fibre.shouldGlow() && p.allowCustomLight && shouldLightCustom()) {
+                                        fibre.set(bl, getShine());
+                                } else if (fibre.shouldGlow() && !p.allowWaterLight && shouldLightWater(bl)) {
+                                        fibre.set(bl, getThread());
+                                } else if (fibre.shouldGlow() && !p.allowCustomLight && !shouldLightCustom()) {
+                                        fibre.set(bl, getThread());
+                                } else {
+                                        if (fibre.shouldGlow()) {
+                                                fibre.set(bl, getShine());
+                                        } else {
+                                                fibre.set(bl, getThread());
+                                        }
+                                }
 			}
 		}
 	}
@@ -292,13 +303,6 @@ public class Carpet {
 			return true;
 		}
 		return false;
-    }
-    
-    private boolean lightWater(Block b) {
-        if (!p.allowWaterLight && touches(b) && isFluid(b.getType())) {
-            return true;
-        }
-        return false;
     }
 
 	// Goes through a grid of the area underneath the player, and if the block
@@ -338,10 +342,17 @@ public class Carpet {
 		}
 	}
 
-	private boolean shouldChange() {
-		if (getThread() == Material.GLASS || getThread() == Material.LEAVES) {
-			return true;
-		}
+	private boolean shouldLightWater(Block b) {
+                if (touches(b) && isFluid(b.getType())) {
+                       return true;
+                }
 		return false;
 	}
+        
+        private boolean shouldLightCustom() {
+                if (getThread() == Material.GLASS || getThread() == Material.LEAVES) {
+                       return true;
+                }
+		return false;
+        }
 }

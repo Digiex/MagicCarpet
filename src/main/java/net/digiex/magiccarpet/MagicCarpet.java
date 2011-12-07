@@ -64,6 +64,7 @@ public class MagicCarpet extends JavaPlugin {
 	int maxCarpSize = 9;
 	boolean teleportBlock = false;
         boolean allowWaterLight = false;
+        boolean allowCustomLight = false;
 
 	public boolean canFly(Player player) {
 		return player.hasPermission("magiccarpet.mc");
@@ -154,6 +155,7 @@ public class MagicCarpet extends JavaPlugin {
 		teleportBlock = config.getBoolean("teleport-block", false);
 		customCarpets = config.getBoolean("allow-custom", true);
                 allowWaterLight = config.getBoolean("allow-water-light", false);
+                allowCustomLight = config.getBoolean("allow-custom-light", false);
 	}
 
 	@Override
@@ -207,6 +209,7 @@ public class MagicCarpet extends JavaPlugin {
 		config.set("teleport-block", teleportBlock);
 		config.set("allow-custom", customCarpets);
                 config.set("allow-water-light", allowWaterLight);
+                config.set("allow-custom-light", allowCustomLight);
 		config.options().header(
 				"Be sure to use /mr if you change any settings here while the server is running.");
 		try {
