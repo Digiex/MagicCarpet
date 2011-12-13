@@ -184,7 +184,7 @@ public class Carpet {
 	}
 
 	public boolean isCustom() {
-		if (getThread() != Material.GLASS || getShine() != Material.GLOWSTONE) {
+		if (getThread() != p.carpMaterial || getShine() != p.lightMaterial) {
 			return true;
 		}
 		return false;
