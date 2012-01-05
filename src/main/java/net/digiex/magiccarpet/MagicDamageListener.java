@@ -68,7 +68,7 @@ public class MagicDamageListener implements Listener {
 	// puts it back.
 	public void onBlockBreak(BlockBreakEvent event) {
 		for (Carpet carpet : plugin.carpets.all()) {
-			if (carpet == null || !carpet.isVisible()) {
+			if (carpet == null) {
 				continue;
 			}
 			if (carpet.isCovering(event.getBlock())) {
@@ -86,7 +86,7 @@ public class MagicDamageListener implements Listener {
 		}
 
 		for (Carpet carpet : plugin.carpets.all()) {
-			if (carpet == null || !carpet.isVisible()) {
+			if (carpet == null) {
 				continue;
 			}
 			// Prevent players from creating floating torches
@@ -143,7 +143,7 @@ public class MagicDamageListener implements Listener {
 			Block eyes = ((LivingEntity) event.getEntity()).getEyeLocation().getBlock();
 			Block block = event.getEntity().getLocation().getBlock();
 			for (Carpet carpet : plugin.carpets.all()) {
-				if (carpet == null || !carpet.isVisible()) {
+				if (carpet == null) {
 					continue;
 				}
 				if (carpet.touches(eyes)) {
@@ -158,10 +158,15 @@ public class MagicDamageListener implements Listener {
 			if (!(event.getEntity() instanceof Player)) {
 				return;
 			}
-			if (plugin.carpets.has((Player) event.getEntity())) {
-				event.setCancelled(true);
-				return;
-			}
+                        for (Carpet carpet : plugin.carpets.all()) {
+                                if (carpet == null) {
+					continue;
+				}
+                                if (carpet.getPlayer().equals((Player) event.getEntity()) && carpet.isVisible()) {
+                                        event.setCancelled(true);
+                                        return;
+                                }
+                        }
 		}
 	}
 }

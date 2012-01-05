@@ -123,8 +123,8 @@ public class MagicPlayerListener extends PlayerListener {
 				falling = true;
 			}
 		}
-
-		if (from.getY() > to.getY() && !falling) {
+                
+                if (from.getY() > to.getY() && !falling) {
 			to.setY(from.getY());
 		}
 		falling = false;
