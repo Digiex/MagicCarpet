@@ -68,7 +68,7 @@ public class MagicDamageListener implements Listener {
 	// puts it back.
 	public void onBlockBreak(BlockBreakEvent event) {
 		for (Carpet carpet : plugin.carpets.all()) {
-			if (carpet == null) {
+			if (carpet == null || !carpet.isVisible()) {
 				continue;
 			}
 			if (carpet.isCovering(event.getBlock())) {
@@ -86,7 +86,7 @@ public class MagicDamageListener implements Listener {
 		}
 
 		for (Carpet carpet : plugin.carpets.all()) {
-			if (carpet == null) {
+			if (carpet == null || !carpet.isVisible()) {
 				continue;
 			}
 			// Prevent players from creating floating torches
@@ -103,7 +103,7 @@ public class MagicDamageListener implements Listener {
 	public void onBlockPistonExtend(BlockPistonExtendEvent event) {
 		// System.out.println("Piston extend...");
 		for (Carpet carpet : plugin.carpets.all()) {
-			if (carpet == null) {
+			if (carpet == null || !carpet.isVisible()) {
 				continue;
 			}
 			for (Block block : event.getBlocks()) {
@@ -121,7 +121,7 @@ public class MagicDamageListener implements Listener {
 		// System.out.println("Piston retract...");
 		if (event.isSticky()) {
 			for (Carpet carpet : plugin.carpets.all()) {
-				if (carpet == null) {
+				if (carpet == null || !carpet.isVisible()) {
 					continue;
 				}
 				if (carpet.isCovering(event.getRetractLocation().getBlock())) {
@@ -143,7 +143,7 @@ public class MagicDamageListener implements Listener {
 			Block eyes = ((LivingEntity) event.getEntity()).getEyeLocation().getBlock();
 			Block block = event.getEntity().getLocation().getBlock();
 			for (Carpet carpet : plugin.carpets.all()) {
-				if (carpet == null) {
+				if (carpet == null || !carpet.isVisible()) {
 					continue;
 				}
 				if (carpet.touches(eyes)) {
@@ -159,10 +159,10 @@ public class MagicDamageListener implements Listener {
 				return;
 			}
                         for (Carpet carpet : plugin.carpets.all()) {
-                                if (carpet == null) {
+                                if (carpet == null || !carpet.isVisible()) {
 					continue;
 				}
-                                if (carpet.getPlayer().equals((Player) event.getEntity()) && carpet.isVisible()) {
+                                if (carpet.getPlayer().equals((Player) event.getEntity())) {
                                         event.setCancelled(true);
                                         return;
                                 }

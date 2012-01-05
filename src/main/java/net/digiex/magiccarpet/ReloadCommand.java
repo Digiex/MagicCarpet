@@ -54,7 +54,7 @@ public class ReloadCommand implements CommandExecutor {
 			Player player = (Player) sender;
 			if (plugin.canReload(player)) {
 				for (Carpet c : plugin.carpets.all()) {
-                                        if (c == null) {
+                                        if (c == null || !c.isVisible()) {
                                                 continue;
                                         }
 					c.suppress();
