@@ -219,6 +219,8 @@ public class Carpet {
 
 	public void show() {
 		if (hidden || suppressed) {
+                        // fix the carpet from being displayed where the player isn't at any longer.
+                        currentCentre = getPlayer().getLocation().getBlock();
 			drawCarpet();
 		}
 		hidden = false;
