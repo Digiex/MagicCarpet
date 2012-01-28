@@ -71,7 +71,14 @@ public class MagicCarpet extends JavaPlugin {
 	}
 
 	public boolean canFlyAt(Player player, int i) {
-		return player.hasPermission("magiccarpet.mc." + i);
+                if (player.hasPermission("magiccarpet.mc." + i)) {
+                        return true;
+                }
+                if (i == carpSize) {
+                    // Always allow the default size
+                    return true;
+                }
+                return false;
 	}
 
 	public boolean canLight(Player player) {
