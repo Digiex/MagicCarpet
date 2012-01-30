@@ -57,7 +57,6 @@ public class CarpetCommand implements CommandExecutor {
 			}
 		} else {
 			if (carpet.isVisible()) {
-                plugin.checkCarpet(carpet);
 				try {
 					c = Integer.valueOf(args[0]);
 				} catch (NumberFormatException e) {

@@ -95,7 +95,6 @@ public class Carpet {
 	private CarpetFibre[] fibres;
 	private boolean hidden;
 	private boolean lightsOn;
-	private boolean suppressed;
 	private Material thread, shine;
 
 	private Player who;
@@ -106,7 +105,6 @@ public class Carpet {
 		currentCentre = player.getLocation().getBlock();
 		lightsOn = on;
 		hidden = true;
-		suppressed = false;
 		thread = mat;
 		shine = light;
 	}
@@ -154,10 +152,10 @@ public class Carpet {
 	}
 
 	public void hide() {
-		if (!hidden && !suppressed) {
+		if (!hidden) {
 			removeCarpet();
+                        hidden = true;
 		}
-		hidden = true;
 	}
 
 	public boolean isCovering(Block block) {
@@ -218,19 +216,11 @@ public class Carpet {
 	}
 
 	public void show() {
-		if (hidden || suppressed) {
+		if (hidden) {
                         // fix the carpet from being displayed where the player isn't at any longer.
                         currentCentre = getPlayer().getLocation().getBlock();
 			drawCarpet();
 		}
-		hidden = false;
-	}
-
-	public void suppress() {
-		if (!suppressed) {
-			removeCarpet();
-		}
-		suppressed = true;
 	}
 
 	public boolean touches(Block block) {
@@ -243,16 +233,13 @@ public class Carpet {
 		if (block.getLocation().distanceSquared(getLocation()) > radplsq) {
 			return false;
 		}
-                if (abs(block.getY() - currentCentre.getY()) > getSize()) {
-			return false;
-		}
 		return true;
 	}
 
 	// Places glass in a 5x5 area underneath the player if the block was just
 	// air previously
 	private void drawCarpet() {
-		suppressed = false;
+                hidden = false;
 		Block bl;
 		for (CarpetFibre fibre : fibres) {
 			if (currentCentre != null) {
@@ -355,5 +342,20 @@ public class Carpet {
                        return true;
                 }
 		return false;
+        }
+        
+        public void checkCarpet() {
+                if (getPlayer().isOnline() && p.carpets.has(getPlayer())) {
+                    removeCarpet();
+                    if (getSize() > p.maxCarpSize) {
+                            setSize(p.carpSize);
+                    }
+                    if (isCustom() && !p.customCarpets) {
+                            thread = p.carpMaterial;
+                            shine = p.lightMaterial;
+                    }
+                    drawCarpet();
+                }
+                p.carpets.update(getPlayer());
         }
 }

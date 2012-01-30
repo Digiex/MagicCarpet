@@ -1,14 +1,9 @@
 package net.digiex.magiccarpet;
 
+import static java.lang.Math.abs;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerListener;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.util.Vector;
 
 /*
@@ -44,8 +39,8 @@ public class MagicPlayerListener extends PlayerListener {
 		Player player = event.getPlayer();
 		if (plugin.carpets.has(player)) {
 			Carpet.create(player, plugin).show();
-			Carpet c = plugin.carpets.get(player);
-			plugin.checkCarpet(c);
+                        Carpet c = plugin.carpets.get(player);
+                        c.checkCarpet();
 		}
 	}
 
@@ -74,7 +69,7 @@ public class MagicPlayerListener extends PlayerListener {
 			return;
 		}
 		if (!plugin.canFly(player)) {
-			carpet.suppress();
+			carpet.hide();
 			return;
 		}
 		if (!plugin.canFlyAt(player, carpet.getSize())) {
@@ -127,8 +122,8 @@ public class MagicPlayerListener extends PlayerListener {
                 if (from.getY() > to.getY() && !falling) {
 			to.setY(from.getY());
 		}
-		falling = false;
 		carpet.moveTo(to);
+		falling = false;
 	}
 
 	@Override
@@ -147,10 +142,6 @@ public class MagicPlayerListener extends PlayerListener {
 		if (carpet == null || !carpet.isVisible()) {
 			return;
 		}
-		if (!plugin.canFly(player)) {
-			carpet.suppress();
-			return;
-		}
 		// Check if the player moved 1 block
 		// to.setY(to.getY()-1);
 		Location last = carpet.getLocation();
@@ -159,16 +150,18 @@ public class MagicPlayerListener extends PlayerListener {
 				&& last.getBlockZ() == to.getBlockZ()) {
 			return;
 		}
-
-		// Check if the player is allowed to move the carpet via teleport
-		if (plugin.teleportBlock) {
-			if (!plugin.canTeleFly(player)) {
-				player.sendMessage("Your carpet cannot follow you there!");
-				carpet.suppress();
-				return;
-			}
+                if (!plugin.canFly(player)) {
+			carpet.hide();
+			return;
 		}
-
+		if (!plugin.canTeleFly(player) && falling == false) {
+                        if (to.getWorld().equals(carpet.getLocation().getWorld()) && abs(to.getY() - carpet.getLocation().getY()) < 2) {
+                            return;
+                        }
+			player.sendMessage("Your carpet cannot follow you there!");
+			carpet.hide();
+			return;
+		}
 		// Move the carpet
 		carpet.moveTo(to);
 	}

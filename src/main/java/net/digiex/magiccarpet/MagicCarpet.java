@@ -62,7 +62,6 @@ public class MagicCarpet extends JavaPlugin {
 	boolean glowCenter = false;
 	Material lightMaterial = GLOWSTONE;
 	int maxCarpSize = 9;
-	boolean teleportBlock = false;
         boolean allowWaterLight = false;
         boolean allowCustomLight = false;
 
@@ -95,18 +94,7 @@ public class MagicCarpet extends JavaPlugin {
 
 	public boolean canTeleFly(Player player) {
 		return player.hasPermission("magiccarpet.tp");
-	}
-
-	public void checkCarpet(Carpet carpet) {
-		if (carpet.getSize() > maxCarpSize) {
-			carpet.changeCarpet(carpSize);
-		}
-		if (carpet.isCustom() && !customCarpets) {
-			carpet.changeCarpet(carpMaterial);
-			carpet.setLights(lightMaterial);
-		}
-		carpets.update(carpet.getPlayer());
-	}
+        }
 
 	public void loadCarpets() {
 		File carpetDat = carpetsFile();
@@ -152,17 +140,23 @@ public class MagicCarpet extends JavaPlugin {
 				config.getInt("Carpet Material", GLASS.getId())));
 		if (!acceptableCarpet.contains(carpMaterial)) {
 			carpMaterial = GLASS;
+                        log.warning("Config error; Invaild carpet material.");
 		}
 		lightMaterial = Material.getMaterial(config.getInt("carpet-light",
 				config.getInt("Carpet Light Material", GLOWSTONE.getId())));
 		if (!acceptableLight.contains(lightMaterial)) {
 			lightMaterial = GLOWSTONE;
+                        log.warning("Config error; Invalid carpet light material.");
 		}
 		maxCarpSize = config.getInt("max-size", 9);
-		teleportBlock = config.getBoolean("teleport-block", false);
 		customCarpets = config.getBoolean("allow-custom", true);
                 allowWaterLight = config.getBoolean("allow-water-light", false);
                 allowCustomLight = config.getBoolean("allow-custom-light", false);
+                if (carpSize > maxCarpSize) {
+                    carpSize = 5;
+                    maxCarpSize = 9;
+                    log.warning("Config error; Default-size is larger than max-size.");
+                }
 	}
 
 	@Override
@@ -213,7 +207,6 @@ public class MagicCarpet extends JavaPlugin {
 		config.set("carpet", carpMaterial.getId());
 		config.set("carpet-light", lightMaterial.getId());
 		config.set("max-size", maxCarpSize);
-		config.set("teleport-block", teleportBlock);
 		config.set("allow-custom", customCarpets);
                 config.set("allow-water-light", allowWaterLight);
                 config.set("allow-custom-light", allowCustomLight);

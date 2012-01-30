@@ -72,7 +72,7 @@ public class CarpetStorage implements Serializable {
 							throw new IllegalStateException();
 						}
 						if (toRemove.carpet != null) {
-							toRemove.carpet.suppress();
+							toRemove.carpet.hide();
 						}
 						toRemove.carpet = null;
 					}
@@ -84,7 +84,7 @@ public class CarpetStorage implements Serializable {
 	public void assign(Player player, Carpet carpet) {
 		CarpetEntry entry = entry(player);
 		if (entry.carpet != null) {
-			entry.carpet.suppress();
+			entry.carpet.hide();
 		}
 		entry.carpet = carpet;
 	}
@@ -99,7 +99,7 @@ public class CarpetStorage implements Serializable {
 			if (entry.carpet == null) {
 				continue;
 			}
-			entry.carpet.suppress();
+			entry.carpet.hide();
 		}
 		carpets.clear();
 	}
@@ -155,7 +155,7 @@ public class CarpetStorage implements Serializable {
 	public void remove(Player player) {
 		CarpetEntry entry = entry(player);
 		if (entry.carpet != null) {
-			entry.carpet.suppress();
+			entry.carpet.hide();
 		}
 		entry.carpet = null;
 	}

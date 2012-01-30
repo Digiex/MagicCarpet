@@ -35,40 +35,13 @@ public class ReloadCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
 		if (!(sender instanceof Player)) {
-			for (Carpet c : plugin.carpets.all()) {
-				c.suppress();
-			}
-			plugin.carpets.clear();
-			plugin.loadSettings();
-			plugin.loadCarpets();
-			for (Player p : plugin.getServer().getOnlinePlayers()) {
-				if (plugin.carpets.has(p)) {
-					Carpet.create(p, plugin).show();
-					Carpet c = plugin.carpets.get(p);
-					plugin.checkCarpet(c);
-				}
-			}
+			reload();
 			log.info("has been reloaded!");
 			return true;
 		} else if (sender instanceof Player) {
 			Player player = (Player) sender;
 			if (plugin.canReload(player)) {
-				for (Carpet c : plugin.carpets.all()) {
-                                        if (c == null || !c.isVisible()) {
-                                                continue;
-                                        }
-					c.suppress();
-				}
-				plugin.carpets.clear();
-				plugin.loadSettings();
-				plugin.loadCarpets();
-				for (Player p : plugin.getServer().getOnlinePlayers()) {
-					if (plugin.carpets.has(p)) {
-						Carpet.create(p, plugin).show();
-						Carpet c = plugin.carpets.get(p);
-						plugin.checkCarpet(c);
-					}
-				}
+				reload();
 				player.sendMessage("MagicCarpet has been reloaded!");
 			} else {
 				player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
@@ -77,4 +50,23 @@ public class ReloadCommand implements CommandExecutor {
 		}
 		return false;
 	}
+        
+        public void reload() {
+                for (Carpet c : plugin.carpets.all()) {
+                        if (c == null || !c.isVisible()) {
+                                continue;
+                        }
+			c.hide();
+		}
+		plugin.carpets.clear();
+		plugin.loadSettings();
+		plugin.loadCarpets();
+		for (Player p : plugin.getServer().getOnlinePlayers()) {
+			if (plugin.carpets.has(p)) {
+				Carpet.create(p, plugin).show();
+				Carpet c = plugin.carpets.get(p);
+                                c.checkCarpet();
+			}
+		}
+        }
 }

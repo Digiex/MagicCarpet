@@ -39,9 +39,7 @@ public class SwitchCommand implements CommandExecutor {
 		Player player = (Player) sender;
 		if (plugin.canFly(player) && plugin.canSwitch(player)) {
             Carpet carpet = plugin.carpets.get(player);
-            if (carpet != null && carpet.isVisible()) {
-                plugin.checkCarpet(carpet);
-            } else {
+            if (carpet == null || !carpet.isVisible()) {
                 player.sendMessage("You don't have a carpet yet, use /mc!");
                 return true;
             }
