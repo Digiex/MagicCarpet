@@ -81,6 +81,7 @@ public class LightCommand implements CommandExecutor {
                 player.sendMessage("You aren't allowed to use the magic carpet!");
             }
         }
+        plugin.carpets.update(player);
         return true;
     }
 

@@ -37,7 +37,8 @@ public class MagicCarpet extends JavaPlugin {
             SANDSTONE, NOTE_BLOCK, WOOL, GOLD_BLOCK, IRON_BLOCK, DOUBLE_STEP,
             BRICK, TNT, BOOKSHELF, MOSSY_COBBLESTONE, OBSIDIAN, DIAMOND_ORE,
             DIAMOND_BLOCK, WORKBENCH, SOIL, SNOW_BLOCK, CLAY, PUMPKIN,
-            NETHERRACK, SOUL_SAND);
+            NETHERRACK, SOUL_SAND, MYCEL, NETHER_BRICK, ENDER_STONE, 
+            HUGE_MUSHROOM_1, HUGE_MUSHROOM_2);
     static final EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE, JACK_O_LANTERN);
     public MagicCarpetLogging log = new MagicCarpetLogging();
     private FileConfiguration config;
@@ -158,6 +159,7 @@ public class MagicCarpet extends JavaPlugin {
     public void onDisable() {
         saveCarpets();
         carpets.clear();
+        log.info("is now disabled!");
     }
 
     @Override
@@ -176,13 +178,19 @@ public class MagicCarpet extends JavaPlugin {
         loadCarpets();
         registerEvents();
         registerCommands();
-
-        log.info("Version " + pdfFile.getVersion() + " is enabled!");
+        log.info("is now enabled!");
     }
 
     public void saveCarpets() {
         File carpetDat = carpetsFile();
         log.info("Saving carpets...");
+        if (!carpetDat.exists()) {
+            try {
+                carpetDat.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         try {
             FileOutputStream file = new FileOutputStream(carpetDat);
             ObjectOutputStream out = new ObjectOutputStream(file);

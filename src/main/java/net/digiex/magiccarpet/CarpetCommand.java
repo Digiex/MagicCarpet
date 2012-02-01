@@ -73,6 +73,7 @@ public class CarpetCommand implements CommandExecutor {
                             if (MagicCarpet.acceptableCarpet.contains(m)) {
                                 player.sendMessage("The carpet reacts to your words and suddenly changes material!");
                                 carpet.changeCarpet(m);
+                                plugin.carpets.update(player);
                                 return true;
                             } else {
                                 player.sendMessage("A carpet of that material would not support you!");
