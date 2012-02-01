@@ -123,27 +123,35 @@ public class MagicCarpet extends JavaPlugin {
                 config.getBoolean("Put glowstone for light in center", false));
         carpSize = config.getInt("default-size",
                 config.getInt("Default size for carpet", 5));
-        carpMaterial = Material.getMaterial(config.getInt("carpet",
-                config.getInt("Carpet Material", GLASS.getId())));
+        carpMaterial = Material.getMaterial(loadString(config.getString("carpet", 
+                GLASS.name())));
+        if (carpMaterial == null) {
+            carpMaterial = Material.getMaterial(config.getInt("carpet",
+                    config.getInt("Carpet Material", GLASS.getId())));
+        }
         if (!acceptableCarpet.contains(carpMaterial)) {
             carpMaterial = GLASS;
             log.warning("Config error; Invaild carpet material.");
         }
-        lightMaterial = Material.getMaterial(config.getInt("carpet-light",
-                config.getInt("Carpet Light Material", GLOWSTONE.getId())));
+        lightMaterial = Material.getMaterial(loadString(config.getString("carpet-light",
+                GLOWSTONE.name())));
+        if (lightMaterial == null) {
+            lightMaterial = Material.getMaterial(config.getInt("carpet-light",
+                    config.getInt("Carpet Light Material", GLOWSTONE.getId())));
+        }
         if (!acceptableLight.contains(lightMaterial)) {
             lightMaterial = GLOWSTONE;
             log.warning("Config error; Invalid carpet light material.");
         }
         maxCarpSize = config.getInt("max-size", 9);
-        customCarpets = config.getBoolean("allow-custom", true);
-        allowWaterLight = config.getBoolean("allow-water-light", false);
-        allowCustomLight = config.getBoolean("allow-custom-light", false);
         if (carpSize > maxCarpSize) {
             carpSize = 5;
             maxCarpSize = 9;
             log.warning("Config error; Default-size is larger than max-size.");
         }
+        customCarpets = config.getBoolean("allow-custom", true);
+        allowWaterLight = config.getBoolean("allow-water-light", false);
+        allowCustomLight = config.getBoolean("allow-custom-light", false);
     }
 
     @Override
@@ -190,8 +198,8 @@ public class MagicCarpet extends JavaPlugin {
         config.set("crouch-descent", crouchDef);
         config.set("center-light", glowCenter);
         config.set("default-size", carpSize);
-        config.set("carpet", carpMaterial.getId());
-        config.set("carpet-light", lightMaterial.getId());
+        config.set("carpet", saveString(carpMaterial.name()));
+        config.set("carpet-light", saveString(lightMaterial.name()));
         config.set("max-size", maxCarpSize);
         config.set("allow-custom", customCarpets);
         config.set("allow-water-light", allowWaterLight);
@@ -203,6 +211,14 @@ public class MagicCarpet extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    private String saveString(String s) {
+        return s.toLowerCase().replace("_", " ");
+    }
+    
+    private String loadString(String s) {
+        return s.toUpperCase().replace(" ", "_");
     }
 
     private File carpetsFile() {

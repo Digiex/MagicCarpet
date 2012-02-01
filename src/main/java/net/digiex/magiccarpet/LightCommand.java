@@ -47,17 +47,32 @@ public class LightCommand implements CommandExecutor {
             if (args.length < 1) {
                 hideOrShow(player);
             } else {
-                Material material = Material.getMaterial(args[0]);
-                if (material == null
-                        || !MagicCarpet.acceptableLight.contains(material)) {
-                    player.sendMessage("A carpet of that material would not support you!");
+                if (plugin.carpets.hasLight(player)) {
+                    if (plugin.customCarpets) {
+                        String word = null;
+                        for (String a : args) {
+                            if (word == null) {
+                                word = a;
+                            } else {
+                                word = word + " " + a;
+                            }
+                        }
+                        Material m = Material.getMaterial(word.toUpperCase().replace(" ", "_"));
+                        if (m != null) {
+                            if (MagicCarpet.acceptableLight.contains(m)) {
+                                player.sendMessage("The carpet reacts to your words and suddenly changes material!");
+                                carpet.setLights(m);
+                            } else {
+                                player.sendMessage("A magic light of that material would not light up!");
+                            }
+                        } else {
+                            player.sendMessage("Material error; Material may be entered as JACK_O_LANTERN or just plain jack o lantern");
+                            return false;
+                        }
+                    }
                 } else {
-                    carpet.setLights(material);
-                    plugin.carpets.update(player);
-                    player.sendMessage("The carpet seems to react to your words, and suddenly changes material!");
-                    return true;
+                    player.sendMessage("You haven't enabled the Magic Light yet.");
                 }
-                return false;
             }
         } else {
             if (plugin.canFly(player)) {

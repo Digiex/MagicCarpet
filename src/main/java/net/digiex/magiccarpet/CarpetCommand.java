@@ -38,7 +38,7 @@ public class CarpetCommand implements CommandExecutor {
         }
         Player player = (Player) sender;
         Carpet carpet = plugin.carpets.get(player);
-        if (!canFly(player, carpet)) {
+        if (!plugin.canFly(player)) {
             player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
             return true;
         }
@@ -60,19 +60,30 @@ public class CarpetCommand implements CommandExecutor {
                     c = Integer.valueOf(args[0]);
                 } catch (NumberFormatException e) {
                     if (plugin.customCarpets) {
-                        Material material = Material.getMaterial(args[0]);
-                        if (material == null) {
-                            player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be an odd number from 3 to 9.");
-                        } else if (MagicCarpet.acceptableCarpet.contains(material)) {
-                            carpet.changeCarpet(material);
-                            player.sendMessage("The carpet seems to react to your words, and suddenly changes material!");
-                            return true;
-                        } else {
-                            player.sendMessage("A carpet of that material would not support you!");
+                        String word = null;
+                        for (String a : args) {
+                            if (word == null) {
+                                word = a;
+                            } else {
+                                word = word + " " + a;
+                            }
                         }
-                        return false;
+                        Material m = Material.getMaterial(word.toUpperCase().replace(" ", "_"));
+                        if (m != null) {
+                            if (MagicCarpet.acceptableCarpet.contains(m)) {
+                                player.sendMessage("The carpet reacts to your words and suddenly changes material!");
+                                carpet.changeCarpet(m);
+                                return true;
+                            } else {
+                                player.sendMessage("A carpet of that material would not support you!");
+                                return true;
+                            }
+                        } else {
+                            player.sendMessage("Material error; Material may be entered as GOLD_BLOCK or just plain gold block");
+                            return false;
+                        }
                     } else {
-                        player.sendMessage("The carpet isn't allowed to change.");
+                        player.sendMessage("The carpet isn't allowed to change material.");
                         return true;
                     }
                 }
@@ -93,45 +104,15 @@ public class CarpetCommand implements CommandExecutor {
                         return true;
                     }
                 } else {
-                    player.sendMessage("Poof! The magic carpet disappears.");
-                    carpet.hide();
-                }
-            } else {
-                try {
-                    c = Integer.valueOf(args[0]);
-                } catch (NumberFormatException e) {
-                    player.sendMessage("Correct usage is: /magiccarpet (size) or /mc (size). The size is optional, and can only be an odd number from 3 to 9.");
-                    return false;
-                }
-                if (c % 2 == 0 || c < 3 || c > 9) {
-                    player.sendMessage("The size can only be an odd number from 3 to 9. Please enter a proper number");
-                    return false;
-                }
-                if (c > plugin.maxCarpSize) {
-                    player.sendMessage("A carpet of that size is not allowed.");
-                    return false;
-                }
-                if (plugin.canFlyAt(player, c)) {
-                    player.sendMessage("A glass carpet appears below your feet.");
-                    carpet.show();
-                    carpet.changeCarpet(c);
-                } else {
-                    player.sendMessage("A carpet of that size is not allowed.");
+                    player.sendMessage("The carpet size is already equal to " + c);
                     return true;
                 }
+            } else {
+                player.sendMessage("You don't have a carpet yet.");
+                return true;
             }
         }
         plugin.carpets.update(player);
         return true;
-    }
-
-    private boolean canFly(Player player, Carpet carpet) {
-        if (plugin.canFly(player)) {
-            return true;
-        }
-        if (carpet != null && carpet.isVisible()) {
-            return true;
-        }
-        return false;
     }
 }
