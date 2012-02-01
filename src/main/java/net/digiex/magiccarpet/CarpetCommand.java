@@ -71,7 +71,7 @@ public class CarpetCommand implements CommandExecutor {
                         Material m = Material.getMaterial(word.toUpperCase().replace(" ", "_"));
                         if (m != null) {
                             if (MagicCarpet.acceptableCarpet.contains(m)) {
-                                player.sendMessage("The carpet reacts to your words and suddenly changes material!");
+                                player.sendMessage("The carpet reacts to your words and suddenly changes!");
                                 carpet.changeCarpet(m);
                                 plugin.carpets.update(player);
                                 return true;
@@ -98,7 +98,7 @@ public class CarpetCommand implements CommandExecutor {
                         return false;
                     }
                     if (plugin.canFlyAt(player, c)) {
-                        player.sendMessage("The carpet seems to react to your words, and suddenly changes size!");
+                        player.sendMessage("The carpet reacts to your words and suddenly changes!");
                         carpet.changeCarpet(c);
                     } else {
                         player.sendMessage("The carpet failed to expand, no permission.");

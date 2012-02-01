@@ -60,7 +60,7 @@ public class LightCommand implements CommandExecutor {
                         Material m = Material.getMaterial(word.toUpperCase().replace(" ", "_"));
                         if (m != null) {
                             if (MagicCarpet.acceptableLight.contains(m)) {
-                                player.sendMessage("The carpet reacts to your words and suddenly changes material!");
+                                player.sendMessage("The carpet reacts to your words and suddenly changes!");
                                 carpet.setLights(m);
                             } else {
                                 player.sendMessage("A magic light of that material would not light up!");
@@ -71,12 +71,12 @@ public class LightCommand implements CommandExecutor {
                         }
                     }
                 } else {
-                    player.sendMessage("You haven't enabled the Magic Light yet.");
+                    player.sendMessage("You haven't enabled the magic light yet.");
                 }
             }
         } else {
             if (plugin.canFly(player)) {
-                player.sendMessage("You do not have permission to use Magic Light!");
+                player.sendMessage("You do not have permission to use magic light!");
             } else {
                 player.sendMessage("You aren't allowed to use the magic carpet!");
             }
