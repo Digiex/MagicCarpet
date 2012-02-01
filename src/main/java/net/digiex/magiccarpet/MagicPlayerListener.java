@@ -3,6 +3,8 @@ package net.digiex.magiccarpet;
 import static java.lang.Math.abs;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
 import org.bukkit.util.Vector;
 
@@ -22,16 +24,16 @@ import org.bukkit.util.Vector;
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class MagicPlayerListener extends PlayerListener {
+public class MagicPlayerListener implements Listener {
 
+    private MagicCarpet plugin;
     private boolean falling = false;
-    private MagicCarpet plugin = null;
 
-    public MagicPlayerListener(MagicCarpet plug) {
-        plugin = plug;
+    public MagicPlayerListener(MagicCarpet plugin) {
+        this.plugin = plugin;
     }
 
-    @Override
+    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         if (plugin.carpets.has(player)) {
@@ -41,8 +43,11 @@ public class MagicPlayerListener extends PlayerListener {
         }
     }
 
-    @Override
+    @EventHandler
     public void onPlayerKick(PlayerKickEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         Player who = event.getPlayer();
         Carpet carpet = plugin.carpets.get(who);
         if (carpet != null && carpet.isVisible()) {
@@ -53,8 +58,11 @@ public class MagicPlayerListener extends PlayerListener {
         }
     }
 
-    @Override
+    @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         Location to = event.getTo().clone();
         Location from = event.getFrom().clone();
         Player player = event.getPlayer();
@@ -114,14 +122,17 @@ public class MagicPlayerListener extends PlayerListener {
         falling = false;
     }
 
-    @Override
+    @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         plugin.carpets.remove(player);
     }
 
-    @Override
+    @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         Location to = event.getTo().clone();
         Player player = event.getPlayer();
         Carpet carpet = plugin.carpets.get(player);
@@ -149,8 +160,11 @@ public class MagicPlayerListener extends PlayerListener {
         carpet.moveTo(to);
     }
 
-    @Override
+    @EventHandler
     public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         Player player = event.getPlayer();
         Carpet carpet = plugin.carpets.get(player);
         if (carpet == null || !carpet.isVisible()) {

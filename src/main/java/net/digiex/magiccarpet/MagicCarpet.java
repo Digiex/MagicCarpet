@@ -7,10 +7,8 @@ import static org.bukkit.Material.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /*
@@ -176,7 +174,8 @@ public class MagicCarpet extends JavaPlugin {
             saveSettings();
         }
         loadCarpets();
-        registerEvents();
+        registerEvents(playerListener);
+        registerEvents(damageListener);
         registerCommands();
         log.info("is now enabled!");
     }
@@ -239,18 +238,8 @@ public class MagicCarpet extends JavaPlugin {
         getCommand("carpetswitch").setExecutor(new SwitchCommand(this));
         getCommand("magicreload").setExecutor(new ReloadCommand(this));
     }
-
-    private void registerEvents() {
-        PluginManager pm = getServer().getPluginManager();
-        pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
-        pm.registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
-        pm.registerEvent(Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
-        pm.registerEvent(Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
-        pm.registerEvent(Type.PLAYER_TOGGLE_SNEAK, playerListener, Priority.Normal, this);
-        pm.registerEvent(Type.BLOCK_BREAK, damageListener, damageListener.executor, Priority.Normal, this);
-        pm.registerEvent(Type.BLOCK_PHYSICS, damageListener, damageListener.executor, Priority.Normal, this);
-        pm.registerEvent(Type.ENTITY_DAMAGE, damageListener, damageListener.executor, Priority.Normal, this);
-        pm.registerEvent(Type.BLOCK_PISTON_RETRACT, damageListener, damageListener.executor, Priority.Normal, this);
-        pm.registerEvent(Type.BLOCK_PISTON_EXTEND, damageListener, damageListener.executor, Priority.Normal, this);
+    
+    private void registerEvents(Listener listener) {
+        getServer().getPluginManager().registerEvents(listener, this);
     }
 }

@@ -4,7 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
@@ -13,7 +13,6 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.material.Redstone;
-import org.bukkit.plugin.EventExecutor;
 
 /*
  * Magic Carpet 2.0 Copyright (C) 2011 Android, Celtic Minstrel, xzKinGzxBuRnzx
@@ -32,38 +31,18 @@ import org.bukkit.plugin.EventExecutor;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class MagicDamageListener implements Listener {
-
-    public EventExecutor executor = new EventExecutor() {
-
-        @Override
-        @SuppressWarnings("incomplete-switch")
-        public void execute(Listener listener, Event event) {
-            switch (event.getType()) {
-                case BLOCK_BREAK:
-                    ((MagicDamageListener) listener).onBlockBreak((BlockBreakEvent) event);
-                    break;
-                case ENTITY_DAMAGE:
-                    ((MagicDamageListener) listener).onEntityDamage((EntityDamageEvent) event);
-                    break;
-                case BLOCK_PHYSICS:
-                    ((MagicDamageListener) listener).onBlockPhysics((BlockPhysicsEvent) event);
-                    break;
-                case BLOCK_PISTON_RETRACT:
-                    ((MagicDamageListener) listener).onBlockPistonRetract((BlockPistonRetractEvent) event);
-                    break;
-                case BLOCK_PISTON_EXTEND:
-                    ((MagicDamageListener) listener).onBlockPistonExtend((BlockPistonExtendEvent) event);
-                    break;
-            }
-        }
-    };
+    
     private MagicCarpet plugin;
 
-    public MagicDamageListener(MagicCarpet plug) {
-        plugin = plug;
+    public MagicDamageListener(MagicCarpet plugin) {
+        this.plugin = plugin;
     }
 
+    @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         for (Carpet carpet : plugin.carpets.all()) {
             if (carpet == null || !carpet.isVisible()) {
                 continue;
@@ -74,7 +53,11 @@ public class MagicDamageListener implements Listener {
         }
     }
 
+    @EventHandler
     public void onBlockPhysics(BlockPhysicsEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         if (event.getChangedType().getNewData((byte) 0) instanceof Redstone) {
             return;
         }
@@ -92,7 +75,11 @@ public class MagicDamageListener implements Listener {
         }
     }
 
+    @EventHandler
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         for (Carpet carpet : plugin.carpets.all()) {
             if (carpet == null || !carpet.isVisible()) {
                 continue;
@@ -106,7 +93,11 @@ public class MagicDamageListener implements Listener {
         }
     }
 
+    @EventHandler
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         if (event.isSticky()) {
             for (Carpet carpet : plugin.carpets.all()) {
                 if (carpet == null || !carpet.isVisible()) {
@@ -120,7 +111,11 @@ public class MagicDamageListener implements Listener {
         }
     }
 
+    @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         if (event.getCause() == DamageCause.SUFFOCATION) {
             if (!(event.getEntity() instanceof LivingEntity)) {
                 return;
