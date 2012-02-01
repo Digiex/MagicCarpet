@@ -146,7 +146,6 @@ public class Carpet {
     }
 
     public boolean isCovering(Block block) {
-        // TODO: Is the distance between adjacent blocks 1?
         if (currentCentre == null || block == null) {
             return false;
         }
