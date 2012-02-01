@@ -38,7 +38,7 @@ public class MagicCarpet extends JavaPlugin {
             BRICK, TNT, BOOKSHELF, MOSSY_COBBLESTONE, OBSIDIAN, DIAMOND_ORE,
             DIAMOND_BLOCK, WORKBENCH, SOIL, SNOW_BLOCK, CLAY, PUMPKIN,
             NETHERRACK, SOUL_SAND, MYCEL, NETHER_BRICK, ENDER_STONE, 
-            HUGE_MUSHROOM_1, HUGE_MUSHROOM_2);
+            HUGE_MUSHROOM_1, HUGE_MUSHROOM_2, MELON_BLOCK);
     static final EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE, JACK_O_LANTERN);
     public MagicCarpetLogging log = new MagicCarpetLogging();
     private FileConfiguration config;
