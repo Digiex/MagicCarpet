@@ -226,7 +226,7 @@ public class Carpet {
             if (currentCentre != null) {
                 bl = currentCentre.getRelative(fibre.dx, fibre.dy, fibre.dz);
                 Material type = bl.getType();
-                if (!isAir(type) && !isFluid(type)) {
+                if (!canReplace(type)) {
                     fibre.block = null;
                     continue;
                 }
@@ -249,28 +249,39 @@ public class Carpet {
             }
         }
     }
-
-    private boolean isAir(Material type) {
-        if (type == Material.AIR) {
-            return true;
+    
+    private boolean canReplace(Material type) {
+        switch (type) {
+            case AIR:
+                return true;
+            case WATER:
+                return true;
+            case STATIONARY_WATER:
+                return true;
+            case LAVA:
+                return true;
+            case STATIONARY_LAVA:
+                return true;
+            case SNOW:
+                return true;
+            default:
+                return false;
         }
-        return false;
     }
-
+    
     private boolean isFluid(Material type) {
-        if (type == Material.WATER) {
-            return true;
+        switch (type) {
+            case WATER:
+                return true;
+            case STATIONARY_WATER:
+                return true;
+            case LAVA:
+                return true;
+            case STATIONARY_LAVA:
+                return true;
+            default:
+                return false;
         }
-        if (type == Material.STATIONARY_WATER) {
-            return true;
-        }
-        if (type == Material.LAVA) {
-            return true;
-        }
-        if (type == Material.STATIONARY_LAVA) {
-            return true;
-        }
-        return false;
     }
 
     private void removeCarpet() {

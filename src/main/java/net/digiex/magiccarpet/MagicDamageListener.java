@@ -122,14 +122,16 @@ public class MagicDamageListener implements Listener {
             }
             Block eyes = ((LivingEntity) event.getEntity()).getEyeLocation().getBlock();
             Block block = event.getEntity().getLocation().getBlock();
-            if (plugin.carpets.has((Player) event.getEntity())) {
-                Carpet c = plugin.carpets.get((Player) event.getEntity());
-                if (c != null && c.isVisible()) {
-                    if (c.touches(eyes)) {
-                        event.setCancelled(true);
-                    } else if (c.touches(block)) {
-                        event.setCancelled(true);
-                    }
+            for (Carpet carpet : plugin.carpets.all()) {
+                if (carpet == null || !carpet.isVisible()) {
+                    continue;
+                }
+                if (carpet.touches(eyes)) {
+                    event.setCancelled(true);
+                    return;
+                } else if (carpet.touches(block)) {
+                    event.setCancelled(true);
+                    return;
                 }
             }
         } else if (event.getCause() == DamageCause.FALL) {
