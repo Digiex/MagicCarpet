@@ -6,10 +6,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.material.Redstone;
@@ -36,6 +33,25 @@ public class MagicDamageListener implements Listener {
 
     public MagicDamageListener(MagicCarpet plugin) {
         this.plugin = plugin;
+    }
+    
+    @EventHandler
+    public void onBlockFade(BlockFadeEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        for (Carpet carpet : plugin.carpets.all()) {
+            if (carpet == null || !carpet.isVisible()) {
+                continue;
+            }
+            if (carpet.touches(event.getBlock())) {
+                event.setCancelled(true);
+                return;
+            } else if (carpet.isCovering(event.getBlock())) {
+                event.setCancelled(true);
+                return;
+            }
+        }
     }
 
     @EventHandler
