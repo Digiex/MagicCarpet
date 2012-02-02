@@ -31,7 +31,7 @@ import org.bukkit.material.Redstone;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class MagicDamageListener implements Listener {
-    
+
     private MagicCarpet plugin;
 
     public MagicDamageListener(MagicCarpet plugin) {
@@ -122,29 +122,24 @@ public class MagicDamageListener implements Listener {
             }
             Block eyes = ((LivingEntity) event.getEntity()).getEyeLocation().getBlock();
             Block block = event.getEntity().getLocation().getBlock();
-            for (Carpet carpet : plugin.carpets.all()) {
-                if (carpet == null || !carpet.isVisible()) {
-                    continue;
-                }
-                if (carpet.touches(eyes)) {
-                    event.setCancelled(true);
-                    return;
-                } else if (carpet.touches(block)) {
-                    event.setCancelled(true);
-                    return;
+            if (plugin.carpets.has((Player) event.getEntity())) {
+                Carpet c = plugin.carpets.get((Player) event.getEntity());
+                if (c != null && c.isVisible()) {
+                    if (c.touches(eyes)) {
+                        event.setCancelled(true);
+                    } else if (c.touches(block)) {
+                        event.setCancelled(true);
+                    }
                 }
             }
         } else if (event.getCause() == DamageCause.FALL) {
             if (!(event.getEntity() instanceof Player)) {
                 return;
             }
-            for (Carpet carpet : plugin.carpets.all()) {
-                if (carpet == null || !carpet.isVisible()) {
-                    continue;
-                }
-                if (carpet.getPlayer().equals((Player) event.getEntity())) {
+            if (plugin.carpets.has((Player) event.getEntity())) {
+                Carpet c = plugin.carpets.get((Player) event.getEntity());
+                if (c != null && c.isVisible()) {
                     event.setCancelled(true);
-                    return;
                 }
             }
         }
