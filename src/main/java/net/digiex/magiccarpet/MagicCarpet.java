@@ -90,7 +90,7 @@ public class MagicCarpet extends JavaPlugin {
         if (!carpetDat.exists()) {
             return;
         }
-        log.info("Loading saved carpets...");
+        log.info("Loading carpets...");
         try {
             FileInputStream file = new FileInputStream(carpetDat);
             ObjectInputStream in = new ObjectInputStream(file);
