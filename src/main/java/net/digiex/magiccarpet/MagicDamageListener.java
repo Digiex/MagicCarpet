@@ -41,7 +41,7 @@ public class MagicDamageListener implements Listener {
             return;
         }
         for (Carpet carpet : plugin.carpets.all()) {
-            if (carpet == null || !carpet.isVisible()) {
+            if (carpet == null || !carpet.isVisible() || !carpet.hasLights()) {
                 continue;
             }
             if (carpet.touches(event.getBlock())) {
