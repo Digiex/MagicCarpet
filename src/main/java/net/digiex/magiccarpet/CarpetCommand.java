@@ -88,15 +88,11 @@ public class CarpetCommand implements CommandExecutor {
                         return true;
                     }
                 }
-                if (c % 2 == 0 || c < 3 || c > 9) {
-                    player.sendMessage("The size must be an odd number from 3 to 9.");
+                if (c % 2 == 0 || c < 1 || c > plugin.maxCarpSize) {
+                    player.sendMessage("The size must be an odd number from 1 to " + String.valueOf(plugin.maxCarpSize) + ".");
                     return false;
                 }
                 if (c != carpet.getSize()) {
-                    if (c > plugin.maxCarpSize) {
-                        player.sendMessage("A carpet of that size is not allowed.");
-                        return false;
-                    }
                     if (plugin.canFlyAt(player, c)) {
                         player.sendMessage("The carpet reacts to your words and suddenly changes!");
                         carpet.changeCarpet(c);

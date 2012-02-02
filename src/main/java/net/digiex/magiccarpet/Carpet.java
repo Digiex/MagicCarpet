@@ -1,7 +1,6 @@
 package net.digiex.magiccarpet;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.min;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -62,20 +61,19 @@ public class Carpet {
             block.update(true);
         }
     }
-    private static final int MAX_SUPPORTED_SIZE = 9;
-    private static int defaultSize = 5, maxSize = MAX_SUPPORTED_SIZE;
     private static MagicCarpet p;
+    private static int defaultSize, maxSize;
 
     public static Carpet create(Player player, MagicCarpet plugin) {
+        p = plugin;
+        defaultSize = plugin.carpSize;
+        maxSize = plugin.maxCarpSize;
         int sz = plugin.carpets.getLastSize(player);
         boolean light = plugin.carpets.hasLight(player);
         Material thread = plugin.carpets.getMaterial(player);
         Material shine = plugin.carpets.getLightMaterial(player);
         Carpet carpet = new Carpet(player, sz, light, thread, shine);
         plugin.carpets.assign(player, carpet);
-        defaultSize = plugin.carpSize;
-        maxSize = min(plugin.maxCarpSize, MAX_SUPPORTED_SIZE);
-        p = plugin;
         return carpet;
     }
     private Block currentCentre;
