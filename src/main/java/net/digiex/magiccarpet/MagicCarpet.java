@@ -30,7 +30,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class MagicCarpet extends JavaPlugin {
 
     static final EnumSet<Material> acceptableCarpet = EnumSet.of(STONE, GRASS,
-            DIRT, COBBLESTONE, WOOD, BEDROCK, GRAVEL, GOLD_ORE, IRON_ORE,
+            DIRT, COBBLESTONE, WOOD, BEDROCK, GOLD_ORE, IRON_ORE,
             COAL_ORE, LOG, LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK,
             SANDSTONE, NOTE_BLOCK, WOOL, GOLD_BLOCK, IRON_BLOCK, DOUBLE_STEP,
             BRICK, TNT, BOOKSHELF, MOSSY_COBBLESTONE, OBSIDIAN, DIAMOND_ORE,
