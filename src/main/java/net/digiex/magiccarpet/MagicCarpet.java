@@ -39,7 +39,7 @@ public class MagicCarpet extends JavaPlugin {
             NETHERRACK, SOUL_SAND, MYCEL, NETHER_BRICK, ENDER_STONE,
             HUGE_MUSHROOM_1, HUGE_MUSHROOM_2, MELON_BLOCK);
     static final EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE, JACK_O_LANTERN);
-    public Logger log = getLogger();
+    public Logger log;
     private FileConfiguration config;
     private File configFile;
     private final MagicDamageListener damageListener = new MagicDamageListener(this);
@@ -163,6 +163,7 @@ public class MagicCarpet extends JavaPlugin {
 
     @Override
     public void onEnable() {
+    	log = getLogger();
         if (!getDataFolder().exists()) {
             getDataFolder().mkdirs();
         }
