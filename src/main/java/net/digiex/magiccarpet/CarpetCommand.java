@@ -60,12 +60,12 @@ public class CarpetCommand implements CommandExecutor {
                     c = Integer.valueOf(args[0]);
                 } catch (NumberFormatException e) {
                     if (plugin.customCarpets) {
-                        String word = null;
+                        String word = "";
                         for (String a : args) {
-                            if (word == null) {
+                            if (word.isEmpty()) {
                                 word = a;
                             } else {
-                                word = word + " " + a;
+                                word += " " + a;
                             }
                         }
                         Material m = Material.getMaterial(word.toUpperCase().replace(" ", "_"));

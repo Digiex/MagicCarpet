@@ -29,8 +29,8 @@ public class MagicPlayerListener implements Listener {
     private MagicCarpet plugin;
     private boolean falling = false;
 
-    public MagicPlayerListener(MagicCarpet plugin) {
-        this.plugin = plugin;
+    public MagicPlayerListener(MagicCarpet instance) {
+        this.plugin = instance;
     }
 
     @EventHandler

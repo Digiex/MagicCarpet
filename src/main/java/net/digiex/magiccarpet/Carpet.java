@@ -77,7 +77,7 @@ public class Carpet {
         return carpet;
     }
     private Block currentCentre;
-    private int edge = 0, area = 0, rad = 0, radsq = 0, radplsq = 0;
+    private int edge = 0, area = 0, rad = 0, radplsq = 0;
     private CarpetFibre[] fibres;
     private boolean hidden;
     private boolean lightsOn;
@@ -306,7 +306,6 @@ public class Carpet {
         area = size * size;
         fibres = new CarpetFibre[area];
         rad = (size - 1) / 2;
-        radsq = rad * rad * 2;
         radplsq = (rad + 1) * (rad + 1) * 2;
         int i = 0;
         for (int x = -rad; x <= rad; x++) {

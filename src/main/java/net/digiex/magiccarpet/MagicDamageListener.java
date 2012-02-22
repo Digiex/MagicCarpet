@@ -31,8 +31,8 @@ public class MagicDamageListener implements Listener {
 
     private MagicCarpet plugin;
 
-    public MagicDamageListener(MagicCarpet plugin) {
-        this.plugin = plugin;
+    public MagicDamageListener(MagicCarpet instance) {
+        this.plugin = instance;
     }
     
     @EventHandler

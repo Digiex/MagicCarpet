@@ -2,13 +2,14 @@ package net.digiex.magiccarpet;
 
 import java.io.*;
 import java.util.EnumSet;
+import java.util.logging.Logger;
+
 import org.bukkit.Material;
 import static org.bukkit.Material.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /*
@@ -35,10 +36,10 @@ public class MagicCarpet extends JavaPlugin {
             SANDSTONE, NOTE_BLOCK, WOOL, GOLD_BLOCK, IRON_BLOCK, DOUBLE_STEP,
             BRICK, TNT, BOOKSHELF, MOSSY_COBBLESTONE, OBSIDIAN, DIAMOND_ORE,
             DIAMOND_BLOCK, SOIL, SNOW_BLOCK, CLAY, PUMPKIN,
-            NETHERRACK, SOUL_SAND, MYCEL, NETHER_BRICK, ENDER_STONE, 
+            NETHERRACK, SOUL_SAND, MYCEL, NETHER_BRICK, ENDER_STONE,
             HUGE_MUSHROOM_1, HUGE_MUSHROOM_2, MELON_BLOCK);
     static final EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE, JACK_O_LANTERN);
-    public MagicCarpetLogging log = new MagicCarpetLogging();
+    public Logger log = getLogger();
     private FileConfiguration config;
     private File configFile;
     private final MagicDamageListener damageListener = new MagicDamageListener(this);
@@ -122,7 +123,7 @@ public class MagicCarpet extends JavaPlugin {
                 config.getBoolean("Put glowstone for light in center", false));
         carpSize = config.getInt("default-size",
                 config.getInt("Default size for carpet", 5));
-        carpMaterial = Material.getMaterial(loadString(config.getString("carpet", 
+        carpMaterial = Material.getMaterial(loadString(config.getString("carpet",
                 GLASS.name())));
         if (carpMaterial == null) {
             carpMaterial = Material.getMaterial(config.getInt("carpet",
@@ -162,7 +163,6 @@ public class MagicCarpet extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        PluginDescriptionFile pdfFile = this.getDescription();
         if (!getDataFolder().exists()) {
             getDataFolder().mkdirs();
         }

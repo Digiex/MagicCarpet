@@ -1,5 +1,7 @@
 package net.digiex.magiccarpet;
 
+import java.util.logging.Logger;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -23,7 +25,7 @@ import org.bukkit.entity.Player;
  */
 public class ReloadCommand implements CommandExecutor {
 
-    private MagicCarpetLogging log;
+    private Logger log;
     private MagicCarpet plugin;
 
     public ReloadCommand(MagicCarpet plug) {

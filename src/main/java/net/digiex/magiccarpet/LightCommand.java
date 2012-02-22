@@ -49,12 +49,12 @@ public class LightCommand implements CommandExecutor {
             } else {
                 if (plugin.carpets.hasLight(player)) {
                     if (plugin.customCarpets) {
-                        String word = null;
+                        String word = "";
                         for (String a : args) {
-                            if (word == null) {
+                            if (word.isEmpty()) {
                                 word = a;
                             } else {
-                                word = word + " " + a;
+                                word += " " + a;
                             }
                         }
                         Material m = Material.getMaterial(word.toUpperCase().replace(" ", "_"));
