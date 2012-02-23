@@ -177,4 +177,18 @@ public class CarpetStorage implements Serializable {
         }
         return carpets.get(player.getName());
     }
+    
+    public void checkCarpets() {
+        for (CarpetEntry entry : carpets.values()) {
+            if (entry.lastSize > plugin.maxCarpSize) {
+                entry.lastSize = plugin.carpSize;
+            }
+            if (entry.thread != plugin.carpMaterial && !plugin.customCarpets) {
+                entry.thread = plugin.carpMaterial;
+            }
+            if (entry.light != plugin.lightMaterial && !plugin.customCarpets) {
+                entry.light = plugin.lightMaterial;
+            }
+        }
+    }
 }

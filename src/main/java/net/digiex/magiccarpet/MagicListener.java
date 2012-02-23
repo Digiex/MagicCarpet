@@ -2,10 +2,16 @@ package net.digiex.magiccarpet;
 
 import static java.lang.Math.abs;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.*;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.material.Redstone;
 import org.bukkit.util.Vector;
 
 /*
@@ -24,12 +30,12 @@ import org.bukkit.util.Vector;
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class MagicPlayerListener implements Listener {
+public class MagicListener implements Listener {
 
     private MagicCarpet plugin;
     private boolean falling = false;
 
-    public MagicPlayerListener(MagicCarpet instance) {
+    public MagicListener(MagicCarpet instance) {
         this.plugin = instance;
     }
 
@@ -38,8 +44,6 @@ public class MagicPlayerListener implements Listener {
         Player player = event.getPlayer();
         if (plugin.carpets.has(player)) {
             Carpet.create(player, plugin).show();
-            Carpet c = plugin.carpets.get(player);
-            c.checkCarpet();
         }
     }
 
@@ -176,6 +180,134 @@ public class MagicPlayerListener implements Listener {
         if (event.isSneaking()) {
             falling = true;
             carpet.descend();
+        }
+    }
+    
+    @EventHandler
+    public void onBlockFade(BlockFadeEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        for (Carpet carpet : plugin.carpets.all()) {
+            if (carpet == null || !carpet.isVisible() || !carpet.hasLights()) {
+                continue;
+            }
+            if (carpet.touches(event.getBlock())) {
+                event.setCancelled(true);
+                return;
+            } else if (carpet.isCovering(event.getBlock())) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        for (Carpet carpet : plugin.carpets.all()) {
+            if (carpet == null || !carpet.isVisible()) {
+                continue;
+            }
+            if (carpet.isCovering(event.getBlock())) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBlockPhysics(BlockPhysicsEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        if (event.getChangedType().getNewData((byte) 0) instanceof Redstone) {
+            return;
+        }
+        if (event.getBlock().getType().equals(Material.TORCH)) {
+            return;
+        }
+        for (Carpet carpet : plugin.carpets.all()) {
+            if (carpet == null || !carpet.isVisible()) {
+                continue;
+            }
+            if (carpet.touches(event.getBlock())) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBlockPistonExtend(BlockPistonExtendEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        for (Carpet carpet : plugin.carpets.all()) {
+            if (carpet == null || !carpet.isVisible()) {
+                continue;
+            }
+            for (Block block : event.getBlocks()) {
+                if (carpet.isCovering(block)) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBlockPistonRetract(BlockPistonRetractEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        if (event.isSticky()) {
+            for (Carpet carpet : plugin.carpets.all()) {
+                if (carpet == null || !carpet.isVisible()) {
+                    continue;
+                }
+                if (carpet.isCovering(event.getRetractLocation().getBlock())) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        if (event.getCause() == EntityDamageEvent.DamageCause.SUFFOCATION) {
+            if (!(event.getEntity() instanceof LivingEntity)) {
+                return;
+            }
+            Block eyes = ((LivingEntity) event.getEntity()).getEyeLocation().getBlock();
+            Block block = event.getEntity().getLocation().getBlock();
+            for (Carpet carpet : plugin.carpets.all()) {
+                if (carpet == null || !carpet.isVisible()) {
+                    continue;
+                }
+                if (carpet.touches(eyes)) {
+                    event.setCancelled(true);
+                    return;
+                } else if (carpet.touches(block)) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        } else if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
+            if (!(event.getEntity() instanceof Player)) {
+                return;
+            }
+            if (plugin.carpets.has((Player) event.getEntity())) {
+                Carpet c = plugin.carpets.get((Player) event.getEntity());
+                if (c != null && c.isVisible()) {
+                    event.setCancelled(true);
+                }
+            }
         }
     }
 }

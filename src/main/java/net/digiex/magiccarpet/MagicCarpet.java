@@ -3,7 +3,6 @@ package net.digiex.magiccarpet;
 import java.io.*;
 import java.util.EnumSet;
 import java.util.logging.Logger;
-
 import org.bukkit.Material;
 import static org.bukkit.Material.*;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -42,8 +41,7 @@ public class MagicCarpet extends JavaPlugin {
     public Logger log;
     private FileConfiguration config;
     private File configFile;
-    private final MagicDamageListener damageListener = new MagicDamageListener(this);
-    private final MagicPlayerListener playerListener = new MagicPlayerListener(this);
+    private final MagicListener magicListener = new MagicListener(this);
     String allowedmaterial;
     CarpetStorage carpets = new CarpetStorage().attach(this);
     Material carpMaterial = GLASS;
@@ -105,6 +103,7 @@ public class MagicCarpet extends JavaPlugin {
             log.severe("CarpetStorage class not found! This should never happen!");
             e.printStackTrace();
         }
+        carpets.checkCarpets();
     }
 
     public void loadSettings() {
@@ -149,15 +148,14 @@ public class MagicCarpet extends JavaPlugin {
             maxCarpSize = 9;
             log.warning("Config error; Default-size is larger than max-size.");
         }
-        customCarpets = config.getBoolean("allow-custom", true);
-        allowWaterLight = config.getBoolean("allow-water-light", false);
-        allowCustomLight = config.getBoolean("allow-custom-light", false);
+        customCarpets = config.getBoolean("custom-carpets", config.getBoolean("allow-custom", true));
+        allowWaterLight = config.getBoolean("water-light", config.getBoolean("allow-water-light", false));
+        allowCustomLight = config.getBoolean("custom-light", config.getBoolean("allow-custom-light", false));
     }
 
     @Override
     public void onDisable() {
         saveCarpets();
-        carpets.clear();
         log.info("is now disabled!");
     }
 
@@ -175,8 +173,7 @@ public class MagicCarpet extends JavaPlugin {
             saveSettings();
         }
         loadCarpets();
-        registerEvents(playerListener);
-        registerEvents(damageListener);
+        registerEvents(magicListener);
         registerCommands();
         log.info("is now enabled!");
     }
@@ -200,6 +197,7 @@ public class MagicCarpet extends JavaPlugin {
             log.warning("Error writing to carpets.dat; carpets data has not been saved!");
             e.printStackTrace();
         }
+        carpets.clear();
     }
 
     public void saveSettings() {

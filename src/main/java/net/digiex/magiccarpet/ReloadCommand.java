@@ -1,7 +1,6 @@
 package net.digiex.magiccarpet;
 
 import java.util.logging.Logger;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,8 +24,8 @@ import org.bukkit.entity.Player;
  */
 public class ReloadCommand implements CommandExecutor {
 
-    private Logger log;
     private MagicCarpet plugin;
+    private Logger log;
 
     public ReloadCommand(MagicCarpet plug) {
         plugin = plug;
@@ -59,14 +58,12 @@ public class ReloadCommand implements CommandExecutor {
             }
             c.hide();
         }
-        plugin.carpets.clear();
+        plugin.saveCarpets();
         plugin.loadSettings();
         plugin.loadCarpets();
         for (Player p : plugin.getServer().getOnlinePlayers()) {
             if (plugin.carpets.has(p)) {
                 Carpet.create(p, plugin).show();
-                Carpet c = plugin.carpets.get(p);
-                c.checkCarpet();
             }
         }
     }
