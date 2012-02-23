@@ -207,9 +207,9 @@ public class MagicCarpet extends JavaPlugin {
         config.set("carpet", saveString(carpMaterial.name()));
         config.set("carpet-light", saveString(lightMaterial.name()));
         config.set("max-size", maxCarpSize);
-        config.set("allow-custom", customCarpets);
-        config.set("allow-water-light", allowWaterLight);
-        config.set("allow-custom-light", allowCustomLight);
+        config.set("custom-carpets", customCarpets);
+        config.set("water-light", allowWaterLight);
+        config.set("custom-light", allowCustomLight);
         config.options().header(
                 "Be sure to use /mr if you change any settings here while the server is running.");
         try {
