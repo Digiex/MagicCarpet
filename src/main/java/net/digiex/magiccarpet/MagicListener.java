@@ -195,9 +195,6 @@ public class MagicListener implements Listener {
             if (carpet.touches(event.getBlock())) {
                 event.setCancelled(true);
                 return;
-            } else if (carpet.isCovering(event.getBlock())) {
-                event.setCancelled(true);
-                return;
             }
         }
     }
@@ -213,6 +210,7 @@ public class MagicListener implements Listener {
             }
             if (carpet.isCovering(event.getBlock())) {
                 event.setCancelled(true);
+                return;
             }
         }
     }
@@ -285,15 +283,11 @@ public class MagicListener implements Listener {
                 return;
             }
             Block eyes = ((LivingEntity) event.getEntity()).getEyeLocation().getBlock();
-            Block block = event.getEntity().getLocation().getBlock();
             for (Carpet carpet : plugin.carpets.all()) {
                 if (carpet == null || !carpet.isVisible()) {
                     continue;
                 }
-                if (carpet.touches(eyes)) {
-                    event.setCancelled(true);
-                    return;
-                } else if (carpet.touches(block)) {
+                if (carpet.isCovering(eyes)) {
                     event.setCancelled(true);
                     return;
                 }
