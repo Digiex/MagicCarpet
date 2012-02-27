@@ -24,7 +24,7 @@
     
     <ciManagement>
         <system>jenkins</system>
-        <url>http://bukkit:bukkit@ci.xzkingzxburnzx.tk/</url>
+        <url>http://xzkingzxburnzx.tk/</url>
     </ciManagement>
   
     <dependencies>
