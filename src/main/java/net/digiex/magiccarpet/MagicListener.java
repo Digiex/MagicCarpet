@@ -198,6 +198,22 @@ public class MagicListener implements Listener {
             }
         }
     }
+    
+    @EventHandler
+    public void onBlockForm(BlockFormEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        for (Carpet carpet : plugin.carpets.all()) {
+            if (carpet == null || !carpet.isVisible()) {
+                continue;
+            }
+            if (carpet.touches(event.getBlock())) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
