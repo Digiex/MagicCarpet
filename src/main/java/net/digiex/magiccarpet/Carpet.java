@@ -264,20 +264,19 @@ public class Carpet {
                 return true;
             case SNOW:
                 return true;
-            default:
-                return false;
-        }
-    }
-    
-    private boolean isFluid(Material type) {
-        switch (type) {
-            case WATER:
+            case LONG_GRASS:
                 return true;
-            case STATIONARY_WATER:
+            case DEAD_BUSH:
                 return true;
-            case LAVA:
+            case WATER_LILY:
                 return true;
-            case STATIONARY_LAVA:
+            case RED_ROSE:
+                return true;
+            case YELLOW_FLOWER:
+                return true;
+            case BROWN_MUSHROOM:
+                return true;
+            case RED_MUSHROOM:
                 return true;
             default:
                 return false;
@@ -317,7 +316,7 @@ public class Carpet {
     }
 
     private boolean shouldLightWater(Block b) {
-        if (touches(b) && isFluid(b.getType())) {
+        if (touches(b) && b.isLiquid()) {
             return true;
         }
         return false;
