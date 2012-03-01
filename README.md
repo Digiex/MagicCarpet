@@ -3,8 +3,7 @@ MagicCarpet
 
 A Bukkit Minecraft Server Mod.
 
-BukkitDev thread: [http://dev.bukkit.org/server-mods/magiccarpet/](http://dev.bukkit.org/server-mods/magiccarpet/)  
-Bugs/Suggestions: [Tickets on BukkitDev](http://dev.bukkit.org/server-mods/magiccarpet/tickets/)
+[http://dev.bukkit.org/server-mods/magiccarpet/](http://dev.bukkit.org/server-mods/magiccarpet/)
 
 Compilation
 -----------
