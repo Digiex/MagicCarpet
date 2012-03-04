@@ -1,6 +1,5 @@
 package net.digiex.magiccarpet;
 
-import java.util.logging.Logger;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,18 +24,16 @@ import org.bukkit.entity.Player;
 public class ReloadCommand implements CommandExecutor {
 
     private MagicCarpet plugin;
-    private Logger log;
 
     public ReloadCommand(MagicCarpet plug) {
         plugin = plug;
-        log = plug.log;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
         if (!(sender instanceof Player)) {
             reload();
-            log.info("has been reloaded!");
+            plugin.log.info("has been reloaded!");
             return true;
         } else if (sender instanceof Player) {
             Player player = (Player) sender;

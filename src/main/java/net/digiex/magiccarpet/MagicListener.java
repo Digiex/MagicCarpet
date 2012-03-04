@@ -239,9 +239,6 @@ public class MagicListener implements Listener {
         if (event.getChangedType().getNewData((byte) 0) instanceof Redstone) {
             return;
         }
-        if (event.getBlock().getType().equals(Material.TORCH)) {
-            return;
-        }
         for (Carpet carpet : plugin.carpets.all()) {
             if (carpet == null || !carpet.isVisible()) {
                 continue;
