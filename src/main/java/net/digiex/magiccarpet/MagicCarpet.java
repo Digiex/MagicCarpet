@@ -9,6 +9,8 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /*
@@ -59,10 +61,11 @@ public class MagicCarpet extends JavaPlugin {
     }
 
     public boolean canFlyAt(Player player, int i) {
-        if (player.hasPermission("magiccarpet.mc." + i)) {
+    	if (i == carpSize) {
             return true;
         }
-        if (i == carpSize) {
+    	if (player.hasPermission(new Permission("magiccarpet.mc." + i, 
+        		"Allows the carpet to operate at size " + i, PermissionDefault.OP))) {
             return true;
         }
         return false;

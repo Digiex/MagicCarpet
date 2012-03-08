@@ -38,18 +38,6 @@ permissions:
   magiccarpet.tp:
     description: Allows the carpet to move when teleporting while active.
     default: op
-  magiccarpet.mc.3:
-    description: Allows the carpet to operate at 3.
-    default: op
-  magiccarpet.mc.5:
-    description: Allows the carpet to operate at 5.
-    default: op
-  magiccarpet.mc.7:
-    description: Allows the carpet to operate at 7.
-    default: op
-  magiccarpet.mc.9:
-    description: Allows the carpet to operate at 9.
-    default: op
   magiccarpet.mr:
     description: Allows the player to reload MagicCarpet.
     default: op
@@ -60,8 +48,4 @@ permissions:
       magiccarpet.ml: true
       magiccarpet.mcs: true
       magiccarpet.tp: true
-      magiccarpet.mc.3: true
-      magiccarpet.mc.5: true
-      magiccarpet.mc.7: true
-      magiccarpet.mc.9: true
       magiccarpet.mr: true

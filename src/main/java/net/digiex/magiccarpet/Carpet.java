@@ -31,7 +31,6 @@ public class Carpet {
         int dx, dy, dz;
         Material strand;
 
-        @SuppressWarnings("hiding")
         public CarpetFibre(int dx, int dy, int dz) {
             this.dx = dx;
             this.dy = dy;
