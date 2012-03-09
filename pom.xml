@@ -1,4 +1,3 @@
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -10,6 +9,7 @@
 
     <name>MagicCarpet</name>
     <url>https://github.com/xzKinGzxBuRnzx/MagicCarpet</url>
+    <description>A Bukkit Plugin for Minecraft.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,15 +23,19 @@
     </repositories>
     
     <ciManagement>
-        <system>jenkins</system>
+        <system>Jenkins</system>
         <url>http://xzkingzxburnzx.tk/</url>
     </ciManagement>
+    <issueManagement>
+    	<system>GitHub Issues</system>
+    	<url>https://github.com/xzKinGzxBuRnzx/MagicCarpet/issues</url>
+    </issueManagement>
   
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.2.3-R0.1-SNAPSHOT</version>
+            <version>1.2.3-R0.2-SNAPSHOT</version>
         </dependency>
     </dependencies>
     
