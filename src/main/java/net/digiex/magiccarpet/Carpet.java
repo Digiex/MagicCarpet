@@ -327,19 +327,4 @@ public class Carpet {
         }
         return false;
     }
-
-    public void checkCarpet() {
-        if (getPlayer().isOnline() && p.carpets.has(getPlayer())) {
-            removeCarpet();
-            if (getSize() > p.maxCarpSize) {
-                setSize(p.carpSize);
-            }
-            if (isCustom() && !p.customCarpets) {
-                thread = p.carpMaterial;
-                shine = p.lightMaterial;
-            }
-            drawCarpet();
-        }
-        p.carpets.update(getPlayer());
-    }
 }

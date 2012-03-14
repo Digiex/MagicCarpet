@@ -180,6 +180,12 @@ public class CarpetStorage implements Serializable {
     
     public void checkCarpets() {
         for (CarpetEntry entry : carpets.values()) {
+            if (!MagicCarpet.acceptableCarpet.contains(entry.thread)) {
+                entry.thread = plugin.carpMaterial;
+            }
+            if (!MagicCarpet.acceptableLight.contains(entry.light)) {
+                entry.light = plugin.lightMaterial;
+            }
             if (entry.lastSize > plugin.maxCarpSize) {
                 entry.lastSize = plugin.carpSize;
             }
