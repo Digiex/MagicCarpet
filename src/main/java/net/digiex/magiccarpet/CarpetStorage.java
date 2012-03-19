@@ -122,7 +122,11 @@ public class CarpetStorage implements Serializable {
     }
 
     public boolean has(Player player) {
-        return entry(player).hasCarpet;
+        CarpetEntry entry = carpets.get(player.getName());
+        if (entry == null) {
+            return false;
+        }
+        return entry.hasCarpet;
     }
 
     public boolean hasLight(Player player) {
