@@ -79,7 +79,7 @@ public class MagicListener implements Listener {
             carpet.changeCarpet(plugin.carpSize);
             plugin.carpets.update(player);
         }
-        Location to = event.getTo();
+        Location to = event.getTo().clone();
         Location from = event.getFrom();
         if (player.getLocation().getBlock().isLiquid()
                 && !player.getEyeLocation().getBlock().isLiquid()
@@ -143,9 +143,6 @@ public class MagicListener implements Listener {
             return;
         }
         if (!plugin.canTeleFly(player) && falling == false) {
-            if (to.getWorld().equals(carpet.getLocation().getWorld()) && abs(to.getY() - carpet.getLocation().getY()) < 2) {
-                return;
-            }
             player.sendMessage("Your carpet cannot follow you there!");
             carpet.hide();
             return;
