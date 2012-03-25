@@ -64,8 +64,9 @@ public class MagicCarpet extends JavaPlugin {
     	if (i == carpSize) {
             return true;
         }
-    	if (player.hasPermission(new Permission("magiccarpet.mc." + i, 
-        		"Allows the carpet to operate at size " + i, PermissionDefault.OP).addParent("magiccarpet.*", true))) {
+        Permission permission = new Permission("magiccarpet.mc." + i, "Allows the carpet to operate at size " + i, PermissionDefault.OP);
+        permission.addParent("magiccarpet.*", true);
+    	if (player.hasPermission(permission)) {
             return true;
         }
         return false;
