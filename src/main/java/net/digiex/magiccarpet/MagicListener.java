@@ -45,12 +45,15 @@ public class MagicListener implements Listener {
             Carpet.create(player, plugin).show();
         }
     }
-
+    
     @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        plugin.carpets.remove(player);
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerKick(PlayerKickEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         Player who = event.getPlayer();
         Carpet carpet = plugin.carpets.get(who);
         if (carpet != null && carpet.isVisible()) {
@@ -61,13 +64,8 @@ public class MagicListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-        Location to = event.getTo().clone();
-        Location from = event.getFrom().clone();
         Player player = event.getPlayer();
         Carpet carpet = plugin.carpets.get(player);
         if (carpet == null || !carpet.isVisible()) {
@@ -81,7 +79,8 @@ public class MagicListener implements Listener {
             carpet.changeCarpet(plugin.carpSize);
             plugin.carpets.update(player);
         }
-
+        Location to = event.getTo();
+        Location from = event.getFrom();
         if (player.getLocation().getBlock().isLiquid()
                 && !player.getEyeLocation().getBlock().isLiquid()
                 && to.getY() > from.getY()) {
@@ -124,24 +123,15 @@ public class MagicListener implements Listener {
         carpet.moveTo(to);
         falling = false;
     }
-
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        plugin.carpets.remove(player);
-    }
-
-    @EventHandler
+    
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-        Location to = event.getTo().clone();
         Player player = event.getPlayer();
         Carpet carpet = plugin.carpets.get(player);
         if (carpet == null || !carpet.isVisible()) {
             return;
         }
+        Location to = event.getTo();
         Location last = carpet.getLocation();
         if (last.getBlockX() == to.getBlockX()
                 && last.getBlockY() == to.getBlockY()
@@ -163,11 +153,8 @@ public class MagicListener implements Listener {
         carpet.moveTo(to);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         Player player = event.getPlayer();
         Carpet carpet = plugin.carpets.get(player);
         if (carpet == null || !carpet.isVisible()) {
@@ -182,11 +169,8 @@ public class MagicListener implements Listener {
         }
     }
     
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockFade(BlockFadeEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         for (Carpet carpet : plugin.carpets.all()) {
             if (carpet == null || !carpet.isVisible() || !carpet.hasLights()) {
                 continue;
@@ -198,11 +182,8 @@ public class MagicListener implements Listener {
         }
     }
     
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         for (Carpet carpet : plugin.carpets.all()) {
             if (carpet == null || !carpet.isVisible()) {
                 continue;
@@ -214,11 +195,8 @@ public class MagicListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         for (Carpet carpet : plugin.carpets.all()) {
             if (carpet == null || !carpet.isVisible()) {
                 continue;
@@ -230,11 +208,8 @@ public class MagicListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockPhysics(BlockPhysicsEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         if (event.getChangedType().getNewData((byte) 0) instanceof Redstone) {
             return;
         }
@@ -249,11 +224,8 @@ public class MagicListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         for (Carpet carpet : plugin.carpets.all()) {
             if (carpet == null || !carpet.isVisible()) {
                 continue;
@@ -267,11 +239,8 @@ public class MagicListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         if (event.isSticky()) {
             for (Carpet carpet : plugin.carpets.all()) {
                 if (carpet == null || !carpet.isVisible()) {
@@ -285,11 +254,8 @@ public class MagicListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         if (event.getCause() == EntityDamageEvent.DamageCause.SUFFOCATION) {
             if (!(event.getEntity() instanceof LivingEntity)) {
                 return;
