@@ -55,9 +55,11 @@ public class ReloadCommand implements CommandExecutor {
             }
             c.hide();
         }
-        plugin.saveCarpets();
         plugin.loadSettings();
-        plugin.loadCarpets();
+        if (plugin.saveCarpets) {
+            plugin.saveCarpets();
+            plugin.loadCarpets();
+        }
         for (Player p : plugin.getServer().getOnlinePlayers()) {
             if (plugin.carpets.has(p)) {
                 Carpet.create(p, plugin).show();

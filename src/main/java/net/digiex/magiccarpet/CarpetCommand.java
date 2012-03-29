@@ -37,7 +37,7 @@ public class CarpetCommand implements CommandExecutor {
             return true;
         }
         Player player = (Player) sender;
-        Carpet carpet = plugin.carpets.get(player);
+        Carpet carpet = plugin.carpets.getCarpet(player);
         if (!plugin.canFly(player)) {
             player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
             return true;

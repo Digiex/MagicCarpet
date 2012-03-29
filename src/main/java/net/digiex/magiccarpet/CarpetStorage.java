@@ -76,7 +76,11 @@ public class CarpetStorage implements Serializable {
     }
 
     public void assign(Player player, Carpet carpet) {
-        CarpetEntry entry = entry(player);
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            entry = new CarpetEntry();
+            carpets.put(player.getName(), entry);
+        }
         if (entry.carpet != null) {
             entry.carpet.hide();
         }
@@ -99,26 +103,49 @@ public class CarpetStorage implements Serializable {
     }
 
     public boolean crouches(Player player) {
-        return entry(player).crouch;
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return plugin.crouchDef;
+        }
+        return entry.crouch;
     }
 
-    public Carpet get(Player player) {
+    public Carpet getCarpet(Player player) {
         if (carpets.containsKey(player.getName())) {
             return carpets.get(player.getName()).carpet;
         }
         return null;
     }
+    
+    private CarpetEntry getEntry(Player player) {
+        if (carpets.containsKey(player.getName())) {
+            return carpets.get(player.getName());
+        }
+        return null;
+    }
 
     public int getLastSize(Player player) {
-        return entry(player).lastSize;
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return plugin.carpSize;
+        }
+        return entry.lastSize;
     }
 
     public Material getLightMaterial(Player player) {
-        return entry(player).light;
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return plugin.lightMaterial;
+        }
+        return entry.light;
     }
 
     public Material getMaterial(Player player) {
-        return entry(player).thread;
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return plugin.carpMaterial;
+        }
+        return entry.thread;
     }
 
     public boolean has(Player player) {
@@ -130,11 +157,18 @@ public class CarpetStorage implements Serializable {
     }
 
     public boolean hasLight(Player player) {
-        return entry(player).lightsOn;
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return plugin.glowCenter;
+        }
+        return entry.lightsOn;
     }
 
     public void lightOff(Player player) {
-        CarpetEntry entry = entry(player);
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return;
+        }
         entry.lightsOn = false;
         if (entry.hasCarpet && entry.carpet != null) {
             entry.carpet.lightsOff();
@@ -142,7 +176,10 @@ public class CarpetStorage implements Serializable {
     }
 
     public void lightOn(Player player) {
-        CarpetEntry entry = entry(player);
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return;
+        }
         entry.lightsOn = true;
         if (entry.hasCarpet && entry.carpet != null) {
             entry.carpet.lightsOn();
@@ -150,20 +187,29 @@ public class CarpetStorage implements Serializable {
     }
 
     public void remove(Player player) {
-        CarpetEntry entry = entry(player);
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return;
+        }
         if (entry.carpet != null) {
             entry.carpet.hide();
+            entry.carpet = null;
         }
-        entry.carpet = null;
     }
 
     public void toggleCrouch(Player player) {
-        CarpetEntry entry = entry(player);
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return;
+        }
         entry.crouch = !entry.crouch;
     }
 
     public void update(Player player) {
-        CarpetEntry entry = entry(player);
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return;
+        }
         if (entry.carpet == null) {
             entry.hasCarpet = false;
             return;
@@ -173,13 +219,6 @@ public class CarpetStorage implements Serializable {
         entry.lightsOn = entry.carpet.hasLights();
         entry.thread = entry.carpet.getThread();
         entry.light = entry.carpet.getShine();
-    }
-
-    private CarpetEntry entry(Player player) {
-        if (!carpets.containsKey(player.getName())) {
-            carpets.put(player.getName(), new CarpetEntry());
-        }
-        return carpets.get(player.getName());
     }
     
     public void checkCarpets() {

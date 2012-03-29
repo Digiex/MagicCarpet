@@ -39,7 +39,7 @@ public class LightCommand implements CommandExecutor {
         }
         Player player = (Player) sender;
         if (plugin.canFly(player) && plugin.canLight(player)) {
-            Carpet carpet = plugin.carpets.get(player);
+            Carpet carpet = plugin.carpets.getCarpet(player);
             if (carpet == null || !carpet.isVisible()) {
                 player.sendMessage("You don't have a carpet yet, use /mc!");
                 return true;

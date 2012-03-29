@@ -55,18 +55,19 @@ public class MagicCarpet extends JavaPlugin {
     int maxCarpSize = 9;
     boolean allowWaterLight = false;
     boolean allowCustomLight = false;
+    boolean saveCarpets = true;
 
     public boolean canFly(Player player) {
         return player.hasPermission("magiccarpet.mc");
     }
 
     public boolean canFlyAt(Player player, int i) {
-    	if (i == carpSize) {
+        if (i == carpSize) {
             return true;
         }
         Permission permission = new Permission("magiccarpet.mc." + i, "Allows the carpet to operate at size " + i, PermissionDefault.OP);
         permission.addParent("magiccarpet.*", true);
-    	if (player.hasPermission(permission)) {
+        if (player.hasPermission(permission)) {
             return true;
         }
         return false;
@@ -155,17 +156,27 @@ public class MagicCarpet extends JavaPlugin {
         customCarpets = config.getBoolean("custom-carpets", config.getBoolean("allow-custom", true));
         allowWaterLight = config.getBoolean("water-light", config.getBoolean("allow-water-light", false));
         allowCustomLight = config.getBoolean("custom-light", config.getBoolean("allow-custom-light", false));
+        saveCarpets = config.getBoolean("save-carpets", true);
     }
 
     @Override
     public void onDisable() {
-        saveCarpets();
+        if (saveCarpets) {
+            saveCarpets();
+        } else {
+            for (Carpet c : carpets.all()) {
+                if (c == null || !c.isVisible()) {
+                    continue;
+                }
+                c.hide();
+            }
+        }
         log.info("is now disabled!");
     }
 
     @Override
     public void onEnable() {
-    	log = getLogger();
+        log = getLogger();
         if (!getDataFolder().exists()) {
             getDataFolder().mkdirs();
         }
@@ -176,7 +187,9 @@ public class MagicCarpet extends JavaPlugin {
         } else {
             saveSettings();
         }
-        loadCarpets();
+        if (saveCarpets) {
+            loadCarpets();
+        }
         registerEvents(magicListener);
         registerCommands();
         log.info("is now enabled!");
@@ -214,6 +227,7 @@ public class MagicCarpet extends JavaPlugin {
         config.set("custom-carpets", customCarpets);
         config.set("water-light", allowWaterLight);
         config.set("custom-light", allowCustomLight);
+        config.set("save-carpets", saveCarpets);
         config.options().header(
                 "Be sure to use /mr if you change any settings here while the server is running.");
         try {
@@ -222,11 +236,11 @@ public class MagicCarpet extends JavaPlugin {
             e.printStackTrace();
         }
     }
-    
+
     private String saveString(String s) {
         return s.toLowerCase().replace("_", " ");
     }
-    
+
     private String loadString(String s) {
         return s.toUpperCase().replace(" ", "_");
     }
@@ -241,7 +255,7 @@ public class MagicCarpet extends JavaPlugin {
         getCommand("carpetswitch").setExecutor(new SwitchCommand(this));
         getCommand("magicreload").setExecutor(new ReloadCommand(this));
     }
-    
+
     private void registerEvents(Listener listener) {
         getServer().getPluginManager().registerEvents(listener, this);
     }

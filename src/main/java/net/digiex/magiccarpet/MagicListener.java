@@ -55,7 +55,7 @@ public class MagicListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerKick(PlayerKickEvent event) {
         Player who = event.getPlayer();
-        Carpet carpet = plugin.carpets.get(who);
+        Carpet carpet = plugin.carpets.getCarpet(who);
         if (carpet != null && carpet.isVisible()) {
             String reason = event.getReason();
             if (reason != null && reason.equals("Flying is not enabled on this server") && who.isSneaking()) {
@@ -67,7 +67,7 @@ public class MagicListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        Carpet carpet = plugin.carpets.get(player);
+        Carpet carpet = plugin.carpets.getCarpet(player);
         if (carpet == null || !carpet.isVisible()) {
             return;
         }
@@ -127,7 +127,7 @@ public class MagicListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
-        Carpet carpet = plugin.carpets.get(player);
+        Carpet carpet = plugin.carpets.getCarpet(player);
         if (carpet == null || !carpet.isVisible()) {
             return;
         }
@@ -153,7 +153,7 @@ public class MagicListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
-        Carpet carpet = plugin.carpets.get(player);
+        Carpet carpet = plugin.carpets.getCarpet(player);
         if (carpet == null || !carpet.isVisible()) {
             return;
         }
@@ -272,7 +272,7 @@ public class MagicListener implements Listener {
                 return;
             }
             if (plugin.carpets.has((Player) event.getEntity())) {
-                Carpet c = plugin.carpets.get((Player) event.getEntity());
+                Carpet c = plugin.carpets.getCarpet((Player) event.getEntity());
                 if (c.isVisible()) {
                     event.setCancelled(true);
                 }
