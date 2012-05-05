@@ -1,6 +1,5 @@
 package net.digiex.magiccarpet;
 
-import static java.lang.Math.abs;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
@@ -71,6 +70,9 @@ public class MagicListener implements Listener {
         if (carpet == null || !carpet.isVisible()) {
             return;
         }
+        if (carpet.getLocation() == event.getTo()) {
+            return;
+        }
         if (!plugin.canFly(player)) {
             carpet.hide();
             return;
@@ -132,10 +134,7 @@ public class MagicListener implements Listener {
             return;
         }
         Location to = event.getTo();
-        Location last = carpet.getLocation();
-        if (last.getBlockX() == to.getBlockX()
-                && last.getBlockY() == to.getBlockY()
-                && last.getBlockZ() == to.getBlockZ()) {
+        if (carpet.getLocation() == to) {
             return;
         }
         if (!plugin.canFly(player)) {
