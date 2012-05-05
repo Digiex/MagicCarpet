@@ -272,9 +272,7 @@ public class MagicListener implements Listener {
             }
             if (plugin.carpets.has((Player) event.getEntity())) {
                 Carpet c = plugin.carpets.getCarpet((Player) event.getEntity());
-                if (c.isVisible()) {
                     event.setCancelled(true);
-                }
             }
         }
     }
