@@ -44,7 +44,7 @@ public class MagicListener implements Listener {
             Carpet.create(player, plugin).show();
         }
     }
-    
+
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
@@ -88,20 +88,6 @@ public class MagicListener implements Listener {
                 && to.getY() > from.getY()) {
             player.setVelocity(player.getVelocity().add(new Vector(0, 0.1, 0)));
         }
-        /*if (from.getX() > to.getX()) {
-            to.setX(to.getX() - .5);
-            from.setX(from.getX() - .5);
-        } else {
-            to.setX(to.getX() + .5);
-            from.setX(from.getX() + .5);
-        }
-        if (from.getZ() > to.getZ()) {
-            to.setZ(to.getZ() - .5);
-            from.setZ(from.getZ() - .5);
-        } else {
-            to.setZ(to.getZ() + .5);
-            from.setZ(from.getZ() + .5);
-        }*/
         if (plugin.carpets.crouches(player)) {
             if (player.isSneaking()) {
                 if (!falling) {
@@ -118,14 +104,13 @@ public class MagicListener implements Listener {
                 falling = true;
             }
         }
-
         if (from.getY() > to.getY() && !falling) {
             to.setY(from.getY());
         }
         carpet.moveTo(to);
         falling = false;
     }
-    
+
     @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
@@ -164,7 +149,7 @@ public class MagicListener implements Listener {
             carpet.descend();
         }
     }
-    
+
     @EventHandler(ignoreCancelled = true)
     public void onBlockFade(BlockFadeEvent event) {
         for (Carpet carpet : plugin.carpets.all()) {
@@ -177,7 +162,7 @@ public class MagicListener implements Listener {
             }
         }
     }
-    
+
     @EventHandler(ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
         for (Carpet carpet : plugin.carpets.all()) {
@@ -271,7 +256,9 @@ public class MagicListener implements Listener {
                 return;
             }
             if (plugin.carpets.has((Player) event.getEntity())) {
-                event.setCancelled(true);
+                if (falling) {
+                    event.setCancelled(true);
+                }
             }
         }
     }
