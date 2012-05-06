@@ -256,9 +256,7 @@ public class MagicListener implements Listener {
                 return;
             }
             if (plugin.carpets.has((Player) event.getEntity())) {
-                if (falling) {
-                    event.setCancelled(true);
-                }
+                event.setCancelled(true);
             }
         }
     }
