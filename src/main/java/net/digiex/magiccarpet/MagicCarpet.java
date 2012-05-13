@@ -102,11 +102,9 @@ public class MagicCarpet extends JavaPlugin {
             carpets.attach(this);
             in.close();
         } catch (IOException e) {
-            log.warning("Error writing to carpets.dat; carpets data has not been saved!");
-            e.printStackTrace();
+            log.warning("Error loading carpets.dat; carpets data has not been loaded.");
         } catch (ClassNotFoundException e) {
             log.severe("CarpetStorage class not found! This should never happen!");
-            e.printStackTrace();
         }
         carpets.checkCarpets();
     }
@@ -115,11 +113,11 @@ public class MagicCarpet extends JavaPlugin {
         try {
             config.load(configFile);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            log.warning("Error loading config.yml; file not found.");
         } catch (IOException e) {
-            e.printStackTrace();
+            log.warning("Error loading config.yml; IOException");
         } catch (InvalidConfigurationException e) {
-            e.printStackTrace();
+            log.warning("Error loading config.yml; InvalidConfigurationException");
         }
         crouchDef = config.getBoolean("crouch-descent",
                 config.getBoolean("Crouch Default", true));
@@ -202,7 +200,7 @@ public class MagicCarpet extends JavaPlugin {
             try {
                 carpetDat.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.severe("Unable to create carpets.dat; IOException");
             }
         }
         try {
@@ -212,7 +210,6 @@ public class MagicCarpet extends JavaPlugin {
             out.close();
         } catch (IOException e) {
             log.warning("Error writing to carpets.dat; carpets data has not been saved!");
-            e.printStackTrace();
         }
         carpets.clear();
     }
@@ -233,7 +230,7 @@ public class MagicCarpet extends JavaPlugin {
         try {
             config.save(configFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.severe("Unable to create config.yml; IOException");
         }
     }
 

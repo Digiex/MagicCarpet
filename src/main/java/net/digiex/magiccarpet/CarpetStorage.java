@@ -23,10 +23,11 @@ import org.bukkit.entity.Player;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class CarpetStorage implements Serializable {
+    private static final long serialVersionUID = 8928246998374203837L;
 
     private class CarpetEntry implements Serializable {
-
-        private static final long serialVersionUID = -7853484578047997719L;
+        private static final long serialVersionUID = 3315970803466536919L;
+        
         public transient Carpet carpet;
         public boolean crouch = plugin.crouchDef;
         public boolean hasCarpet = false;
@@ -35,7 +36,7 @@ public class CarpetStorage implements Serializable {
         public boolean lightsOn = plugin.glowCenter;
         public Material thread = plugin.carpMaterial;
     }
-    private static final long serialVersionUID = 1168884913848994599L;
+    
     private HashMap<String, CarpetEntry> carpets = new HashMap<String, CarpetEntry>();
     private transient MagicCarpet plugin;
 
