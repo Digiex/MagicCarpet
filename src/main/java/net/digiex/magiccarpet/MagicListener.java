@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.material.Redstone;
 import org.bukkit.util.Vector;
@@ -257,6 +258,21 @@ public class MagicListener implements Listener {
             }
             if (plugin.carpets.has((Player) event.getEntity())) {
                 event.setCancelled(true);
+            }
+        }
+    }
+    
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityExplode(EntityExplodeEvent event) {
+        for (Carpet carpet : plugin.carpets.all()) {
+            if (carpet == null || !carpet.isVisible()) {
+                continue;
+            }
+            for (Block block : event.blockList()) {
+                if (carpet.isCarpet(block)) {
+                    event.setCancelled(true);
+                    return;
+                }
             }
         }
     }
