@@ -33,8 +33,8 @@ public class MagicListener implements Listener {
     private MagicCarpet plugin;
     private boolean falling = false;
 
-    public MagicListener(MagicCarpet instance) {
-        this.plugin = instance;
+    public MagicListener(MagicCarpet plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler
@@ -126,7 +126,7 @@ public class MagicListener implements Listener {
             carpet.hide();
             return;
         }
-        if (!plugin.canTeleFly(player) && falling == false) {
+        if (!plugin.canTeleFly(player) && !falling) {
             player.sendMessage("Your carpet cannot follow you there!");
             carpet.hide();
             return;
@@ -182,7 +182,7 @@ public class MagicListener implements Listener {
             if (carpet == null || !carpet.isVisible()) {
                 continue;
             }
-            if (carpet.isCovering(event.getBlock())) {
+            if (carpet.isCarpet(event.getBlock())) {
                 event.setCancelled(true);
                 return;
             }
@@ -212,7 +212,7 @@ public class MagicListener implements Listener {
                 continue;
             }
             for (Block block : event.getBlocks()) {
-                if (carpet.isCovering(block)) {
+                if (carpet.isCarpet(block)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -227,7 +227,7 @@ public class MagicListener implements Listener {
                 if (carpet == null || !carpet.isVisible()) {
                     continue;
                 }
-                if (carpet.isCovering(event.getRetractLocation().getBlock())) {
+                if (carpet.isCarpet(event.getRetractLocation().getBlock())) {
                     event.setCancelled(true);
                     return;
                 }
@@ -246,7 +246,7 @@ public class MagicListener implements Listener {
                 if (carpet == null || !carpet.isVisible()) {
                     continue;
                 }
-                if (carpet.isCovering(eyes)) {
+                if (carpet.isCarpet(eyes)) {
                     event.setCancelled(true);
                     return;
                 }

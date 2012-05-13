@@ -40,7 +40,6 @@ public class Carpet {
         void set(Block bl, Material material) {
             bl.setTypeId(material.getId(), false);
             strand = material;
-
         }
 
         boolean shouldGlow() {
@@ -142,7 +141,7 @@ public class Carpet {
         }
     }
 
-    public boolean isCovering(Block block) {
+    public boolean isCarpet(Block block) {
         if (currentCentre == null || block == null) {
             return false;
         }
@@ -248,7 +247,7 @@ public class Carpet {
             }
         }
     }
-    
+
     private boolean canReplace(Material type) {
         switch (type) {
             case AIR:
