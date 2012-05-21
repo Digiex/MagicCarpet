@@ -1,7 +1,15 @@
 package net.digiex.magiccarpet;
 
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldguard.LocalPlayer;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.managers.RegionManager;
 import java.io.*;
 import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.logging.Logger;
 import org.bukkit.Material;
 import static org.bukkit.Material.*;
@@ -11,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /*
@@ -56,6 +65,7 @@ public class MagicCarpet extends JavaPlugin {
     boolean allowWaterLight = false;
     boolean allowCustomLight = false;
     boolean saveCarpets = true;
+    WorldGuardPlugin worldGuard;
 
     public boolean canFly(Player player) {
         return player.hasPermission("magiccarpet.mc");
@@ -71,6 +81,30 @@ public class MagicCarpet extends JavaPlugin {
             return true;
         }
         return false;
+    }
+    
+    public boolean canFlyHere(Player player) {
+        RegionManager regionManager = worldGuard.getRegionManager(player.getWorld());
+        LocalPlayer localPlayer = worldGuard.wrapPlayer(player);
+        Vector location = localPlayer.getPosition();
+        ApplicableRegionSet set = regionManager.getApplicableRegions(location);
+        if (set == null) {
+            return true;
+        }
+        Set<String> flag = set.getFlag(DefaultFlag.BLOCKED_CMDS);
+        if (flag == null) {
+            return true;
+        }
+        for (Iterator<String> it = flag.iterator(); it.hasNext();) {
+            String blocked = it.next();
+            if (blocked == null) {
+                continue;
+            }
+            if (blocked.contains("/mc") || blocked.contains("/magiccarpet")) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean canLight(Player player) {
@@ -190,6 +224,7 @@ public class MagicCarpet extends JavaPlugin {
         }
         registerEvents(magicListener);
         registerCommands();
+        worldGuard = getWorldGuard();
         log.info("is now enabled!");
     }
 
@@ -255,5 +290,13 @@ public class MagicCarpet extends JavaPlugin {
 
     private void registerEvents(Listener listener) {
         getServer().getPluginManager().registerEvents(listener, this);
+    }
+    
+    public WorldGuardPlugin getWorldGuard() {
+        Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
+        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+            return null;
+        }
+        return (WorldGuardPlugin) plugin;
     }
 }
