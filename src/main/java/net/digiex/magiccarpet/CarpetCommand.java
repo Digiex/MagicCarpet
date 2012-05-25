@@ -42,7 +42,7 @@ public class CarpetCommand implements CommandExecutor {
             player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
             return true;
         }
-        int c = plugin.carpSize;
+        int c;
         if (carpet == null) {
             carpet = Carpet.create(player, plugin);
         }

@@ -1,15 +1,7 @@
 package net.digiex.magiccarpet;
 
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldguard.LocalPlayer;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.managers.RegionManager;
 import java.io.*;
 import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.logging.Logger;
 import org.bukkit.Material;
 import static org.bukkit.Material.*;
@@ -62,10 +54,11 @@ public class MagicCarpet extends JavaPlugin {
     boolean glowCenter = false;
     Material lightMaterial = GLOWSTONE;
     int maxCarpSize = 9;
-    boolean allowWaterLight = false;
-    boolean allowCustomLight = false;
+    boolean waterLight = false;
+    boolean customLight = false;
     boolean saveCarpets = true;
-    WorldGuardPlugin worldGuard;
+    boolean lights = false;
+    private WorldGuardHandler worldGuardHandler;
 
     public boolean canFly(Player player) {
         return player.hasPermission("magiccarpet.mc");
@@ -82,27 +75,10 @@ public class MagicCarpet extends JavaPlugin {
         }
         return false;
     }
-    
+
     public boolean canFlyHere(Player player) {
-        RegionManager regionManager = worldGuard.getRegionManager(player.getWorld());
-        LocalPlayer localPlayer = worldGuard.wrapPlayer(player);
-        Vector location = localPlayer.getPosition();
-        ApplicableRegionSet set = regionManager.getApplicableRegions(location);
-        if (set == null) {
-            return true;
-        }
-        Set<String> flag = set.getFlag(DefaultFlag.BLOCKED_CMDS);
-        if (flag == null) {
-            return true;
-        }
-        for (Iterator<String> it = flag.iterator(); it.hasNext();) {
-            String blocked = it.next();
-            if (blocked == null) {
-                continue;
-            }
-            if (blocked.contains("/mc") || blocked.contains("/magiccarpet")) {
-                return false;
-            }
+        if (worldGuardHandler != null) {
+            return worldGuardHandler.canFlyHere(player);
         }
         return true;
     }
@@ -186,9 +162,10 @@ public class MagicCarpet extends JavaPlugin {
             log.warning("Config error; Default-size is larger than max-size.");
         }
         customCarpets = config.getBoolean("custom-carpets", config.getBoolean("allow-custom", true));
-        allowWaterLight = config.getBoolean("water-light", config.getBoolean("allow-water-light", false));
-        allowCustomLight = config.getBoolean("custom-light", config.getBoolean("allow-custom-light", false));
+        waterLight = config.getBoolean("water-light", config.getBoolean("allow-water-light", false));
+        customLight = config.getBoolean("custom-light", config.getBoolean("allow-custom-light", false));
         saveCarpets = config.getBoolean("save-carpets", true);
+        lights = config.getBoolean("lights", false);
     }
 
     @Override
@@ -224,7 +201,7 @@ public class MagicCarpet extends JavaPlugin {
         }
         registerEvents(magicListener);
         registerCommands();
-        worldGuard = getWorldGuard();
+        getWorldGuard();
         log.info("is now enabled!");
     }
 
@@ -257,9 +234,10 @@ public class MagicCarpet extends JavaPlugin {
         config.set("carpet-light", saveString(lightMaterial.name()));
         config.set("max-size", maxCarpSize);
         config.set("custom-carpets", customCarpets);
-        config.set("water-light", allowWaterLight);
-        config.set("custom-light", allowCustomLight);
+        config.set("water-light", waterLight);
+        config.set("custom-light", customLight);
         config.set("save-carpets", saveCarpets);
+        config.set("lights", lights);
         config.options().header(
                 "Be sure to use /mr if you change any settings here while the server is running.");
         try {
@@ -291,12 +269,12 @@ public class MagicCarpet extends JavaPlugin {
     private void registerEvents(Listener listener) {
         getServer().getPluginManager().registerEvents(listener, this);
     }
-    
-    public WorldGuardPlugin getWorldGuard() {
+
+    public void getWorldGuard() {
         Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
-        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
-            return null;
+        if (plugin == null || !(plugin instanceof com.sk89q.worldguard.bukkit.WorldGuardPlugin)) {
+            return;
         }
-        return (WorldGuardPlugin) plugin;
+        worldGuardHandler = new WorldGuardHandler(this, (com.sk89q.worldguard.bukkit.WorldGuardPlugin) plugin);
     }
 }

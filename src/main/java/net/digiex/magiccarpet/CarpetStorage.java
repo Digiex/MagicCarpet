@@ -239,6 +239,9 @@ public class CarpetStorage implements Serializable {
             if (entry.light != plugin.lightMaterial && !plugin.customCarpets) {
                 entry.light = plugin.lightMaterial;
             }
+            if (entry.lightsOn && !plugin.lights) {
+                entry.lightsOn = false;
+            }
         }
     }
 }
