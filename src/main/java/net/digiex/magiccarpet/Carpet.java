@@ -229,13 +229,13 @@ public class Carpet {
                     continue;
                 }
                 fibre.block = bl.getState();
-                if (fibre.shouldGlow() && p.allowWaterLight && shouldLightWater(bl)) {
+                if (fibre.shouldGlow() && p.waterLight && shouldLightWater(bl)) {
                     fibre.set(bl, getShine());
-                } else if (fibre.shouldGlow() && p.allowCustomLight && shouldLightCustom()) {
+                } else if (fibre.shouldGlow() && p.customLight && shouldLightCustom()) {
                     fibre.set(bl, getShine());
-                } else if (fibre.shouldGlow() && !p.allowWaterLight && shouldLightWater(bl)) {
+                } else if (fibre.shouldGlow() && !p.waterLight && shouldLightWater(bl)) {
                     fibre.set(bl, getThread());
-                } else if (fibre.shouldGlow() && !p.allowCustomLight && !shouldLightCustom()) {
+                } else if (fibre.shouldGlow() && !p.customLight && !shouldLightCustom()) {
                     fibre.set(bl, getThread());
                 } else {
                     if (fibre.shouldGlow()) {

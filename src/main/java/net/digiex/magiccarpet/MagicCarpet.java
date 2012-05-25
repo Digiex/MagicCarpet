@@ -53,9 +53,10 @@ public class MagicCarpet extends JavaPlugin {
     boolean glowCenter = false;
     Material lightMaterial = GLOWSTONE;
     int maxCarpSize = 9;
-    boolean allowWaterLight = false;
-    boolean allowCustomLight = false;
+    boolean waterLight = false;
+    boolean customLight = false;
     boolean saveCarpets = true;
+    boolean lights = false;
 
     public boolean canFly(Player player) {
         return player.hasPermission("magiccarpet.mc");
@@ -152,9 +153,10 @@ public class MagicCarpet extends JavaPlugin {
             log.warning("Config error; Default-size is larger than max-size.");
         }
         customCarpets = config.getBoolean("custom-carpets", config.getBoolean("allow-custom", true));
-        allowWaterLight = config.getBoolean("water-light", config.getBoolean("allow-water-light", false));
-        allowCustomLight = config.getBoolean("custom-light", config.getBoolean("allow-custom-light", false));
+        waterLight = config.getBoolean("water-light", config.getBoolean("allow-water-light", false));
+        customLight = config.getBoolean("custom-light", config.getBoolean("allow-custom-light", false));
         saveCarpets = config.getBoolean("save-carpets", true);
+        lights = config.getBoolean("lights", false);
     }
 
     @Override
@@ -222,9 +224,10 @@ public class MagicCarpet extends JavaPlugin {
         config.set("carpet-light", saveString(lightMaterial.name()));
         config.set("max-size", maxCarpSize);
         config.set("custom-carpets", customCarpets);
-        config.set("water-light", allowWaterLight);
-        config.set("custom-light", allowCustomLight);
+        config.set("water-light", waterLight);
+        config.set("custom-light", customLight);
         config.set("save-carpets", saveCarpets);
+        config.set("lights", lights);
         config.options().header(
                 "Be sure to use /mr if you change any settings here while the server is running.");
         try {

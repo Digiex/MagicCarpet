@@ -86,6 +86,10 @@ public class LightCommand implements CommandExecutor {
     }
 
     private void hideOrShow(Player player) {
+        if (!plugin.lights) {
+            player.sendMessage("The magic light is disabled");
+            return;
+        }
         if (plugin.carpets.hasLight(player)) {
             plugin.carpets.lightOff(player);
             player.sendMessage("The luminous stones in the carpet slowly fade away.");
