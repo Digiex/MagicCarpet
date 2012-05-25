@@ -6,6 +6,7 @@ description: "Take yourself wonder by wonder on a carpet made of glass."
 database: false
 startup: postworld
 authors: [Android, Celtic Minstrel, xzKinGzxBuRnzx]
+softdepend: [WorldGuard]
 commands:
   magiccarpet:
     description: Take yourself wonder by wonder on a carpet made of glass.
@@ -24,11 +25,6 @@ commands:
     aliases: [mr]
     usage: /<command>
 permissions:
-  magiccarpet.mc:
-    description: Take yourself wonder by wonder on a carpet made of glass.
-    default: op
-    children:
-      magiccarpet.tp: true
   magiccarpet.ml:
     description: Allows a bright light for your carpet ride.
     default: op
@@ -41,6 +37,11 @@ permissions:
   magiccarpet.mr:
     description: Allows the player to reload MagicCarpet.
     default: op
+  magiccarpet.mc:
+    description: Take yourself wonder by wonder on a carpet made of glass.
+    default: op
+    children:
+      magiccarpet.tp: true
   magiccarpet.*:
     description: Allows access to all MagicCarpet commands.
     default: op

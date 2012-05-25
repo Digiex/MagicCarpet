@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /*
@@ -57,6 +58,10 @@ public class MagicCarpet extends JavaPlugin {
     boolean customLight = false;
     boolean saveCarpets = true;
     boolean lights = false;
+<<<<<<< HEAD
+=======
+    private WorldGuardHandler worldGuardHandler;
+>>>>>>> worldguard
 
     public boolean canFly(Player player) {
         return player.hasPermission("magiccarpet.mc");
@@ -72,6 +77,13 @@ public class MagicCarpet extends JavaPlugin {
             return true;
         }
         return false;
+    }
+
+    public boolean canFlyHere(Player player) {
+        if (worldGuardHandler != null) {
+            return worldGuardHandler.canFlyHere(player);
+        }
+        return true;
     }
 
     public boolean canLight(Player player) {
@@ -192,6 +204,7 @@ public class MagicCarpet extends JavaPlugin {
         }
         registerEvents(magicListener);
         registerCommands();
+        getWorldGuard();
         log.info("is now enabled!");
     }
 
@@ -258,5 +271,13 @@ public class MagicCarpet extends JavaPlugin {
 
     private void registerEvents(Listener listener) {
         getServer().getPluginManager().registerEvents(listener, this);
+    }
+
+    public void getWorldGuard() {
+        Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
+        if (plugin == null || !(plugin instanceof com.sk89q.worldguard.bukkit.WorldGuardPlugin)) {
+            return;
+        }
+        worldGuardHandler = new WorldGuardHandler(this, (com.sk89q.worldguard.bukkit.WorldGuardPlugin) plugin);
     }
 }
