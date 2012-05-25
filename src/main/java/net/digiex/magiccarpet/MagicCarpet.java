@@ -58,10 +58,7 @@ public class MagicCarpet extends JavaPlugin {
     boolean customLight = false;
     boolean saveCarpets = true;
     boolean lights = false;
-<<<<<<< HEAD
-=======
     private WorldGuardHandler worldGuardHandler;
->>>>>>> worldguard
 
     public boolean canFly(Player player) {
         return player.hasPermission("magiccarpet.mc");
