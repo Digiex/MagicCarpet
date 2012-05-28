@@ -23,10 +23,10 @@ import org.bukkit.entity.Player;
  */
 public class ReloadCommand implements CommandExecutor {
 
-    private MagicCarpet plugin;
+    private final MagicCarpet plugin;
 
-    public ReloadCommand(MagicCarpet plug) {
-        plugin = plug;
+    public ReloadCommand(MagicCarpet plugin) {
+        this.plugin = plugin;
     }
 
     @Override

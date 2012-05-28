@@ -24,10 +24,10 @@ import org.bukkit.entity.Player;
  */
 public class CarpetCommand implements CommandExecutor {
 
-    private MagicCarpet plugin;
+    private final MagicCarpet plugin;
 
-    public CarpetCommand(MagicCarpet plug) {
-        plugin = plug;
+    public CarpetCommand(MagicCarpet plugin) {
+        this.plugin = plugin;
     }
 
     @Override

@@ -60,12 +60,9 @@ public class Carpet {
         }
     }
     private static MagicCarpet p;
-    private static int defaultSize, maxSize;
 
     public static Carpet create(Player player, MagicCarpet plugin) {
         p = plugin;
-        defaultSize = plugin.carpSize;
-        maxSize = plugin.maxCarpSize;
         int sz = plugin.carpets.getLastSize(player);
         boolean light = plugin.carpets.hasLight(player);
         Material thread = plugin.carpets.getMaterial(player);
@@ -296,8 +293,6 @@ public class Carpet {
     private void setSize(int size) {
         if (size < 0) {
             size = abs(size);
-        } else if (size > maxSize) {
-            size = defaultSize;
         }
         edge = size;
         area = size * size;

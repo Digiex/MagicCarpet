@@ -31,7 +31,7 @@ import org.bukkit.util.Vector;
  */
 public class MagicListener implements Listener {
 
-    private MagicCarpet plugin;
+    private final MagicCarpet plugin;
     private boolean falling = false;
 
     public MagicListener(MagicCarpet plugin) {

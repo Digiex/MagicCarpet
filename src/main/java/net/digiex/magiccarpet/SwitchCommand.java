@@ -23,10 +23,10 @@ import org.bukkit.entity.Player;
  */
 public class SwitchCommand implements CommandExecutor {
 
-    private MagicCarpet plugin;
+    private final MagicCarpet plugin;
 
-    public SwitchCommand(MagicCarpet plug) {
-        plugin = plug;
+    public SwitchCommand(MagicCarpet plugin) {
+        this.plugin = plugin;
     }
 
     @Override
