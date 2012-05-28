@@ -31,17 +31,12 @@ permissions:
   magiccarpet.mcs:
     description: Allows the player to switch methods for going down with the carpet.
     default: op
-  magiccarpet.tp:
-    description: Allows the carpet to move when teleporting while active.
-    default: op
   magiccarpet.mr:
     description: Allows the player to reload MagicCarpet.
     default: op
   magiccarpet.mc:
     description: Take yourself wonder by wonder on a carpet made of glass.
     default: op
-    children:
-      magiccarpet.tp: true
   magiccarpet.*:
     description: Allows access to all MagicCarpet commands.
     default: op
@@ -49,5 +44,4 @@ permissions:
       magiccarpet.mc: true
       magiccarpet.ml: true
       magiccarpet.mcs: true
-      magiccarpet.tp: true
       magiccarpet.mr: true

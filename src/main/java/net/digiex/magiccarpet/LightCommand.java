@@ -64,21 +64,28 @@ public class LightCommand implements CommandExecutor {
                                 carpet.setLights(m);
                             } else {
                                 player.sendMessage("A magic light of that material would not light up!");
+                                return true;
                             }
                         } else {
                             player.sendMessage("Material error; Material may be entered as JACK_O_LANTERN or just plain jack o lantern");
-                            return false;
+                            return true;
                         }
+                    } else {
+                        player.sendMessage("The carpet isn't allowed to change material.");
+                        return true;
                     }
                 } else {
                     player.sendMessage("You haven't enabled the magic light yet.");
+                    return true;
                 }
             }
         } else {
             if (plugin.canFly(player)) {
                 player.sendMessage("You do not have permission to use magic light!");
+                return true;
             } else {
                 player.sendMessage("You aren't allowed to use the magic carpet!");
+                return true;
             }
         }
         plugin.carpets.update(player);

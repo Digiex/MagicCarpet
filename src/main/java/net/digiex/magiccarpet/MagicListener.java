@@ -136,11 +136,6 @@ public class MagicListener implements Listener {
             carpet.changeCarpet(plugin.carpSize);
             plugin.carpets.update(player);
         }
-        if (!plugin.canTeleFly(player) && !falling) {
-            player.sendMessage("Your carpet cannot follow you there!");
-            carpet.hide();
-            return;
-        }
         if (!plugin.canFlyHere(player)) {
             player.sendMessage("Your carpet is forbidden in this area!");
             carpet.hide();

@@ -95,10 +95,6 @@ public class MagicCarpet extends JavaPlugin {
         return player.hasPermission("magiccarpet.mcs");
     }
 
-    public boolean canTeleFly(Player player) {
-        return player.hasPermission("magiccarpet.tp");
-    }
-
     public void loadCarpets() {
         File carpetDat = carpetsFile();
         if (!carpetDat.exists()) {

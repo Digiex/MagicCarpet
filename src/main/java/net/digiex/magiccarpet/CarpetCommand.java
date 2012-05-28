@@ -81,7 +81,7 @@ public class CarpetCommand implements CommandExecutor {
                             }
                         } else {
                             player.sendMessage("Material error; Material may be entered as GOLD_BLOCK or just plain gold block");
-                            return false;
+                            return true;
                         }
                     } else {
                         player.sendMessage("The carpet isn't allowed to change material.");
@@ -90,7 +90,7 @@ public class CarpetCommand implements CommandExecutor {
                 }
                 if (c % 2 == 0 || c < 1 || c > plugin.maxCarpSize) {
                     player.sendMessage("The size must be an odd number from 1 to " + String.valueOf(plugin.maxCarpSize) + ".");
-                    return false;
+                    return true;
                 }
                 if (c != carpet.getSize()) {
                     if (plugin.canFlyAt(player, c)) {
