@@ -273,6 +273,8 @@ public class Carpet {
                 return true;
             case RED_MUSHROOM:
                 return true;
+            case VINE:
+                return true;
             default:
                 return false;
         }
