@@ -41,12 +41,14 @@ public class MagicCarpet extends JavaPlugin {
             NETHERRACK, SOUL_SAND, MYCEL, NETHER_BRICK, ENDER_STONE,
             HUGE_MUSHROOM_1, HUGE_MUSHROOM_2, MELON_BLOCK);
     static final EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE, JACK_O_LANTERN);
+    
+    private final MagicListener magicListener = new MagicListener(this);
+    CarpetStorage carpets = new CarpetStorage().attach(this);
+    private WorldGuardHandler worldGuardHandler;
     public Logger log;
+    
     private FileConfiguration config;
     private File configFile;
-    private final MagicListener magicListener = new MagicListener(this);
-    String allowedmaterial;
-    CarpetStorage carpets = new CarpetStorage().attach(this);
     Material carpMaterial = GLASS;
     int carpSize = 5;
     boolean crouchDef = true;
@@ -54,11 +56,11 @@ public class MagicCarpet extends JavaPlugin {
     boolean glowCenter = false;
     Material lightMaterial = GLOWSTONE;
     int maxCarpSize = 9;
-    boolean waterLight = false;
-    boolean customLight = false;
+    boolean lightWater = false;
+    boolean lightCustom = false;
     boolean saveCarpets = true;
     boolean lights = false;
-    private WorldGuardHandler worldGuardHandler;
+    boolean customLights = true;
 
     public boolean canFly(Player player) {
         return player.hasPermission("magiccarpet.mc");
@@ -158,8 +160,9 @@ public class MagicCarpet extends JavaPlugin {
             log.warning("Config error; Default-size is larger than max-size.");
         }
         customCarpets = config.getBoolean("custom-carpets", config.getBoolean("allow-custom", true));
-        waterLight = config.getBoolean("water-light", config.getBoolean("allow-water-light", false));
-        customLight = config.getBoolean("custom-light", config.getBoolean("allow-custom-light", false));
+        customLights = config.getBoolean("custom-lights", true);
+        lightWater = config.getBoolean("light-water", config.getBoolean("water-light", config.getBoolean("allow-water-light", false)));
+        lightCustom = config.getBoolean("light-custom", config.getBoolean("custom-light", config.getBoolean("allow-custom-light", false)));
         saveCarpets = config.getBoolean("save-carpets", true);
         lights = config.getBoolean("lights", false);
     }
@@ -230,10 +233,11 @@ public class MagicCarpet extends JavaPlugin {
         config.set("carpet-light", saveString(lightMaterial.name()));
         config.set("max-size", maxCarpSize);
         config.set("custom-carpets", customCarpets);
-        config.set("water-light", waterLight);
-        config.set("custom-light", customLight);
-        config.set("save-carpets", saveCarpets);
+        config.set("custom-lights", customLights);
         config.set("lights", lights);
+        config.set("light-water", lightWater);
+        config.set("light-custom", lightCustom);
+        config.set("save-carpets", saveCarpets);
         config.options().header(
                 "Be sure to use /mr if you change any settings here while the server is running.");
         try {

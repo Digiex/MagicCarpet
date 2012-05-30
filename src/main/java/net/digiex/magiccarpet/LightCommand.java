@@ -48,7 +48,7 @@ public class LightCommand implements CommandExecutor {
                 hideOrShow(player);
             } else {
                 if (plugin.carpets.hasLight(player)) {
-                    if (plugin.customCarpets) {
+                    if (plugin.customLights) {
                         String word = "";
                         for (String a : args) {
                             if (word.isEmpty()) {
@@ -71,7 +71,7 @@ public class LightCommand implements CommandExecutor {
                             return true;
                         }
                     } else {
-                        player.sendMessage("The carpet isn't allowed to change material.");
+                        player.sendMessage("The magic light isn't allowed to change material.");
                         return true;
                     }
                 } else {

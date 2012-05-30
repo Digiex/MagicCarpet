@@ -236,7 +236,7 @@ public class CarpetStorage implements Serializable {
             if (entry.thread != plugin.carpMaterial && !plugin.customCarpets) {
                 entry.thread = plugin.carpMaterial;
             }
-            if (entry.light != plugin.lightMaterial && !plugin.customCarpets) {
+            if (entry.light != plugin.lightMaterial && !plugin.customLights) {
                 entry.light = plugin.lightMaterial;
             }
             if (entry.lightsOn && !plugin.lights) {
