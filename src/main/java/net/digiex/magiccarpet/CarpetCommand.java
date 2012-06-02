@@ -44,17 +44,6 @@ public class CarpetCommand implements CommandExecutor {
         }
         int c;
         if (carpet == null) {
-            if (plugin.charge) {
-                if (plugin.vault != null && plugin.vault.isEconomyEnabled()) {
-                    if (plugin.vault.hasAmount(player, plugin.chargeAmount)) {
-                        plugin.vault.subtractAmount(player, plugin.chargeAmount);
-                        player.sendMessage("You've been charged " + String.valueOf(plugin.chargeAmount) + " " + plugin.vault.getCurrencyName() + " and now have " + String.valueOf(plugin.vault.getBalance(player)) + plugin.vault.getCurrencyName());
-                    } else {
-                        player.sendMessage("You don't have enough " + plugin.vault.getCurrencyName());
-                        return true;
-                    }
-                }
-            }
             carpet = Carpet.create(player, plugin);
         }
         if (args.length < 1) {

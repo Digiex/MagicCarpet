@@ -62,8 +62,6 @@ public class MagicCarpet extends JavaPlugin {
     boolean saveCarpets = true;
     boolean lights = false;
     boolean customLights = true;
-    boolean charge = false;
-    double chargeAmount = 1.0;
 
     public boolean canFly(Player player) {
         String s = "magiccarpet.mc";
@@ -185,8 +183,6 @@ public class MagicCarpet extends JavaPlugin {
         lightCustom = config.getBoolean("light-custom", config.getBoolean("custom-light", config.getBoolean("allow-custom-light", false)));
         saveCarpets = config.getBoolean("save-carpets", true);
         lights = config.getBoolean("lights", false);
-        charge = config.getBoolean("charge", false);
-        chargeAmount = config.getDouble("charge-amount", 1.0);
     }
 
     @Override
@@ -261,8 +257,6 @@ public class MagicCarpet extends JavaPlugin {
         config.set("light-water", lightWater);
         config.set("light-custom", lightCustom);
         config.set("save-carpets", saveCarpets);
-        config.set("charge", charge);
-        config.set("charge-amount", chargeAmount);
         config.options().header(
                 "Be sure to use /mr if you change any settings here while the server is running.");
         try {

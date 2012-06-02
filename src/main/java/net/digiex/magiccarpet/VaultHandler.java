@@ -1,7 +1,6 @@
 package net.digiex.magiccarpet;
 
 import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.economy.EconomyResponse;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -23,53 +22,25 @@ import org.bukkit.plugin.RegisteredServiceProvider;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class VaultHandler {
-
+    
     private final MagicCarpet plugin;
     private Permission permissionsProvider;
-    private Economy economyProvider;
-
+    
     public VaultHandler(MagicCarpet plugin) {
         this.plugin = plugin;
     }
-
+    
     public VaultHandler setup() {
         RegisteredServiceProvider<Permission> p = plugin.getServer().getServicesManager().getRegistration(Permission.class);
         permissionsProvider = p.getProvider();
-        RegisteredServiceProvider<Economy> e = plugin.getServer().getServicesManager().getRegistration(Economy.class);
-        economyProvider = e.getProvider();
         return this;
     }
-
+    
     public boolean isPermissionsEnabled() {
         return permissionsProvider != null;
     }
-
-    public boolean isEconomyEnabled() {
-        return economyProvider != null;
-    }
-
+    
     public boolean hasPermission(Player player, String permission) {
         return permissionsProvider.has(player, permission);
-    }
-    
-    public String getCurrencyName() {
-        return economyProvider.currencyNamePlural();
-    }
-    
-    public Double getBalance(Player player) {
-        return economyProvider.getBalance(player.getName());
-    }
-    
-    public boolean hasAmount(Player player, Double d) {
-        Double balance = getBalance(player);
-        if (balance >= d) {
-            return true;
-        }
-        return false;
-    }
-    
-    public boolean subtractAmount(Player player, Double d) {
-        EconomyResponse r = economyProvider.withdrawPlayer(player.getName(), d);
-        return r.transactionSuccess();
     }
 }
