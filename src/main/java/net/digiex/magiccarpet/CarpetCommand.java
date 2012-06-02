@@ -44,13 +44,39 @@ public class CarpetCommand implements CommandExecutor {
         }
         int c;
         if (carpet == null) {
+            if (plugin.charge) {
+                if (plugin.vault != null && plugin.vault.isEconomyEnabled()) {
+                    if (plugin.vault.hasAmount(player, plugin.chargeAmount)) {
+                        plugin.vault.subtractAmount(player, plugin.chargeAmount);
+                        player.sendMessage("You've been charged " + String.valueOf(plugin.chargeAmount) + " " + plugin.vault.getCurrencyName().toLowerCase() + " and now have " + String.valueOf(plugin.vault.getBalance(player)) + " " + plugin.vault.getCurrencyName().toLowerCase() + ".");
+                    } else {
+                        player.sendMessage("You don't have enough " + plugin.vault.getCurrencyName().toLowerCase() + ".");
+                        return true;
+                    }
+                }
+            }
             carpet = Carpet.create(player, plugin);
+            player.sendMessage("A glass carpet appears below your feet.");
+            carpet.show();
+            plugin.carpets.update(player);
+            return true;
         }
         if (args.length < 1) {
             if (carpet.isVisible()) {
                 player.sendMessage("Poof! The magic carpet disappears.");
                 carpet.hide();
             } else {
+                if (plugin.charge) {
+                    if (plugin.vault != null && plugin.vault.isEconomyEnabled()) {
+                        if (plugin.vault.hasAmount(player, plugin.chargeAmount)) {
+                            plugin.vault.subtractAmount(player, plugin.chargeAmount);
+                            player.sendMessage("You've been charged " + String.valueOf(plugin.chargeAmount) + " " + plugin.vault.getCurrencyName().toLowerCase() + " and now have " + String.valueOf(plugin.vault.getBalance(player)) + " " + plugin.vault.getCurrencyName().toLowerCase() + ".");
+                        } else {
+                            player.sendMessage("You don't have enough " + plugin.vault.getCurrencyName().toLowerCase() + ".");
+                            return true;
+                        }
+                    }
+                }
                 player.sendMessage("A glass carpet appears below your feet.");
                 carpet.show();
             }
