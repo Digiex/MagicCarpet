@@ -1,10 +1,5 @@
 package net.digiex.magiccarpet;
 
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldguard.LocalPlayer;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.managers.RegionManager;
 import java.util.Iterator;
 import java.util.Set;
 import org.bukkit.entity.Player;
@@ -27,17 +22,19 @@ import org.bukkit.entity.Player;
  */
 public class WorldGuardHandler {
 
-    private final WorldGuardPlugin worldGuard;
+    private final MagicCarpet plugin;
+    private final com.sk89q.worldguard.bukkit.WorldGuardPlugin worldGuard;
 
-    public WorldGuardHandler(WorldGuardPlugin worldGuard) {
+    public WorldGuardHandler(MagicCarpet plugin, com.sk89q.worldguard.bukkit.WorldGuardPlugin worldGuard) {
+        this.plugin = plugin;
         this.worldGuard = worldGuard;
     }
 
     public boolean canFlyHere(Player player) {
-        RegionManager regionManager = worldGuard.getRegionManager(player.getWorld());
-        LocalPlayer localPlayer = worldGuard.wrapPlayer(player);
-        Vector location = localPlayer.getPosition();
-        ApplicableRegionSet set = regionManager.getApplicableRegions(location);
+        com.sk89q.worldguard.protection.managers.RegionManager regionManager = worldGuard.getRegionManager(player.getWorld());
+        com.sk89q.worldguard.LocalPlayer localPlayer = worldGuard.wrapPlayer(player);
+        com.sk89q.worldedit.Vector location = localPlayer.getPosition();
+        com.sk89q.worldguard.protection.ApplicableRegionSet set = regionManager.getApplicableRegions(location);
         if (set == null) {
             return true;
         }

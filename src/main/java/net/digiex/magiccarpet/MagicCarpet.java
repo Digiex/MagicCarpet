@@ -45,7 +45,6 @@ public class MagicCarpet extends JavaPlugin {
     private final MagicListener magicListener = new MagicListener(this);
     CarpetStorage carpets = new CarpetStorage().attach(this);
     private WorldGuardHandler worldGuardHandler;
-    public VaultHandler vault;
     public Logger log;
     
     private FileConfiguration config;
@@ -64,24 +63,19 @@ public class MagicCarpet extends JavaPlugin {
     boolean customLights = true;
 
     public boolean canFly(Player player) {
-        String s = "magiccarpet.mc";
-        if (vault != null && vault.isPermissionsEnabled()) {
-            return vault.hasPermission(player, s);
-        }
-        return player.hasPermission(s);
+        return player.hasPermission("magiccarpet.mc");
     }
 
     public boolean canFlyAt(Player player, int i) {
         if (i == carpSize) {
             return true;
         }
-        String s = "magiccarpet.mc.";
-        Permission permission = new Permission(s + i, "Allows the carpet to operate at size " + i, PermissionDefault.OP);
+        Permission permission = new Permission("magiccarpet.mc." + i, "Allows the carpet to operate at size " + i, PermissionDefault.OP);
         permission.addParent("magiccarpet.*", true);
-        if (vault != null && vault.isPermissionsEnabled()) {
-            return vault.hasPermission(player, s + i);
+        if (player.hasPermission(permission)) {
+            return true;
         }
-        return player.hasPermission(permission);
+        return false;
     }
 
     public boolean canFlyHere(Player player) {
@@ -92,27 +86,15 @@ public class MagicCarpet extends JavaPlugin {
     }
 
     public boolean canLight(Player player) {
-        String s = "magiccarpet.ml";
-        if (vault != null && vault.isPermissionsEnabled()) {
-            return vault.hasPermission(player, s);
-        }
-        return player.hasPermission(s);
+        return player.hasPermission("magiccarpet.ml");
     }
 
     public boolean canReload(Player player) {
-        String s = "magiccarpet.mr";
-        if (vault != null && vault.isPermissionsEnabled()) {
-            return vault.hasPermission(player, s);
-        }
-        return player.hasPermission(s);
+        return player.hasPermission("magiccarpet.mr");
     }
 
     public boolean canSwitch(Player player) {
-        String s = "magiccarpet.mcs";
-        if (vault != null && vault.isPermissionsEnabled()) {
-            return vault.hasPermission(player, s);
-        }
-        return player.hasPermission(s);
+        return player.hasPermission("magiccarpet.mcs");
     }
 
     public void loadCarpets() {
@@ -219,7 +201,6 @@ public class MagicCarpet extends JavaPlugin {
         registerEvents(magicListener);
         registerCommands();
         getWorldGuard();
-        getVault();
         log.info("is now enabled!");
     }
 
@@ -289,19 +270,11 @@ public class MagicCarpet extends JavaPlugin {
         getServer().getPluginManager().registerEvents(listener, this);
     }
 
-    private void getWorldGuard() {
+    public void getWorldGuard() {
         Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
         if (plugin == null || !(plugin instanceof com.sk89q.worldguard.bukkit.WorldGuardPlugin)) {
             return;
         }
-        worldGuardHandler = new WorldGuardHandler((com.sk89q.worldguard.bukkit.WorldGuardPlugin) plugin);
-    }
-    
-    private void getVault() {
-        Plugin plugin = getServer().getPluginManager().getPlugin("Vault");
-        if (plugin == null || !(plugin instanceof net.milkbowl.vault.Vault)) {
-            return;
-        }
-        vault = new VaultHandler(this).setup();
+        worldGuardHandler = new WorldGuardHandler(this, (com.sk89q.worldguard.bukkit.WorldGuardPlugin) plugin);
     }
 }
