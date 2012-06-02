@@ -9,4 +9,4 @@ magiccarpet.jar
 .svn
 target/
 ._*
-nbactions.xml
+nb*.xml
