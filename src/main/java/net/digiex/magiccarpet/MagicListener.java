@@ -65,7 +65,7 @@ public class MagicListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         Carpet carpet = plugin.carpets.getCarpet(player);
@@ -77,6 +77,7 @@ public class MagicListener implements Listener {
         }
         if (!plugin.canFly(player)) {
             carpet.hide();
+            plugin.carpets.update(player);
             return;
         }
         if (!plugin.canFlyAt(player, carpet.getSize())) {
@@ -86,6 +87,7 @@ public class MagicListener implements Listener {
         if (!plugin.canFlyHere(player)) {
             player.sendMessage("Your carpet is forbidden in this area!");
             carpet.hide();
+            plugin.carpets.update(player);
             return;
         }
         Location to = event.getTo().clone();
@@ -118,7 +120,7 @@ public class MagicListener implements Listener {
         falling = false;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
         Carpet carpet = plugin.carpets.getCarpet(player);
@@ -131,6 +133,7 @@ public class MagicListener implements Listener {
         }
         if (!plugin.canFly(player)) {
             carpet.hide();
+            plugin.carpets.update(player);
             return;
         }
         if (!plugin.canFlyAt(player, carpet.getSize())) {
@@ -140,12 +143,13 @@ public class MagicListener implements Listener {
         if (!plugin.canFlyHere(player)) {
             player.sendMessage("Your carpet is forbidden in this area!");
             carpet.hide();
+            plugin.carpets.update(player);
             return;
         }
         carpet.moveTo(to);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
         Carpet carpet = plugin.carpets.getCarpet(player);
