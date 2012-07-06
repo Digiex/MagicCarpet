@@ -48,7 +48,7 @@ public class CarpetCommand implements CommandExecutor {
                 if (plugin.vault != null && plugin.vault.isEconomyEnabled()) {
                     if (plugin.vault.hasAmount(player, plugin.chargeAmount)) {
                         plugin.vault.subtractAmount(player, plugin.chargeAmount);
-                        player.sendMessage("You've been charged " + String.valueOf(plugin.chargeAmount) + " " + plugin.vault.getCurrencyName().toLowerCase() + " and now have " + String.valueOf(plugin.vault.getBalance(player)) + " " + plugin.vault.getCurrencyName().toLowerCase() + ".");
+                        player.sendMessage("You've been charged " + plugin.vault.formatBalance(plugin.chargeAmount).toLowerCase() + " and now have " + plugin.vault.formatBalance(plugin.vault.getBalance(player)).toLowerCase() + " left.");
                     } else {
                         player.sendMessage("You don't have enough " + plugin.vault.getCurrencyName().toLowerCase() + ".");
                         return true;
@@ -70,7 +70,7 @@ public class CarpetCommand implements CommandExecutor {
                     if (plugin.vault != null && plugin.vault.isEconomyEnabled()) {
                         if (plugin.vault.hasAmount(player, plugin.chargeAmount)) {
                             plugin.vault.subtractAmount(player, plugin.chargeAmount);
-                            player.sendMessage("You've been charged " + String.valueOf(plugin.chargeAmount) + " " + plugin.vault.getCurrencyName().toLowerCase() + " and now have " + String.valueOf(plugin.vault.getBalance(player)) + " " + plugin.vault.getCurrencyName().toLowerCase() + ".");
+                            player.sendMessage("You've been charged " + plugin.vault.formatBalance(plugin.chargeAmount).toLowerCase() + " and now have " + plugin.vault.formatBalance(plugin.vault.getBalance(player)).toLowerCase() + " left.");
                         } else {
                             player.sendMessage("You don't have enough " + plugin.vault.getCurrencyName().toLowerCase() + ".");
                             return true;

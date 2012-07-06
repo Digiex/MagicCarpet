@@ -63,6 +63,10 @@ public class VaultHandler {
     public Double getBalance(Player player) {
         return economyProvider.getBalance(player.getName());
     }
+    
+    public String formatBalance(Double d) {
+        return economyProvider.format(d);
+    }
 
     public boolean hasAmount(Player player, Double d) {
         Double balance = getBalance(player);
