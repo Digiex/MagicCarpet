@@ -34,9 +34,13 @@ public class VaultHandler {
 
     public VaultHandler setup() {
         RegisteredServiceProvider<Permission> p = plugin.getServer().getServicesManager().getRegistration(Permission.class);
-        permissionsProvider = p.getProvider();
+        if (p != null) {
+            permissionsProvider = p.getProvider();
+        }
         RegisteredServiceProvider<Economy> e = plugin.getServer().getServicesManager().getRegistration(Economy.class);
-        economyProvider = e.getProvider();
+        if (e != null) {
+            economyProvider = e.getProvider();
+        }
         return this;
     }
 
@@ -51,15 +55,15 @@ public class VaultHandler {
     public boolean hasPermission(Player player, String permission) {
         return permissionsProvider.has(player, permission);
     }
-    
+
     public String getCurrencyName() {
         return economyProvider.currencyNamePlural();
     }
-    
+
     public Double getBalance(Player player) {
         return economyProvider.getBalance(player.getName());
     }
-    
+
     public boolean hasAmount(Player player, Double d) {
         Double balance = getBalance(player);
         if (balance >= d) {
@@ -67,7 +71,7 @@ public class VaultHandler {
         }
         return false;
     }
-    
+
     public boolean subtractAmount(Player player, Double d) {
         EconomyResponse r = economyProvider.withdrawPlayer(player.getName(), d);
         return r.transactionSuccess();
