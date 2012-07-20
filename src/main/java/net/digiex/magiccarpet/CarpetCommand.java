@@ -46,11 +46,11 @@ public class CarpetCommand implements CommandExecutor {
         if (carpet == null) {
             if (plugin.charge) {
                 if (plugin.vault != null && plugin.vault.isEconomyEnabled()) {
-                    if (plugin.vault.hasAmount(player, plugin.chargeAmount)) {
-                        plugin.vault.subtractAmount(player, plugin.chargeAmount);
-                        player.sendMessage("You've been charged " + plugin.vault.formatBalance(plugin.chargeAmount).toLowerCase() + " and now have " + plugin.vault.formatBalance(plugin.vault.getBalance(player)).toLowerCase() + " left.");
+                    if (plugin.vault.getEconomyProvider().has(player.getName(), plugin.chargeAmount)) {
+                        plugin.vault.getEconomyProvider().withdrawPlayer(player.getName(), plugin.chargeAmount);
+                        player.sendMessage("You've been charged " + plugin.vault.getEconomyProvider().format(plugin.chargeAmount).toLowerCase() + " and now have " + plugin.vault.getEconomyProvider().format(plugin.vault.getEconomyProvider().getBalance(player.getName())).toLowerCase() + " left.");
                     } else {
-                        player.sendMessage("You don't have enough " + plugin.vault.getCurrencyName().toLowerCase() + ".");
+                        player.sendMessage("You don't have enough " + plugin.vault.getEconomyProvider().currencyNamePlural().toLowerCase() + ".");
                         return true;
                     }
                 }
@@ -68,11 +68,11 @@ public class CarpetCommand implements CommandExecutor {
             } else {
                 if (plugin.charge) {
                     if (plugin.vault != null && plugin.vault.isEconomyEnabled()) {
-                        if (plugin.vault.hasAmount(player, plugin.chargeAmount)) {
-                            plugin.vault.subtractAmount(player, plugin.chargeAmount);
-                            player.sendMessage("You've been charged " + plugin.vault.formatBalance(plugin.chargeAmount).toLowerCase() + " and now have " + plugin.vault.formatBalance(plugin.vault.getBalance(player)).toLowerCase() + " left.");
+                        if (plugin.vault.getEconomyProvider().has(player.getName(), plugin.chargeAmount)) {
+                            plugin.vault.getEconomyProvider().withdrawPlayer(player.getName(), plugin.chargeAmount);
+                            player.sendMessage("You've been charged " + plugin.vault.getEconomyProvider().format(plugin.chargeAmount).toLowerCase() + " and now have " + plugin.vault.getEconomyProvider().format(plugin.vault.getEconomyProvider().getBalance(player.getName())).toLowerCase() + " left.");
                         } else {
-                            player.sendMessage("You don't have enough " + plugin.vault.getCurrencyName().toLowerCase() + ".");
+                            player.sendMessage("You don't have enough " + plugin.vault.getEconomyProvider().currencyNamePlural().toLowerCase() + ".");
                             return true;
                         }
                     }

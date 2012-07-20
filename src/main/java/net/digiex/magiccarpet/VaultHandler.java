@@ -1,9 +1,7 @@
 package net.digiex.magiccarpet;
 
 import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.economy.EconomyResponse;
 import net.milkbowl.vault.permission.Permission;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 /*
@@ -43,6 +41,14 @@ public class VaultHandler {
         }
         return this;
     }
+    
+    public Permission getPermissionProvider() {
+        return permissionsProvider;
+    }
+    
+    public Economy getEconomyProvider() {
+        return economyProvider;
+    }
 
     public boolean isPermissionsEnabled() {
         return permissionsProvider != null;
@@ -50,34 +56,5 @@ public class VaultHandler {
 
     public boolean isEconomyEnabled() {
         return economyProvider != null;
-    }
-
-    public boolean hasPermission(Player player, String permission) {
-        return permissionsProvider.has(player, permission);
-    }
-
-    public String getCurrencyName() {
-        return economyProvider.currencyNamePlural();
-    }
-
-    public Double getBalance(Player player) {
-        return economyProvider.getBalance(player.getName());
-    }
-    
-    public String formatBalance(Double d) {
-        return economyProvider.format(d);
-    }
-
-    public boolean hasAmount(Player player, Double d) {
-        Double balance = getBalance(player);
-        if (balance >= d) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean subtractAmount(Player player, Double d) {
-        EconomyResponse r = economyProvider.withdrawPlayer(player.getName(), d);
-        return r.transactionSuccess();
     }
 }

@@ -68,7 +68,7 @@ public class MagicCarpet extends JavaPlugin {
     public boolean canFly(Player player) {
         String s = "magiccarpet.mc";
         if (vault != null && vault.isPermissionsEnabled()) {
-            return vault.hasPermission(player, s);
+            return vault.getPermissionProvider().has(player, s);
         }
         return player.hasPermission(s);
     }
@@ -81,7 +81,7 @@ public class MagicCarpet extends JavaPlugin {
         Permission permission = new Permission(s + i, "Allows the carpet to operate at size " + i, PermissionDefault.OP);
         permission.addParent("magiccarpet.*", true);
         if (vault != null && vault.isPermissionsEnabled()) {
-            return vault.hasPermission(player, s + i);
+            return vault.getPermissionProvider().has(player, s + i);
         }
         return player.hasPermission(permission);
     }
@@ -96,7 +96,7 @@ public class MagicCarpet extends JavaPlugin {
     public boolean canLight(Player player) {
         String s = "magiccarpet.ml";
         if (vault != null && vault.isPermissionsEnabled()) {
-            return vault.hasPermission(player, s);
+            return vault.getPermissionProvider().has(player, s);
         }
         return player.hasPermission(s);
     }
@@ -104,7 +104,7 @@ public class MagicCarpet extends JavaPlugin {
     public boolean canReload(Player player) {
         String s = "magiccarpet.mr";
         if (vault != null && vault.isPermissionsEnabled()) {
-            return vault.hasPermission(player, s);
+            return vault.getPermissionProvider().has(player, s);
         }
         return player.hasPermission(s);
     }
@@ -112,7 +112,7 @@ public class MagicCarpet extends JavaPlugin {
     public boolean canSwitch(Player player) {
         String s = "magiccarpet.mcs";
         if (vault != null && vault.isPermissionsEnabled()) {
-            return vault.hasPermission(player, s);
+            return vault.getPermissionProvider().has(player, s);
         }
         return player.hasPermission(s);
     }
