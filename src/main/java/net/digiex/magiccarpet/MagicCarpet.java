@@ -53,15 +53,13 @@ public class MagicCarpet extends JavaPlugin {
     Material carpMaterial = GLASS;
     int carpSize = 5;
     boolean crouchDef = true;
-    boolean customCarpets = true;
+    boolean customCarpets = false;
     boolean glowCenter = false;
     Material lightMaterial = GLOWSTONE;
     int maxCarpSize = 9;
-    boolean lightWater = false;
-    boolean lightCustom = false;
     boolean saveCarpets = true;
     boolean lights = false;
-    boolean customLights = true;
+    boolean customLights = false;
     boolean charge = false;
     double chargeAmount = 1.0;
 
@@ -142,36 +140,33 @@ public class MagicCarpet extends JavaPlugin {
             config.load(configFile);
         } catch (FileNotFoundException e) {
             log.warning("Error loading config.yml; file not found.");
+            log.warning("Creating new config.yml since the old one has disappeared.");
+            saveSettings();
         } catch (IOException e) {
             log.warning("Error loading config.yml; IOException");
         } catch (InvalidConfigurationException e) {
             log.warning("Error loading config.yml; InvalidConfigurationException");
         }
-        crouchDef = config.getBoolean("crouch-descent",
-                config.getBoolean("Crouch Default", true));
-        glowCenter = config.getBoolean("center-light",
-                config.getBoolean("Put glowstone for light in center", false));
-        carpSize = config.getInt("default-size",
-                config.getInt("Default size for carpet", 5));
-        carpMaterial = Material.getMaterial(loadString(config.getString("carpet",
+        crouchDef = config.getBoolean("crouch-descent", true);
+        glowCenter = config.getBoolean("center-light", false);
+        carpSize = config.getInt("default-size", 5);
+        carpMaterial = Material.getMaterial(loadString(config.getString("carpet-material",
                 GLASS.name())));
         if (carpMaterial == null) {
-            carpMaterial = Material.getMaterial(config.getInt("carpet",
-                    config.getInt("Carpet Material", GLASS.getId())));
+            carpMaterial = Material.getMaterial(config.getInt("carpet-material", GLASS.getId()));
         }
         if (!acceptableCarpet.contains(carpMaterial)) {
             carpMaterial = GLASS;
             log.warning("Config error; Invaild carpet material.");
         }
-        lightMaterial = Material.getMaterial(loadString(config.getString("carpet-light",
+        lightMaterial = Material.getMaterial(loadString(config.getString("light-material",
                 GLOWSTONE.name())));
         if (lightMaterial == null) {
-            lightMaterial = Material.getMaterial(config.getInt("carpet-light",
-                    config.getInt("Carpet Light Material", GLOWSTONE.getId())));
+            lightMaterial = Material.getMaterial(config.getInt("light-material", GLOWSTONE.getId()));
         }
         if (!acceptableLight.contains(lightMaterial)) {
             lightMaterial = GLOWSTONE;
-            log.warning("Config error; Invalid carpet light material.");
+            log.warning("Config error; Invalid light material.");
         }
         maxCarpSize = config.getInt("max-size", 9);
         if (carpSize > maxCarpSize) {
@@ -179,10 +174,8 @@ public class MagicCarpet extends JavaPlugin {
             maxCarpSize = 9;
             log.warning("Config error; Default-size is larger than max-size.");
         }
-        customCarpets = config.getBoolean("custom-carpets", config.getBoolean("allow-custom", true));
-        customLights = config.getBoolean("custom-lights", true);
-        lightWater = config.getBoolean("light-water", config.getBoolean("water-light", config.getBoolean("allow-water-light", false)));
-        lightCustom = config.getBoolean("light-custom", config.getBoolean("custom-light", config.getBoolean("allow-custom-light", false)));
+        customCarpets = config.getBoolean("custom-carpets", false);
+        customLights = config.getBoolean("custom-lights", false);
         saveCarpets = config.getBoolean("save-carpets", true);
         lights = config.getBoolean("lights", false);
         charge = config.getBoolean("charge", false);
@@ -252,14 +245,12 @@ public class MagicCarpet extends JavaPlugin {
         config.set("crouch-descent", crouchDef);
         config.set("center-light", glowCenter);
         config.set("default-size", carpSize);
-        config.set("carpet", saveString(carpMaterial.name()));
-        config.set("carpet-light", saveString(lightMaterial.name()));
+        config.set("carpet-material", saveString(carpMaterial.name()));
+        config.set("light-material", saveString(lightMaterial.name()));
         config.set("max-size", maxCarpSize);
         config.set("custom-carpets", customCarpets);
         config.set("custom-lights", customLights);
         config.set("lights", lights);
-        config.set("light-water", lightWater);
-        config.set("light-custom", lightCustom);
         config.set("save-carpets", saveCarpets);
         config.set("charge", charge);
         config.set("charge-amount", chargeAmount);

@@ -226,20 +226,10 @@ public class Carpet {
                     continue;
                 }
                 fibre.block = bl.getState();
-                if (fibre.shouldGlow() && p.lightWater && shouldLightWater(bl)) {
+                if (fibre.shouldGlow()) {
                     fibre.set(bl, getShine());
-                } else if (fibre.shouldGlow() && p.lightCustom && shouldLightCustom()) {
-                    fibre.set(bl, getShine());
-                } else if (fibre.shouldGlow() && !p.lightWater && shouldLightWater(bl)) {
-                    fibre.set(bl, getThread());
-                } else if (fibre.shouldGlow() && !p.lightCustom && !shouldLightCustom()) {
-                    fibre.set(bl, getThread());
                 } else {
-                    if (fibre.shouldGlow()) {
-                        fibre.set(bl, getShine());
-                    } else {
-                        fibre.set(bl, getThread());
-                    }
+                    fibre.set(bl, getThread());
                 }
             }
         }
@@ -308,19 +298,5 @@ public class Carpet {
                 i++;
             }
         }
-    }
-
-    private boolean shouldLightWater(Block b) {
-        if (touches(b) && b.isLiquid()) {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean shouldLightCustom() {
-        if (getThread() == Material.GLASS || getThread() == Material.LEAVES) {
-            return true;
-        }
-        return false;
     }
 }
