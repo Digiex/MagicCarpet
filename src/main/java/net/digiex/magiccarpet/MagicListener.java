@@ -44,6 +44,7 @@ public class MagicListener implements Listener {
         Player player = event.getPlayer();
         if (plugin.carpets.has(player)) {
             Carpet.create(player, plugin).show();
+            plugin.carpets.update(player);
         }
     }
 
@@ -77,17 +78,14 @@ public class MagicListener implements Listener {
         }
         if (!plugin.canFly(player)) {
             carpet.hide();
-            plugin.carpets.update(player);
             return;
         }
         if (!plugin.canFlyAt(player, carpet.getSize())) {
             carpet.changeCarpet(plugin.carpSize);
-            plugin.carpets.update(player);
         }
         if (!plugin.canFlyHere(player)) {
             player.sendMessage("Your carpet is forbidden in this area!");
             carpet.hide();
-            plugin.carpets.update(player);
             return;
         }
         Location to = event.getTo().clone();
@@ -133,17 +131,14 @@ public class MagicListener implements Listener {
         }
         if (!plugin.canFly(player)) {
             carpet.hide();
-            plugin.carpets.update(player);
             return;
         }
         if (!plugin.canFlyAt(player, carpet.getSize())) {
             carpet.changeCarpet(plugin.carpSize);
-            plugin.carpets.update(player);
         }
         if (!plugin.canFlyHere(player)) {
             player.sendMessage("Your carpet is forbidden in this area!");
             carpet.hide();
-            plugin.carpets.update(player);
             return;
         }
         carpet.moveTo(to);
