@@ -33,8 +33,42 @@ public class CarpetCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("Sorry, only players can use the carpet!");
-            return true;
+            if (args.length == 2 && args[0].equalsIgnoreCase("give")) {
+                Player who = null;
+                for (Player p : plugin.getServer().getOnlinePlayers()) {
+                    if (p.getName().toLowerCase().contains(args[1].toLowerCase()) || p.getName().equalsIgnoreCase(args[1])) {
+                        who = p;
+                    }
+                }
+                if (who != null) {
+                    plugin.carpets.setGiven(who, true);
+                    who.sendMessage("The magic carpet has been given to you.");
+                    sender.sendMessage("The magic carpet was given to " + who.getName());
+                    return true;
+                } else {
+                    sender.sendMessage("Can't find player " + args[1]);
+                    return true;
+                }
+            } else if (args.length == 2 && args[0].equalsIgnoreCase("take")) {
+                Player who = null;
+                for (Player p : plugin.getServer().getOnlinePlayers()) {
+                    if (p.getName().toLowerCase().contains(args[1].toLowerCase()) || p.getName().equalsIgnoreCase(args[1])) {
+                        who = p;
+                    }
+                }
+                if (who != null) {
+                    plugin.carpets.setGiven(who, false);
+                    who.sendMessage("The magic carpet has been taken from you.");
+                    sender.sendMessage("The magic carpet was taken from " + who.getName());
+                    return true;
+                } else {
+                    sender.sendMessage("Can't find player " + args[1]);
+                    return true;
+                }
+            } else {
+                sender.sendMessage("Sorry, only players can use the carpet!");
+                return true;
+            }
         }
         Player player = (Player) sender;
         Carpet carpet = plugin.carpets.getCarpet(player);
@@ -81,6 +115,49 @@ public class CarpetCommand implements CommandExecutor {
                 carpet.show();
             }
         } else {
+            if (args.length == 2 && args[0].equals("give")) {
+                if (player.isOp()) {
+                    Player who = null;
+                    for (Player p : plugin.getServer().getOnlinePlayers()) {
+                        if (p.getName().toLowerCase().contains(args[1].toLowerCase()) || p.getName().equalsIgnoreCase(args[1])) {
+                            who = p;
+                        }
+                    }
+                    if (who != null) {
+                        plugin.carpets.setGiven(who, true);
+                        who.sendMessage("The magic carpet has been given to you.");
+                        player.sendMessage("You've given the magic carpet to " + who.getName());
+                        return true;
+                    } else {
+                        player.sendMessage("Can't find player " + args[1]);
+                        return true;
+                    }
+                } else {
+                    player.sendMessage("You don't have permission to use this.");
+                    return true;
+                }
+            } else if (args.length == 2 && args[0].equals("take")) {
+                if (player.isOp()) {
+                    Player who = null;
+                    for (Player p : plugin.getServer().getOnlinePlayers()) {
+                        if (p.getName().toLowerCase().contains(args[1].toLowerCase()) || p.getName().equalsIgnoreCase(args[1])) {
+                            who = p;
+                        }
+                    }
+                    if (who != null) {
+                        plugin.carpets.setGiven(who, false);
+                        who.sendMessage("The magic carpet has been taken from you.");
+                        player.sendMessage("You've taken the magic carpet from " + who.getName());
+                        return true;
+                    } else {
+                        player.sendMessage("Can't find player " + args[1]);
+                        return true;
+                    }
+                } else {
+                    player.sendMessage("You don't have permission to use this.");
+                    return true;
+                }
+            }
             if (carpet.isVisible()) {
                 try {
                     c = Integer.valueOf(args[0]);

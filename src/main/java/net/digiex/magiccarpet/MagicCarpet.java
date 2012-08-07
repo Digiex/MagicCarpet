@@ -64,6 +64,9 @@ public class MagicCarpet extends JavaPlugin {
     double chargeAmount = 1.0;
 
     public boolean canFly(Player player) {
+        if (carpets.getGiven(player)) {
+            return true;
+        }
         String s = "magiccarpet.mc";
         if (vault != null && vault.isPermissionsEnabled()) {
             return vault.getPermissionProvider().has(player, s);
@@ -73,6 +76,9 @@ public class MagicCarpet extends JavaPlugin {
 
     public boolean canFlyAt(Player player, int i) {
         if (i == carpSize) {
+            return true;
+        }
+        if (carpets.getGiven(player)) {
             return true;
         }
         String s = "magiccarpet.mc.";
@@ -92,6 +98,9 @@ public class MagicCarpet extends JavaPlugin {
     }
 
     public boolean canLight(Player player) {
+        if (carpets.getGiven(player)) {
+            return true;
+        }
         String s = "magiccarpet.ml";
         if (vault != null && vault.isPermissionsEnabled()) {
             return vault.getPermissionProvider().has(player, s);
@@ -108,6 +117,9 @@ public class MagicCarpet extends JavaPlugin {
     }
 
     public boolean canSwitch(Player player) {
+        if (carpets.getGiven(player)) {
+            return true;
+        }
         String s = "magiccarpet.mcs";
         if (vault != null && vault.isPermissionsEnabled()) {
             return vault.getPermissionProvider().has(player, s);

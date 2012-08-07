@@ -23,10 +23,12 @@ import org.bukkit.entity.Player;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class CarpetStorage implements Serializable {
-    private static final long serialVersionUID = 8928246998374203837L;
+    
+    private static final long serialVersionUID = -2319896942961830890L;
 
     private class CarpetEntry implements Serializable {
-        private static final long serialVersionUID = 3315970803466536919L;
+        
+        private static final long serialVersionUID = -7976244556045495329L;
         
         public transient Carpet carpet;
         public boolean crouch = plugin.crouchDef;
@@ -35,18 +37,16 @@ public class CarpetStorage implements Serializable {
         public Material light = plugin.lightMaterial;
         public boolean lightsOn = plugin.glowCenter;
         public Material thread = plugin.carpMaterial;
+        public boolean given = false;
     }
-    
     private HashMap<String, CarpetEntry> carpets = new HashMap<String, CarpetEntry>();
     private transient MagicCarpet plugin;
 
     public Iterable<Carpet> all() {
         return new Iterable<Carpet>() {
-
             @Override
             public Iterator<Carpet> iterator() {
                 return new Iterator<Carpet>() {
-
                     private Iterator<CarpetEntry> iter = carpets.values().iterator();
                     private CarpetEntry toRemove = null;
 
@@ -117,7 +117,7 @@ public class CarpetStorage implements Serializable {
         }
         return null;
     }
-    
+
     private CarpetEntry getEntry(Player player) {
         if (carpets.containsKey(player.getName())) {
             return carpets.get(player.getName());
@@ -221,7 +221,7 @@ public class CarpetStorage implements Serializable {
         entry.thread = entry.carpet.getThread();
         entry.light = entry.carpet.getShine();
     }
-    
+
     public void checkCarpets() {
         for (CarpetEntry entry : carpets.values()) {
             if (!MagicCarpet.acceptableCarpet.contains(entry.thread)) {
@@ -243,5 +243,21 @@ public class CarpetStorage implements Serializable {
                 entry.lightsOn = false;
             }
         }
+    }
+
+    public boolean getGiven(Player player) {
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return false;
+        }
+        return entry.given;
+    }
+
+    public void setGiven(Player player, Boolean given) {
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return;
+        }
+        entry.given = given;
     }
 }
