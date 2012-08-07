@@ -83,6 +83,12 @@ public class CarpetCommand implements CommandExecutor {
         }
         int c;
         if (carpet == null) {
+            if (plugin.carpets.getGiven(player)) {
+                carpet = Carpet.create(player, plugin);
+                player.sendMessage("A glass carpet appears below your feet.");
+                carpet.show();
+                return true;
+            }
             if (plugin.charge) {
                 if (plugin.vault != null && plugin.vault.isEconomyEnabled()) {
                     if (plugin.vault.getEconomyProvider().has(player.getName(), plugin.chargeAmount)) {
@@ -97,14 +103,21 @@ public class CarpetCommand implements CommandExecutor {
             carpet = Carpet.create(player, plugin);
             player.sendMessage("A glass carpet appears below your feet.");
             carpet.show();
-            plugin.carpets.update(player);
             return true;
         }
         if (args.length < 1) {
             if (carpet.isVisible()) {
                 player.sendMessage("Poof! The magic carpet disappears.");
                 carpet.hide();
+                plugin.carpets.update(player);
+                return true;
             } else {
+                if (plugin.carpets.getGiven(player)) {
+                    player.sendMessage("A glass carpet appears below your feet.");
+                    carpet.show();
+                    plugin.carpets.update(player);
+                    return true;
+                }
                 if (plugin.charge) {
                     if (plugin.vault != null && plugin.vault.isEconomyEnabled()) {
                         if (plugin.vault.getEconomyProvider().has(player.getName(), plugin.chargeAmount)) {
@@ -118,6 +131,8 @@ public class CarpetCommand implements CommandExecutor {
                 }
                 player.sendMessage("A glass carpet appears below your feet.");
                 carpet.show();
+                plugin.carpets.update(player);
+                return true;
             }
         } else {
             if (args.length == 2 && args[0].equals("give")) {
@@ -209,6 +224,8 @@ public class CarpetCommand implements CommandExecutor {
                     if (plugin.canFlyAt(player, c)) {
                         player.sendMessage("The carpet reacts to your words and suddenly changes!");
                         carpet.changeCarpet(c);
+                        plugin.carpets.update(player);
+                        return true;
                     } else {
                         player.sendMessage("The carpet failed to expand, no permission.");
                         return true;
@@ -222,7 +239,5 @@ public class CarpetCommand implements CommandExecutor {
                 return true;
             }
         }
-        plugin.carpets.update(player);
-        return true;
     }
 }
