@@ -41,6 +41,7 @@ public class CarpetCommand implements CommandExecutor {
                     }
                 }
                 if (who != null) {
+                    Carpet.create(who, plugin).show();
                     plugin.carpets.setGiven(who, true);
                     who.sendMessage("The magic carpet has been given to you.");
                     sender.sendMessage("The magic carpet was given to " + who.getName());
@@ -57,6 +58,10 @@ public class CarpetCommand implements CommandExecutor {
                     }
                 }
                 if (who != null) {
+                    if (plugin.carpets.has(who)) {
+                        plugin.carpets.getCarpet(who).hide();
+                        plugin.carpets.update(who);
+                    }
                     plugin.carpets.setGiven(who, false);
                     who.sendMessage("The magic carpet has been taken from you.");
                     sender.sendMessage("The magic carpet was taken from " + who.getName());
@@ -124,6 +129,7 @@ public class CarpetCommand implements CommandExecutor {
                         }
                     }
                     if (who != null) {
+                        Carpet.create(who, plugin).show();
                         plugin.carpets.setGiven(who, true);
                         who.sendMessage("The magic carpet has been given to you.");
                         player.sendMessage("You've given the magic carpet to " + who.getName());
@@ -145,6 +151,10 @@ public class CarpetCommand implements CommandExecutor {
                         }
                     }
                     if (who != null) {
+                        if (plugin.carpets.has(who)) {
+                            plugin.carpets.getCarpet(who).hide();
+                            plugin.carpets.update(who);
+                        }
                         plugin.carpets.setGiven(who, false);
                         who.sendMessage("The magic carpet has been taken from you.");
                         player.sendMessage("You've taken the magic carpet from " + who.getName());
