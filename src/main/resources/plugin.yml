@@ -12,6 +12,8 @@ commands:
     description: Take yourself wonder by wonder on a carpet made of glass.
     aliases: [mc]
     usage: /<command> [size] [material]
+    usage: /<command> give [player]
+    usage: /<command> take [player]
   magiclight:
     description: A bright light for your carpet ride.
     aliases: [ml]
