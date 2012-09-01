@@ -31,6 +31,7 @@
         <system>Jenkins</system>
         <url>http://xzkingzxburnzx.tk/</url>
     </ciManagement>
+    
     <issueManagement>
         <system>GitHub Issues</system>
         <url>https://github.com/Digiex/MagicCarpet/issues</url>

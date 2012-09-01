@@ -41,13 +41,11 @@ public class MagicCarpet extends JavaPlugin {
             NETHERRACK, SOUL_SAND, MYCEL, NETHER_BRICK, ENDER_STONE,
             HUGE_MUSHROOM_1, HUGE_MUSHROOM_2, MELON_BLOCK);
     static final EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE, JACK_O_LANTERN);
-    
     private final MagicListener magicListener = new MagicListener(this);
     CarpetStorage carpets = new CarpetStorage().attach(this);
     private WorldGuardHandler worldGuardHandler;
     public VaultHandler vault;
     public Logger log;
-    
     private FileConfiguration config;
     private File configFile;
     Material carpMaterial = GLASS;
@@ -229,6 +227,7 @@ public class MagicCarpet extends JavaPlugin {
         registerCommands();
         getWorldGuard();
         getVault();
+        startStats();
         log.info("is now enabled!");
     }
 
@@ -305,12 +304,21 @@ public class MagicCarpet extends JavaPlugin {
         }
         worldGuardHandler = new WorldGuardHandler((com.sk89q.worldguard.bukkit.WorldGuardPlugin) plugin);
     }
-    
+
     private void getVault() {
         Plugin plugin = getServer().getPluginManager().getPlugin("Vault");
         if (plugin == null || !(plugin instanceof net.milkbowl.vault.Vault)) {
             return;
         }
         vault = new VaultHandler(this).setup();
+    }
+
+    private void startStats() {
+        try {
+            Metrics metrics = new Metrics(this);
+            metrics.start();
+        } catch (IOException e) {
+            log.warning("Failed to submit stats.");
+        }
     }
 }
