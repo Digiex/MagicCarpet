@@ -202,7 +202,7 @@ public class MagicCarpet extends JavaPlugin {
                 if (c == null || !c.isVisible()) {
                     continue;
                 }
-                c.hide();
+                c.removeCarpet();
             }
         }
         log.info("is now disabled!");
