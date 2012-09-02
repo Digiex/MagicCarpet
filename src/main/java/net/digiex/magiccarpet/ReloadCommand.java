@@ -53,7 +53,7 @@ public class ReloadCommand implements CommandExecutor {
             if (c == null || !c.isVisible()) {
                 continue;
             }
-            c.hide();
+            c.removeCarpet();
         }
         plugin.loadSettings();
         if (plugin.saveCarpets) {

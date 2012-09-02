@@ -53,7 +53,7 @@ public class MagicListener implements Listener {
         Player player = event.getPlayer();
         Carpet carpet = plugin.carpets.getCarpet(player);
         if (carpet != null && carpet.isVisible()) {
-            carpet.hide();
+            carpet.removeCarpet();
         }
     }
 

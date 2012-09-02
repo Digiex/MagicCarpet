@@ -270,7 +270,7 @@ public class Carpet {
         }
     }
 
-    private void removeCarpet() {
+    public void removeCarpet() {
         if (currentCentre == null) {
             return;
         }
