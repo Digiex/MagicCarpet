@@ -3,6 +3,7 @@ package net.digiex.magiccarpet;
 import java.io.*;
 import java.util.EnumSet;
 import java.util.logging.Logger;
+import net.digiex.magiccarpet.Metrics.Graph;
 import org.bukkit.Material;
 import static org.bukkit.Material.*;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -316,6 +317,30 @@ public class MagicCarpet extends JavaPlugin {
     private void startStats() {
         try {
             Metrics metrics = new Metrics(this);
+            Graph graph = metrics.createGraph("Carpets");
+            graph.addPlotter(new Metrics.Plotter("Total") {
+                @Override
+                public int getValue() {
+                    int i = 0;
+                    for (Carpet c : carpets.all()) {
+                        i = i + 1;
+                    }
+                    return i;
+                }
+            });
+            graph.addPlotter(new Metrics.Plotter("Current") {
+                @Override
+                public int getValue() {
+                    int i = 0;
+                    for (Carpet c : carpets.all()) {
+                        if (c == null || !c.isVisible()) {
+                            continue;
+                        }
+                        i = i + 1;
+                    }
+                    return i;
+                }
+            });
             metrics.start();
         } catch (IOException e) {
             log.warning("Failed to submit stats.");
