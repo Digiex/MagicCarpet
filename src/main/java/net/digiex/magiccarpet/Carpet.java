@@ -139,13 +139,7 @@ public class Carpet {
     }
 
     public boolean isCarpet(Block block) {
-        if (block instanceof CarpetFibre) {
-            return true;
-        }
-        if (block instanceof Carpet) {
-            return true;
-        }
-        /*if (currentCentre == null || block == null) {
+        if (currentCentre == null || block == null) {
             return false;
         }
         if (block.getLocation().getWorld() != getLocation().getWorld()) {
@@ -161,7 +155,7 @@ public class Carpet {
             if (fibre.block.getBlock().equals(block)) {
                 return true;
             }
-        }*/
+        }
         return false;
     }
 
