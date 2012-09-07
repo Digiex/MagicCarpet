@@ -48,15 +48,6 @@ public class MagicListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        Carpet carpet = plugin.carpets.getCarpet(who);
-        if (carpet != null && carpet.isVisible()) {
-            carpet.hide();
-        }
-    }
-
     @EventHandler(ignoreCancelled = true)
     public void onPlayerKick(PlayerKickEvent event) {
         Player who = event.getPlayer();
