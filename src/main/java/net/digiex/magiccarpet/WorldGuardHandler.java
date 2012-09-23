@@ -1,10 +1,13 @@
 package net.digiex.magiccarpet;
 
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import java.util.Iterator;
 import java.util.Set;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 /*
  * Magic Carpet 2.2 Copyright (C) 2012 Android, Celtic Minstrel, xzKinGzxBuRnzx
@@ -35,7 +38,9 @@ public class WorldGuardHandler {
         if (regionManager == null) {
             return true;
         }
-        ApplicableRegionSet set = regionManager.getApplicableRegions(player.getLocation());
+        LocalPlayer localPlayer = worldGuard.wrapPlayer(player);
+        Vector location = localPlayer.getPosition();
+        ApplicableRegionSet set = regionManager.getApplicableRegions(location);
         if (set == null) {
             return true;
         }
