@@ -1,7 +1,6 @@
 package net.digiex.magiccarpet;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -201,11 +200,30 @@ public class MagicListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockPhysics(BlockPhysicsEvent event) {
+        Block block = event.getBlock();
+        if (block == null) {
+            // Should fix a NPE
+            return;
+        }
+        if (!block.getType().isBlock()) {
+            // Hopes this fixes Tekkits custom blocks
+            return;
+        }
         if (event.getChangedType().getNewData((byte) 0) instanceof Redstone) {
             return;
         }
-        if (event.getBlock().getType().equals(Material.TORCH)) {
-            return;
+        switch(block.getType()) {
+            // To prevent flying rails / torches and such. Hopefully,,,
+            case TORCH:
+                return;
+            case REDSTONE_TORCH_ON:
+                return;
+            case REDSTONE_TORCH_OFF:
+                return;
+            case RAILS:
+                return;
+            default:
+                break;
         }
         for (Carpet carpet : plugin.carpets.all()) {
             if (carpet == null || !carpet.isVisible()) {
