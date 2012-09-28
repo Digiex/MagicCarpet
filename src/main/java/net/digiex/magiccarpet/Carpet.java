@@ -240,13 +240,13 @@ public class Carpet {
             case AIR:
                 return true;
             case WATER:
-                return MagicCarpet.changeLiquids;
+                return p.changeLiquids;
             case STATIONARY_WATER:
-                return MagicCarpet.changeLiquids;
+                return p.changeLiquids;
             case LAVA:
-                return MagicCarpet.changeLiquids;
+                return p.changeLiquids;
             case STATIONARY_LAVA:
-                return MagicCarpet.changeLiquids;
+                return p.changeLiquids;
             case SNOW:
                 return true;
             case LONG_GRASS:

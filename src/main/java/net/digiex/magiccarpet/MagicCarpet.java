@@ -61,7 +61,7 @@ public class MagicCarpet extends JavaPlugin {
     boolean customLights = false;
     boolean charge = false;
     double chargeAmount = 1.0;
-    public static boolean changeLiquids = true;
+    boolean changeLiquids = true;
 
     public boolean canFly(Player player) {
         if (carpets.getGiven(player)) {
