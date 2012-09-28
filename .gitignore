@@ -1,12 +1,7 @@
-.DS_STORE
+._*
+.*
 test.sh
-.classpath
-.eclipse-build/
 bin/
 magiccarpet.jar
-.project
-.settings/
-.svn
 target/
-._*
 nbactions.xml

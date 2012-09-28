@@ -202,18 +202,12 @@ public class MagicListener implements Listener {
     public void onBlockPhysics(BlockPhysicsEvent event) {
         Block block = event.getBlock();
         if (block == null) {
-            // Should fix a NPE
             return;
         }
         if (!block.getType().isBlock()) {
-            // Hopes this fixes Tekkits custom blocks
-            return;
-        }
-        if (event.getChangedType().getNewData((byte) 0) instanceof Redstone) {
             return;
         }
         switch(block.getType()) {
-            // To prevent flying rails / torches and such. Hopefully,,,
             case TORCH:
                 return;
             case REDSTONE_TORCH_ON:
@@ -221,6 +215,8 @@ public class MagicListener implements Listener {
             case REDSTONE_TORCH_OFF:
                 return;
             case RAILS:
+                return;
+            case REDSTONE:
                 return;
             default:
                 break;
