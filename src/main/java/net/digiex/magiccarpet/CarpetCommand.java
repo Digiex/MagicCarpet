@@ -45,6 +45,7 @@ public class CarpetCommand implements CommandExecutor {
                     plugin.carpets.setGiven(who, true);
                     who.sendMessage("The magic carpet has been given to you.");
                     sender.sendMessage("The magic carpet was given to " + who.getName());
+                    plugin.carpets.update(who);
                     return true;
                 } else {
                     sender.sendMessage("Can't find player " + args[1]);
@@ -103,6 +104,7 @@ public class CarpetCommand implements CommandExecutor {
             carpet = Carpet.create(player, plugin);
             player.sendMessage("A glass carpet appears below your feet.");
             carpet.show();
+            plugin.carpets.update(player);
             return true;
         }
         if (args.length < 1) {
@@ -148,6 +150,7 @@ public class CarpetCommand implements CommandExecutor {
                         plugin.carpets.setGiven(who, true);
                         who.sendMessage("The magic carpet has been given to you.");
                         player.sendMessage("You've given the magic carpet to " + who.getName());
+                        plugin.carpets.update(player);
                         return true;
                     } else {
                         player.sendMessage("Can't find player " + args[1]);
