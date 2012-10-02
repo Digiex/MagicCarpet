@@ -200,44 +200,6 @@ public class MagicListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onBlockPhysics(BlockPhysicsEvent event) {
-        Block block = event.getBlock();
-        if (block == null) {
-            return;
-        }
-        if (!block.getType().isBlock()) {
-            return;
-        }
-        switch(block.getType()) {
-            case TORCH:
-                return;
-            case REDSTONE_TORCH_ON:
-                return;
-            case REDSTONE_TORCH_OFF:
-                return;
-            case RAILS:
-                return;
-            case POWERED_RAIL:
-                return;
-            case DETECTOR_RAIL:
-                return;
-            case REDSTONE_WIRE:
-                return;
-            default:
-                break;
-        }
-        for (Carpet carpet : plugin.carpets.all()) {
-            if (carpet == null || !carpet.isVisible()) {
-                continue;
-            }
-            if (carpet.touches(event.getBlock())) {
-                event.setCancelled(true);
-                return;
-            }
-        }
-    }
-
-    @EventHandler(ignoreCancelled = true)
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
         for (Carpet carpet : plugin.carpets.all()) {
             if (carpet == null || !carpet.isVisible()) {
