@@ -150,7 +150,7 @@ public class CarpetCommand implements CommandExecutor {
                         plugin.carpets.setGiven(who, true);
                         who.sendMessage("The magic carpet has been given to you.");
                         player.sendMessage("You've given the magic carpet to " + who.getName());
-                        plugin.carpets.update(player);
+                        plugin.carpets.update(who);
                         return true;
                     } else {
                         player.sendMessage("Can't find player " + args[1]);
