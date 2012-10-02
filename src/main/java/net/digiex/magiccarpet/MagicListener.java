@@ -1,6 +1,7 @@
 package net.digiex.magiccarpet;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -216,7 +217,11 @@ public class MagicListener implements Listener {
                 return;
             case RAILS:
                 return;
-            case REDSTONE:
+            case POWERED_RAIL:
+                return;
+            case DETECTOR_RAIL:
+                return;
+            case REDSTONE_WIRE:
                 return;
             default:
                 break;
