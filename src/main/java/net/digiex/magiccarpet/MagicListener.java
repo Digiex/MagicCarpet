@@ -198,6 +198,19 @@ public class MagicListener implements Listener {
             }
         }
     }
+    
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockPhysics(BlockPhysicsEvent event) {
+        for (Carpet carpet : plugin.carpets.all()) {
+            if (carpet == null || !carpet.isVisible()) {
+                continue;
+            }
+            if (carpet.touches(event.getBlock())) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
