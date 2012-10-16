@@ -1,7 +1,6 @@
 package net.digiex.magiccarpet;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -12,7 +11,6 @@ import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.material.Redstone;
 import org.bukkit.util.Vector;
 
 /*
@@ -188,17 +186,11 @@ public class MagicListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        for (Carpet carpet : plugin.carpets.all()) {
-            if (carpet == null || !carpet.isVisible()) {
-                continue;
-            }
-            if (carpet.isCarpet(event.getBlock())) {
-                event.setCancelled(true);
-                return;
-            }
+        if (!event.getBlock().getMetadata("Carpet").isEmpty()) {
+            event.setCancelled(true);
         }
     }
-    
+
     @EventHandler(ignoreCancelled = true)
     public void onBlockPhysics(BlockPhysicsEvent event) {
         for (Carpet carpet : plugin.carpets.all()) {
@@ -214,15 +206,10 @@ public class MagicListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
-        for (Carpet carpet : plugin.carpets.all()) {
-            if (carpet == null || !carpet.isVisible()) {
-                continue;
-            }
-            for (Block block : event.getBlocks()) {
-                if (carpet.isCarpet(block)) {
-                    event.setCancelled(true);
-                    return;
-                }
+        for (Block block : event.getBlocks()) {
+            if (!block.getMetadata("Carpet").isEmpty()) {
+                event.setCancelled(true);
+                return;
             }
         }
     }
@@ -230,14 +217,8 @@ public class MagicListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
         if (event.isSticky()) {
-            for (Carpet carpet : plugin.carpets.all()) {
-                if (carpet == null || !carpet.isVisible()) {
-                    continue;
-                }
-                if (carpet.isCarpet(event.getRetractLocation().getBlock())) {
-                    event.setCancelled(true);
-                    return;
-                }
+            if (!event.getRetractLocation().getBlock().getMetadata("Carpet").isEmpty()) {
+                event.setCancelled(true);
             }
         }
     }
@@ -249,14 +230,8 @@ public class MagicListener implements Listener {
                 return;
             }
             Block eyes = ((LivingEntity) event.getEntity()).getEyeLocation().getBlock();
-            for (Carpet carpet : plugin.carpets.all()) {
-                if (carpet == null || !carpet.isVisible()) {
-                    continue;
-                }
-                if (carpet.isCarpet(eyes)) {
-                    event.setCancelled(true);
-                    return;
-                }
+            if (!eyes.getMetadata("Carpet").isEmpty()) {
+                event.setCancelled(true);
             }
         } else if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
             if (!(event.getEntity() instanceof Player)) {
@@ -267,18 +242,13 @@ public class MagicListener implements Listener {
             }
         }
     }
-    
+
     @EventHandler(ignoreCancelled = true)
     public void onEntityExplode(EntityExplodeEvent event) {
-        for (Carpet carpet : plugin.carpets.all()) {
-            if (carpet == null || !carpet.isVisible()) {
-                continue;
-            }
-            for (Block block : event.blockList()) {
-                if (carpet.isCarpet(block)) {
-                    event.setCancelled(true);
-                    return;
-                }
+        for (Block block : event.blockList()) {
+            if (!block.getMetadata("Carpet").isEmpty()) {
+                event.setCancelled(true);
+                return;
             }
         }
     }

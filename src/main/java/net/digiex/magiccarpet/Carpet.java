@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 
 /*
  * Magic Carpet 2.2 Copyright (C) 2012 Android, Celtic Minstrel, xzKinGzxBuRnzx
@@ -40,6 +41,7 @@ public class Carpet {
         void set(Block bl, Material material) {
             bl.setTypeId(material.getId(), false);
             strand = material;
+            bl.setMetadata("Carpet", new FixedMetadataValue(p, who));
         }
 
         boolean shouldGlow() {
@@ -56,6 +58,7 @@ public class Carpet {
             if (block.getBlock().getType() != strand) {
                 return;
             }
+            block.removeMetadata("Carpet", p);
             block.update(true);
         }
     }
@@ -136,27 +139,6 @@ public class Carpet {
             removeCarpet();
             hidden = true;
         }
-    }
-
-    public boolean isCarpet(Block block) {
-        if (currentCentre == null || block == null) {
-            return false;
-        }
-        if (block.getLocation().getWorld() != getLocation().getWorld()) {
-            return false;
-        }
-        if (block.getLocation().distanceSquared(getLocation()) > radplsq) {
-            return false;
-        }
-        for (CarpetFibre fibre : fibres) {
-            if (fibre.block == null) {
-                continue;
-            }
-            if (fibre.block.getBlock().equals(block)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public boolean isCustom() {
