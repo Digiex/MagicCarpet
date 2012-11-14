@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.util.Vector;
 
@@ -38,7 +39,7 @@ public class MagicListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         if (plugin.carpets.has(player)) {
@@ -46,7 +47,7 @@ public class MagicListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerKick(PlayerKickEvent event) {
         Player who = event.getPlayer();
         Carpet carpet = plugin.carpets.getCarpet(who);
@@ -58,7 +59,7 @@ public class MagicListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         Carpet carpet = plugin.carpets.getCarpet(player);
@@ -158,7 +159,7 @@ public class MagicListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockFade(BlockFadeEvent event) {
         for (Carpet carpet : plugin.carpets.all()) {
             if (carpet == null || !carpet.isVisible() || !carpet.hasLights()) {
@@ -171,7 +172,7 @@ public class MagicListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
         for (Carpet carpet : plugin.carpets.all()) {
             if (carpet == null || !carpet.isVisible()) {
@@ -184,14 +185,14 @@ public class MagicListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         if (!event.getBlock().getMetadata("Carpet").isEmpty()) {
             event.setCancelled(true);
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockPhysics(BlockPhysicsEvent event) {
         for (Carpet carpet : plugin.carpets.all()) {
             if (carpet == null || !carpet.isVisible()) {
@@ -204,7 +205,7 @@ public class MagicListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
         for (Block block : event.getBlocks()) {
             if (!block.getMetadata("Carpet").isEmpty()) {
@@ -214,7 +215,7 @@ public class MagicListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
         if (event.isSticky()) {
             if (!event.getRetractLocation().getBlock().getMetadata("Carpet").isEmpty()) {
@@ -223,7 +224,7 @@ public class MagicListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getCause() == EntityDamageEvent.DamageCause.SUFFOCATION) {
             if (!(event.getEntity() instanceof LivingEntity)) {
@@ -243,10 +244,23 @@ public class MagicListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityExplode(EntityExplodeEvent event) {
         for (Block block : event.blockList()) {
             if (!block.getMetadata("Carpet").isEmpty()) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onHangingingBreak(HangingBreakEvent event) {
+        for (Carpet carpet : plugin.carpets.all()) {
+            if (carpet == null || !carpet.isVisible()) {
+                continue;
+            }
+            if (carpet.touches(event.getEntity().getLocation().getBlock())) {
                 event.setCancelled(true);
                 return;
             }
