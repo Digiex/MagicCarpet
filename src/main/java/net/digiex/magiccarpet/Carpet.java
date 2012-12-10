@@ -222,13 +222,13 @@ public class Carpet {
             case AIR:
                 return true;
             case WATER:
-                return p.changeLiquids;
+                return p.canChangeLiquids("water");
             case STATIONARY_WATER:
-                return p.changeLiquids;
+                return p.canChangeLiquids("water");
             case LAVA:
-                return p.changeLiquids;
+                return p.canChangeLiquids("lava");
             case STATIONARY_LAVA:
-                return p.changeLiquids;
+                return p.canChangeLiquids("lava");
             case SNOW:
                 return true;
             case LONG_GRASS:

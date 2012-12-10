@@ -61,7 +61,7 @@ public class MagicCarpet extends JavaPlugin {
     boolean customLights = false;
     boolean charge = false;
     double chargeAmount = 1.0;
-    boolean changeLiquids = true;
+    String changeLiquids = "true";
 
     public boolean canFly(Player player) {
         if (carpets.getGiven(player)) {
@@ -192,7 +192,9 @@ public class MagicCarpet extends JavaPlugin {
         lights = config.getBoolean("lights", false);
         charge = config.getBoolean("charge", false);
         chargeAmount = config.getDouble("charge-amount", 1.0);
-        changeLiquids = config.getBoolean("change-liquids", true);
+        changeLiquids = config.getString("change-liquids", "true");
+        if(!changeLiquids.equals("lava") && !changeLiquids.equals("water") && !changeLiquids.equals("false"))
+        	changeLiquids = "true";
     }
 
     @Override
@@ -349,4 +351,10 @@ public class MagicCarpet extends JavaPlugin {
             log.warning("Failed to submit stats.");
         }
     }
+
+	public boolean canChangeLiquids(String type) {
+		if(changeLiquids.equals("false")) return false;
+		else if(changeLiquids.equals("true")) return true;
+		else return changeLiquids.equals(type);
+	}
 }
