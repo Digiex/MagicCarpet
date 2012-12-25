@@ -12,6 +12,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.material.Redstone;
 import org.bukkit.util.Vector;
 
 /*
@@ -39,21 +40,24 @@ public class MagicListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler()
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         if (plugin.carpets.has(player)) {
-            Carpet.create(player, plugin).show();
+            if (plugin.canFly(player)) {
+                Carpet.create(player, plugin).show();
+            } else {
+                plugin.carpets.update(player);
+            }
         }
     }
-    
+
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        plugin.carpets.remove(player);
+        plugin.carpets.remove(event.getPlayer());
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerKick(PlayerKickEvent event) {
         Player who = event.getPlayer();
         Carpet carpet = plugin.carpets.getCarpet(who);
@@ -74,15 +78,6 @@ public class MagicListener implements Listener {
         }
         if (carpet.getLocation() == event.getTo()) {
             return;
-        }
-        if (!plugin.canFly(player)) {
-            carpet.hide();
-            plugin.carpets.update(player);
-            return;
-        }
-        if (!plugin.canFlyAt(player, carpet.getSize())) {
-            carpet.changeCarpet(plugin.carpSize);
-            plugin.carpets.update(player);
         }
         if (!plugin.canFlyHere(player)) {
             player.sendMessage("Your carpet is forbidden in this area!");
@@ -130,15 +125,6 @@ public class MagicListener implements Listener {
         Location to = event.getTo();
         if (carpet.getLocation() == to) {
             return;
-        }
-        if (!plugin.canFly(player)) {
-            carpet.hide();
-            plugin.carpets.update(player);
-            return;
-        }
-        if (!plugin.canFlyAt(player, carpet.getSize())) {
-            carpet.changeCarpet(plugin.carpSize);
-            plugin.carpets.update(player);
         }
         if (!plugin.canFlyHere(player)) {
             player.sendMessage("Your carpet is forbidden in this area!");
@@ -200,6 +186,9 @@ public class MagicListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockPhysics(BlockPhysicsEvent event) {
+        if (event.getChangedType().getNewData((byte) 0) instanceof Redstone) {
+            return;
+        }
         for (Carpet carpet : plugin.carpets.all()) {
             if (carpet == null || !carpet.isVisible()) {
                 continue;

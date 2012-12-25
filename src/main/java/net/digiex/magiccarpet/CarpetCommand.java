@@ -91,7 +91,7 @@ public class CarpetCommand implements CommandExecutor {
                 return true;
             }
             if (plugin.charge) {
-                if (plugin.vault != null && plugin.vault.isEconomyEnabled()) {
+                if (plugin.vault != null) {
                     if (plugin.vault.getEconomyProvider().has(player.getName(), plugin.chargeAmount)) {
                         plugin.vault.getEconomyProvider().withdrawPlayer(player.getName(), plugin.chargeAmount);
                         player.sendMessage("You've been charged " + plugin.vault.getEconomyProvider().format(plugin.chargeAmount).toLowerCase() + " and now have " + plugin.vault.getEconomyProvider().format(plugin.vault.getEconomyProvider().getBalance(player.getName())).toLowerCase() + " left.");
@@ -121,7 +121,7 @@ public class CarpetCommand implements CommandExecutor {
                     return true;
                 }
                 if (plugin.charge) {
-                    if (plugin.vault != null && plugin.vault.isEconomyEnabled()) {
+                    if (plugin.vault != null) {
                         if (plugin.vault.getEconomyProvider().has(player.getName(), plugin.chargeAmount)) {
                             plugin.vault.getEconomyProvider().withdrawPlayer(player.getName(), plugin.chargeAmount);
                             player.sendMessage("You've been charged " + plugin.vault.getEconomyProvider().format(plugin.chargeAmount).toLowerCase() + " and now have " + plugin.vault.getEconomyProvider().format(plugin.vault.getEconomyProvider().getBalance(player.getName())).toLowerCase() + " left.");
@@ -224,15 +224,10 @@ public class CarpetCommand implements CommandExecutor {
                     return true;
                 }
                 if (c != carpet.getSize()) {
-                    if (plugin.canFlyAt(player, c)) {
-                        player.sendMessage("The carpet reacts to your words and suddenly changes!");
-                        carpet.changeCarpet(c);
-                        plugin.carpets.update(player);
-                        return true;
-                    } else {
-                        player.sendMessage("The carpet failed to expand, no permission.");
-                        return true;
-                    }
+                    carpet.changeCarpet(c);
+                    plugin.carpets.update(player);
+                    player.sendMessage("The carpet reacts to your words and suddenly changes!");
+                    return true;
                 } else {
                     player.sendMessage("The carpet size is already equal to " + c);
                     return true;

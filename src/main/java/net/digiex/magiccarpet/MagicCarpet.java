@@ -10,8 +10,6 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -68,33 +66,14 @@ public class MagicCarpet extends JavaPlugin {
             return true;
         }
         String s = "magiccarpet.mc";
-        if (vault != null && vault.isPermissionsEnabled()) {
-            return vault.getPermissionProvider().has(player, s);
-        }
-        return player.hasPermission(s);
-    }
-
-    public boolean canFlyAt(Player player, int i) {
-        if (i == carpSize) {
-            return true;
-        }
-        if (carpets.getGiven(player)) {
-            return true;
-        }
-        String s = "magiccarpet.mc.";
-        Permission permission = new Permission(s + i, "Allows the carpet to operate at size " + i, PermissionDefault.OP);
-        permission.addParent("magiccarpet.*", true);
-        if (vault != null && vault.isPermissionsEnabled()) {
-            return vault.getPermissionProvider().has(player, s + i);
-        }
-        return player.hasPermission(permission);
+        return (vault == null) ? 
+                player.hasPermission(s) : 
+                vault.getPermissionProvider().has(player, s);
     }
 
     public boolean canFlyHere(Player player) {
-        if (worldGuardHandler != null) {
-            return worldGuardHandler.canFlyHere(player);
-        }
-        return true;
+        return (worldGuardHandler == null) ? true :
+                worldGuardHandler.canFlyHere(player);
     }
 
     public boolean canLight(Player player) {
@@ -102,18 +81,16 @@ public class MagicCarpet extends JavaPlugin {
             return true;
         }
         String s = "magiccarpet.ml";
-        if (vault != null && vault.isPermissionsEnabled()) {
-            return vault.getPermissionProvider().has(player, s);
-        }
-        return player.hasPermission(s);
+        return (vault == null) ? 
+                player.hasPermission(s) : 
+                vault.getPermissionProvider().has(player, s);
     }
 
     public boolean canReload(Player player) {
         String s = "magiccarpet.mr";
-        if (vault != null && vault.isPermissionsEnabled()) {
-            return vault.getPermissionProvider().has(player, s);
-        }
-        return player.hasPermission(s);
+        return (vault == null) ? 
+                player.hasPermission(s) : 
+                vault.getPermissionProvider().has(player, s);
     }
 
     public boolean canSwitch(Player player) {
@@ -121,10 +98,9 @@ public class MagicCarpet extends JavaPlugin {
             return true;
         }
         String s = "magiccarpet.mcs";
-        if (vault != null && vault.isPermissionsEnabled()) {
-            return vault.getPermissionProvider().has(player, s);
-        }
-        return player.hasPermission(s);
+        return (vault == null) ? 
+                player.hasPermission(s) : 
+                vault.getPermissionProvider().has(player, s);
     }
 
     public void loadCarpets() {
@@ -193,8 +169,9 @@ public class MagicCarpet extends JavaPlugin {
         charge = config.getBoolean("charge", false);
         chargeAmount = config.getDouble("charge-amount", 1.0);
         changeLiquids = config.getString("change-liquids", "true");
-        if(!changeLiquids.equals("lava") && !changeLiquids.equals("water") && !changeLiquids.equals("false"))
-        	changeLiquids = "true";
+        if (!changeLiquids.equals("lava") && !changeLiquids.equals("water") && !changeLiquids.equals("false")) {
+            changeLiquids = "true";
+        }
     }
 
     @Override
@@ -352,9 +329,13 @@ public class MagicCarpet extends JavaPlugin {
         }
     }
 
-	public boolean canChangeLiquids(String type) {
-		if(changeLiquids.equals("false")) return false;
-		else if(changeLiquids.equals("true")) return true;
-		else return changeLiquids.equals(type);
-	}
+    public boolean canChangeLiquids(String type) {
+        if (changeLiquids.equals("false")) {
+            return false;
+        } else if (changeLiquids.equals("true")) {
+            return true;
+        } else {
+            return changeLiquids.equals(type);
+        }
+    }
 }

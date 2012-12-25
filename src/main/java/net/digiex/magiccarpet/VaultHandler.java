@@ -49,12 +49,4 @@ public class VaultHandler {
     public Economy getEconomyProvider() {
         return economyProvider;
     }
-
-    public boolean isPermissionsEnabled() {
-        return permissionsProvider != null;
-    }
-
-    public boolean isEconomyEnabled() {
-        return economyProvider != null;
-    }
 }
