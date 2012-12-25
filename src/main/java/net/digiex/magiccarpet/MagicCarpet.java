@@ -3,7 +3,7 @@ package net.digiex.magiccarpet;
 import java.io.*;
 import java.util.EnumSet;
 import java.util.logging.Logger;
-import net.digiex.magiccarpet.Metrics.Graph;
+import net.digiex.magiccarpet.BukkitMetrics.Graph;
 import org.bukkit.Material;
 import static org.bukkit.Material.*;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -66,14 +66,14 @@ public class MagicCarpet extends JavaPlugin {
             return true;
         }
         String s = "magiccarpet.mc";
-        return (vault == null) ? 
-                player.hasPermission(s) : 
-                vault.getPermissionProvider().has(player, s);
+        return (vault == null)
+                ? player.hasPermission(s)
+                : vault.getPermissionProvider().has(player, s);
     }
 
     public boolean canFlyHere(Player player) {
-        return (worldGuardHandler == null) ? true :
-                worldGuardHandler.canFlyHere(player);
+        return (worldGuardHandler == null) ? true
+                : worldGuardHandler.canFlyHere(player);
     }
 
     public boolean canLight(Player player) {
@@ -81,16 +81,16 @@ public class MagicCarpet extends JavaPlugin {
             return true;
         }
         String s = "magiccarpet.ml";
-        return (vault == null) ? 
-                player.hasPermission(s) : 
-                vault.getPermissionProvider().has(player, s);
+        return (vault == null)
+                ? player.hasPermission(s)
+                : vault.getPermissionProvider().has(player, s);
     }
 
     public boolean canReload(Player player) {
         String s = "magiccarpet.mr";
-        return (vault == null) ? 
-                player.hasPermission(s) : 
-                vault.getPermissionProvider().has(player, s);
+        return (vault == null)
+                ? player.hasPermission(s)
+                : vault.getPermissionProvider().has(player, s);
     }
 
     public boolean canSwitch(Player player) {
@@ -98,9 +98,9 @@ public class MagicCarpet extends JavaPlugin {
             return true;
         }
         String s = "magiccarpet.mcs";
-        return (vault == null) ? 
-                player.hasPermission(s) : 
-                vault.getPermissionProvider().has(player, s);
+        return (vault == null)
+                ? player.hasPermission(s)
+                : vault.getPermissionProvider().has(player, s);
     }
 
     public void loadCarpets() {
@@ -298,9 +298,9 @@ public class MagicCarpet extends JavaPlugin {
 
     private void startStats() {
         try {
-            Metrics metrics = new Metrics(this);
+            BukkitMetrics metrics = new BukkitMetrics(this);
             Graph graph = metrics.createGraph("Carpets");
-            graph.addPlotter(new Metrics.Plotter("Total") {
+            graph.addPlotter(new BukkitMetrics.Plotter("Total") {
                 @Override
                 public int getValue() {
                     int i = 0;
@@ -310,7 +310,7 @@ public class MagicCarpet extends JavaPlugin {
                     return i;
                 }
             });
-            graph.addPlotter(new Metrics.Plotter("Current") {
+            graph.addPlotter(new BukkitMetrics.Plotter("Current") {
                 @Override
                 public int getValue() {
                     int i = 0;
