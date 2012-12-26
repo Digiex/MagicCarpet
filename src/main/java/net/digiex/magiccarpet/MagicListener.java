@@ -1,6 +1,7 @@
 package net.digiex.magiccarpet;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -186,6 +187,9 @@ public class MagicListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockPhysics(BlockPhysicsEvent event) {
+        if (!event.getBlock().getMetadata("Carpet").isEmpty()) {
+            return;
+        }
         if (event.getChangedType().getNewData((byte) 0) instanceof Redstone) {
             return;
         }
