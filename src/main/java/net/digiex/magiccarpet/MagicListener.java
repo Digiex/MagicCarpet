@@ -1,7 +1,6 @@
 package net.digiex.magiccarpet;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -180,16 +179,16 @@ public class MagicListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        if (!event.getBlock().getMetadata("Carpet").isEmpty()) {
-            event.setCancelled(true);
-        }
+    	if (event.getBlock().getMetadata("Carpet") != null) {
+    		event.setCancelled(true);
+    	}
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockPhysics(BlockPhysicsEvent event) {
-        if (!event.getBlock().getMetadata("Carpet").isEmpty()) {
-            return;
-        }
+    	if (event.getBlock().getMetadata("Carpet") != null) {
+    		return;
+    	}
         if (event.getChangedType().getNewData((byte) 0) instanceof Redstone) {
             return;
         }
@@ -207,7 +206,7 @@ public class MagicListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
         for (Block block : event.getBlocks()) {
-            if (!block.getMetadata("Carpet").isEmpty()) {
+        	if (block.getMetadata("Carpet") != null) {
                 event.setCancelled(true);
                 return;
             }
@@ -217,7 +216,7 @@ public class MagicListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
         if (event.isSticky()) {
-            if (!event.getRetractLocation().getBlock().getMetadata("Carpet").isEmpty()) {
+            if (event.getRetractLocation().getBlock().getMetadata("Carpet") != null) {
                 event.setCancelled(true);
             }
         }
@@ -230,9 +229,9 @@ public class MagicListener implements Listener {
                 return;
             }
             Block eyes = ((LivingEntity) event.getEntity()).getEyeLocation().getBlock();
-            if (!eyes.getMetadata("Carpet").isEmpty()) {
-                event.setCancelled(true);
-            }
+            if (eyes.getMetadata("Carpet") != null) {
+        		event.setCancelled(true);
+        	}
         } else if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
             if (!(event.getEntity() instanceof Player)) {
                 return;
@@ -246,7 +245,7 @@ public class MagicListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityExplode(EntityExplodeEvent event) {
         for (Block block : event.blockList()) {
-            if (!block.getMetadata("Carpet").isEmpty()) {
+            if (block.getMetadata("Carpet") != null) {
                 event.setCancelled(true);
                 return;
             }
