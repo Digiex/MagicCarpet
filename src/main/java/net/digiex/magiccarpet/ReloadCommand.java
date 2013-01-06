@@ -49,7 +49,7 @@ public class ReloadCommand implements CommandExecutor {
     }
 
     public void reload() {
-        for (Carpet c : plugin.carpets.all()) {
+        for (Carpet c : MagicCarpet.carpets.all()) {
             if (c == null || !c.isVisible()) {
                 continue;
             }
@@ -61,7 +61,7 @@ public class ReloadCommand implements CommandExecutor {
             plugin.loadCarpets();
         }
         for (Player p : plugin.getServer().getOnlinePlayers()) {
-            if (plugin.carpets.has(p)) {
+            if (MagicCarpet.carpets.has(p)) {
                 Carpet.create(p, plugin).show();
             }
         }

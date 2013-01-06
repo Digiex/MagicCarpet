@@ -37,13 +37,13 @@ public class SwitchCommand implements CommandExecutor {
         }
         Player player = (Player) sender;
         if (plugin.canFly(player) && plugin.canSwitch(player)) {
-            Carpet carpet = plugin.carpets.getCarpet(player);
+            Carpet carpet = MagicCarpet.carpets.getCarpet(player);
             if (carpet == null || !carpet.isVisible()) {
                 player.sendMessage("You don't have a carpet yet, use /mc!");
                 return true;
             }
-            plugin.carpets.toggleCrouch(player);
-            if (plugin.carpets.crouches(player)) {
+            MagicCarpet.carpets.toggleCrouch(player);
+            if (MagicCarpet.carpets.crouches(player)) {
                 player.sendMessage("You now crouch to descend");
             } else {
                 player.sendMessage("You now look down to descend");

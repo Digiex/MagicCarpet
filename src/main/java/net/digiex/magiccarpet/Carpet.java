@@ -30,7 +30,6 @@ public class Carpet {
 
         BlockState block;
         int dx, dy, dz;
-        Material strand;
 
         public CarpetFibre(int dx, int dy, int dz) {
             this.dx = dx;
@@ -40,8 +39,7 @@ public class Carpet {
 
         void set(Block bl, Material material) {
             bl.setTypeId(material.getId(), false);
-            strand = material;
-            bl.setMetadata("Carpet", new FixedMetadataValue(p, who));
+            bl.setMetadata("Carpet", new FixedMetadataValue(p, carpet));
         }
 
         boolean shouldGlow() {
@@ -55,23 +53,24 @@ public class Carpet {
         }
 
         void update() {
-            if (block.getBlock().getType() != strand) {
-                return;
-            }
+        	if (block.getBlock().getMetadata("Carpet").isEmpty()) {
+        		return;
+        	}
             block.removeMetadata("Carpet", p);
             block.update(true);
         }
     }
     private static MagicCarpet p;
+    private Carpet carpet = this;
 
     public static Carpet create(Player player, MagicCarpet plugin) {
         p = plugin;
-        int sz = plugin.carpets.getLastSize(player);
-        boolean light = plugin.carpets.hasLight(player);
-        Material thread = plugin.carpets.getMaterial(player);
-        Material shine = plugin.carpets.getLightMaterial(player);
+        int sz = MagicCarpet.carpets.getLastSize(player);
+        boolean light = MagicCarpet.carpets.hasLight(player);
+        Material thread = MagicCarpet.carpets.getMaterial(player);
+        Material shine = MagicCarpet.carpets.getLightMaterial(player);
         Carpet carpet = new Carpet(player, sz, light, thread, shine);
-        plugin.carpets.assign(player, carpet);
+        MagicCarpet.carpets.assign(player, carpet);
         return carpet;
     }
     private Block currentCentre;

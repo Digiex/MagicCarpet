@@ -39,7 +39,7 @@ public class LightCommand implements CommandExecutor {
         }
         Player player = (Player) sender;
         if (plugin.canFly(player) && plugin.canLight(player)) {
-            Carpet carpet = plugin.carpets.getCarpet(player);
+            Carpet carpet = MagicCarpet.carpets.getCarpet(player);
             if (carpet == null || !carpet.isVisible()) {
                 player.sendMessage("You don't have a carpet yet, use /mc!");
                 return true;
@@ -47,7 +47,7 @@ public class LightCommand implements CommandExecutor {
             if (args.length < 1) {
                 hideOrShow(player);
             } else {
-                if (plugin.carpets.hasLight(player)) {
+                if (MagicCarpet.carpets.hasLight(player)) {
                     if (plugin.customLights) {
                         String word = "";
                         for (String a : args) {
@@ -88,7 +88,7 @@ public class LightCommand implements CommandExecutor {
                 return true;
             }
         }
-        plugin.carpets.update(player);
+        MagicCarpet.carpets.update(player);
         return true;
     }
 
@@ -97,11 +97,11 @@ public class LightCommand implements CommandExecutor {
             player.sendMessage("The magic light is disabled");
             return;
         }
-        if (plugin.carpets.hasLight(player)) {
-            plugin.carpets.lightOff(player);
+        if (MagicCarpet.carpets.hasLight(player)) {
+            MagicCarpet.carpets.lightOff(player);
             player.sendMessage("The luminous stones in the carpet slowly fade away.");
         } else {
-            plugin.carpets.lightOn(player);
+            MagicCarpet.carpets.lightOn(player);
             player.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
         }
     }
