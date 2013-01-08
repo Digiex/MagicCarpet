@@ -41,7 +41,7 @@ public class MagicCarpet extends JavaPlugin {
             HUGE_MUSHROOM_1, HUGE_MUSHROOM_2, MELON_BLOCK);
     static final EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE, JACK_O_LANTERN);
     private final MagicListener magicListener = new MagicListener(this);
-    static CarpetStorage carpets = new CarpetStorage();
+    public static CarpetStorage carpets = new CarpetStorage();
     private WorldGuardHandler worldGuardHandler;
     public VaultHandler vault;
     public Logger log;
