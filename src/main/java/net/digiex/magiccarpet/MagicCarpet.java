@@ -2,6 +2,7 @@ package net.digiex.magiccarpet;
 
 import java.io.*;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.logging.Logger;
 import net.digiex.magiccarpet.BukkitMetrics.Graph;
 import org.bukkit.Material;
@@ -305,9 +306,10 @@ public class MagicCarpet extends JavaPlugin {
                 @Override
                 public int getValue() {
                     int i = 0;
-                    for (Carpet c : carpets.all()) {
-                        i = i + 1;
-                    }
+                    for (Iterator<Carpet> iterator = carpets.all().iterator(); iterator
+							.hasNext();) {
+						i = i + 1;
+					}
                     return i;
                 }
             });
