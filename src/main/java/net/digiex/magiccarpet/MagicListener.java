@@ -12,7 +12,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.material.Redstone;
 import org.bukkit.util.Vector;
 
 /*
@@ -186,9 +185,22 @@ public class MagicListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockPhysics(BlockPhysicsEvent event) {
-        if (event.getChangedType().getNewData((byte) 0) instanceof Redstone) {
-            return;
-        }
+    	switch (event.getBlock().getType()) {
+		case REDSTONE:
+			return;
+		case DIODE_BLOCK_ON:
+			return;
+		case DIODE_BLOCK_OFF:
+			return;
+		case REDSTONE_WIRE:
+			return;
+		case REDSTONE_LAMP_ON:
+			return;
+		case REDSTONE_LAMP_OFF:
+			return;
+		default:
+			break;
+		}
         for (Carpet carpet : MagicCarpet.carpets.all()) {
             if (carpet == null || !carpet.isVisible()) {
                 continue;

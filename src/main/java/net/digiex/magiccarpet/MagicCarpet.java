@@ -61,6 +61,7 @@ public class MagicCarpet extends JavaPlugin {
     boolean charge = false;
     double chargeAmount = 1.0;
     String changeLiquids = "true";
+    boolean tools = false;;
 
     public boolean canFly(Player player) {
         if (carpets.getGiven(player)) {
@@ -173,6 +174,7 @@ public class MagicCarpet extends JavaPlugin {
         if (!changeLiquids.equals("lava") && !changeLiquids.equals("water") && !changeLiquids.equals("false")) {
             changeLiquids = "true";
         }
+        tools = config.getBoolean("tools", false);
     }
 
     @Override
@@ -250,6 +252,7 @@ public class MagicCarpet extends JavaPlugin {
         config.set("charge", charge);
         config.set("charge-amount", chargeAmount);
         config.set("change-liquids", changeLiquids);
+        config.set("tools", tools);
         config.options().header(
                 "Be sure to use /mr if you change any settings here while the server is running.");
         try {

@@ -23,12 +23,19 @@ import org.bukkit.entity.Player;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class CarpetStorage implements Serializable {
-    private static final long serialVersionUID = -2319896942961830890L;
 
-    private class CarpetEntry implements Serializable {
-        private static final long serialVersionUID = -7976244556045495329L;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7095060918230909632L;
+
+	private class CarpetEntry implements Serializable {
         
-        public transient Carpet carpet;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -1655870844571882460L;
+		public transient Carpet carpet;
         public boolean crouch = plugin.crouchDef;
         public boolean hasCarpet = false;
         public int lastSize = plugin.carpSize;
@@ -36,6 +43,7 @@ public class CarpetStorage implements Serializable {
         public boolean lightsOn = plugin.glowCenter;
         public Material thread = plugin.carpMaterial;
         public boolean given = false;
+        public boolean tools = false;
     }
     private HashMap<String, CarpetEntry> carpets = new HashMap<String, CarpetEntry>();
     private transient MagicCarpet plugin;
@@ -218,6 +226,7 @@ public class CarpetStorage implements Serializable {
         entry.lightsOn = entry.carpet.hasLights();
         entry.thread = entry.carpet.getThread();
         entry.light = entry.carpet.getShine();
+        entry.tools = entry.carpet.hasTools();
     }
 
     public void checkCarpets() {
@@ -240,6 +249,9 @@ public class CarpetStorage implements Serializable {
             if (entry.lightsOn && !plugin.lights) {
                 entry.lightsOn = false;
             }
+            if (entry.tools && !plugin.tools) {
+            	entry.tools = false;
+            }
         }
     }
 
@@ -257,5 +269,35 @@ public class CarpetStorage implements Serializable {
             return;
         }
         entry.given = given;
+    }
+    
+    public void toolsOn(Player player) {
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return;
+        }
+        entry.tools = true;
+        if (entry.hasCarpet && entry.carpet != null) {
+            entry.carpet.toolsOn();
+        }
+    }
+
+    public void toolsOff(Player player) {
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return;
+        }
+        entry.tools = false;
+        if (entry.hasCarpet && entry.carpet != null) {
+            entry.carpet.toolsOff();
+        }
+    }
+    
+    public boolean hasTools(Player player) {
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return false;
+        }
+        return entry.tools;
     }
 }

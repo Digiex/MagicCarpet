@@ -43,13 +43,33 @@ public class Carpet {
         }
 
         boolean shouldGlow() {
-            if (!lightsOn) {
+            if (!lights) {
                 return false;
             }
             if (dx == 0 && dz == 0) {
                 return true;
             }
             return false;
+        }
+        
+        boolean shouldEnder() {
+        	if (!tools) {
+        		return false;
+        	}
+        	if (dx == 2 && dz == 0) {
+        		return true;
+        	}
+        	return false;
+        }
+        
+        boolean shouldWork() {
+        	if (!tools) {
+        		return false;
+        	}
+        	if (dx == -2 && dz == 0) {
+        		return true;
+        	}
+        	return false;
         }
 
         void update() {
@@ -67,28 +87,29 @@ public class Carpet {
         p = plugin;
         int sz = MagicCarpet.carpets.getLastSize(player);
         boolean light = MagicCarpet.carpets.hasLight(player);
+        boolean tools = MagicCarpet.carpets.hasTools(player);
         Material thread = MagicCarpet.carpets.getMaterial(player);
         Material shine = MagicCarpet.carpets.getLightMaterial(player);
-        Carpet carpet = new Carpet(player, sz, light, thread, shine);
+        Carpet carpet = new Carpet(player, sz, light, thread, shine, tools);
         MagicCarpet.carpets.assign(player, carpet);
         return carpet;
     }
     private Block currentCentre;
     private int edge = 0, area = 0, rad = 0, radplsq = 0;
     private CarpetFibre[] fibres;
-    private boolean hidden;
-    private boolean lightsOn;
+    private boolean hidden, lights, tools;
     private Material thread, shine;
     private Player who;
 
-    private Carpet(Player player, int sz, boolean on, Material mat, Material light) {
+    private Carpet(Player player, int sz, boolean on, Material mat, Material light, boolean t) {
         setSize(sz);
         who = player;
         currentCentre = player.getLocation().getBlock();
-        lightsOn = on;
+        lights = on;
         hidden = true;
         thread = mat;
         shine = light;
+        tools = t;
     }
 
     public void changeCarpet(int sz) {
@@ -130,7 +151,7 @@ public class Carpet {
     }
 
     public boolean hasLights() {
-        return lightsOn;
+        return lights;
     }
 
     public void hide() {
@@ -153,13 +174,13 @@ public class Carpet {
 
     public void lightsOff() {
         removeCarpet();
-        lightsOn = false;
+        lights = false;
         drawCarpet();
     }
 
     public void lightsOn() {
         removeCarpet();
-        lightsOn = true;
+        lights = true;
         drawCarpet();
     }
 
@@ -209,6 +230,10 @@ public class Carpet {
                 fibre.block = bl.getState();
                 if (fibre.shouldGlow()) {
                     fibre.set(bl, getShine());
+                } else if (fibre.shouldEnder()) {
+                	fibre.set(bl, Material.ENDER_CHEST);
+                } else if (fibre.shouldWork()) {
+                	fibre.set(bl, Material.WORKBENCH);
                 } else {
                     fibre.set(bl, getThread());
                 }
@@ -279,5 +304,21 @@ public class Carpet {
                 i++;
             }
         }
+    }
+    
+    public void toolsOff() {
+        removeCarpet();
+        tools = false;
+        drawCarpet();
+    }
+
+    public void toolsOn() {
+        removeCarpet();
+        tools = true;
+        drawCarpet();
+    }
+    
+    public boolean hasTools() {
+    	return tools;
     }
 }
