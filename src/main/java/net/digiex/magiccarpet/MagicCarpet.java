@@ -104,6 +104,16 @@ public class MagicCarpet extends JavaPlugin {
                 ? player.hasPermission(s)
                 : vault.getPermissionProvider().has(player, s);
     }
+    
+    public boolean canTool(Player player) {
+        if (carpets.getGiven(player)) {
+            return true;
+        }
+        String s = "magiccarpet.mct";
+        return (vault == null)
+                ? player.hasPermission(s)
+                : vault.getPermissionProvider().has(player, s);
+    }
 
     public void loadCarpets() {
         File carpetDat = carpetsFile();

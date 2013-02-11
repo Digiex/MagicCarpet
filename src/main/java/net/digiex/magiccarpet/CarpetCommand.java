@@ -185,7 +185,11 @@ public class CarpetCommand implements CommandExecutor {
                     player.sendMessage("You don't have permission to use this.");
                     return true;
                 }
-            } else if (args.length == 1 && args[0].equals("t")) {
+            } else if (args.length == 1 && args[0].equals("t") || args.length == 1 && args[0].equals("tools")) {
+            	if (!plugin.canTool(player)) {
+            		player.sendMessage("You cannot use the magic tools, no permission.");
+            		return true;
+            	}
             	if (!plugin.tools) {
             		player.sendMessage("The magic tools are not enabled.");
             		return true;

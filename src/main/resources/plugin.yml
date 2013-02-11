@@ -40,6 +40,9 @@ permissions:
   magiccarpet.mc:
     description: Take yourself wonder by wonder on a carpet made of glass.
     default: op
+  magiccarpet.mct:
+    description: Supplies a ender chest and workbench for you Magic Carpet.
+    default: op
   magiccarpet.*:
     description: Allows access to all MagicCarpet commands.
     default: op
@@ -48,3 +51,4 @@ permissions:
       magiccarpet.ml: true
       magiccarpet.mcs: true
       magiccarpet.mr: true
+      magiccarpet.mct: true
