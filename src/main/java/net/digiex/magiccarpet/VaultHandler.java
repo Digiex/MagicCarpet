@@ -1,7 +1,6 @@
 package net.digiex.magiccarpet;
 
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 /*
@@ -22,31 +21,61 @@ import org.bukkit.plugin.RegisteredServiceProvider;
  */
 public class VaultHandler {
 
-    private final MagicCarpet plugin;
-    private Permission permissionsProvider;
-    private Economy economyProvider;
+private static net.milkbowl.vault.economy.Economy vaultPlugin;
+	
+	public VaultHandler() {
+		getVault();
+	}
 
-    public VaultHandler(MagicCarpet plugin) {
-        this.plugin = plugin;
+    public static boolean add(String player, double amount) {
+        return vaultPlugin.depositPlayer(player, amount).transactionSuccess();
     }
 
-    public VaultHandler setup() {
-        RegisteredServiceProvider<Permission> p = plugin.getServer().getServicesManager().getRegistration(Permission.class);
-        if (p != null) {
-            permissionsProvider = p.getProvider();
+    public static boolean subtract(String player, double amount) {
+        return vaultPlugin.withdrawPlayer(player, amount).transactionSuccess();
+    }
+
+    public static boolean hasEnough(String player, double amount) {
+        return vaultPlugin.has(player, amount);
+    }
+
+    public static double balance(String player) {
+        return vaultPlugin.getBalance(player);
+    }
+
+    public static String format(double amount) {
+        return vaultPlugin.format(amount);
+    }
+
+    public static String getPluginName() {
+        if (vaultPlugin == null) {
+            return "";
+        } else {
+            return vaultPlugin.getName();
         }
-        RegisteredServiceProvider<Economy> e = plugin.getServer().getServicesManager().getRegistration(Economy.class);
-        if (e != null) {
-            economyProvider = e.getProvider();
-        }
-        return this;
     }
     
-    public Permission getPermissionProvider() {
-        return permissionsProvider;
+    public static String getCurrencyName() {
+    	return vaultPlugin.currencyNameSingular();
     }
     
-    public Economy getEconomyProvider() {
-        return economyProvider;
+    public static String getCurrencyNamePlural() {
+    	return vaultPlugin.currencyNamePlural();
+    }
+
+    private VaultHandler getVault() {
+        RegisteredServiceProvider<net.milkbowl.vault.economy.Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+
+        if (rsp == null) {
+            return null;
+        }
+
+        vaultPlugin = rsp.getProvider();
+
+        if (vaultPlugin == null) {
+            return null;
+        } else {
+            return new VaultHandler();
+        }
     }
 }

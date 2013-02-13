@@ -1,13 +1,22 @@
 package net.digiex.magiccarpet;
 
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldguard.LocalPlayer;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+
+import com.sk89q.worldedit.bukkit.BukkitUtil;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import java.util.Iterator;
-import java.util.Set;
-import org.bukkit.entity.Player;
+import com.sk89q.worldguard.protection.GlobalRegionManager;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.flags.Flag;
+import com.sk89q.worldguard.protection.flags.StateFlag;
 /*
  * Magic Carpet 2.2 Copyright (C) 2012 Android, Celtic Minstrel, xzKinGzxBuRnzx
  *
@@ -26,36 +35,68 @@ import org.bukkit.entity.Player;
  */
 public class WorldGuardHandler {
 
-    private final WorldGuardPlugin worldGuard;
+	public static class CarpetFlag extends StateFlag {
+        public static CarpetFlag flag = new CarpetFlag();
 
-    public WorldGuardHandler(WorldGuardPlugin worldGuard) {
-        this.worldGuard = worldGuard;
+        public CarpetFlag() {
+            super("carpet", true);
+        }
+
+        public static boolean setAllowsFlag(ApplicableRegionSet set) {
+            return set.allows(flag);
+        }
+
+        private static List elements() {
+            List<Flag> elements = new ArrayList(Arrays.asList(DefaultFlag.getFlags()));
+            elements.add(flag);
+            return elements;
+        }
+
+        public static void injectHax() {
+            try {
+                Field field = DefaultFlag.class.getDeclaredField("flagsList");
+
+                Field modifiersField = Field.class.getDeclaredField("modifiers");
+                modifiersField.setAccessible(true);
+                modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+                field.setAccessible(true);
+
+                List<Flag> elements = elements();
+
+                Flag<?> list[] = new Flag<?>[elements.size()];
+                for (int i = 0; i < elements.size(); i++) {
+                    list[i] = elements.get(i);
+                }
+
+                field.set(null, list);
+
+                Field grm = WorldGuardPlugin.class.getDeclaredField("globalRegionManager");
+                grm.setAccessible(true);
+                GlobalRegionManager globalRegionManager = (GlobalRegionManager) grm.get(Bukkit.getServer().getPluginManager().getPlugin("WorldGuard"));
+
+                globalRegionManager.preload();
+
+            } catch (Exception e) {
+                Bukkit.getLogger().severe("Oh noes! Something wrong happened! Be sure to paste that in your bug report:");
+                e.printStackTrace();
+            }
+        }
     }
 
+    private WorldGuardPlugin worldGuard;
+    
+    public WorldGuardHandler(WorldGuardPlugin worldGuard) {
+        this.worldGuard = worldGuard;
+        CarpetFlag.injectHax();
+    }
+    
     public boolean canFlyHere(Player player) {
-        RegionManager regionManager = worldGuard.getRegionManager(player.getWorld());
-        if (regionManager == null) {
-            return true;
-        }
-        LocalPlayer localPlayer = worldGuard.wrapPlayer(player);
-        Vector location = localPlayer.getPosition();
-        ApplicableRegionSet set = regionManager.getApplicableRegions(location);
-        if (set == null) {
-            return true;
-        }
-        Set<String> flag = set.getFlag(com.sk89q.worldguard.protection.flags.DefaultFlag.BLOCKED_CMDS);
-        if (flag == null) {
-            return true;
-        }
-        for (Iterator<String> it = flag.iterator(); it.hasNext();) {
-            String blocked = it.next();
-            if (blocked == null) {
-                continue;
-            }
-            if (blocked.contains("/mc") || blocked.contains("/magiccarpet")) {
-                return false;
-            }
-        }
-        return true;
+        ApplicableRegionSet regions = getApplicableRegions(player.getLocation());
+        return CarpetFlag.setAllowsFlag(regions);
+    }
+
+    private ApplicableRegionSet getApplicableRegions(Location location) {
+        return worldGuard.getGlobalRegionManager().get(location.getWorld()).getApplicableRegions(BukkitUtil.toVector(location));
     }
 }

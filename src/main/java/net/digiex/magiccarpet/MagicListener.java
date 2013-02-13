@@ -7,11 +7,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.*;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockFormEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.util.Vector;
 
 /*
@@ -42,24 +52,22 @@ public class MagicListener implements Listener {
     @EventHandler()
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (MagicCarpet.carpets.has(player)) {
-            if (plugin.canFly(player)) {
-                Carpet.create(player, plugin).show();
-            } else {
-                MagicCarpet.carpets.update(player);
-            }
+        if (plugin.getCarpets().has(player)) {
+            Carpet.create(player, plugin).show();
+        } else {
+            plugin.getCarpets().update(player);
         }
     }
-
+    
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        MagicCarpet.carpets.remove(event.getPlayer());
+        plugin.getCarpets().remove(event.getPlayer());
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerKick(PlayerKickEvent event) {
         Player who = event.getPlayer();
-        Carpet carpet = MagicCarpet.carpets.getCarpet(who);
+        Carpet carpet = plugin.getCarpets().getCarpet(who);
         if (carpet != null && carpet.isVisible()) {
             String reason = event.getReason();
             if (reason != null && reason.equals("Flying is not enabled on this server") && who.isSneaking()) {
@@ -71,7 +79,7 @@ public class MagicListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        Carpet carpet = MagicCarpet.carpets.getCarpet(player);
+        Carpet carpet = plugin.getCarpets().getCarpet(player);
         if (carpet == null || !carpet.isVisible()) {
             return;
         }
@@ -81,7 +89,7 @@ public class MagicListener implements Listener {
         if (!plugin.canFlyHere(player)) {
             player.sendMessage("Your carpet is forbidden in this area!");
             carpet.hide();
-            MagicCarpet.carpets.update(player);
+            plugin.getCarpets().update(player);
             return;
         }
         Location to = event.getTo().clone();
@@ -91,7 +99,7 @@ public class MagicListener implements Listener {
                 && to.getY() > from.getY()) {
             player.setVelocity(player.getVelocity().add(new Vector(0, 0.1, 0)));
         }
-        if (MagicCarpet.carpets.crouches(player)) {
+        if (plugin.getCarpets().crouches(player)) {
             if (player.isSneaking()) {
                 if (!falling) {
                     to.setY(to.getY() - 1);
@@ -117,7 +125,7 @@ public class MagicListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
-        Carpet carpet = MagicCarpet.carpets.getCarpet(player);
+        Carpet carpet = plugin.getCarpets().getCarpet(player);
         if (carpet == null || !carpet.isVisible()) {
             return;
         }
@@ -128,7 +136,7 @@ public class MagicListener implements Listener {
         if (!plugin.canFlyHere(player)) {
             player.sendMessage("Your carpet is forbidden in this area!");
             carpet.hide();
-            MagicCarpet.carpets.update(player);
+            plugin.getCarpets().update(player);
             return;
         }
         carpet.moveTo(to);
@@ -137,11 +145,11 @@ public class MagicListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
-        Carpet carpet = MagicCarpet.carpets.getCarpet(player);
+        Carpet carpet = plugin.getCarpets().getCarpet(player);
         if (carpet == null || !carpet.isVisible()) {
             return;
         }
-        if (!MagicCarpet.carpets.crouches(player)) {
+        if (!plugin.getCarpets().crouches(player)) {
             return;
         }
         if (event.isSneaking()) {
@@ -152,8 +160,8 @@ public class MagicListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockFade(BlockFadeEvent event) {
-        for (Carpet carpet : MagicCarpet.carpets.all()) {
-            if (carpet == null || !carpet.isVisible() || !carpet.hasLights()) {
+        for (Carpet carpet : plugin.getCarpets().all()) {
+            if (carpet == null || !carpet.isVisible() || !carpet.hasLight()) {
                 continue;
             }
             if (carpet.touches(event.getBlock())) {
@@ -165,7 +173,7 @@ public class MagicListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
-        for (Carpet carpet : MagicCarpet.carpets.all()) {
+        for (Carpet carpet : plugin.getCarpets().all()) {
             if (carpet == null || !carpet.isVisible()) {
                 continue;
             }
@@ -198,10 +206,24 @@ public class MagicListener implements Listener {
 			return;
 		case REDSTONE_LAMP_OFF:
 			return;
+		case RAILS:
+			return;
+		case POWERED_RAIL:
+			return;
+		case DETECTOR_RAIL:
+			return;
+		case TORCH:
+			return;
+		case REDSTONE_TORCH_ON:
+			return;
+		case REDSTONE_TORCH_OFF:
+			return;
+		case LEVER:
+			return;
 		default:
 			break;
 		}
-        for (Carpet carpet : MagicCarpet.carpets.all()) {
+    	for (Carpet carpet : plugin.getCarpets().all()) {
             if (carpet == null || !carpet.isVisible()) {
                 continue;
             }
@@ -245,7 +267,7 @@ public class MagicListener implements Listener {
             if (!(event.getEntity() instanceof Player)) {
                 return;
             }
-            if (MagicCarpet.carpets.has((Player) event.getEntity())) {
+            if (plugin.getCarpets().has((Player) event.getEntity())) {
                 event.setCancelled(true);
             }
         }
@@ -263,7 +285,7 @@ public class MagicListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onHangingingBreak(HangingBreakEvent event) {
-        for (Carpet carpet : MagicCarpet.carpets.all()) {
+        for (Carpet carpet : plugin.getCarpets().all()) {
             if (carpet == null || !carpet.isVisible()) {
                 continue;
             }

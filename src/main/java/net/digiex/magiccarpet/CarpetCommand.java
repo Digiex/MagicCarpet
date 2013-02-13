@@ -41,11 +41,9 @@ public class CarpetCommand implements CommandExecutor {
                     }
                 }
                 if (who != null) {
-                    Carpet.create(who, plugin).show();
-                    MagicCarpet.carpets.setGiven(who, true);
-                    who.sendMessage("The magic carpet has been given to you.");
+                    plugin.getCarpets().setGiven(who, true);
+                    who.sendMessage("The magic carpet has been given to you. Use /mc");
                     sender.sendMessage("The magic carpet was given to " + who.getName());
-                    MagicCarpet.carpets.update(who);
                     return true;
                 } else {
                     sender.sendMessage("Can't find player " + args[1]);
@@ -59,11 +57,11 @@ public class CarpetCommand implements CommandExecutor {
                     }
                 }
                 if (who != null) {
-                    if (MagicCarpet.carpets.has(who)) {
-                        MagicCarpet.carpets.getCarpet(who).hide();
-                        MagicCarpet.carpets.update(who);
+                    if (plugin.getCarpets().has(who)) {
+                        plugin.getCarpets().getCarpet(who).hide();
+                        plugin.getCarpets().update(who);
                     }
-                    MagicCarpet.carpets.setGiven(who, false);
+                    plugin.getCarpets().setGiven(who, false);
                     who.sendMessage("The magic carpet has been taken from you.");
                     sender.sendMessage("The magic carpet was taken from " + who.getName());
                     return true;
@@ -77,26 +75,26 @@ public class CarpetCommand implements CommandExecutor {
             }
         }
         Player player = (Player) sender;
-        Carpet carpet = MagicCarpet.carpets.getCarpet(player);
+        Carpet carpet = plugin.getCarpets().getCarpet(player);
         if (!plugin.canFly(player)) {
             player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
             return true;
         }
         int c;
         if (carpet == null) {
-            if (MagicCarpet.carpets.getGiven(player)) {
+            if (plugin.getCarpets().getGiven(player)) {
                 carpet = Carpet.create(player, plugin);
                 player.sendMessage("A glass carpet appears below your feet.");
                 carpet.show();
                 return true;
             }
             if (plugin.charge) {
-                if (plugin.vault != null) {
-                    if (plugin.vault.getEconomyProvider().has(player.getName(), plugin.chargeAmount)) {
-                        plugin.vault.getEconomyProvider().withdrawPlayer(player.getName(), plugin.chargeAmount);
-                        player.sendMessage("You've been charged " + plugin.vault.getEconomyProvider().format(plugin.chargeAmount).toLowerCase() + " and now have " + plugin.vault.getEconomyProvider().format(plugin.vault.getEconomyProvider().getBalance(player.getName())).toLowerCase() + " left.");
+                if (plugin.getVault() != null) {
+					if (VaultHandler.hasEnough(player.getName(), plugin.chargeAmount)) {
+                        VaultHandler.subtract(player.getName(), plugin.chargeAmount);
+                        player.sendMessage("You've been charged " + VaultHandler.format(plugin.chargeAmount).toLowerCase() + " and now have " + VaultHandler.format(VaultHandler.balance(player.getName())).toLowerCase() + " left.");
                     } else {
-                        player.sendMessage("You don't have enough " + plugin.vault.getEconomyProvider().currencyNamePlural().toLowerCase() + ".");
+                        player.sendMessage("You don't have enough " + VaultHandler.getCurrencyNamePlural().toLowerCase() + ".");
                         return true;
                     }
                 }
@@ -104,36 +102,36 @@ public class CarpetCommand implements CommandExecutor {
             carpet = Carpet.create(player, plugin);
             player.sendMessage("A glass carpet appears below your feet.");
             carpet.show();
-            MagicCarpet.carpets.update(player);
+            plugin.getCarpets().update(player);
             return true;
         }
         if (args.length < 1) {
             if (carpet.isVisible()) {
                 player.sendMessage("Poof! The magic carpet disappears.");
                 carpet.hide();
-                MagicCarpet.carpets.update(player);
+                plugin.getCarpets().update(player);
                 return true;
             } else {
-                if (MagicCarpet.carpets.getGiven(player)) {
+                if (plugin.getCarpets().getGiven(player)) {
                     player.sendMessage("A glass carpet appears below your feet.");
                     carpet.show();
-                    MagicCarpet.carpets.update(player);
+                    plugin.getCarpets().update(player);
                     return true;
                 }
                 if (plugin.charge) {
-                    if (plugin.vault != null) {
-                        if (plugin.vault.getEconomyProvider().has(player.getName(), plugin.chargeAmount)) {
-                            plugin.vault.getEconomyProvider().withdrawPlayer(player.getName(), plugin.chargeAmount);
-                            player.sendMessage("You've been charged " + plugin.vault.getEconomyProvider().format(plugin.chargeAmount).toLowerCase() + " and now have " + plugin.vault.getEconomyProvider().format(plugin.vault.getEconomyProvider().getBalance(player.getName())).toLowerCase() + " left.");
+                    if (plugin.getVault() != null) {
+						if (VaultHandler.hasEnough(player.getName(), plugin.chargeAmount)) {
+                            VaultHandler.subtract(player.getName(), plugin.chargeAmount);
+                            player.sendMessage("You've been charged " + VaultHandler.format(plugin.chargeAmount).toLowerCase() + " and now have " + VaultHandler.format(VaultHandler.balance(player.getName())).toLowerCase() + " left.");
                         } else {
-                            player.sendMessage("You don't have enough " + plugin.vault.getEconomyProvider().currencyNamePlural().toLowerCase() + ".");
+                            player.sendMessage("You don't have enough " + VaultHandler.getCurrencyNamePlural().toLowerCase() + ".");
                             return true;
                         }
                     }
                 }
                 player.sendMessage("A glass carpet appears below your feet.");
                 carpet.show();
-                MagicCarpet.carpets.update(player);
+                plugin.getCarpets().update(player);
                 return true;
             }
         } else {
@@ -146,11 +144,9 @@ public class CarpetCommand implements CommandExecutor {
                         }
                     }
                     if (who != null) {
-                        Carpet.create(who, plugin).show();
-                        MagicCarpet.carpets.setGiven(who, true);
-                        who.sendMessage("The magic carpet has been given to you.");
+                        plugin.getCarpets().setGiven(who, true);
+                        who.sendMessage("The magic carpet has been given to you. Use /mc");
                         player.sendMessage("You've given the magic carpet to " + who.getName());
-                        MagicCarpet.carpets.update(who);
                         return true;
                     } else {
                         player.sendMessage("Can't find player " + args[1]);
@@ -169,11 +165,11 @@ public class CarpetCommand implements CommandExecutor {
                         }
                     }
                     if (who != null) {
-                        if (MagicCarpet.carpets.has(who)) {
-                            MagicCarpet.carpets.getCarpet(who).hide();
-                            MagicCarpet.carpets.update(who);
+                        if (plugin.getCarpets().has(who)) {
+                            plugin.getCarpets().getCarpet(who).hide();
+                            plugin.getCarpets().update(who);
                         }
-                        MagicCarpet.carpets.setGiven(who, false);
+                        plugin.getCarpets().setGiven(who, false);
                         who.sendMessage("The magic carpet has been taken from you.");
                         player.sendMessage("You've taken the magic carpet from " + who.getName());
                         return true;
@@ -196,12 +192,12 @@ public class CarpetCommand implements CommandExecutor {
             	}
             	if (carpet.hasTools()) {
             		carpet.toolsOff();
-            		MagicCarpet.carpets.update(player);
+            		plugin.getCarpets().update(player);
             		player.sendMessage("The magic tools have disappeared.");
             		return true;
             	}
             	carpet.toolsOn();
-            	MagicCarpet.carpets.update(player);
+            	plugin.getCarpets().update(player);
             	player.sendMessage("The magic tools have appeared!");
             	return true;
             }
@@ -223,7 +219,7 @@ public class CarpetCommand implements CommandExecutor {
                             if (MagicCarpet.acceptableCarpet.contains(m)) {
                                 player.sendMessage("The carpet reacts to your words and suddenly changes!");
                                 carpet.changeCarpet(m);
-                                MagicCarpet.carpets.update(player);
+                                plugin.getCarpets().update(player);
                                 return true;
                             } else {
                                 player.sendMessage("A carpet of that material would not support you!");
@@ -244,7 +240,7 @@ public class CarpetCommand implements CommandExecutor {
                 }
                 if (c != carpet.getSize()) {
                     carpet.changeCarpet(c);
-                    MagicCarpet.carpets.update(player);
+                    plugin.getCarpets().update(player);
                     player.sendMessage("The carpet reacts to your words and suddenly changes!");
                     return true;
                 } else {

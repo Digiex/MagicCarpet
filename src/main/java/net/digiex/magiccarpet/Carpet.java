@@ -1,6 +1,7 @@
 package net.digiex.magiccarpet;
 
 import static java.lang.Math.abs;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -43,19 +44,31 @@ public class Carpet {
         }
 
         boolean shouldGlow() {
-            if (!lights) {
+            if (!light) {
                 return false;
+            }
+            if (light && !p.canLight(who)) {
+            	lightOff();
+            	who.sendMessage("he luminous stones in the carpet slowly fade away.");
+            	p.getCarpets().update(who);
+            	return false;
             }
             if (dx == 0 && dz == 0) {
                 return true;
             }
             return false;
         }
-        
+
         boolean shouldEnder() {
         	if (!tools) {
         		return false;
         	}
+        	if (tools && !p.canTool(who)) {
+        		toolsOff();
+        		who.sendMessage("The magic tools suddenly disappeared.");
+        		p.getCarpets().update(who);
+            	return false;
+            }
         	if (dx == 2 && dz == 0) {
         		return true;
         	}
@@ -66,6 +79,12 @@ public class Carpet {
         	if (!tools) {
         		return false;
         	}
+        	if (tools && !p.canTool(who)) {
+        		toolsOff();
+        		who.sendMessage("The magic tools suddenly disappeared.");
+        		p.getCarpets().update(who);
+            	return false;
+            }
         	if (dx == -2 && dz == 0) {
         		return true;
         	}
@@ -73,9 +92,9 @@ public class Carpet {
         }
 
         void update() {
-        	if (block.getBlock().getMetadata("Carpet").isEmpty()) {
-        		return;
-        	}
+            if (block.getMetadata("Carpet").isEmpty()) {
+                return;
+            }
             block.removeMetadata("Carpet", p);
             block.update(true);
         }
@@ -85,138 +104,40 @@ public class Carpet {
 
     public static Carpet create(Player player, MagicCarpet plugin) {
         p = plugin;
-        int sz = MagicCarpet.carpets.getLastSize(player);
-        boolean light = MagicCarpet.carpets.hasLight(player);
-        boolean tools = MagicCarpet.carpets.hasTools(player);
-        Material thread = MagicCarpet.carpets.getMaterial(player);
-        Material shine = MagicCarpet.carpets.getLightMaterial(player);
+        int sz = plugin.getCarpets().getLastSize(player);
+        boolean light = plugin.getCarpets().hasLight(player);
+        Material thread = plugin.getCarpets().getMaterial(player);
+        Material shine = plugin.getCarpets().getLightMaterial(player);
+        boolean tools = plugin.getCarpets().hasTools(player);
         Carpet carpet = new Carpet(player, sz, light, thread, shine, tools);
-        MagicCarpet.carpets.assign(player, carpet);
+        plugin.getCarpets().assign(player, carpet);
         return carpet;
     }
     private Block currentCentre;
     private int edge = 0, area = 0, rad = 0, radplsq = 0;
     private CarpetFibre[] fibres;
-    private boolean hidden, lights, tools;
+    private boolean hidden, light, tools;
     private Material thread, shine;
     private Player who;
 
-    private Carpet(Player player, int sz, boolean on, Material mat, Material light, boolean t) {
-        setSize(sz);
-        who = player;
-        currentCentre = player.getLocation().getBlock();
-        lights = on;
+    private Carpet(Player p, int s, boolean o, Material m, Material l, boolean t) {
+        setSize(s);
+        who = p;
+        currentCentre = p.getLocation().getBlock();
+        light = o;
         hidden = true;
-        thread = mat;
-        shine = light;
+        thread = m;
+        shine = l;
         tools = t;
     }
-
-    public void changeCarpet(int sz) {
-        removeCarpet();
-        setSize(sz);
-        drawCarpet();
-    }
-
-    public void changeCarpet(Material material) {
-        removeCarpet();
-        thread = material;
-        drawCarpet();
-    }
-
-    public void descend() {
-        removeCarpet();
-        currentCentre = currentCentre.getRelative(0, -1, 0);
-        drawCarpet();
-    }
-
-    public Location getLocation() {
-        return currentCentre.getLocation();
-    }
-
-    public Player getPlayer() {
-        return who;
-    }
-
-    public Material getShine() {
-        return shine;
-    }
-
-    public int getSize() {
-        return edge;
-    }
-
-    public Material getThread() {
-        return thread;
-    }
-
-    public boolean hasLights() {
-        return lights;
-    }
-
-    public void hide() {
-        if (!hidden) {
-            removeCarpet();
-            hidden = true;
-        }
-    }
-
-    public boolean isCustom() {
-        if (getThread() != p.carpMaterial || getShine() != p.lightMaterial) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isVisible() {
-        return !hidden;
-    }
-
-    public void lightsOff() {
-        removeCarpet();
-        lights = false;
-        drawCarpet();
-    }
-
-    public void lightsOn() {
-        removeCarpet();
-        lights = true;
-        drawCarpet();
-    }
-
-    public void moveTo(Location to) {
-        removeCarpet();
-        currentCentre = to.getBlock();
-        drawCarpet();
-    }
-
-    public void setLights(Material material) {
-        removeCarpet();
-        shine = material;
-        drawCarpet();
-    }
-
-    public void show() {
-        if (hidden) {
-            currentCentre = getPlayer().getLocation().getBlock();
-            drawCarpet();
-        }
-    }
-
-    public boolean touches(Block block) {
-        if (currentCentre == null || block == null) {
-            return false;
-        }
-        if (block.getLocation().getWorld() != getLocation().getWorld()) {
-            return false;
-        }
-        if (block.getLocation().distanceSquared(getLocation()) > radplsq) {
-            return false;
-        }
-        return true;
-    }
-
+    
     private void drawCarpet() {
+    	if (!p.canFly(who)) {
+            hide();
+            who.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
+            p.getCarpets().update(who);
+            return;
+        }
         hidden = false;
         Block bl;
         for (CarpetFibre fibre : fibres) {
@@ -305,6 +226,114 @@ public class Carpet {
             }
         }
     }
+
+    public void changeCarpet(int sz) {
+        removeCarpet();
+        setSize(sz);
+        drawCarpet();
+    }
+
+    public void changeCarpet(Material material) {
+        removeCarpet();
+        thread = material;
+        drawCarpet();
+    }
+
+    public void descend() {
+        removeCarpet();
+        currentCentre = currentCentre.getRelative(0, -1, 0);
+        drawCarpet();
+    }
+
+    public Location getLocation() {
+        return currentCentre.getLocation();
+    }
+
+    public Player getPlayer() {
+        return who;
+    }
+
+    public Material getShine() {
+        return shine;
+    }
+
+    public int getSize() {
+        return edge;
+    }
+
+    public Material getThread() {
+        return thread;
+    }
+
+    public void hide() {
+        if (!hidden) {
+            removeCarpet();
+            hidden = true;
+        }
+    }
+
+    public boolean isCustom() {
+        if (getThread() != p.carpMaterial || getShine() != p.lightMaterial) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isVisible() {
+        return !hidden;
+    }
+    
+    public boolean hasLight() {
+        return light;
+    }
+
+    public void lightOff() {
+        removeCarpet();
+        light = false;
+        drawCarpet();
+    }
+
+    public void lightOn() {
+        removeCarpet();
+        light = true;
+        drawCarpet();
+    }
+
+    public void moveTo(Location to) {
+        removeCarpet();
+        currentCentre = to.getBlock();
+        drawCarpet();
+    }
+
+    public void setLight(Material material) {
+        removeCarpet();
+        shine = material;
+        drawCarpet();
+    }
+
+    public void show() {
+        if (hidden) {
+            currentCentre = getPlayer().getLocation().getBlock();
+            drawCarpet();
+        }
+    }
+
+    public boolean touches(Block block) {
+        if (currentCentre == null || block == null) {
+            return false;
+        }
+        if (block.getLocation().getWorld() != getLocation().getWorld()) {
+            return false;
+        }
+        if (block.getLocation().distanceSquared(getLocation()) > radplsq) {
+            return false;
+        }
+        return true;
+    }
+    
+    public boolean hasTools() {
+        return tools;
+    }
     
     public void toolsOff() {
         removeCarpet();
@@ -316,9 +345,5 @@ public class Carpet {
         removeCarpet();
         tools = true;
         drawCarpet();
-    }
-    
-    public boolean hasTools() {
-    	return tools;
     }
 }

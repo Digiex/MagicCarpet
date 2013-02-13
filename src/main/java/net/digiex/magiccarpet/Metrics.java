@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Tyler Blair. All rights reserved.
+ * Copyright 2011-2013 Tyler Blair. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -61,7 +61,7 @@ import java.util.logging.Level;
  * void start(); <br/>
  * </code>
  */
-public class BukkitMetrics {
+public class Metrics {
 
     /**
      * The current revision number
@@ -121,7 +121,7 @@ public class BukkitMetrics {
      */
     private volatile BukkitTask task = null;
 
-    public BukkitMetrics(final Plugin plugin) throws IOException {
+    public Metrics(final Plugin plugin) throws IOException {
         if (plugin == null) {
             throw new IllegalArgumentException("Plugin cannot be null");
         }
@@ -287,7 +287,7 @@ public class BukkitMetrics {
     /**
      * Enables metrics for the server by setting "opt-out" to false in the config file and starting the metrics task.
      *
-     * @throws IOException
+     * @throws java.io.IOException
      */
     public void enable() throws IOException {
         // This has to be synchronized or it can collide with the check in the task.
@@ -308,7 +308,7 @@ public class BukkitMetrics {
     /**
      * Disables metrics for the server by setting "opt-out" to true in the config file and canceling the metrics task.
      *
-     * @throws IOException
+     * @throws java.io.IOException
      */
     public void disable() throws IOException {
         // This has to be synchronized or it can collide with the check in the task.
@@ -555,7 +555,7 @@ public class BukkitMetrics {
         /**
          * Gets an <b>unmodifiable</b> set of the plotter objects in the graph
          *
-         * @return an unmodifiable {@link Set} of the plotter objects
+         * @return an unmodifiable {@link java.util.Set} of the plotter objects
          */
         public Set<Plotter> getPlotters() {
             return Collections.unmodifiableSet(plotters);

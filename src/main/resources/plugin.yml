@@ -1,8 +1,7 @@
 name: MagicCarpet
 main: net.digiex.magiccarpet.MagicCarpet
-version: 2.2.7
+version: 2.2.8
 website: http://dev.bukkit.org/server-mods/magiccarpet/
-dev-url: http://dev.bukkit.org/server-mods/magiccarpet/
 description: Take yourself wonder by wonder on a carpet made of glass.
 database: false
 load: POSTWORLD
@@ -12,9 +11,7 @@ commands:
   magiccarpet:
     description: Take yourself wonder by wonder on a carpet made of glass.
     aliases: [mc]
-    usage: /<command> [size] [material]
-    usage: /<command> give [player]
-    usage: /<command> take [player]
+    usage: /<command> [size|material|give|take] [player]
   magiclight:
     description: A bright light for your carpet ride.
     aliases: [ml]
@@ -41,7 +38,7 @@ permissions:
     description: Take yourself wonder by wonder on a carpet made of glass.
     default: op
   magiccarpet.mct:
-    description: Supplies a ender chest and workbench for you Magic Carpet.
+    description: Gives the player a ender chest and workbench for there carpet.
     default: op
   magiccarpet.*:
     description: Allows access to all MagicCarpet commands.
@@ -51,4 +48,3 @@ permissions:
       magiccarpet.ml: true
       magiccarpet.mcs: true
       magiccarpet.mr: true
-      magiccarpet.mct: true

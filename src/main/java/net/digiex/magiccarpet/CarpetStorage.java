@@ -3,6 +3,7 @@ package net.digiex.magiccarpet;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -23,19 +24,12 @@ import org.bukkit.entity.Player;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class CarpetStorage implements Serializable {
+    private static final long serialVersionUID = -2319896942961830890L;
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = -7095060918230909632L;
-
-	private class CarpetEntry implements Serializable {
+    private class CarpetEntry implements Serializable {
+        private static final long serialVersionUID = -7976244556045495329L;
         
-        /**
-		 * 
-		 */
-		private static final long serialVersionUID = -1655870844571882460L;
-		public transient Carpet carpet;
+        public transient Carpet carpet;
         public boolean crouch = plugin.crouchDef;
         public boolean hasCarpet = false;
         public int lastSize = plugin.carpSize;
@@ -178,7 +172,7 @@ public class CarpetStorage implements Serializable {
         }
         entry.lightsOn = false;
         if (entry.hasCarpet && entry.carpet != null) {
-            entry.carpet.lightsOff();
+            entry.carpet.lightOff();
         }
     }
 
@@ -189,7 +183,7 @@ public class CarpetStorage implements Serializable {
         }
         entry.lightsOn = true;
         if (entry.hasCarpet && entry.carpet != null) {
-            entry.carpet.lightsOn();
+            entry.carpet.lightOn();
         }
     }
 
@@ -223,7 +217,7 @@ public class CarpetStorage implements Serializable {
         }
         entry.lastSize = entry.carpet.getSize();
         entry.hasCarpet = entry.carpet.isVisible();
-        entry.lightsOn = entry.carpet.hasLights();
+        entry.lightsOn = entry.carpet.hasLight();
         entry.thread = entry.carpet.getThread();
         entry.light = entry.carpet.getShine();
         entry.tools = entry.carpet.hasTools();
@@ -266,20 +260,11 @@ public class CarpetStorage implements Serializable {
     public void setGiven(Player player, Boolean given) {
         CarpetEntry entry = getEntry(player);
         if (entry == null) {
+        	entry = new CarpetEntry();
+            carpets.put(player.getName(), entry);
             return;
         }
         entry.given = given;
-    }
-    
-    public void toolsOn(Player player) {
-        CarpetEntry entry = getEntry(player);
-        if (entry == null) {
-            return;
-        }
-        entry.tools = true;
-        if (entry.hasCarpet && entry.carpet != null) {
-            entry.carpet.toolsOn();
-        }
     }
 
     public void toolsOff(Player player) {
@@ -290,6 +275,17 @@ public class CarpetStorage implements Serializable {
         entry.tools = false;
         if (entry.hasCarpet && entry.carpet != null) {
             entry.carpet.toolsOff();
+        }
+    }
+
+    public void toolsOn(Player player) {
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return;
+        }
+        entry.tools = true;
+        if (entry.hasCarpet && entry.carpet != null) {
+            entry.carpet.toolsOn();
         }
     }
     

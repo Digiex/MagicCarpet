@@ -39,7 +39,7 @@ public class LightCommand implements CommandExecutor {
         }
         Player player = (Player) sender;
         if (plugin.canFly(player) && plugin.canLight(player)) {
-            Carpet carpet = MagicCarpet.carpets.getCarpet(player);
+            Carpet carpet = plugin.getCarpets().getCarpet(player);
             if (carpet == null || !carpet.isVisible()) {
                 player.sendMessage("You don't have a carpet yet, use /mc!");
                 return true;
@@ -47,7 +47,7 @@ public class LightCommand implements CommandExecutor {
             if (args.length < 1) {
                 hideOrShow(player);
             } else {
-                if (MagicCarpet.carpets.hasLight(player)) {
+                if (plugin.getCarpets().hasLight(player)) {
                     if (plugin.customLights) {
                         String word = "";
                         for (String a : args) {
@@ -61,7 +61,7 @@ public class LightCommand implements CommandExecutor {
                         if (m != null) {
                             if (MagicCarpet.acceptableLight.contains(m)) {
                                 player.sendMessage("The carpet reacts to your words and suddenly changes!");
-                                carpet.setLights(m);
+                                carpet.setLight(m);
                             } else {
                                 player.sendMessage("A magic light of that material would not light up!");
                                 return true;
@@ -88,7 +88,7 @@ public class LightCommand implements CommandExecutor {
                 return true;
             }
         }
-        MagicCarpet.carpets.update(player);
+        plugin.getCarpets().update(player);
         return true;
     }
 
@@ -97,11 +97,11 @@ public class LightCommand implements CommandExecutor {
             player.sendMessage("The magic light is disabled");
             return;
         }
-        if (MagicCarpet.carpets.hasLight(player)) {
-            MagicCarpet.carpets.lightOff(player);
+        if (plugin.getCarpets().hasLight(player)) {
+            plugin.getCarpets().lightOff(player);
             player.sendMessage("The luminous stones in the carpet slowly fade away.");
         } else {
-            MagicCarpet.carpets.lightOn(player);
+            plugin.getCarpets().lightOn(player);
             player.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
         }
     }

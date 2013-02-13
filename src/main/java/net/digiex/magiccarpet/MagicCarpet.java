@@ -1,12 +1,21 @@
 package net.digiex.magiccarpet;
 
-import java.io.*;
+import static org.bukkit.Material.*;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.logging.Logger;
-import net.digiex.magiccarpet.BukkitMetrics.Graph;
+
+import net.digiex.magiccarpet.Metrics.Graph;
+
 import org.bukkit.Material;
-import static org.bukkit.Material.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -32,7 +41,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class MagicCarpet extends JavaPlugin {
 
-    static final EnumSet<Material> acceptableCarpet = EnumSet.of(STONE, GRASS,
+    static EnumSet<Material> acceptableCarpet = EnumSet.of(STONE, GRASS,
             DIRT, COBBLESTONE, WOOD, BEDROCK, GOLD_ORE, IRON_ORE,
             COAL_ORE, LOG, LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK,
             SANDSTONE, NOTE_BLOCK, WOOL, GOLD_BLOCK, IRON_BLOCK, DOUBLE_STEP,
@@ -40,14 +49,15 @@ public class MagicCarpet extends JavaPlugin {
             DIAMOND_BLOCK, SOIL, SNOW_BLOCK, CLAY, PUMPKIN,
             NETHERRACK, SOUL_SAND, MYCEL, NETHER_BRICK, ENDER_STONE,
             HUGE_MUSHROOM_1, HUGE_MUSHROOM_2, MELON_BLOCK);
-    static final EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE, JACK_O_LANTERN);
-    private final MagicListener magicListener = new MagicListener(this);
-    public static CarpetStorage carpets = new CarpetStorage();
-    private WorldGuardHandler worldGuardHandler;
-    public VaultHandler vault;
-    public Logger log;
-    private FileConfiguration config;
-    private File configFile;
+    static EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE, JACK_O_LANTERN);
+    private CarpetStorage carpets = new CarpetStorage().attach(this);
+    MagicListener magicListener = new MagicListener(this);
+    WorldGuardHandler worldGuardHandler;
+    VaultHandler vault;
+    FileConfiguration config;
+    File configFile;
+    Logger log;
+    
     Material carpMaterial = GLASS;
     int carpSize = 5;
     boolean crouchDef = true;
@@ -61,58 +71,180 @@ public class MagicCarpet extends JavaPlugin {
     boolean charge = false;
     double chargeAmount = 1.0;
     String changeLiquids = "true";
-    boolean tools = false;;
+    boolean tools = false;
+    
+    private enum Permission {
+    	CARPET("magiccarpet.mc"),
+    	LIGHT("magiccarpet.ml"),
+    	SWITCH("magiccarpet.mcs"),
+    	TOOL("magiccarpet.mct"),
+    	RELOAD("magiccarpet.mr");
+    	
+    	private final String permission;
+
+        Permission(String permission) {
+            this.permission = permission;
+        }
+        
+        public static boolean has(Player player, Permission permission) {
+            return has(player, permission.permission);
+        }
+
+        public static boolean has(Player player, String node) {
+            return player.hasPermission(node);
+        }
+    }
+    
+    private String saveString(String s) {
+        return s.toLowerCase().replace("_", " ");
+    }
+
+    private String loadString(String s) {
+        return s.toUpperCase().replace(" ", "_");
+    }
+
+    private File carpetsFile() {
+        return new File(getDataFolder(), "carpets.dat");
+    }
+
+    private void registerCommands() {
+        getCommand("magiccarpet").setExecutor(new CarpetCommand(this));
+        getCommand("magiclight").setExecutor(new LightCommand(this));
+        getCommand("carpetswitch").setExecutor(new SwitchCommand(this));
+        getCommand("magicreload").setExecutor(new ReloadCommand(this));
+    }
+
+    private void registerEvents(Listener listener) {
+        getServer().getPluginManager().registerEvents(listener, this);
+    }
+
+    private void startStats() {
+        try {
+            Metrics metrics = new Metrics(this);
+            Graph graph = metrics.createGraph("Carpets");
+            graph.addPlotter(new Metrics.Plotter("Total") {
+                @Override
+                public int getValue() {
+                    int i = 0;
+                    for (Iterator<Carpet> iterator = carpets.all().iterator(); iterator
+							.hasNext();) {
+                    	i = i + 1;
+                    	iterator.next();
+					}
+                    return i;
+                }
+            });
+            graph.addPlotter(new Metrics.Plotter("Current") {
+                @Override
+                public int getValue() {
+                    int i = 0;
+                    for (Carpet c : carpets.all()) {
+                        if (c == null || !c.isVisible()) {
+                            continue;
+                        }
+                        i = i + 1;
+                    }
+                    return i;
+                }
+            });
+            metrics.start();
+        } catch (IOException e) {
+            log.warning("Failed to submit stats.");
+        }
+    }
+    
+    @Override
+    public void onDisable() {
+        if (saveCarpets) {
+            saveCarpets();
+        } else {
+            for (Carpet c : carpets.all()) {
+                if (c == null || !c.isVisible()) {
+                    continue;
+                }
+                c.hide();
+            }
+        }
+        log.info("is now disabled!");
+    }
+
+    @Override
+    public void onEnable() {
+        log = getLogger();
+        if (!getDataFolder().exists()) {
+            getDataFolder().mkdirs();
+        }
+        config = getConfig();
+        configFile = new File(getDataFolder(), "config.yml");
+        if (configFile.exists()) {
+            loadSettings();
+        } else {
+            saveSettings();
+        }
+        if (saveCarpets) {
+            loadCarpets();
+        }
+        registerEvents(magicListener);
+        registerCommands();
+        getWorldGuard();
+        getVault();
+        startStats();
+        log.info("is now enabled!");
+    }
+    
+    public void getWorldGuard() {
+        Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
+        if (plugin == null || !(plugin instanceof com.sk89q.worldguard.bukkit.WorldGuardPlugin)) {
+            return;
+        }
+        worldGuardHandler = new WorldGuardHandler((com.sk89q.worldguard.bukkit.WorldGuardPlugin) plugin);
+    }
+
+    public VaultHandler getVault() {
+    	if (vault != null) {
+    		return vault;
+    	}
+        Plugin plugin = getServer().getPluginManager().getPlugin("Vault");
+        if (plugin == null || !(plugin instanceof net.milkbowl.vault.Vault)) {
+            return null;
+        }
+        return vault = new VaultHandler();
+    }
+    
+    public CarpetStorage getCarpets() {
+    	return carpets;
+    }
 
     public boolean canFly(Player player) {
-        if (carpets.getGiven(player)) {
-            return true;
-        }
-        String s = "magiccarpet.mc";
-        return (vault == null)
-                ? player.hasPermission(s)
-                : vault.getPermissionProvider().has(player, s);
+    	return (getCarpets().getGiven(player)) ? true : 
+    		Permission.has(player, Permission.CARPET);
     }
 
     public boolean canFlyHere(Player player) {
-        return (worldGuardHandler == null) ? true
-                : worldGuardHandler.canFlyHere(player);
+        if (worldGuardHandler != null) {
+            return worldGuardHandler.canFlyHere(player);
+        }
+        return true;
     }
 
     public boolean canLight(Player player) {
-        if (carpets.getGiven(player)) {
-            return true;
-        }
-        String s = "magiccarpet.ml";
-        return (vault == null)
-                ? player.hasPermission(s)
-                : vault.getPermissionProvider().has(player, s);
-    }
-
-    public boolean canReload(Player player) {
-        String s = "magiccarpet.mr";
-        return (vault == null)
-                ? player.hasPermission(s)
-                : vault.getPermissionProvider().has(player, s);
+    	return (getCarpets().getGiven(player)) ? true : 
+    		Permission.has(player, Permission.LIGHT);
     }
 
     public boolean canSwitch(Player player) {
-        if (carpets.getGiven(player)) {
-            return true;
-        }
-        String s = "magiccarpet.mcs";
-        return (vault == null)
-                ? player.hasPermission(s)
-                : vault.getPermissionProvider().has(player, s);
+    	return (getCarpets().getGiven(player)) ? true : 
+    		Permission.has(player, Permission.SWITCH);
     }
     
     public boolean canTool(Player player) {
-        if (carpets.getGiven(player)) {
-            return true;
-        }
-        String s = "magiccarpet.mct";
-        return (vault == null)
-                ? player.hasPermission(s)
-                : vault.getPermissionProvider().has(player, s);
+    	return (getCarpets().getGiven(player)) ? true : 
+    		Permission.has(player, Permission.TOOL);
+    }
+    
+    public boolean canReload(Player player) {
+    	return (getCarpets().getGiven(player)) ? true : 
+    		Permission.has(player, Permission.RELOAD);
     }
 
     public void loadCarpets() {
@@ -181,50 +313,9 @@ public class MagicCarpet extends JavaPlugin {
         charge = config.getBoolean("charge", false);
         chargeAmount = config.getDouble("charge-amount", 1.0);
         changeLiquids = config.getString("change-liquids", "true");
-        if (!changeLiquids.equals("lava") && !changeLiquids.equals("water") && !changeLiquids.equals("false")) {
-            changeLiquids = "true";
-        }
+        if(!changeLiquids.equals("lava") && !changeLiquids.equals("water") && !changeLiquids.equals("false"))
+        	changeLiquids = "true";
         tools = config.getBoolean("tools", false);
-    }
-
-    @Override
-    public void onDisable() {
-        if (saveCarpets) {
-            saveCarpets();
-        } else {
-            for (Carpet c : carpets.all()) {
-                if (c == null || !c.isVisible()) {
-                    continue;
-                }
-                c.hide();
-            }
-        }
-        log.info("is now disabled!");
-    }
-
-    @Override
-    public void onEnable() {
-    	carpets = carpets.attach(this);
-        log = getLogger();
-        if (!getDataFolder().exists()) {
-            getDataFolder().mkdirs();
-        }
-        config = getConfig();
-        configFile = new File(getDataFolder(), "config.yml");
-        if (configFile.exists()) {
-            loadSettings();
-        } else {
-            saveSettings();
-        }
-        if (saveCarpets) {
-            loadCarpets();
-        }
-        registerEvents(magicListener);
-        registerCommands();
-        getWorldGuard();
-        getVault();
-        startStats();
-        log.info("is now enabled!");
     }
 
     public void saveCarpets() {
@@ -272,86 +363,9 @@ public class MagicCarpet extends JavaPlugin {
         }
     }
 
-    private String saveString(String s) {
-        return s.toLowerCase().replace("_", " ");
-    }
-
-    private String loadString(String s) {
-        return s.toUpperCase().replace(" ", "_");
-    }
-
-    private File carpetsFile() {
-        return new File(getDataFolder(), "carpets.dat");
-    }
-
-    private void registerCommands() {
-        getCommand("magiccarpet").setExecutor(new CarpetCommand(this));
-        getCommand("magiclight").setExecutor(new LightCommand(this));
-        getCommand("carpetswitch").setExecutor(new SwitchCommand(this));
-        getCommand("magicreload").setExecutor(new ReloadCommand(this));
-    }
-
-    private void registerEvents(Listener listener) {
-        getServer().getPluginManager().registerEvents(listener, this);
-    }
-
-    private void getWorldGuard() {
-        Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
-        if (plugin == null || !(plugin instanceof com.sk89q.worldguard.bukkit.WorldGuardPlugin)) {
-            return;
-        }
-        worldGuardHandler = new WorldGuardHandler((com.sk89q.worldguard.bukkit.WorldGuardPlugin) plugin);
-    }
-
-    private void getVault() {
-        Plugin plugin = getServer().getPluginManager().getPlugin("Vault");
-        if (plugin == null || !(plugin instanceof net.milkbowl.vault.Vault)) {
-            return;
-        }
-        vault = new VaultHandler(this).setup();
-    }
-
-    private void startStats() {
-        try {
-            BukkitMetrics metrics = new BukkitMetrics(this);
-            Graph graph = metrics.createGraph("Carpets");
-            graph.addPlotter(new BukkitMetrics.Plotter("Total") {
-                @Override
-                public int getValue() {
-                    int i = 0;
-                    for (Iterator<Carpet> iterator = carpets.all().iterator(); iterator
-							.hasNext();) {
-						i = i + 1;
-					}
-                    return i;
-                }
-            });
-            graph.addPlotter(new BukkitMetrics.Plotter("Current") {
-                @Override
-                public int getValue() {
-                    int i = 0;
-                    for (Carpet c : carpets.all()) {
-                        if (c == null || !c.isVisible()) {
-                            continue;
-                        }
-                        i = i + 1;
-                    }
-                    return i;
-                }
-            });
-            metrics.start();
-        } catch (IOException e) {
-            log.warning("Failed to submit stats.");
-        }
-    }
-
-    public boolean canChangeLiquids(String type) {
-        if (changeLiquids.equals("false")) {
-            return false;
-        } else if (changeLiquids.equals("true")) {
-            return true;
-        } else {
-            return changeLiquids.equals(type);
-        }
-    }
+	public boolean canChangeLiquids(String type) {
+		if(changeLiquids.equals("false")) return false;
+		else if(changeLiquids.equals("true")) return true;
+		else return changeLiquids.equals(type);
+	}
 }
