@@ -11,7 +11,7 @@ commands:
   magiccarpet:
     description: Take yourself wonder by wonder on a carpet made of glass.
     aliases: [mc]
-    usage: /<command> [size|material|give|take] [player]
+    usage: /<command> [size|material|give|take|tool] [player]
   magiclight:
     description: A bright light for your carpet ride.
     aliases: [ml]
@@ -48,3 +48,4 @@ permissions:
       magiccarpet.ml: true
       magiccarpet.mcs: true
       magiccarpet.mr: true
+      magiccarpet.mct: true
