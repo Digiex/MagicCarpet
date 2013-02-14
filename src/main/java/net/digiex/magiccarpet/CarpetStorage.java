@@ -24,12 +24,12 @@ import org.bukkit.entity.Player;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class CarpetStorage implements Serializable {
-    private static final long serialVersionUID = -2319896942961830890L;
+	private static final long serialVersionUID = -6967864502680011546L;
 
-    private class CarpetEntry implements Serializable {
-        private static final long serialVersionUID = -7976244556045495329L;
-        
-        public transient Carpet carpet;
+	private class CarpetEntry implements Serializable {
+		private static final long serialVersionUID = -1655870844571882460L;
+		
+		public transient Carpet carpet;
         public boolean crouch = plugin.crouchDef;
         public boolean hasCarpet = false;
         public int lastSize = plugin.carpSize;
