@@ -33,11 +33,11 @@ public class ReloadCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
         if (!(sender instanceof Player)) {
             reload();
-            plugin.log.info("has been reloaded!");
+            sender.sendMessage("has been reloaded!");
             return true;
         } else if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (plugin.canReload(player)) {
+            if (MagicCarpet.canReload(player)) {
                 reload();
                 player.sendMessage("MagicCarpet has been reloaded!");
             } else {
@@ -49,7 +49,7 @@ public class ReloadCommand implements CommandExecutor {
     }
 
     public void reload() {
-        for (Carpet c : plugin.getCarpets().all()) {
+        for (Carpet c : MagicCarpet.getCarpets().all()) {
             if (c == null || !c.isVisible()) {
                 continue;
             }
@@ -61,7 +61,7 @@ public class ReloadCommand implements CommandExecutor {
             plugin.loadCarpets();
         }
         for (Player p : plugin.getServer().getOnlinePlayers()) {
-            if (plugin.getCarpets().has(p)) {
+            if (MagicCarpet.getCarpets().has(p)) {
                 Carpet.create(p, plugin).show();
             }
         }

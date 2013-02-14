@@ -225,10 +225,10 @@ public class CarpetStorage implements Serializable {
 
     public void checkCarpets() {
         for (CarpetEntry entry : carpets.values()) {
-            if (!MagicCarpet.acceptableCarpet.contains(entry.thread)) {
+            if (!MagicCarpet.getAcceptableCarpetMaterial().contains(entry.thread)) {
                 entry.thread = plugin.carpMaterial;
             }
-            if (!MagicCarpet.acceptableLight.contains(entry.light)) {
+            if (!MagicCarpet.getAcceptableLightMaterial().contains(entry.light)) {
                 entry.light = plugin.lightMaterial;
             }
             if (entry.lastSize > plugin.maxCarpSize) {
@@ -262,7 +262,6 @@ public class CarpetStorage implements Serializable {
         if (entry == null) {
         	entry = new CarpetEntry();
             carpets.put(player.getName(), entry);
-            return;
         }
         entry.given = given;
     }

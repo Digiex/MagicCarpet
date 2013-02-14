@@ -47,10 +47,10 @@ public class Carpet {
             if (!light) {
                 return false;
             }
-            if (light && !p.canLight(who)) {
+            if (light && !MagicCarpet.canLight(who)) {
             	lightOff();
-            	who.sendMessage("he luminous stones in the carpet slowly fade away.");
-            	p.getCarpets().update(who);
+            	who.sendMessage("The luminous stones in the carpet slowly fade away.");
+            	MagicCarpet.getCarpets().update(who);
             	return false;
             }
             if (dx == 0 && dz == 0) {
@@ -63,10 +63,10 @@ public class Carpet {
         	if (!tools) {
         		return false;
         	}
-        	if (tools && !p.canTool(who)) {
+        	if (tools && !MagicCarpet.canTool(who)) {
         		toolsOff();
         		who.sendMessage("The magic tools suddenly disappeared.");
-        		p.getCarpets().update(who);
+        		MagicCarpet.getCarpets().update(who);
             	return false;
             }
         	if (dx == 2 && dz == 0) {
@@ -79,10 +79,10 @@ public class Carpet {
         	if (!tools) {
         		return false;
         	}
-        	if (tools && !p.canTool(who)) {
+        	if (tools && !MagicCarpet.canTool(who)) {
         		toolsOff();
         		who.sendMessage("The magic tools suddenly disappeared.");
-        		p.getCarpets().update(who);
+        		MagicCarpet.getCarpets().update(who);
             	return false;
             }
         	if (dx == -2 && dz == 0) {
@@ -104,13 +104,13 @@ public class Carpet {
 
     public static Carpet create(Player player, MagicCarpet plugin) {
         p = plugin;
-        int sz = plugin.getCarpets().getLastSize(player);
-        boolean light = plugin.getCarpets().hasLight(player);
-        Material thread = plugin.getCarpets().getMaterial(player);
-        Material shine = plugin.getCarpets().getLightMaterial(player);
-        boolean tools = plugin.getCarpets().hasTools(player);
+        int sz = MagicCarpet.getCarpets().getLastSize(player);
+        boolean light = MagicCarpet.getCarpets().hasLight(player);
+        Material thread = MagicCarpet.getCarpets().getMaterial(player);
+        Material shine = MagicCarpet.getCarpets().getLightMaterial(player);
+        boolean tools = MagicCarpet.getCarpets().hasTools(player);
         Carpet carpet = new Carpet(player, sz, light, thread, shine, tools);
-        plugin.getCarpets().assign(player, carpet);
+        MagicCarpet.getCarpets().assign(player, carpet);
         return carpet;
     }
     private Block currentCentre;
@@ -132,10 +132,10 @@ public class Carpet {
     }
     
     private void drawCarpet() {
-    	if (!p.canFly(who)) {
+    	if (!MagicCarpet.canFly(who)) {
             hide();
             who.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
-            p.getCarpets().update(who);
+            MagicCarpet.getCarpets().update(who);
             return;
         }
         hidden = false;
@@ -300,6 +300,12 @@ public class Carpet {
     }
 
     public void moveTo(Location to) {
+    	if (!p.canFlyHere(to)) {
+            hide();
+            who.sendMessage("Your carpet is forbidden in this area!");
+            MagicCarpet.getCarpets().update(who);
+            return;
+        }
         removeCarpet();
         currentCentre = to.getBlock();
         drawCarpet();

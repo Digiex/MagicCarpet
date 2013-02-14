@@ -23,12 +23,6 @@ import org.bukkit.entity.Player;
  */
 public class SwitchCommand implements CommandExecutor {
 
-    private final MagicCarpet plugin;
-
-    public SwitchCommand(MagicCarpet plugin) {
-        this.plugin = plugin;
-    }
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
@@ -36,20 +30,20 @@ public class SwitchCommand implements CommandExecutor {
             return true;
         }
         Player player = (Player) sender;
-        if (plugin.canFly(player) && plugin.canSwitch(player)) {
-            Carpet carpet = plugin.getCarpets().getCarpet(player);
+        if (MagicCarpet.canFly(player) && MagicCarpet.canSwitch(player)) {
+            Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
             if (carpet == null || !carpet.isVisible()) {
                 player.sendMessage("You don't have a carpet yet, use /mc!");
                 return true;
             }
-            plugin.getCarpets().toggleCrouch(player);
-            if (plugin.getCarpets().crouches(player)) {
+            MagicCarpet.getCarpets().toggleCrouch(player);
+            if (MagicCarpet.getCarpets().crouches(player)) {
                 player.sendMessage("You now crouch to descend");
             } else {
                 player.sendMessage("You now look down to descend");
             }
         } else {
-            if (plugin.canFly(player)) {
+            if (MagicCarpet.canFly(player)) {
                 player.sendMessage("You don't have permission to switch your mode of descent.");
             } else {
                 player.sendMessage("You aren't allowed to use the magic carpet!");

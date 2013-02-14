@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 import net.digiex.magiccarpet.Metrics.Graph;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -41,7 +42,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class MagicCarpet extends JavaPlugin {
 
-    static EnumSet<Material> acceptableCarpet = EnumSet.of(STONE, GRASS,
+    private static EnumSet<Material> acceptableCarpet = EnumSet.of(STONE, GRASS,
             DIRT, COBBLESTONE, WOOD, BEDROCK, GOLD_ORE, IRON_ORE,
             COAL_ORE, LOG, LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK,
             SANDSTONE, NOTE_BLOCK, WOOL, GOLD_BLOCK, IRON_BLOCK, DOUBLE_STEP,
@@ -49,14 +50,14 @@ public class MagicCarpet extends JavaPlugin {
             DIAMOND_BLOCK, SOIL, SNOW_BLOCK, CLAY, PUMPKIN,
             NETHERRACK, SOUL_SAND, MYCEL, NETHER_BRICK, ENDER_STONE,
             HUGE_MUSHROOM_1, HUGE_MUSHROOM_2, MELON_BLOCK);
-    static EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE, JACK_O_LANTERN);
-    private CarpetStorage carpets = new CarpetStorage().attach(this);
-    MagicListener magicListener = new MagicListener(this);
-    WorldGuardHandler worldGuardHandler;
-    VaultHandler vault;
-    FileConfiguration config;
-    File configFile;
-    Logger log;
+    private static EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE, JACK_O_LANTERN);
+    private static CarpetStorage carpets = new CarpetStorage();
+    private MagicListener magicListener = new MagicListener(this);
+    private static WorldGuardHandler worldGuardHandler;
+    private VaultHandler vault;
+    private FileConfiguration config;
+    private File configFile;
+    private Logger log;
     
     Material carpMaterial = GLASS;
     int carpSize = 5;
@@ -110,7 +111,7 @@ public class MagicCarpet extends JavaPlugin {
     private void registerCommands() {
         getCommand("magiccarpet").setExecutor(new CarpetCommand(this));
         getCommand("magiclight").setExecutor(new LightCommand(this));
-        getCommand("carpetswitch").setExecutor(new SwitchCommand(this));
+        getCommand("carpetswitch").setExecutor(new SwitchCommand());
         getCommand("magicreload").setExecutor(new ReloadCommand(this));
     }
 
@@ -170,6 +171,7 @@ public class MagicCarpet extends JavaPlugin {
 
     @Override
     public void onEnable() {
+    	carpets = carpets.attach(this);
         log = getLogger();
         if (!getDataFolder().exists()) {
             getDataFolder().mkdirs();
@@ -192,7 +194,7 @@ public class MagicCarpet extends JavaPlugin {
         log.info("is now enabled!");
     }
     
-    public void getWorldGuard() {
+    void getWorldGuard() {
         Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
         if (plugin == null || !(plugin instanceof com.sk89q.worldguard.bukkit.WorldGuardPlugin)) {
             return;
@@ -200,7 +202,7 @@ public class MagicCarpet extends JavaPlugin {
         worldGuardHandler = new WorldGuardHandler((com.sk89q.worldguard.bukkit.WorldGuardPlugin) plugin);
     }
 
-    public VaultHandler getVault() {
+    VaultHandler getVault() {
     	if (vault != null) {
     		return vault;
     	}
@@ -211,43 +213,49 @@ public class MagicCarpet extends JavaPlugin {
         return vault = new VaultHandler();
     }
     
-    public CarpetStorage getCarpets() {
+    public static CarpetStorage getCarpets() {
     	return carpets;
     }
 
-    public boolean canFly(Player player) {
+    public static boolean canFly(Player player) {
     	return (getCarpets().getGiven(player)) ? true : 
     		Permission.has(player, Permission.CARPET);
     }
 
-    public boolean canFlyHere(Player player) {
-        if (worldGuardHandler != null) {
-            return worldGuardHandler.canFlyHere(player);
-        }
-        return true;
-    }
-
-    public boolean canLight(Player player) {
+    public static boolean canLight(Player player) {
     	return (getCarpets().getGiven(player)) ? true : 
     		Permission.has(player, Permission.LIGHT);
     }
 
-    public boolean canSwitch(Player player) {
+    public static boolean canSwitch(Player player) {
     	return (getCarpets().getGiven(player)) ? true : 
     		Permission.has(player, Permission.SWITCH);
     }
     
-    public boolean canTool(Player player) {
+    public static boolean canTool(Player player) {
     	return (getCarpets().getGiven(player)) ? true : 
     		Permission.has(player, Permission.TOOL);
     }
     
-    public boolean canReload(Player player) {
+    public static boolean canReload(Player player) {
     	return (getCarpets().getGiven(player)) ? true : 
     		Permission.has(player, Permission.RELOAD);
     }
+    
+    public static EnumSet<Material> getAcceptableCarpetMaterial() {
+    	return acceptableCarpet;
+    }
+    
+    public static EnumSet<Material> getAcceptableLightMaterial() {
+    	return acceptableLight;
+    }
+    
+    boolean canFlyHere(Location location) {
+        return (worldGuardHandler == null) ? true :
+            worldGuardHandler.canFlyHere(location);
+    }
 
-    public void loadCarpets() {
+    void loadCarpets() {
         File carpetDat = carpetsFile();
         if (!carpetDat.exists()) {
             return;
@@ -267,7 +275,7 @@ public class MagicCarpet extends JavaPlugin {
         carpets.checkCarpets();
     }
 
-    public void loadSettings() {
+    void loadSettings() {
         try {
             config.load(configFile);
         } catch (FileNotFoundException e) {
@@ -318,7 +326,7 @@ public class MagicCarpet extends JavaPlugin {
         tools = config.getBoolean("tools", false);
     }
 
-    public void saveCarpets() {
+    void saveCarpets() {
         File carpetDat = carpetsFile();
         log.info("Saving carpets...");
         if (!carpetDat.exists()) {
@@ -339,7 +347,7 @@ public class MagicCarpet extends JavaPlugin {
         carpets.clear();
     }
 
-    public void saveSettings() {
+    void saveSettings() {
         config.set("crouch-descent", crouchDef);
         config.set("center-light", glowCenter);
         config.set("default-size", carpSize);
@@ -363,7 +371,7 @@ public class MagicCarpet extends JavaPlugin {
         }
     }
 
-	public boolean canChangeLiquids(String type) {
+	boolean canChangeLiquids(String type) {
 		if(changeLiquids.equals("false")) return false;
 		else if(changeLiquids.equals("true")) return true;
 		else return changeLiquids.equals(type);

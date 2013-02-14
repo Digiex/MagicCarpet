@@ -91,8 +91,8 @@ public class WorldGuardHandler {
         CarpetFlag.injectHax();
     }
     
-    public boolean canFlyHere(Player player) {
-        ApplicableRegionSet regions = getApplicableRegions(player.getLocation());
+    boolean canFlyHere(Location location) {
+    	ApplicableRegionSet regions = getApplicableRegions(location);
         return CarpetFlag.setAllowsFlag(regions);
     }
 
