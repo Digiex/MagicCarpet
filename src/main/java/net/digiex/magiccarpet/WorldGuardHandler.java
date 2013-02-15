@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import com.sk89q.worldedit.bukkit.BukkitUtil;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -41,18 +40,18 @@ public class WorldGuardHandler {
         public CarpetFlag() {
             super("carpet", true);
         }
-
-        public static boolean setAllowsFlag(ApplicableRegionSet set) {
-            return set.allows(flag);
-        }
-
+        
         private static List elements() {
             List<Flag> elements = new ArrayList(Arrays.asList(DefaultFlag.getFlags()));
             elements.add(flag);
             return elements;
         }
 
-        public static void injectHax() {
+        static boolean setAllowsFlag(ApplicableRegionSet set) {
+            return set.allows(flag);
+        }
+
+        static void injectHax() {
             try {
                 Field field = DefaultFlag.class.getDeclaredField("flagsList");
 

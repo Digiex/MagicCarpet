@@ -22,6 +22,12 @@ import org.bukkit.entity.Player;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class SwitchCommand implements CommandExecutor {
+	
+	private final MagicCarpet plugin;
+	
+	public SwitchCommand(MagicCarpet plugin) {
+		this.plugin = plugin;
+	}
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -30,7 +36,7 @@ public class SwitchCommand implements CommandExecutor {
             return true;
         }
         Player player = (Player) sender;
-        if (MagicCarpet.canFly(player) && MagicCarpet.canSwitch(player)) {
+        if (plugin.canFly(player) && plugin.canSwitch(player)) {
             Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
             if (carpet == null || !carpet.isVisible()) {
                 player.sendMessage("You don't have a carpet yet, use /mc!");
@@ -43,7 +49,7 @@ public class SwitchCommand implements CommandExecutor {
                 player.sendMessage("You now look down to descend");
             }
         } else {
-            if (MagicCarpet.canFly(player)) {
+            if (plugin.canFly(player)) {
                 player.sendMessage("You don't have permission to switch your mode of descent.");
             } else {
                 player.sendMessage("You aren't allowed to use the magic carpet!");

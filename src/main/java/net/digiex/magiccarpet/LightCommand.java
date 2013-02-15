@@ -38,17 +38,20 @@ public class LightCommand implements CommandExecutor {
             return true;
         }
         Player player = (Player) sender;
-        if (MagicCarpet.canFly(player) && MagicCarpet.canLight(player)) {
+        if (plugin.canFly(player) && plugin.canLight(player)) {
             Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
             if (carpet == null || !carpet.isVisible()) {
                 player.sendMessage("You don't have a carpet yet, use /mc!");
                 return true;
             }
             if (args.length < 1) {
-                hideOrShow(player);
+            	if (MagicCarpet.getCarpets().hasLight(player)) {
+                    carpet.lightOff();
+                } else {
+                    carpet.lightOn();
+                }
             } else {
                 if (MagicCarpet.getCarpets().hasLight(player)) {
-                    if (plugin.customLights) {
                         String word = "";
                         for (String a : args) {
                             if (word.isEmpty()) {
@@ -59,50 +62,26 @@ public class LightCommand implements CommandExecutor {
                         }
                         Material m = Material.getMaterial(word.toUpperCase().replace(" ", "_"));
                         if (m != null) {
-                            if (MagicCarpet.getAcceptableLightMaterial().contains(m)) {
-                                player.sendMessage("The carpet reacts to your words and suddenly changes!");
                                 carpet.setLight(m);
-                            } else {
-                                player.sendMessage("A magic light of that material would not light up!");
                                 return true;
-                            }
                         } else {
                             player.sendMessage("Material error; Material may be entered as JACK_O_LANTERN or just plain jack o lantern");
                             return true;
                         }
-                    } else {
-                        player.sendMessage("The magic light isn't allowed to change material.");
-                        return true;
-                    }
                 } else {
                     player.sendMessage("You haven't enabled the magic light yet.");
                     return true;
                 }
             }
         } else {
-            if (MagicCarpet.canFly(player)) {
+            if (plugin.canFly(player)) {
                 player.sendMessage("You do not have permission to use magic light!");
                 return true;
             } else {
-                player.sendMessage("You aren't allowed to use the magic carpet!");
+                player.sendMessage("You are not allowed to use the magic carpet!");
                 return true;
             }
         }
-        MagicCarpet.getCarpets().update(player);
         return true;
-    }
-
-    private void hideOrShow(Player player) {
-        if (!plugin.lights) {
-            player.sendMessage("The magic light is disabled");
-            return;
-        }
-        if (MagicCarpet.getCarpets().hasLight(player)) {
-            MagicCarpet.getCarpets().lightOff(player);
-            player.sendMessage("The luminous stones in the carpet slowly fade away.");
-        } else {
-            MagicCarpet.getCarpets().lightOn(player);
-            player.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
-        }
     }
 }

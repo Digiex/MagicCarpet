@@ -54,8 +54,6 @@ public class MagicListener implements Listener {
         Player player = event.getPlayer();
         if (MagicCarpet.getCarpets().has(player)) {
             Carpet.create(player, plugin).show();
-        } else {
-            MagicCarpet.getCarpets().update(player);
         }
     }
     

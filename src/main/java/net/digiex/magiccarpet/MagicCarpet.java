@@ -87,11 +87,11 @@ public class MagicCarpet extends JavaPlugin {
             this.permission = permission;
         }
         
-        public static boolean has(Player player, Permission permission) {
+        static boolean has(Player player, Permission permission) {
             return has(player, permission.permission);
         }
 
-        public static boolean has(Player player, String node) {
+        static boolean has(Player player, String node) {
             return player.hasPermission(node);
         }
     }
@@ -111,7 +111,7 @@ public class MagicCarpet extends JavaPlugin {
     private void registerCommands() {
         getCommand("magiccarpet").setExecutor(new CarpetCommand(this));
         getCommand("magiclight").setExecutor(new LightCommand(this));
-        getCommand("carpetswitch").setExecutor(new SwitchCommand());
+        getCommand("carpetswitch").setExecutor(new SwitchCommand(this));
         getCommand("magicreload").setExecutor(new ReloadCommand(this));
     }
 
@@ -163,7 +163,7 @@ public class MagicCarpet extends JavaPlugin {
                 if (c == null || !c.isVisible()) {
                     continue;
                 }
-                c.hide();
+                c.removeCarpet();
             }
         }
         log.info("is now disabled!");
@@ -217,42 +217,63 @@ public class MagicCarpet extends JavaPlugin {
     	return carpets;
     }
 
-    public static boolean canFly(Player player) {
-    	return (getCarpets().getGiven(player)) ? true : 
+    boolean canFly(Player player) {
+    	return (getCarpets().wasGiven(player)) ? true : 
     		Permission.has(player, Permission.CARPET);
     }
 
-    public static boolean canLight(Player player) {
-    	return (getCarpets().getGiven(player)) ? true : 
+    boolean canLight(Player player) {
+    	return (getCarpets().wasGiven(player)) ? true : 
     		Permission.has(player, Permission.LIGHT);
     }
 
-    public static boolean canSwitch(Player player) {
-    	return (getCarpets().getGiven(player)) ? true : 
+    boolean canSwitch(Player player) {
+    	return (getCarpets().wasGiven(player)) ? true : 
     		Permission.has(player, Permission.SWITCH);
     }
     
-    public static boolean canTool(Player player) {
-    	return (getCarpets().getGiven(player)) ? true : 
+    boolean canTool(Player player) {
+    	return (getCarpets().wasGiven(player)) ? true : 
     		Permission.has(player, Permission.TOOL);
     }
     
-    public static boolean canReload(Player player) {
-    	return (getCarpets().getGiven(player)) ? true : 
+    boolean canReload(Player player) {
+    	return (getCarpets().wasGiven(player)) ? true : 
     		Permission.has(player, Permission.RELOAD);
     }
     
-    public static EnumSet<Material> getAcceptableCarpetMaterial() {
+    EnumSet<Material> getAcceptableCarpetMaterial() {
     	return acceptableCarpet;
     }
     
-    public static EnumSet<Material> getAcceptableLightMaterial() {
+    EnumSet<Material> getAcceptableLightMaterial() {
     	return acceptableLight;
     }
     
     boolean canFlyHere(Location location) {
         return (worldGuardHandler == null) ? true :
             worldGuardHandler.canFlyHere(location);
+    }
+    
+    void saveCarpets() {
+        File carpetDat = carpetsFile();
+        log.info("Saving carpets...");
+        if (!carpetDat.exists()) {
+            try {
+                carpetDat.createNewFile();
+            } catch (IOException e) {
+                log.severe("Unable to create carpets.dat; IOException");
+            }
+        }
+        try {
+            FileOutputStream file = new FileOutputStream(carpetDat);
+            ObjectOutputStream out = new ObjectOutputStream(file);
+            out.writeObject(carpets);
+            out.close();
+        } catch (IOException e) {
+            log.warning("Error writing to carpets.dat; carpets data has not been saved!");
+        }
+        carpets.clear();
     }
 
     void loadCarpets() {
@@ -273,6 +294,30 @@ public class MagicCarpet extends JavaPlugin {
             log.severe("CarpetStorage class not found! This should never happen!");
         }
         carpets.checkCarpets();
+    }
+    
+    void saveSettings() {
+        config.set("crouch-descent", crouchDef);
+        config.set("center-light", glowCenter);
+        config.set("default-size", carpSize);
+        config.set("carpet-material", saveString(carpMaterial.name()));
+        config.set("light-material", saveString(lightMaterial.name()));
+        config.set("max-size", maxCarpSize);
+        config.set("custom-carpets", customCarpets);
+        config.set("custom-lights", customLights);
+        config.set("lights", lights);
+        config.set("save-carpets", saveCarpets);
+        config.set("charge", charge);
+        config.set("charge-amount", chargeAmount);
+        config.set("change-liquids", changeLiquids);
+        config.set("tools", tools);
+        config.options().header(
+                "Be sure to use /mr if you change any settings here while the server is running.");
+        try {
+            config.save(configFile);
+        } catch (IOException e) {
+            log.severe("Unable to create config.yml; IOException");
+        }
     }
 
     void loadSettings() {
@@ -324,51 +369,6 @@ public class MagicCarpet extends JavaPlugin {
         if(!changeLiquids.equals("lava") && !changeLiquids.equals("water") && !changeLiquids.equals("false"))
         	changeLiquids = "true";
         tools = config.getBoolean("tools", false);
-    }
-
-    void saveCarpets() {
-        File carpetDat = carpetsFile();
-        log.info("Saving carpets...");
-        if (!carpetDat.exists()) {
-            try {
-                carpetDat.createNewFile();
-            } catch (IOException e) {
-                log.severe("Unable to create carpets.dat; IOException");
-            }
-        }
-        try {
-            FileOutputStream file = new FileOutputStream(carpetDat);
-            ObjectOutputStream out = new ObjectOutputStream(file);
-            out.writeObject(carpets);
-            out.close();
-        } catch (IOException e) {
-            log.warning("Error writing to carpets.dat; carpets data has not been saved!");
-        }
-        carpets.clear();
-    }
-
-    void saveSettings() {
-        config.set("crouch-descent", crouchDef);
-        config.set("center-light", glowCenter);
-        config.set("default-size", carpSize);
-        config.set("carpet-material", saveString(carpMaterial.name()));
-        config.set("light-material", saveString(lightMaterial.name()));
-        config.set("max-size", maxCarpSize);
-        config.set("custom-carpets", customCarpets);
-        config.set("custom-lights", customLights);
-        config.set("lights", lights);
-        config.set("save-carpets", saveCarpets);
-        config.set("charge", charge);
-        config.set("charge-amount", chargeAmount);
-        config.set("change-liquids", changeLiquids);
-        config.set("tools", tools);
-        config.options().header(
-                "Be sure to use /mr if you change any settings here while the server is running.");
-        try {
-            config.save(configFile);
-        } catch (IOException e) {
-            log.severe("Unable to create config.yml; IOException");
-        }
     }
 
 	boolean canChangeLiquids(String type) {

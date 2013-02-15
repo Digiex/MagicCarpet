@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class CarpetStorage implements Serializable {
-	private static final long serialVersionUID = -6967864502680011546L;
+	private static final long serialVersionUID = 5679237239554542205L;
 
 	private class CarpetEntry implements Serializable {
 		private static final long serialVersionUID = -1655870844571882460L;
@@ -41,6 +41,18 @@ public class CarpetStorage implements Serializable {
     }
     private HashMap<String, CarpetEntry> carpets = new HashMap<String, CarpetEntry>();
     private transient MagicCarpet plugin;
+    
+    public CarpetStorage attach(MagicCarpet plug) {
+        plugin = plug;
+        return this;
+    }
+    
+    private CarpetEntry getEntry(Player player) {
+        if (carpets.containsKey(player.getName())) {
+            return carpets.get(player.getName());
+        }
+        return null;
+    }
 
     public Iterable<Carpet> all() {
         return new Iterable<Carpet>() {
@@ -67,7 +79,7 @@ public class CarpetStorage implements Serializable {
                             throw new IllegalStateException();
                         }
                         if (toRemove.carpet != null) {
-                            toRemove.carpet.hide();
+                            toRemove.carpet.removeCarpet();
                         }
                         toRemove.carpet = null;
                     }
@@ -83,130 +95,40 @@ public class CarpetStorage implements Serializable {
             carpets.put(player.getName(), entry);
         }
         if (entry.carpet != null) {
-            entry.carpet.hide();
+            entry.carpet.removeCarpet();
         }
         entry.carpet = carpet;
     }
-
-    public CarpetStorage attach(MagicCarpet plug) {
-        plugin = plug;
-        return this;
-    }
-
-    public void clear() {
-        for (CarpetEntry entry : carpets.values()) {
-            if (entry.carpet == null) {
-                continue;
-            }
-            entry.carpet.hide();
-        }
-        carpets.clear();
-    }
-
-    public boolean crouches(Player player) {
-        CarpetEntry entry = getEntry(player);
-        if (entry == null) {
-            return plugin.crouchDef;
-        }
-        return entry.crouch;
-    }
-
+    
     public Carpet getCarpet(Player player) {
         if (carpets.containsKey(player.getName())) {
             return carpets.get(player.getName()).carpet;
         }
         return null;
     }
-
-    private CarpetEntry getEntry(Player player) {
-        if (carpets.containsKey(player.getName())) {
-            return carpets.get(player.getName());
-        }
-        return null;
-    }
-
-    public int getLastSize(Player player) {
-        CarpetEntry entry = getEntry(player);
-        if (entry == null) {
-            return plugin.carpSize;
-        }
-        return entry.lastSize;
-    }
-
-    public Material getLightMaterial(Player player) {
-        CarpetEntry entry = getEntry(player);
-        if (entry == null) {
-            return plugin.lightMaterial;
-        }
-        return entry.light;
-    }
-
-    public Material getMaterial(Player player) {
-        CarpetEntry entry = getEntry(player);
-        if (entry == null) {
-            return plugin.carpMaterial;
-        }
-        return entry.thread;
-    }
-
-    public boolean has(Player player) {
-        CarpetEntry entry = carpets.get(player.getName());
-        if (entry == null) {
-            return false;
-        }
-        return entry.hasCarpet;
-    }
-
-    public boolean hasLight(Player player) {
-        CarpetEntry entry = getEntry(player);
-        if (entry == null) {
-            return plugin.glowCenter;
-        }
-        return entry.lightsOn;
-    }
-
-    public void lightOff(Player player) {
-        CarpetEntry entry = getEntry(player);
-        if (entry == null) {
-            return;
-        }
-        entry.lightsOn = false;
-        if (entry.hasCarpet && entry.carpet != null) {
-            entry.carpet.lightOff();
-        }
-    }
-
-    public void lightOn(Player player) {
-        CarpetEntry entry = getEntry(player);
-        if (entry == null) {
-            return;
-        }
-        entry.lightsOn = true;
-        if (entry.hasCarpet && entry.carpet != null) {
-            entry.carpet.lightOn();
-        }
-    }
-
+    
     public void remove(Player player) {
         CarpetEntry entry = getEntry(player);
         if (entry == null) {
             return;
         }
         if (entry.carpet != null) {
-            entry.carpet.hide();
+            entry.carpet.removeCarpet();
             entry.carpet = null;
         }
     }
-
-    public void toggleCrouch(Player player) {
-        CarpetEntry entry = getEntry(player);
-        if (entry == null) {
-            return;
+    
+    public void clear() {
+        for (CarpetEntry entry : carpets.values()) {
+            if (entry.carpet == null) {
+                continue;
+            }
+            entry.carpet.removeCarpet();
         }
-        entry.crouch = !entry.crouch;
+        carpets.clear();
     }
-
-    public void update(Player player) {
+    
+    void update(Player player) {
         CarpetEntry entry = getEntry(player);
         if (entry == null) {
             return;
@@ -222,13 +144,13 @@ public class CarpetStorage implements Serializable {
         entry.light = entry.carpet.getShine();
         entry.tools = entry.carpet.hasTools();
     }
-
-    public void checkCarpets() {
+    
+    void checkCarpets() {
         for (CarpetEntry entry : carpets.values()) {
-            if (!MagicCarpet.getAcceptableCarpetMaterial().contains(entry.thread)) {
+            if (!plugin.getAcceptableCarpetMaterial().contains(entry.thread)) {
                 entry.thread = plugin.carpMaterial;
             }
-            if (!MagicCarpet.getAcceptableLightMaterial().contains(entry.light)) {
+            if (!plugin.getAcceptableLightMaterial().contains(entry.light)) {
                 entry.light = plugin.lightMaterial;
             }
             if (entry.lastSize > plugin.maxCarpSize) {
@@ -249,7 +171,63 @@ public class CarpetStorage implements Serializable {
         }
     }
 
-    public boolean getGiven(Player player) {
+    boolean crouches(Player player) {
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return plugin.crouchDef;
+        }
+        return entry.crouch;
+    }
+
+    int getLastSize(Player player) {
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return plugin.carpSize;
+        }
+        return entry.lastSize;
+    }
+    
+    Material getMaterial(Player player) {
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return plugin.carpMaterial;
+        }
+        return entry.thread;
+    }
+
+    Material getLightMaterial(Player player) {
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return plugin.lightMaterial;
+        }
+        return entry.light;
+    }
+
+    boolean has(Player player) {
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return false;
+        }
+        return entry.hasCarpet;
+    }
+
+    boolean hasLight(Player player) {
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return plugin.glowCenter;
+        }
+        return entry.lightsOn;
+    }
+
+    void toggleCrouch(Player player) {
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            return;
+        }
+        entry.crouch = !entry.crouch;
+    }
+
+    boolean wasGiven(Player player) {
         CarpetEntry entry = getEntry(player);
         if (entry == null) {
             return false;
@@ -257,7 +235,7 @@ public class CarpetStorage implements Serializable {
         return entry.given;
     }
 
-    public void setGiven(Player player, Boolean given) {
+    void setGiven(Player player, Boolean given) {
         CarpetEntry entry = getEntry(player);
         if (entry == null) {
         	entry = new CarpetEntry();
@@ -265,30 +243,8 @@ public class CarpetStorage implements Serializable {
         }
         entry.given = given;
     }
-
-    public void toolsOff(Player player) {
-        CarpetEntry entry = getEntry(player);
-        if (entry == null) {
-            return;
-        }
-        entry.tools = false;
-        if (entry.hasCarpet && entry.carpet != null) {
-            entry.carpet.toolsOff();
-        }
-    }
-
-    public void toolsOn(Player player) {
-        CarpetEntry entry = getEntry(player);
-        if (entry == null) {
-            return;
-        }
-        entry.tools = true;
-        if (entry.hasCarpet && entry.carpet != null) {
-            entry.carpet.toolsOn();
-        }
-    }
     
-    public boolean hasTools(Player player) {
+    boolean hasTools(Player player) {
         CarpetEntry entry = getEntry(player);
         if (entry == null) {
             return false;

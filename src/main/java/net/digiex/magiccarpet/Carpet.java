@@ -47,10 +47,9 @@ public class Carpet {
             if (!light) {
                 return false;
             }
-            if (light && !MagicCarpet.canLight(who)) {
+            if (light && !p.canLight(who)) {
             	lightOff();
             	who.sendMessage("The luminous stones in the carpet slowly fade away.");
-            	MagicCarpet.getCarpets().update(who);
             	return false;
             }
             if (dx == 0 && dz == 0) {
@@ -63,10 +62,9 @@ public class Carpet {
         	if (!tools) {
         		return false;
         	}
-        	if (tools && !MagicCarpet.canTool(who)) {
+        	if (tools && !p.canTool(who)) {
         		toolsOff();
         		who.sendMessage("The magic tools suddenly disappeared.");
-        		MagicCarpet.getCarpets().update(who);
             	return false;
             }
         	if (dx == 2 && dz == 0) {
@@ -79,10 +77,9 @@ public class Carpet {
         	if (!tools) {
         		return false;
         	}
-        	if (tools && !MagicCarpet.canTool(who)) {
+        	if (tools && !p.canTool(who)) {
         		toolsOff();
         		who.sendMessage("The magic tools suddenly disappeared.");
-        		MagicCarpet.getCarpets().update(who);
             	return false;
             }
         	if (dx == -2 && dz == 0) {
@@ -132,13 +129,11 @@ public class Carpet {
     }
     
     private void drawCarpet() {
-    	if (!MagicCarpet.canFly(who)) {
+    	if (!p.canFly(who)) {
             hide();
             who.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
-            MagicCarpet.getCarpets().update(who);
             return;
         }
-        hidden = false;
         Block bl;
         for (CarpetFibre fibre : fibres) {
             if (currentCentre != null) {
@@ -197,18 +192,6 @@ public class Carpet {
         }
     }
 
-    private void removeCarpet() {
-        if (currentCentre == null) {
-            return;
-        }
-        for (CarpetFibre fibre : fibres) {
-            if (fibre.block != null) {
-                fibre.update();
-            }
-            fibre.block = null;
-        }
-    }
-
     private void setSize(int size) {
         if (size < 0) {
             size = abs(size);
@@ -228,15 +211,35 @@ public class Carpet {
     }
 
     public void changeCarpet(int sz) {
+    	if (sz % 2 == 0 || sz < 1 || sz > p.maxCarpSize) {
+            who.sendMessage("The size must be an odd number from 1 to " + String.valueOf(p.maxCarpSize) + ".");
+            return;
+        }
+        if (sz == edge) {
+        	who.sendMessage("The carpet size is already equal to " + sz);
+        	return;
+        }
         removeCarpet();
         setSize(sz);
         drawCarpet();
+        who.sendMessage("The carpet reacts to your words and suddenly changes!");
+        MagicCarpet.getCarpets().update(who);
     }
 
     public void changeCarpet(Material material) {
+    	if (!p.customCarpets) {
+    		who.sendMessage("The carpet isn't allowed to change material.");
+    		return;
+    	}
+    	if (!p.getAcceptableCarpetMaterial().contains(material)) {
+    		who.sendMessage("A carpet of that material would not support you!");
+    		return;
+    	}
         removeCarpet();
         thread = material;
         drawCarpet();
+        who.sendMessage("The carpet reacts to your words and suddenly changes!");
+        MagicCarpet.getCarpets().update(who);
     }
 
     public void descend() {
@@ -269,11 +272,12 @@ public class Carpet {
         if (!hidden) {
             removeCarpet();
             hidden = true;
+            MagicCarpet.getCarpets().update(who);
         }
     }
 
     public boolean isCustom() {
-        if (getThread() != p.carpMaterial || getShine() != p.lightMaterial) {
+        if (thread != p.carpMaterial || shine != p.lightMaterial) {
             return true;
         }
         return false;
@@ -291,12 +295,20 @@ public class Carpet {
         removeCarpet();
         light = false;
         drawCarpet();
+        who.sendMessage("The luminous stones in the carpet slowly fade away.");
+        MagicCarpet.getCarpets().update(who);
     }
 
     public void lightOn() {
+    	if (!p.lights) {
+            who.sendMessage("The magic light is disabled");
+            return;
+        }
         removeCarpet();
         light = true;
         drawCarpet();
+        who.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
+        MagicCarpet.getCarpets().update(who);
     }
 
     public void moveTo(Location to) {
@@ -312,15 +324,27 @@ public class Carpet {
     }
 
     public void setLight(Material material) {
+    	if (p.customLights) {
+    		who.sendMessage("The magic light isn't allowed to change material.");
+    		return;
+    	}
+    	if (!p.getAcceptableCarpetMaterial().contains(material)) {
+    		who.sendMessage("A magic light of that material would not light up!");
+    		return;
+    	}
         removeCarpet();
         shine = material;
         drawCarpet();
+        who.sendMessage("The carpet reacts to your words and suddenly changes!");
+        MagicCarpet.getCarpets().update(who);
     }
 
     public void show() {
         if (hidden) {
             currentCentre = getPlayer().getLocation().getBlock();
             drawCarpet();
+            hidden = false;
+            MagicCarpet.getCarpets().update(who);
         }
     }
 
@@ -345,11 +369,31 @@ public class Carpet {
         removeCarpet();
         tools = false;
         drawCarpet();
+        who.sendMessage("The magic tools have disappeared.");
+        MagicCarpet.getCarpets().update(who);
     }
 
     public void toolsOn() {
+    	if (!p.tools) {
+    		who.sendMessage("The magic tools are not enabled.");
+    		return;
+    	}
         removeCarpet();
         tools = true;
         drawCarpet();
+        who.sendMessage("The magic tools have appeared!");
+        MagicCarpet.getCarpets().update(who);
+    }
+    
+    void removeCarpet() {
+        if (currentCentre == null) {
+            return;
+        }
+        for (CarpetFibre fibre : fibres) {
+            if (fibre.block != null) {
+                fibre.update();
+            }
+            fibre.block = null;
+        }
     }
 }

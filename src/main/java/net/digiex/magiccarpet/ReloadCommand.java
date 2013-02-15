@@ -37,7 +37,7 @@ public class ReloadCommand implements CommandExecutor {
             return true;
         } else if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (MagicCarpet.canReload(player)) {
+            if (plugin.canReload(player)) {
                 reload();
                 player.sendMessage("MagicCarpet has been reloaded!");
             } else {
@@ -48,12 +48,12 @@ public class ReloadCommand implements CommandExecutor {
         return false;
     }
 
-    public void reload() {
+    private void reload() {
         for (Carpet c : MagicCarpet.getCarpets().all()) {
             if (c == null || !c.isVisible()) {
                 continue;
             }
-            c.hide();
+            c.removeCarpet();
         }
         plugin.loadSettings();
         if (plugin.saveCarpets) {

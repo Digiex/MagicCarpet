@@ -27,27 +27,27 @@ private static net.milkbowl.vault.economy.Economy vaultPlugin;
 		getVault();
 	}
 
-    public static boolean add(String player, double amount) {
+    boolean add(String player, double amount) {
         return vaultPlugin.depositPlayer(player, amount).transactionSuccess();
     }
 
-    public static boolean subtract(String player, double amount) {
+    boolean subtract(String player, double amount) {
         return vaultPlugin.withdrawPlayer(player, amount).transactionSuccess();
     }
 
-    public static boolean hasEnough(String player, double amount) {
+    boolean hasEnough(String player, double amount) {
         return vaultPlugin.has(player, amount);
     }
 
-    public static double balance(String player) {
+    double balance(String player) {
         return vaultPlugin.getBalance(player);
     }
 
-    public static String format(double amount) {
+    String format(double amount) {
         return vaultPlugin.format(amount);
     }
 
-    public static String getPluginName() {
+    String getPluginName() {
         if (vaultPlugin == null) {
             return "";
         } else {
@@ -55,11 +55,11 @@ private static net.milkbowl.vault.economy.Economy vaultPlugin;
         }
     }
     
-    public static String getCurrencyName() {
+    String getCurrencyName() {
     	return vaultPlugin.currencyNameSingular();
     }
     
-    public static String getCurrencyNamePlural() {
+    String getCurrencyNamePlural() {
     	return vaultPlugin.currencyNamePlural();
     }
 

@@ -59,7 +59,6 @@ public class CarpetCommand implements CommandExecutor {
                 if (who != null) {
                     if (MagicCarpet.getCarpets().has(who)) {
                         MagicCarpet.getCarpets().getCarpet(who).hide();
-                        MagicCarpet.getCarpets().update(who);
                     }
                     MagicCarpet.getCarpets().setGiven(who, false);
                     who.sendMessage("The magic carpet has been taken from you.");
@@ -76,62 +75,56 @@ public class CarpetCommand implements CommandExecutor {
         }
         Player player = (Player) sender;
         Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
-        if (!MagicCarpet.canFly(player)) {
+        if (!plugin.canFly(player)) {
             player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
             return true;
         }
         int c;
         if (carpet == null) {
-            if (MagicCarpet.getCarpets().getGiven(player)) {
-                carpet = Carpet.create(player, plugin);
+            if (MagicCarpet.getCarpets().wasGiven(player)) {
+                Carpet.create(player, plugin).show();
                 player.sendMessage("A glass carpet appears below your feet.");
-                carpet.show();
                 return true;
             }
             if (plugin.charge) {
                 if (plugin.getVault() != null) {
-					if (VaultHandler.hasEnough(player.getName(), plugin.chargeAmount)) {
-                        VaultHandler.subtract(player.getName(), plugin.chargeAmount);
-                        player.sendMessage("You've been charged " + VaultHandler.format(plugin.chargeAmount).toLowerCase() + " and now have " + VaultHandler.format(VaultHandler.balance(player.getName())).toLowerCase() + " left.");
+					if (plugin.getVault().hasEnough(player.getName(), plugin.chargeAmount)) {
+                        plugin.getVault().subtract(player.getName(), plugin.chargeAmount);
+                        player.sendMessage("You've been charged " + plugin.getVault().format(plugin.chargeAmount).toLowerCase() + " and now have " + plugin.getVault().format(plugin.getVault().balance(player.getName())).toLowerCase() + " left.");
                     } else {
-                        player.sendMessage("You don't have enough " + VaultHandler.getCurrencyNamePlural().toLowerCase() + ".");
+                        player.sendMessage("You don't have enough " + plugin.getVault().getCurrencyNamePlural().toLowerCase() + ".");
                         return true;
                     }
                 }
             }
-            carpet = Carpet.create(player, plugin);
+            Carpet.create(player, plugin).show();
             player.sendMessage("A glass carpet appears below your feet.");
-            carpet.show();
-            MagicCarpet.getCarpets().update(player);
             return true;
         }
         if (args.length < 1) {
             if (carpet.isVisible()) {
                 player.sendMessage("Poof! The magic carpet disappears.");
                 carpet.hide();
-                MagicCarpet.getCarpets().update(player);
                 return true;
             } else {
-                if (MagicCarpet.getCarpets().getGiven(player)) {
+                if (MagicCarpet.getCarpets().wasGiven(player)) {
                     player.sendMessage("A glass carpet appears below your feet.");
                     carpet.show();
-                    MagicCarpet.getCarpets().update(player);
                     return true;
                 }
                 if (plugin.charge) {
                     if (plugin.getVault() != null) {
-						if (VaultHandler.hasEnough(player.getName(), plugin.chargeAmount)) {
-                            VaultHandler.subtract(player.getName(), plugin.chargeAmount);
-                            player.sendMessage("You've been charged " + VaultHandler.format(plugin.chargeAmount).toLowerCase() + " and now have " + VaultHandler.format(VaultHandler.balance(player.getName())).toLowerCase() + " left.");
+						if (plugin.getVault().hasEnough(player.getName(), plugin.chargeAmount)) {
+                            plugin.getVault().subtract(player.getName(), plugin.chargeAmount);
+                            player.sendMessage("You've been charged " + plugin.getVault().format(plugin.chargeAmount).toLowerCase() + " and now have " + plugin.getVault().format(plugin.getVault().balance(player.getName())).toLowerCase() + " left.");
                         } else {
-                            player.sendMessage("You don't have enough " + VaultHandler.getCurrencyNamePlural().toLowerCase() + ".");
+                            player.sendMessage("You don't have enough " + plugin.getVault().getCurrencyNamePlural().toLowerCase() + ".");
                             return true;
                         }
                     }
                 }
                 player.sendMessage("A glass carpet appears below your feet.");
                 carpet.show();
-                MagicCarpet.getCarpets().update(player);
                 return true;
             }
         } else {
@@ -167,7 +160,6 @@ public class CarpetCommand implements CommandExecutor {
                     if (who != null) {
                         if (MagicCarpet.getCarpets().has(who)) {
                             MagicCarpet.getCarpets().getCarpet(who).hide();
-                            MagicCarpet.getCarpets().update(who);
                         }
                         MagicCarpet.getCarpets().setGiven(who, false);
                         who.sendMessage("The magic carpet has been taken from you.");
@@ -182,30 +174,21 @@ public class CarpetCommand implements CommandExecutor {
                     return true;
                 }
             } else if (args.length == 1 && args[0].equals("t") || args.length == 1 && args[0].equals("tools")) {
-            	if (!MagicCarpet.canTool(player)) {
+            	if (!plugin.canTool(player)) {
             		player.sendMessage("You cannot use the magic tools, no permission.");
-            		return true;
-            	}
-            	if (!plugin.tools) {
-            		player.sendMessage("The magic tools are not enabled.");
             		return true;
             	}
             	if (carpet.hasTools()) {
             		carpet.toolsOff();
-            		MagicCarpet.getCarpets().update(player);
-            		player.sendMessage("The magic tools have disappeared.");
             		return true;
             	}
             	carpet.toolsOn();
-            	MagicCarpet.getCarpets().update(player);
-            	player.sendMessage("The magic tools have appeared!");
             	return true;
             }
             if (carpet.isVisible()) {
                 try {
                     c = Integer.valueOf(args[0]);
                 } catch (NumberFormatException e) {
-                    if (plugin.customCarpets) {
                         String word = "";
                         for (String a : args) {
                             if (word.isEmpty()) {
@@ -216,37 +199,15 @@ public class CarpetCommand implements CommandExecutor {
                         }
                         Material m = Material.getMaterial(word.toUpperCase().replace(" ", "_"));
                         if (m != null) {
-                            if (MagicCarpet.getAcceptableCarpetMaterial().contains(m)) {
-                                player.sendMessage("The carpet reacts to your words and suddenly changes!");
                                 carpet.changeCarpet(m);
-                                MagicCarpet.getCarpets().update(player);
                                 return true;
-                            } else {
-                                player.sendMessage("A carpet of that material would not support you!");
-                                return true;
-                            }
                         } else {
                             player.sendMessage("Material error; Material may be entered as GOLD_BLOCK or just plain gold block");
                             return true;
                         }
-                    } else {
-                        player.sendMessage("The carpet isn't allowed to change material.");
-                        return true;
-                    }
                 }
-                if (c % 2 == 0 || c < 1 || c > plugin.maxCarpSize) {
-                    player.sendMessage("The size must be an odd number from 1 to " + String.valueOf(plugin.maxCarpSize) + ".");
-                    return true;
-                }
-                if (c != carpet.getSize()) {
                     carpet.changeCarpet(c);
-                    MagicCarpet.getCarpets().update(player);
-                    player.sendMessage("The carpet reacts to your words and suddenly changes!");
                     return true;
-                } else {
-                    player.sendMessage("The carpet size is already equal to " + c);
-                    return true;
-                }
             } else {
                 player.sendMessage("You don't have a carpet yet.");
                 return true;
