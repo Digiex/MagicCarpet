@@ -81,6 +81,10 @@ public class CarpetCommand implements CommandExecutor {
         }
         int c;
         if (carpet == null) {
+        	if (!plugin.canFlyHere(player.getLocation())) {
+        		player.sendMessage("The carpet is forbidden in this area.");
+        		return true;
+        	}
             if (MagicCarpet.getCarpets().wasGiven(player)) {
                 Carpet.create(player, plugin).show();
                 player.sendMessage("A glass carpet appears below your feet.");
@@ -107,6 +111,10 @@ public class CarpetCommand implements CommandExecutor {
                 carpet.hide();
                 return true;
             } else {
+            	if (!plugin.canFlyHere(player.getLocation())) {
+            		player.sendMessage("The carpet is forbidden in this area.");
+            		return true;
+            	}
                 if (MagicCarpet.getCarpets().wasGiven(player)) {
                     player.sendMessage("A glass carpet appears below your feet.");
                     carpet.show();
