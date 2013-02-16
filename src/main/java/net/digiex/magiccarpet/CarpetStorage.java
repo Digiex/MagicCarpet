@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class CarpetStorage implements Serializable {
-	private static final long serialVersionUID = 5679237239554542205L;
+	private static final long serialVersionUID = -2975489155267573151L;
 
 	private class CarpetEntry implements Serializable {
 		private static final long serialVersionUID = -1655870844571882460L;
@@ -42,7 +42,7 @@ public class CarpetStorage implements Serializable {
     private HashMap<String, CarpetEntry> carpets = new HashMap<String, CarpetEntry>();
     private transient MagicCarpet plugin;
     
-    public CarpetStorage attach(MagicCarpet plug) {
+    CarpetStorage attach(MagicCarpet plug) {
         plugin = plug;
         return this;
     }

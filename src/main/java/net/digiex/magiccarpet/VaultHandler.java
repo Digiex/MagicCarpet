@@ -23,7 +23,7 @@ public class VaultHandler {
 
 private static net.milkbowl.vault.economy.Economy vaultPlugin;
 	
-	public VaultHandler() {
+	VaultHandler() {
 		getVault();
 	}
 

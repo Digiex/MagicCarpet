@@ -26,7 +26,7 @@ public class LightCommand implements CommandExecutor {
 
     private final MagicCarpet plugin;
 
-    public LightCommand(MagicCarpet plugin) {
+    LightCommand(MagicCarpet plugin) {
         this.plugin = plugin;
     }
 

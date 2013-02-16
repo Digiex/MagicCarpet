@@ -25,7 +25,7 @@ public class SwitchCommand implements CommandExecutor {
 	
 	private final MagicCarpet plugin;
 	
-	public SwitchCommand(MagicCarpet plugin) {
+	SwitchCommand(MagicCarpet plugin) {
 		this.plugin = plugin;
 	}
 

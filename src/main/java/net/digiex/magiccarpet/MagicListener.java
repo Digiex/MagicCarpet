@@ -45,7 +45,7 @@ public class MagicListener implements Listener {
     private final MagicCarpet plugin;
     private boolean falling = false;
 
-    public MagicListener(MagicCarpet plugin) {
+    MagicListener(MagicCarpet plugin) {
         this.plugin = plugin;
     }
 

@@ -26,7 +26,7 @@ public class CarpetCommand implements CommandExecutor {
 
     private final MagicCarpet plugin;
 
-    public CarpetCommand(MagicCarpet plugin) {
+    CarpetCommand(MagicCarpet plugin) {
         this.plugin = plugin;
     }
 

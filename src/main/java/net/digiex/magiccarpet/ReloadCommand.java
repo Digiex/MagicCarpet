@@ -25,7 +25,7 @@ public class ReloadCommand implements CommandExecutor {
 
     private final MagicCarpet plugin;
 
-    public ReloadCommand(MagicCarpet plugin) {
+    ReloadCommand(MagicCarpet plugin) {
         this.plugin = plugin;
     }
 

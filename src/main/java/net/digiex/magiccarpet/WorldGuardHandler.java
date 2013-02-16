@@ -85,7 +85,7 @@ public class WorldGuardHandler {
 
     private WorldGuardPlugin worldGuard;
     
-    public WorldGuardHandler(WorldGuardPlugin worldGuard) {
+    WorldGuardHandler(WorldGuardPlugin worldGuard) {
         this.worldGuard = worldGuard;
         CarpetFlag.injectHax();
     }
