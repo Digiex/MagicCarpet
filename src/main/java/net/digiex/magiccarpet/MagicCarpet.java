@@ -79,7 +79,8 @@ public class MagicCarpet extends JavaPlugin {
     	LIGHT("magiccarpet.ml"),
     	SWITCH("magiccarpet.mcs"),
     	TOOL("magiccarpet.mct"),
-    	RELOAD("magiccarpet.mr");
+    	RELOAD("magiccarpet.mr"),
+    	All("magiccarpet.*");
     	
     	private final String permission;
 
@@ -253,6 +254,9 @@ public class MagicCarpet extends JavaPlugin {
         }
         if (carpets.wasGiven(player)) {
             return true;
+        }
+        if (Permission.has(player, Permission.All)) {
+        	return true;
         }
         return player.hasPermission("magiccarpet.mc." + i);
     }

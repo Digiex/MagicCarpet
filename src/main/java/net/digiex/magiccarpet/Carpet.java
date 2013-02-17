@@ -326,7 +326,7 @@ public class Carpet {
     		removeCarpet();
     		setSize(p.carpSize);
     		drawCarpet();
-    		who.sendMessage("Your carpet must of got wet and has shrunken in size.");
+    		who.sendMessage("Your carpet was washed and has shrunken in size.");
     		MagicCarpet.getCarpets().update(who);
     	}
         removeCarpet();
