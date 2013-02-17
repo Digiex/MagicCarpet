@@ -219,6 +219,10 @@ public class Carpet {
         	who.sendMessage("The carpet size is already equal to " + sz);
         	return;
         }
+        if (!p.canFlyAt(who, sz)) {
+    		who.sendMessage("A carpet of that size is not allowed for you.");
+    		return;
+    	}
         removeCarpet();
         setSize(sz);
         drawCarpet();
@@ -318,6 +322,13 @@ public class Carpet {
             MagicCarpet.getCarpets().update(who);
             return;
         }
+    	if (!p.canFlyAt(who, edge)) {
+    		removeCarpet();
+    		setSize(p.carpSize);
+    		drawCarpet();
+    		who.sendMessage("Your carpet must of got wet and has shrunken in size.");
+    		MagicCarpet.getCarpets().update(who);
+    	}
         removeCarpet();
         currentCentre = to.getBlock();
         drawCarpet();

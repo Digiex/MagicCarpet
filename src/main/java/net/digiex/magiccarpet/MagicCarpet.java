@@ -242,17 +242,27 @@ public class MagicCarpet extends JavaPlugin {
     		Permission.has(player, Permission.RELOAD);
     }
     
+    boolean canFlyHere(Location location) {
+        return (worldGuardHandler == null) ? true :
+            worldGuardHandler.canFlyHere(location);
+    }
+    
+    boolean canFlyAt(Player player, int i) {
+        if (i == carpSize) {
+            return true;
+        }
+        if (carpets.wasGiven(player)) {
+            return true;
+        }
+        return player.hasPermission("magiccarpet.mc." + i);
+    }
+    
     EnumSet<Material> getAcceptableCarpetMaterial() {
     	return acceptableCarpet;
     }
     
     EnumSet<Material> getAcceptableLightMaterial() {
     	return acceptableLight;
-    }
-    
-    boolean canFlyHere(Location location) {
-        return (worldGuardHandler == null) ? true :
-            worldGuardHandler.canFlyHere(location);
     }
     
     void saveCarpets() {

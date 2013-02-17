@@ -91,7 +91,7 @@ public class CarpetCommand implements CommandExecutor {
                 return true;
             }
             if (plugin.charge) {
-                if (plugin.getVault() != null) {
+                if (plugin.getVault() != null && plugin.getVault().isEnabled()) {
 					if (plugin.getVault().hasEnough(player.getName(), plugin.chargeAmount)) {
                         plugin.getVault().subtract(player.getName(), plugin.chargeAmount);
                         player.sendMessage("You've been charged " + plugin.getVault().format(plugin.chargeAmount).toLowerCase() + " and now have " + plugin.getVault().format(plugin.getVault().balance(player.getName())).toLowerCase() + " left.");
@@ -121,7 +121,7 @@ public class CarpetCommand implements CommandExecutor {
                     return true;
                 }
                 if (plugin.charge) {
-                    if (plugin.getVault() != null) {
+                	if (plugin.getVault() != null && plugin.getVault().isEnabled()) {
 						if (plugin.getVault().hasEnough(player.getName(), plugin.chargeAmount)) {
                             plugin.getVault().subtract(player.getName(), plugin.chargeAmount);
                             player.sendMessage("You've been charged " + plugin.getVault().format(plugin.chargeAmount).toLowerCase() + " and now have " + plugin.getVault().format(plugin.getVault().balance(player.getName())).toLowerCase() + " left.");

@@ -1,5 +1,7 @@
 package net.digiex.magiccarpet;
 
+import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
@@ -21,10 +23,10 @@ import org.bukkit.plugin.RegisteredServiceProvider;
  */
 public class VaultHandler {
 
-private static net.milkbowl.vault.economy.Economy vaultPlugin;
+private Economy vaultPlugin;
 	
 	VaultHandler() {
-		getVault();
+		getEconomy();
 	}
 
     boolean add(String player, double amount) {
@@ -62,20 +64,16 @@ private static net.milkbowl.vault.economy.Economy vaultPlugin;
     String getCurrencyNamePlural() {
     	return vaultPlugin.currencyNamePlural();
     }
+    
+    boolean isEnabled() {
+    	return (vaultPlugin != null) ? true : false;
+    }
 
-    private VaultHandler getVault() {
-        RegisteredServiceProvider<net.milkbowl.vault.economy.Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-
+    private void getEconomy() {
+        RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
-            return null;
+            return;
         }
-
         vaultPlugin = rsp.getProvider();
-
-        if (vaultPlugin == null) {
-            return null;
-        } else {
-            return new VaultHandler();
-        }
     }
 }
