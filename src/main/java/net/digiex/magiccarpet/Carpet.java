@@ -335,7 +335,7 @@ public class Carpet {
     }
 
     public void setLight(Material material) {
-    	if (p.customLights) {
+    	if (!p.customLights) {
     		who.sendMessage("The magic light isn't allowed to change material.");
     		return;
     	}
