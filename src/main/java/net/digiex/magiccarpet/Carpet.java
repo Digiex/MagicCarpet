@@ -396,7 +396,7 @@ public class Carpet {
         MagicCarpet.getCarpets().update(who);
     }
     
-    void removeCarpet() {
+    public void removeCarpet() {
         if (currentCentre == null) {
             return;
         }
