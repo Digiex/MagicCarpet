@@ -235,7 +235,7 @@ public class Carpet {
     		who.sendMessage("The carpet isn't allowed to change material.");
     		return;
     	}
-    	if (!p.getAcceptableLightMaterial().contains(material)) {
+    	if (!p.getAcceptableCarpetMaterial().contains(material)) {
     		who.sendMessage("A carpet of that material would not support you!");
     		return;
     	}
@@ -339,7 +339,7 @@ public class Carpet {
     		who.sendMessage("The magic light isn't allowed to change material.");
     		return;
     	}
-    	if (!p.getAcceptableCarpetMaterial().contains(material)) {
+    	if (!p.getAcceptableLightMaterial().contains(material)) {
     		who.sendMessage("A magic light of that material would not light up!");
     		return;
     	}
