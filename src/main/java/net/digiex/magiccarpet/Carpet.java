@@ -235,7 +235,7 @@ public class Carpet {
     		who.sendMessage("The carpet isn't allowed to change material.");
     		return;
     	}
-    	if (!p.getAcceptableCarpetMaterial().contains(material)) {
+    	if (!p.getAcceptableLightMaterial().contains(material)) {
     		who.sendMessage("A carpet of that material would not support you!");
     		return;
     	}
