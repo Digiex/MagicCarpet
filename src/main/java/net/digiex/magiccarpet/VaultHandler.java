@@ -1,9 +1,9 @@
 package net.digiex.magiccarpet;
 
-import net.milkbowl.vault.economy.Economy;
-
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
+
+import net.milkbowl.vault.economy.Economy;
 
 /*
  * Magic Carpet 2.2 Copyright (C) 2012 Android, Celtic Minstrel, xzKinGzxBuRnzx
@@ -23,57 +23,58 @@ import org.bukkit.plugin.RegisteredServiceProvider;
  */
 public class VaultHandler {
 
-private Economy vaultPlugin;
-	
+	private Economy vaultPlugin;
+
 	VaultHandler() {
 		getEconomy();
 	}
 
-    boolean add(String player, double amount) {
-        return vaultPlugin.depositPlayer(player, amount).transactionSuccess();
-    }
+	boolean add(String player, double amount) {
+		return vaultPlugin.depositPlayer(player, amount).transactionSuccess();
+	}
 
-    boolean subtract(String player, double amount) {
-        return vaultPlugin.withdrawPlayer(player, amount).transactionSuccess();
-    }
+	boolean subtract(String player, double amount) {
+		return vaultPlugin.withdrawPlayer(player, amount).transactionSuccess();
+	}
 
-    boolean hasEnough(String player, double amount) {
-        return vaultPlugin.has(player, amount);
-    }
+	boolean hasEnough(String player, double amount) {
+		return vaultPlugin.has(player, amount);
+	}
 
-    double balance(String player) {
-        return vaultPlugin.getBalance(player);
-    }
+	double balance(String player) {
+		return vaultPlugin.getBalance(player);
+	}
 
-    String format(double amount) {
-        return vaultPlugin.format(amount);
-    }
+	String format(double amount) {
+		return vaultPlugin.format(amount);
+	}
 
-    String getPluginName() {
-        if (vaultPlugin == null) {
-            return "";
-        } else {
-            return vaultPlugin.getName();
-        }
-    }
-    
-    String getCurrencyName() {
-    	return vaultPlugin.currencyNameSingular();
-    }
-    
-    String getCurrencyNamePlural() {
-    	return vaultPlugin.currencyNamePlural();
-    }
-    
-    boolean isEnabled() {
-    	return (vaultPlugin != null) ? true : false;
-    }
+	String getPluginName() {
+		if (vaultPlugin == null) {
+			return "";
+		} else {
+			return vaultPlugin.getName();
+		}
+	}
 
-    private void getEconomy() {
-        RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
-            return;
-        }
-        vaultPlugin = rsp.getProvider();
-    }
+	String getCurrencyName() {
+		return vaultPlugin.currencyNameSingular();
+	}
+
+	String getCurrencyNamePlural() {
+		return vaultPlugin.currencyNamePlural();
+	}
+
+	boolean isEnabled() {
+		return (vaultPlugin != null) ? true : false;
+	}
+
+	private void getEconomy() {
+		RegisteredServiceProvider<Economy> rsp = Bukkit.getServer()
+				.getServicesManager().getRegistration(Economy.class);
+		if (rsp == null) {
+			return;
+		}
+		vaultPlugin = rsp.getProvider();
+	}
 }

@@ -23,47 +23,48 @@ import org.bukkit.entity.Player;
  */
 public class ReloadCommand implements CommandExecutor {
 
-    private final MagicCarpet plugin;
+	private final MagicCarpet plugin;
 
-    ReloadCommand(MagicCarpet plugin) {
-        this.plugin = plugin;
-    }
+	ReloadCommand(MagicCarpet plugin) {
+		this.plugin = plugin;
+	}
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
-        if (!(sender instanceof Player)) {
-            reload();
-            sender.sendMessage("has been reloaded!");
-            return true;
-        } else if (sender instanceof Player) {
-            Player player = (Player) sender;
-            if (plugin.canReload(player)) {
-                reload();
-                player.sendMessage("MagicCarpet has been reloaded!");
-            } else {
-                player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
-            }
-            return true;
-        }
-        return false;
-    }
+	@Override
+	public boolean onCommand(CommandSender sender, Command command,
+			String commandLabel, String[] args) {
+		if (!(sender instanceof Player)) {
+			reload();
+			sender.sendMessage("has been reloaded!");
+			return true;
+		} else if (sender instanceof Player) {
+			Player player = (Player) sender;
+			if (plugin.canReload(player)) {
+				reload();
+				player.sendMessage("MagicCarpet has been reloaded!");
+			} else {
+				player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
+			}
+			return true;
+		}
+		return false;
+	}
 
-    private void reload() {
-        for (Carpet c : MagicCarpet.getCarpets().all()) {
-            if (c == null || !c.isVisible()) {
-                continue;
-            }
-            c.removeCarpet();
-        }
-        plugin.loadSettings();
-        if (plugin.saveCarpets) {
-            plugin.saveCarpets();
-            plugin.loadCarpets();
-        }
-        for (Player p : plugin.getServer().getOnlinePlayers()) {
-            if (MagicCarpet.getCarpets().has(p)) {
-                Carpet.create(p, plugin).show();
-            }
-        }
-    }
+	private void reload() {
+		for (Carpet c : MagicCarpet.getCarpets().all()) {
+			if (c == null || !c.isVisible()) {
+				continue;
+			}
+			c.removeCarpet();
+		}
+		plugin.loadSettings();
+		if (plugin.saveCarpets) {
+			plugin.saveCarpets();
+			plugin.loadCarpets();
+		}
+		for (Player p : plugin.getServer().getOnlinePlayers()) {
+			if (MagicCarpet.getCarpets().has(p)) {
+				Carpet.create(p, plugin).show();
+			}
+		}
+	}
 }

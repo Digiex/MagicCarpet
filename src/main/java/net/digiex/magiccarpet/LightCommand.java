@@ -24,64 +24,65 @@ import org.bukkit.entity.Player;
  */
 public class LightCommand implements CommandExecutor {
 
-    private final MagicCarpet plugin;
+	private final MagicCarpet plugin;
 
-    LightCommand(MagicCarpet plugin) {
-        this.plugin = plugin;
-    }
+	LightCommand(MagicCarpet plugin) {
+		this.plugin = plugin;
+	}
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command,
-            String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("Sorry, only players can use the carpet!");
-            return true;
-        }
-        Player player = (Player) sender;
-        if (plugin.canFly(player) && plugin.canLight(player)) {
-            Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
-            if (carpet == null || !carpet.isVisible()) {
-                player.sendMessage("You don't have a carpet yet, use /mc!");
-                return true;
-            }
-            if (args.length < 1) {
-            	if (MagicCarpet.getCarpets().hasLight(player)) {
-                    carpet.lightOff();
-                } else {
-                    carpet.lightOn();
-                }
-            } else {
-                if (MagicCarpet.getCarpets().hasLight(player)) {
-                        String word = "";
-                        for (String a : args) {
-                            if (word.isEmpty()) {
-                                word = a;
-                            } else {
-                                word += " " + a;
-                            }
-                        }
-                        Material m = Material.getMaterial(word.toUpperCase().replace(" ", "_"));
-                        if (m != null) {
-                                carpet.setLight(m);
-                                return true;
-                        } else {
-                            player.sendMessage("Material error; Material may be entered as JACK_O_LANTERN or just plain jack o lantern");
-                            return true;
-                        }
-                } else {
-                    player.sendMessage("You haven't enabled the magic light yet.");
-                    return true;
-                }
-            }
-        } else {
-            if (plugin.canFly(player)) {
-                player.sendMessage("You do not have permission to use magic light!");
-                return true;
-            } else {
-                player.sendMessage("You are not allowed to use the magic carpet!");
-                return true;
-            }
-        }
-        return true;
-    }
+	@Override
+	public boolean onCommand(CommandSender sender, Command command,
+			String label, String[] args) {
+		if (!(sender instanceof Player)) {
+			sender.sendMessage("Sorry, only players can use the carpet!");
+			return true;
+		}
+		Player player = (Player) sender;
+		if (plugin.canFly(player) && plugin.canLight(player)) {
+			Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+			if (carpet == null || !carpet.isVisible()) {
+				player.sendMessage("You don't have a carpet yet, use /mc!");
+				return true;
+			}
+			if (args.length < 1) {
+				if (MagicCarpet.getCarpets().hasLight(player)) {
+					carpet.lightOff();
+				} else {
+					carpet.lightOn();
+				}
+			} else {
+				if (MagicCarpet.getCarpets().hasLight(player)) {
+					String word = "";
+					for (String a : args) {
+						if (word.isEmpty()) {
+							word = a;
+						} else {
+							word += " " + a;
+						}
+					}
+					Material m = Material.getMaterial(word.toUpperCase()
+							.replace(" ", "_"));
+					if (m != null) {
+						carpet.setLight(m);
+						return true;
+					} else {
+						player.sendMessage("Material error; Material may be entered as JACK_O_LANTERN or just plain jack o lantern");
+						return true;
+					}
+				} else {
+					player.sendMessage("You haven't enabled the magic light yet.");
+					return true;
+				}
+			}
+		} else {
+			if (plugin.canFly(player)) {
+				player.sendMessage("You do not have permission to use magic light!");
+				return true;
+			} else {
+				player.sendMessage("You are not allowed to use the magic carpet!");
+				return true;
+			}
+		}
+		return true;
+	}
 }
