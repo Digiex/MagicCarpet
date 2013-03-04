@@ -89,7 +89,7 @@ public class Carpet {
 		}
 
 		void update() {
-			if (block.getMetadata("Carpet").isEmpty()) {
+			if (!block.hasMetadata("Carpet")) {
 				return;
 			}
 			block.removeMetadata("Carpet", p);

@@ -174,7 +174,7 @@ public class MagicListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
-		if (!event.getBlock().getMetadata("Carpet").isEmpty()) {
+		if (event.getBlock().hasMetadata("Carpet")) {
 			event.setCancelled(true);
 		}
 	}
@@ -225,7 +225,7 @@ public class MagicListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onBlockPistonExtend(BlockPistonExtendEvent event) {
 		for (Block block : event.getBlocks()) {
-			if (!block.getMetadata("Carpet").isEmpty()) {
+			if (block.hasMetadata("Carpet")) {
 				event.setCancelled(true);
 				return;
 			}
@@ -235,8 +235,7 @@ public class MagicListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onBlockPistonRetract(BlockPistonRetractEvent event) {
 		if (event.isSticky()) {
-			if (!event.getRetractLocation().getBlock().getMetadata("Carpet")
-					.isEmpty()) {
+			if (event.getRetractLocation().getBlock().hasMetadata("Carpet")) {
 				event.setCancelled(true);
 			}
 		}
@@ -250,7 +249,7 @@ public class MagicListener implements Listener {
 			}
 			Block eyes = ((LivingEntity) event.getEntity()).getEyeLocation()
 					.getBlock();
-			if (!eyes.getMetadata("Carpet").isEmpty()) {
+			if (eyes.hasMetadata("Carpet")) {
 				event.setCancelled(true);
 			}
 		} else if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
@@ -266,7 +265,7 @@ public class MagicListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onEntityExplode(EntityExplodeEvent event) {
 		for (Block block : event.blockList()) {
-			if (!block.getMetadata("Carpet").isEmpty()) {
+			if (block.hasMetadata("Carpet")) {
 				event.setCancelled(true);
 				return;
 			}
