@@ -8,7 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 /*
- * Magic Carpet 2.2 Copyright (C) 2012 Android, Celtic Minstrel, xzKinGzxBuRnzx
+ * Magic Carpet 3.0 Copyright (C) 2012-2013 Android, Celtic Minstrel, xzKinGzxBuRnzx
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -38,6 +38,10 @@ public class CarpetStorage implements Serializable {
 		public Material thread = plugin.carpMaterial;
 		public boolean given = false;
 		public boolean tools = false;
+		public long time = plugin.chargeTime;
+		public boolean autoRenew = false;
+		public boolean oneTimeFee = false;
+		public String autoPackage = null;
 	}
 
 	private HashMap<String, CarpetEntry> carpets = new HashMap<String, CarpetEntry>();
@@ -155,6 +159,11 @@ public class CarpetStorage implements Serializable {
 			if (!plugin.getAcceptableLightMaterial().contains(entry.light)) {
 				entry.light = plugin.lightMaterial;
 			}
+			if (plugin.getVault() != null
+					&& plugin.getVault().getPackage(entry.autoPackage) == null) {
+				entry.autoPackage = null;
+				entry.autoRenew = false;
+			}
 			if (entry.lastSize > plugin.maxCarpSize) {
 				entry.lastSize = plugin.carpSize;
 			}
@@ -252,5 +261,70 @@ public class CarpetStorage implements Serializable {
 			return false;
 		}
 		return entry.tools;
+	}
+
+	void setTime(Player player, Long time) {
+		CarpetEntry entry = getEntry(player);
+		if (entry == null) {
+			return;
+		}
+		entry.time = time;
+	}
+
+	long getTime(Player player) {
+		CarpetEntry entry = getEntry(player);
+		if (entry == null) {
+			return plugin.chargeTime;
+		}
+		return entry.time;
+	}
+
+	boolean canAutoRenew(Player player) {
+		CarpetEntry entry = getEntry(player);
+		if (entry == null) {
+			return false;
+		}
+		return entry.autoRenew;
+	}
+
+	void setAutoRenew(Player player, Boolean renew) {
+		CarpetEntry entry = getEntry(player);
+		if (entry == null) {
+			return;
+		}
+		entry.autoRenew = renew;
+	}
+
+	String getAutoPackage(Player player) {
+		CarpetEntry entry = getEntry(player);
+		if (entry == null) {
+			return null;
+		}
+		return entry.autoPackage;
+	}
+
+	void setAutoPackage(Player player, String auto) {
+		CarpetEntry entry = getEntry(player);
+		if (entry == null) {
+			return;
+		}
+		entry.autoPackage = auto;
+	}
+
+	boolean hasPaidFee(Player player) {
+		CarpetEntry entry = getEntry(player);
+		if (entry == null) {
+			return false;
+		}
+		return entry.oneTimeFee;
+	}
+
+	void setPaidFee(Player player, Boolean paid) {
+		CarpetEntry entry = getEntry(player);
+		if (entry == null) {
+			entry = new CarpetEntry();
+			carpets.put(player.getName(), entry);
+		}
+		entry.oneTimeFee = paid;
 	}
 }

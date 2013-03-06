@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /*
- * Magic Carpet 2.2 Copyright (C) 2012 Android, Celtic Minstrel, xzKinGzxBuRnzx
+ * Magic Carpet 3.0 Copyright (C) 2012-2013 Android, Celtic Minstrel, xzKinGzxBuRnzx
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -88,6 +88,10 @@ public class CarpetCommand implements CommandExecutor {
 		}
 		int c;
 		if (carpet == null) {
+			if (player.getFallDistance() > 0
+					&& !player.getLocation().getBlock().isLiquid()) {
+				return true;
+			}
 			if (!plugin.canFlyHere(player.getLocation())) {
 				player.sendMessage("The carpet is forbidden in this area.");
 				return true;
@@ -97,26 +101,14 @@ public class CarpetCommand implements CommandExecutor {
 				player.sendMessage("A glass carpet appears below your feet.");
 				return true;
 			}
-			if (plugin.charge) {
-				if (plugin.getVault() != null && plugin.getVault().isEnabled()) {
-					if (plugin.getVault().hasEnough(player.getName(),
-							plugin.chargeAmount)) {
-						plugin.getVault().subtract(player.getName(),
-								plugin.chargeAmount);
-						player.sendMessage("You've been charged "
-								+ plugin.getVault().format(plugin.chargeAmount)
-										.toLowerCase()
-								+ " and now have "
-								+ plugin.getVault()
-										.format(plugin.getVault().balance(
-												player.getName()))
-										.toLowerCase() + " left.");
-					} else {
-						player.sendMessage("You don't have enough "
-								+ plugin.getVault().getCurrencyNamePlural()
-										.toLowerCase() + ".");
-						return true;
-					}
+			if (plugin.getVault() != null) {
+				if (MagicCarpet.getCarpets().getTime(player) == 0L) {
+					player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
+					return true;
+				}
+				if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
+					player.sendMessage("You need to pay a one time fee before you can use Magic Carpet. Use /mcb.");
+					return true;
 				}
 			}
 			Carpet.create(player, plugin).show();
@@ -129,6 +121,10 @@ public class CarpetCommand implements CommandExecutor {
 				carpet.hide();
 				return true;
 			} else {
+				if (player.getFallDistance() > 0
+						&& !player.getLocation().getBlock().isLiquid()) {
+					return true;
+				}
 				if (!plugin.canFlyHere(player.getLocation())) {
 					player.sendMessage("The carpet is forbidden in this area.");
 					return true;
@@ -138,28 +134,14 @@ public class CarpetCommand implements CommandExecutor {
 					carpet.show();
 					return true;
 				}
-				if (plugin.charge) {
-					if (plugin.getVault() != null
-							&& plugin.getVault().isEnabled()) {
-						if (plugin.getVault().hasEnough(player.getName(),
-								plugin.chargeAmount)) {
-							plugin.getVault().subtract(player.getName(),
-									plugin.chargeAmount);
-							player.sendMessage("You've been charged "
-									+ plugin.getVault()
-											.format(plugin.chargeAmount)
-											.toLowerCase()
-									+ " and now have "
-									+ plugin.getVault()
-											.format(plugin.getVault().balance(
-													player.getName()))
-											.toLowerCase() + " left.");
-						} else {
-							player.sendMessage("You don't have enough "
-									+ plugin.getVault().getCurrencyNamePlural()
-											.toLowerCase() + ".");
-							return true;
-						}
+				if (plugin.getVault() != null) {
+					if (MagicCarpet.getCarpets().getTime(player) == 0L) {
+						player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
+						return true;
+					}
+					if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
+						player.sendMessage("You need to pay a one time fee before you can use Magic Carpet. Use /mcb.");
+						return true;
 					}
 				}
 				player.sendMessage("A glass carpet appears below your feet.");

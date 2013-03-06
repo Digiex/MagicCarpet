@@ -49,10 +49,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 
+import net.digiex.magiccarpet.Metrics.Graph;
+import net.milkbowl.vault.economy.Economy;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -60,12 +66,11 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import net.digiex.magiccarpet.Metrics.Graph;
-
 /*
- * Magic Carpet 2.2 Copyright (C) 2012 Android, Celtic Minstrel, xzKinGzxBuRnzx
+ * Magic Carpet 3.0 Copyright (C) 2012-2013 Android, Celtic Minstrel, xzKinGzxBuRnzx
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -111,9 +116,11 @@ public class MagicCarpet extends JavaPlugin {
 	boolean lights = false;
 	boolean customLights = false;
 	boolean charge = false;
-	double chargeAmount = 1.0;
+	double chargeAmount = 20.0;
 	String changeLiquids = "true";
 	boolean tools = false;
+	List<?> chargePackages = Arrays.asList("One:3600:5.0", "Two:7200:10.0");
+	long chargeTime = 1800;
 
 	private enum Permission {
 		CARPET("magiccarpet.mc"), LIGHT("magiccarpet.ml"), SWITCH(
@@ -152,6 +159,7 @@ public class MagicCarpet extends JavaPlugin {
 		getCommand("magiclight").setExecutor(new LightCommand(this));
 		getCommand("carpetswitch").setExecutor(new SwitchCommand(this));
 		getCommand("magicreload").setExecutor(new ReloadCommand(this));
+		getCommand("magiccarpetbuy").setExecutor(new CarpetBuyCommand(this));
 	}
 
 	private void registerEvents(Listener listener) {
@@ -244,6 +252,9 @@ public class MagicCarpet extends JavaPlugin {
 	}
 
 	VaultHandler getVault() {
+		if (!charge) {
+			return null;
+		}
 		if (vault != null) {
 			return vault;
 		}
@@ -251,7 +262,12 @@ public class MagicCarpet extends JavaPlugin {
 		if (plugin == null || !(plugin instanceof net.milkbowl.vault.Vault)) {
 			return null;
 		}
-		return vault = new VaultHandler();
+		RegisteredServiceProvider<Economy> rsp = Bukkit.getServer()
+				.getServicesManager().getRegistration(Economy.class);
+		if (rsp == null) {
+			return null;
+		}
+		return vault = new VaultHandler(this, rsp.getProvider());
 	}
 
 	public static CarpetStorage getCarpets() {
@@ -361,10 +377,12 @@ public class MagicCarpet extends JavaPlugin {
 		config.set("custom-lights", customLights);
 		config.set("lights", lights);
 		config.set("save-carpets", saveCarpets);
-		config.set("charge", charge);
-		config.set("charge-amount", chargeAmount);
 		config.set("change-liquids", changeLiquids);
 		config.set("tools", tools);
+		config.set("charge", charge);
+		config.set("charge-amount", chargeAmount);
+		config.set("charge-time", chargeTime);
+		config.set("charge-packages", chargePackages);
 		config.options()
 				.header("Be sure to use /mr if you change any settings here while the server is running.");
 		try {
@@ -420,12 +438,15 @@ public class MagicCarpet extends JavaPlugin {
 		saveCarpets = config.getBoolean("save-carpets", true);
 		lights = config.getBoolean("lights", false);
 		charge = config.getBoolean("charge", false);
-		chargeAmount = config.getDouble("charge-amount", 1.0);
+		chargeAmount = config.getDouble("charge-amount", 5.0);
 		changeLiquids = config.getString("change-liquids", "true");
 		if (!changeLiquids.equals("lava") && !changeLiquids.equals("water")
 				&& !changeLiquids.equals("false"))
 			changeLiquids = "true";
 		tools = config.getBoolean("tools", false);
+		chargeTime = config.getLong("charge-time", 1800);
+		chargePackages = config.getList("charge-packages",
+				Arrays.asList("One:3600:5.0", "Two:7200:10.0"));
 	}
 
 	boolean canChangeLiquids(String type) {

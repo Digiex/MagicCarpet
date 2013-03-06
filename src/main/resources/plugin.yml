@@ -24,6 +24,10 @@ commands:
     description: Reloads MagicCarpet.
     aliases: [mr]
     usage: /<command>
+  magiccarpetbuy:
+    description: Allows you to buy time for Magic Carpet.
+    aliases: [mcb]
+    usage: /<command> [plan] [-p] [-a] [-b]
 permissions:
   magiccarpet.ml:
     description: Allows a bright light for your carpet ride.

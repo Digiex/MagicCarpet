@@ -1,12 +1,13 @@
 package net.digiex.magiccarpet;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.RegisteredServiceProvider;
+import java.util.HashMap;
 
 import net.milkbowl.vault.economy.Economy;
 
+import org.bukkit.entity.Player;
+
 /*
- * Magic Carpet 2.2 Copyright (C) 2012 Android, Celtic Minstrel, xzKinGzxBuRnzx
+ * Magic Carpet 3.0 Copyright (C) 2012-2013 Android, Celtic Minstrel, xzKinGzxBuRnzx
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -23,10 +24,38 @@ import net.milkbowl.vault.economy.Economy;
  */
 public class VaultHandler {
 
-	private Economy vaultPlugin;
+	class TimePackage {
+		private final String name;
+		private final long time;
+		private final double amount;
 
-	VaultHandler() {
-		getEconomy();
+		TimePackage(String name, Long time, Double amount) {
+			this.name = name;
+			this.time = time;
+			this.amount = amount;
+		}
+
+		String getName() {
+			return name;
+		}
+
+		Long getTime() {
+			return time;
+		}
+
+		Double getAmount() {
+			return amount;
+		}
+	}
+
+	private final MagicCarpet plugin;
+	private final Economy vaultPlugin;
+	private HashMap<String, TimePackage> packages = new HashMap<String, TimePackage>();
+
+	VaultHandler(MagicCarpet plugin, Economy vaultPlugin) {
+		this.plugin = plugin;
+		this.vaultPlugin = vaultPlugin;
+		startCharge();
 	}
 
 	boolean add(String player, double amount) {
@@ -65,16 +94,132 @@ public class VaultHandler {
 		return vaultPlugin.currencyNamePlural();
 	}
 
-	boolean isEnabled() {
-		return (vaultPlugin != null) ? true : false;
+	long get(Player player) {
+		return MagicCarpet.getCarpets().getTime(player);
 	}
 
-	private void getEconomy() {
-		RegisteredServiceProvider<Economy> rsp = Bukkit.getServer()
-				.getServicesManager().getRegistration(Economy.class);
-		if (rsp == null) {
-			return;
+	String getTime(Player player) {
+		return getTime(get(player));
+	}
+
+	String getTime(Long time) {
+		long days = time / 86400L;
+		long remainder = time % 86400L;
+		long hours = remainder / 3600L;
+		remainder %= 3600L;
+		long minutes = remainder / 60L;
+		long seconds = remainder % 60L;
+
+		String s = "";
+		if (days > 0) {
+			s = s + days + "D ";
 		}
-		vaultPlugin = rsp.getProvider();
+		if (hours > 0) {
+			s = s + hours + "H ";
+		}
+		if (minutes > 0) {
+			s = s + minutes + "M ";
+		}
+		if (seconds > 0) {
+			s = s + seconds + "S";
+		}
+		return s;
+	}
+
+	void substractTime(Player player, long time) {
+		long rTime = get(player) - time;
+		if (rTime <= 0L) {
+			Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+			if (carpet == null || !carpet.isVisible()) {
+				return;
+			}
+			carpet.hide();
+			player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
+		}
+		MagicCarpet.getCarpets().setTime(player, rTime);
+	}
+
+	boolean addTime(Player player, Long time, Double amount) {
+		long rTime = get(player) + time;
+		if (hasEnough(player.getName(), amount)) {
+			subtract(player.getName(), amount);
+			MagicCarpet.getCarpets().setTime(player, rTime);
+			return true;
+		} else {
+			player.sendMessage("You don't have enough "
+					+ getCurrencyNamePlural() + ".");
+		}
+		return false;
+	}
+
+	void addTime(Player player, Long time) {
+		long rTime = get(player) + time;
+		MagicCarpet.getCarpets().setTime(player, rTime);
+		player.sendMessage("Console has given you " + getTime(time)
+				+ " of time to use Magic Carpet");
+	}
+
+	HashMap<String, TimePackage> getPackages() {
+		return packages;
+	}
+
+	TimePackage getPackage(String name) {
+		return getPackages().get(name);
+	}
+
+	void addPackage(String name, Long time, Double amount) {
+		packages.put(name, new TimePackage(name, time, amount));
+	}
+
+	private void startCharge() {
+		plugin.getServer().getScheduler()
+				.runTaskTimerAsynchronously(plugin, new Runnable() {
+					public void run() {
+						for (Player player : plugin.getServer()
+								.getOnlinePlayers()) {
+							Carpet carpet = MagicCarpet.getCarpets().getCarpet(
+									player);
+							if (carpet == null || !carpet.isVisible()) {
+								continue;
+							}
+							if (get(player) == 300) {
+								if (!MagicCarpet.getCarpets().canAutoRenew(
+										player)) {
+									player.sendMessage("You are running low on time to use the Magic Carpet. If you wish to continue using it please purchase more time using /mcb.");
+									substractTime(player, 1L);
+									continue;
+								}
+								TimePackage pack = getPackage(MagicCarpet
+										.getCarpets().getAutoPackage(player));
+								if (addTime(player, pack.getTime(),
+										pack.getAmount())) {
+									player.sendMessage("Your Magic Carpet has auto renewed for "
+											+ getTime(pack.getTime())
+											+ " and you was charged "
+											+ format(pack.getAmount()) + ".");
+								}
+							}
+							substractTime(player, 1L);
+						}
+					}
+				}, 20L, 20L);
+		loadPackages();
+	}
+
+	void loadPackages() {
+		try {
+			for (Object o : plugin.chargePackages) {
+				String[] s = (String[]) o.toString().split(":");
+				String name = s[0];
+				long time = Long.valueOf(s[1]);
+				double amount = Double.valueOf(s[2]);
+				addPackage(name, time, amount);
+			}
+		} catch (NumberFormatException e) {
+			plugin.getLogger().severe(
+					"Unable to read charge-packages; defaulting.");
+			addPackage("One", 3600L, 5.0);
+			addPackage("Two", 7200L, 10.0);
+		}
 	}
 }
