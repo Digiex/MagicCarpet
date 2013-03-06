@@ -119,7 +119,7 @@ public class MagicCarpet extends JavaPlugin {
 	double chargeAmount = 20.0;
 	String changeLiquids = "true";
 	boolean tools = false;
-	List<?> chargePackages = Arrays.asList("One:3600:5.0", "Two:7200:10.0");
+	List<?> chargePackages = Arrays.asList("alpha:3600:5.0", "beta:7200:10.0");
 	long chargeTime = 1800;
 
 	private enum Permission {
@@ -446,7 +446,7 @@ public class MagicCarpet extends JavaPlugin {
 		tools = config.getBoolean("tools", false);
 		chargeTime = config.getLong("charge-time", 1800);
 		chargePackages = config.getList("charge-packages",
-				Arrays.asList("One:3600:5.0", "Two:7200:10.0"));
+				Arrays.asList("alpha:3600:5.0", "beta:7200:10.0"));
 	}
 
 	boolean canChangeLiquids(String type) {
