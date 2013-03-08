@@ -101,6 +101,12 @@ public class CarpetBuyCommand implements CommandExecutor {
 					player.sendMessage("You've disabled auto-renew for your Magic Carpet.");
 					return true;
 				}
+				if (!MagicCarpet.getCarpets().canAutoRenew(player)) {
+					MagicCarpet.getCarpets().setAutoRenew(player, true);
+					player.sendMessage("You've re-activated auto-renew for plan "
+							+ MagicCarpet.getCarpets().getAutoPackage(player));
+					return true;
+				}
 			} else if (args.length == 1 && args[0].equalsIgnoreCase("-b")) {
 				if (MagicCarpet.getCarpets().hasPaidFee(player)) {
 					player.sendMessage("You've already paid the fee, use /mc!");
@@ -119,15 +125,13 @@ public class CarpetBuyCommand implements CommandExecutor {
 					return true;
 				}
 			} else if (args.length == 2 && args[1].equalsIgnoreCase("-a")) {
-				boolean has = false;
-				for (Entry<String, TimePackage> set : plugin.getVault()
-						.getPackages().entrySet()) {
-					if (set.getKey().equalsIgnoreCase(args[0])) {
-						has = true;
-					}
-				}
-				if (!has) {
+				if (plugin.getVault().getPackage(args[0]) == null) {
 					player.sendMessage("That plan doesn't exist");
+					return true;
+				}
+				if (MagicCarpet.getCarpets().canAutoRenew(player)
+						&& MagicCarpet.getCarpets().getAutoPackage(player) == args[0]) {
+					player.sendMessage("You've already activated auto-renew for that plan.");
 					return true;
 				}
 				if (!MagicCarpet.getCarpets().canAutoRenew(player)) {
