@@ -182,6 +182,9 @@ public class VaultHandler {
 							if (carpet == null || !carpet.isVisible()) {
 								continue;
 							}
+							if (plugin.canNotPay(player)) {
+								continue;
+							}
 							if (get(player) == 300) {
 								if (!MagicCarpet.getCarpets().canAutoRenew(
 										player)) {
@@ -218,8 +221,8 @@ public class VaultHandler {
 		} catch (NumberFormatException e) {
 			plugin.getLogger().severe(
 					"Unable to read charge-packages; defaulting.");
-			addPackage("One", 3600L, 5.0);
-			addPackage("Two", 7200L, 10.0);
+			addPackage("alpha", 3600L, 5.0);
+			addPackage("beta", 7200L, 10.0);
 		}
 	}
 }

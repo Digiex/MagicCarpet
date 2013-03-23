@@ -102,6 +102,11 @@ public class CarpetCommand implements CommandExecutor {
 				return true;
 			}
 			if (plugin.getVault() != null) {
+				if (plugin.canNotPay(player)) {
+					Carpet.create(player, plugin).show();
+					player.sendMessage("A glass carpet appears below your feet.");
+					return true;
+				}
 				if (MagicCarpet.getCarpets().getTime(player) == 0L) {
 					player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
 					return true;
@@ -135,6 +140,11 @@ public class CarpetCommand implements CommandExecutor {
 					return true;
 				}
 				if (plugin.getVault() != null) {
+					if (plugin.canNotPay(player)) {
+						Carpet.create(player, plugin).show();
+						player.sendMessage("A glass carpet appears below your feet.");
+						return true;
+					}
 					if (MagicCarpet.getCarpets().getTime(player) == 0L) {
 						player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
 						return true;

@@ -125,7 +125,7 @@ public class MagicCarpet extends JavaPlugin {
 	private enum Permission {
 		CARPET("magiccarpet.mc"), LIGHT("magiccarpet.ml"), SWITCH(
 				"magiccarpet.mcs"), TOOL("magiccarpet.mct"), RELOAD(
-				"magiccarpet.mr"), All("magiccarpet.*");
+				"magiccarpet.mr"), NOPAY("magiccarpet.np"), All("magiccarpet.*");
 
 		private final String permission;
 
@@ -302,6 +302,10 @@ public class MagicCarpet extends JavaPlugin {
 	boolean canFlyHere(Location location) {
 		return (worldGuardHandler == null) ? true : worldGuardHandler
 				.canFlyHere(location);
+	}
+	
+	boolean canNotPay(Player player) {
+		return (getVault() == null) ? false : Permission.has(player, Permission.NOPAY);
 	}
 
 	boolean canFlyAt(Player player, int i) {
