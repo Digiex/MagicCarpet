@@ -63,6 +63,10 @@ public class CarpetBuyCommand implements CommandExecutor {
 		} else {
 			Player player = (Player) sender;
 			if (args.length == 0) {
+				if (!plugin.canFly(player)) {
+					player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
+					return true;
+				}
 				if (plugin.canNotPay(player)) {
 					player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
 					return true;
@@ -88,6 +92,10 @@ public class CarpetBuyCommand implements CommandExecutor {
 				}
 				return true;
 			} else if (args.length == 1 && args[0].equalsIgnoreCase("-p")) {
+				if (!plugin.canFly(player)) {
+					player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
+					return true;
+				}
 				if (plugin.canNotPay(player)) {
 					player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
 					return true;
@@ -104,6 +112,10 @@ public class CarpetBuyCommand implements CommandExecutor {
 				player.sendMessage("Use /mcb to purchase plan by typing it's name in.");
 				return true;
 			} else if (args.length == 1 && args[0].equalsIgnoreCase("-a")) {
+				if (!plugin.canFly(player)) {
+					player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
+					return true;
+				}
 				if (plugin.canNotPay(player)) {
 					player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
 					return true;
@@ -120,6 +132,10 @@ public class CarpetBuyCommand implements CommandExecutor {
 					return true;
 				}
 			} else if (args.length == 1 && args[0].equalsIgnoreCase("-b")) {
+				if (!plugin.canFly(player)) {
+					player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
+					return true;
+				}
 				if (plugin.canNotPay(player)) {
 					player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
 					return true;
@@ -141,6 +157,10 @@ public class CarpetBuyCommand implements CommandExecutor {
 					return true;
 				}
 			} else if (args.length == 2 && args[1].equalsIgnoreCase("-a")) {
+				if (!plugin.canFly(player)) {
+					player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
+					return true;
+				}
 				if (plugin.canNotPay(player)) {
 					player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
 					return true;
@@ -162,6 +182,10 @@ public class CarpetBuyCommand implements CommandExecutor {
 					return true;
 				}
 			} else if (args.length == 1) {
+				if (!plugin.canFly(player)) {
+					player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
+					return true;
+				}
 				if (plugin.canNotPay(player)) {
 					player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
 					return true;
