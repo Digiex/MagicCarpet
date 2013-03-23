@@ -65,6 +65,7 @@ public class CarpetBuyCommand implements CommandExecutor {
 			if (args.length == 0) {
 				if (plugin.canNotPay(player)) {
 					player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
+					return true;
 				}
 				if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
 					player.sendMessage("You need to pay a one time fee of "
@@ -89,6 +90,7 @@ public class CarpetBuyCommand implements CommandExecutor {
 			} else if (args.length == 1 && args[0].equalsIgnoreCase("-p")) {
 				if (plugin.canNotPay(player)) {
 					player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
+					return true;
 				}
 				player.sendMessage("Here are some of the time packages currently available.");
 				for (Entry<String, TimePackage> set : plugin.getVault()
@@ -104,6 +106,7 @@ public class CarpetBuyCommand implements CommandExecutor {
 			} else if (args.length == 1 && args[0].equalsIgnoreCase("-a")) {
 				if (plugin.canNotPay(player)) {
 					player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
+					return true;
 				}
 				if (MagicCarpet.getCarpets().canAutoRenew(player)) {
 					MagicCarpet.getCarpets().setAutoRenew(player, false);
@@ -119,6 +122,7 @@ public class CarpetBuyCommand implements CommandExecutor {
 			} else if (args.length == 1 && args[0].equalsIgnoreCase("-b")) {
 				if (plugin.canNotPay(player)) {
 					player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
+					return true;
 				}
 				if (MagicCarpet.getCarpets().hasPaidFee(player)) {
 					player.sendMessage("You've already paid the fee, use /mc!");
@@ -139,6 +143,7 @@ public class CarpetBuyCommand implements CommandExecutor {
 			} else if (args.length == 2 && args[1].equalsIgnoreCase("-a")) {
 				if (plugin.canNotPay(player)) {
 					player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
+					return true;
 				}
 				if (plugin.getVault().getPackage(args[0]) == null) {
 					player.sendMessage("That plan doesn't exist");
@@ -159,6 +164,7 @@ public class CarpetBuyCommand implements CommandExecutor {
 			} else if (args.length == 1) {
 				if (plugin.canNotPay(player)) {
 					player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
+					return true;
 				}
 				if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
 					player.sendMessage("You need to pay a one time fee of "
