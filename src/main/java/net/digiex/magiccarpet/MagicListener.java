@@ -203,7 +203,7 @@ public class MagicListener implements Listener {
 			break;
 		}
 		for (Carpet carpet : MagicCarpet.getCarpets().all()) {
-			if (carpet == null || !carpet.isVisible() || !carpet.hasLight()) {
+			if (carpet == null || !carpet.isVisible()) {
 				continue;
 			}
 			if (carpet.touches(event.getBlock())) {
