@@ -36,7 +36,7 @@ public class ToolCommand implements CommandExecutor {
 			return true;
 		}
 		Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
-		if (carpet == null) {
+		if (carpet == null || !carpet.isVisible()) {
 			player.sendMessage("You must activate the carpet first using /mc.");
 			return true;
 		}
