@@ -202,9 +202,11 @@ public class MagicListener implements Listener {
 		default:
 			break;
 		}
-		for (BlockFace face : BlockFace.values()) {
-			Block block = event.getBlock().getRelative(face);
-			if (block.hasMetadata("Carpet")) {
+		for (Carpet carpet : MagicCarpet.getCarpets().all()) {
+			if (carpet == null || !carpet.isVisible() || !carpet.hasLight()) {
+				continue;
+			}
+			if (carpet.touches(event.getBlock())) {
 				event.setCancelled(true);
 				return;
 			}
