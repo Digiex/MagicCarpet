@@ -54,8 +54,6 @@ public class Carpet {
 				return false;
 			}
 			if (!MagicCarpet.canLight(who)) {
-				lightOff();
-				who.sendMessage("The luminous stones in the carpet slowly fade away.");
 				return false;
 			}
 			if (dx == 0 && dz == 0) {
@@ -69,8 +67,6 @@ public class Carpet {
 				return false;
 			}
 			if (!MagicCarpet.canTool(who)) {
-				toolsOff();
-				who.sendMessage("The magic tools suddenly disappeared.");
 				return false;
 			}
 			if (dx == 2 && dz == 0) {
@@ -84,8 +80,6 @@ public class Carpet {
 				return false;
 			}
 			if (!MagicCarpet.canTool(who)) {
-				toolsOff();
-				who.sendMessage("The magic tools suddenly disappeared.");
 				return false;
 			}
 			if (dx == -2 && dz == 0) {
