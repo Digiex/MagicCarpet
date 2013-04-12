@@ -105,10 +105,7 @@ public class CarpetCommand implements CommandExecutor {
 					player.sendMessage("You need to pay a one time fee before you can use Magic Carpet. Use /mcb.");
 					return true;
 				}
-				if (!plugin.chargeTimeBased) {
-					return true;
-				}
-				if (MagicCarpet.getCarpets().getTime(player) == 0L) {
+				if (plugin.chargeTimeBased && MagicCarpet.getCarpets().getTime(player) == 0L) {
 					player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
 					return true;
 				}
@@ -138,10 +135,7 @@ public class CarpetCommand implements CommandExecutor {
 						player.sendMessage("You need to pay a one time fee before you can use Magic Carpet. Use /mcb.");
 						return true;
 					}
-					if (!plugin.chargeTimeBased) {
-						return true;
-					}
-					if (MagicCarpet.getCarpets().getTime(player) == 0L) {
+					if (plugin.chargeTimeBased && MagicCarpet.getCarpets().getTime(player) == 0L) {
 						player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
 						return true;
 					}

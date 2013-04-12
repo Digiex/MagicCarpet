@@ -145,6 +145,7 @@ public class MagicCarpet extends JavaPlugin {
 		getCommand("carpetswitch").setExecutor(new SwitchCommand());
 		getCommand("magicreload").setExecutor(new ReloadCommand(this));
 		getCommand("magiccarpetbuy").setExecutor(new CarpetBuyCommand(this));
+		getCommand("magictools").setExecutor(new ToolCommand());
 	}
 
 	private void registerEvents(Listener listener) {
