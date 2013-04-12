@@ -174,7 +174,11 @@ public class VaultHandler {
 	private void startCharge() {
 		plugin.getServer().getScheduler()
 				.runTaskTimerAsynchronously(plugin, new Runnable() {
+					@Override
 					public void run() {
+						if (!plugin.chargeTimeBased) {
+							return;
+						}
 						for (Player player : plugin.getServer()
 								.getOnlinePlayers()) {
 							Carpet carpet = MagicCarpet.getCarpets().getCarpet(
@@ -182,7 +186,7 @@ public class VaultHandler {
 							if (carpet == null || !carpet.isVisible()) {
 								continue;
 							}
-							if (plugin.canNotPay(player)) {
+							if (MagicCarpet.canNotPay(player)) {
 								continue;
 							}
 							if (get(player) == 300) {
@@ -212,7 +216,7 @@ public class VaultHandler {
 	void loadPackages() {
 		try {
 			for (Object o : plugin.chargePackages) {
-				String[] s = (String[]) o.toString().split(":");
+				String[] s = o.toString().split(":");
 				String name = s[0];
 				long time = Long.valueOf(s[1]);
 				double amount = Double.valueOf(s[2]);

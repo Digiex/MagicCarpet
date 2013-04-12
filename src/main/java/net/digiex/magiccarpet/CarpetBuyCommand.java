@@ -63,11 +63,11 @@ public class CarpetBuyCommand implements CommandExecutor {
 		} else {
 			Player player = (Player) sender;
 			if (args.length == 0) {
-				if (!plugin.canFly(player)) {
+				if (!MagicCarpet.canFly(player)) {
 					player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
 					return true;
 				}
-				if (plugin.canNotPay(player)) {
+				if (MagicCarpet.canNotPay(player)) {
 					player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
 					return true;
 				}
@@ -77,6 +77,9 @@ public class CarpetBuyCommand implements CommandExecutor {
 							+ " "
 							+ plugin.getVault().getCurrencyNamePlural()
 							+ " before you can use Magic Carpet. Use /mcb -b to accept this charge.");
+					return true;
+				}
+				if (!plugin.chargeTimeBased) {
 					return true;
 				}
 				player.sendMessage("You have "
@@ -92,12 +95,23 @@ public class CarpetBuyCommand implements CommandExecutor {
 				}
 				return true;
 			} else if (args.length == 1 && args[0].equalsIgnoreCase("-p")) {
-				if (!plugin.canFly(player)) {
+				if (!MagicCarpet.canFly(player)) {
 					player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
 					return true;
 				}
-				if (plugin.canNotPay(player)) {
+				if (MagicCarpet.canNotPay(player)) {
 					player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
+					return true;
+				}
+				if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
+					player.sendMessage("You need to pay a one time fee of "
+							+ String.valueOf(plugin.chargeAmount)
+							+ " "
+							+ plugin.getVault().getCurrencyNamePlural()
+							+ " before you can use Magic Carpet. Use /mcb -b to accept this charge.");
+					return true;
+				}
+				if (!plugin.chargeTimeBased) {
 					return true;
 				}
 				player.sendMessage("Here are some of the time packages currently available.");
@@ -112,12 +126,23 @@ public class CarpetBuyCommand implements CommandExecutor {
 				player.sendMessage("Use /mcb to purchase plan by typing it's name in.");
 				return true;
 			} else if (args.length == 1 && args[0].equalsIgnoreCase("-a")) {
-				if (!plugin.canFly(player)) {
+				if (!MagicCarpet.canFly(player)) {
 					player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
 					return true;
 				}
-				if (plugin.canNotPay(player)) {
+				if (MagicCarpet.canNotPay(player)) {
 					player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
+					return true;
+				}
+				if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
+					player.sendMessage("You need to pay a one time fee of "
+							+ String.valueOf(plugin.chargeAmount)
+							+ " "
+							+ plugin.getVault().getCurrencyNamePlural()
+							+ " before you can use Magic Carpet. Use /mcb -b to accept this charge.");
+					return true;
+				}
+				if (!plugin.chargeTimeBased) {
 					return true;
 				}
 				if (MagicCarpet.getCarpets().canAutoRenew(player)) {
@@ -132,11 +157,11 @@ public class CarpetBuyCommand implements CommandExecutor {
 					return true;
 				}
 			} else if (args.length == 1 && args[0].equalsIgnoreCase("-b")) {
-				if (!plugin.canFly(player)) {
+				if (!MagicCarpet.canFly(player)) {
 					player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
 					return true;
 				}
-				if (plugin.canNotPay(player)) {
+				if (MagicCarpet.canNotPay(player)) {
 					player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
 					return true;
 				}
@@ -157,12 +182,23 @@ public class CarpetBuyCommand implements CommandExecutor {
 					return true;
 				}
 			} else if (args.length == 2 && args[1].equalsIgnoreCase("-a")) {
-				if (!plugin.canFly(player)) {
+				if (!MagicCarpet.canFly(player)) {
 					player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
 					return true;
 				}
-				if (plugin.canNotPay(player)) {
+				if (MagicCarpet.canNotPay(player)) {
 					player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
+					return true;
+				}
+				if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
+					player.sendMessage("You need to pay a one time fee of "
+							+ String.valueOf(plugin.chargeAmount)
+							+ " "
+							+ plugin.getVault().getCurrencyNamePlural()
+							+ " before you can use Magic Carpet. Use /mcb -b to accept this charge.");
+					return true;
+				}
+				if (!plugin.chargeTimeBased) {
 					return true;
 				}
 				if (plugin.getVault().getPackage(args[0]) == null) {
@@ -182,11 +218,11 @@ public class CarpetBuyCommand implements CommandExecutor {
 					return true;
 				}
 			} else if (args.length == 1) {
-				if (!plugin.canFly(player)) {
+				if (!MagicCarpet.canFly(player)) {
 					player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
 					return true;
 				}
-				if (plugin.canNotPay(player)) {
+				if (MagicCarpet.canNotPay(player)) {
 					player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
 					return true;
 				}
@@ -196,6 +232,9 @@ public class CarpetBuyCommand implements CommandExecutor {
 							+ " "
 							+ plugin.getVault().getCurrencyNamePlural()
 							+ " before you can use Magic Carpet. Use /mcb -b to accept this charge.");
+					return true;
+				}
+				if (!plugin.chargeTimeBased) {
 					return true;
 				}
 				TimePackage tp = plugin.getVault().getPackage(args[0]);

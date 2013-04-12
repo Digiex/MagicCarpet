@@ -153,10 +153,10 @@ public class CarpetStorage implements Serializable {
 
 	void checkCarpets() {
 		for (CarpetEntry entry : carpets.values()) {
-			if (!plugin.getAcceptableCarpetMaterial().contains(entry.thread)) {
+			if (!MagicCarpet.getAcceptableCarpetMaterial().contains(entry.thread)) {
 				entry.thread = plugin.carpMaterial;
 			}
-			if (!plugin.getAcceptableLightMaterial().contains(entry.light)) {
+			if (!MagicCarpet.getAcceptableLightMaterial().contains(entry.light)) {
 				entry.light = plugin.lightMaterial;
 			}
 			if (plugin.getVault() != null
@@ -258,7 +258,7 @@ public class CarpetStorage implements Serializable {
 	boolean hasTools(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return false;
+			return plugin.tools;
 		}
 		return entry.tools;
 	}

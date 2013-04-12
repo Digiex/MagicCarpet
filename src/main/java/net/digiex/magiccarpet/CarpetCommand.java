@@ -82,7 +82,7 @@ public class CarpetCommand implements CommandExecutor {
 		}
 		Player player = (Player) sender;
 		Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
-		if (!plugin.canFly(player)) {
+		if (!MagicCarpet.canFly(player)) {
 			player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
 			return true;
 		}
@@ -92,37 +92,32 @@ public class CarpetCommand implements CommandExecutor {
 					&& !player.getLocation().getBlock().isLiquid()) {
 				return true;
 			}
-			if (!plugin.canFlyHere(player.getLocation())) {
-				player.sendMessage("The carpet is forbidden in this area.");
-				return true;
-			}
 			if (MagicCarpet.getCarpets().wasGiven(player)) {
-				Carpet.create(player, plugin).show();
-				player.sendMessage("A glass carpet appears below your feet.");
+				Carpet.create(player).show();
 				return true;
 			}
 			if (plugin.getVault() != null) {
-				if (plugin.canNotPay(player)) {
-					Carpet.create(player, plugin).show();
-					player.sendMessage("A glass carpet appears below your feet.");
-					return true;
-				}
-				if (MagicCarpet.getCarpets().getTime(player) == 0L) {
-					player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
+				if (MagicCarpet.canNotPay(player)) {
+					Carpet.create(player).show();
 					return true;
 				}
 				if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
 					player.sendMessage("You need to pay a one time fee before you can use Magic Carpet. Use /mcb.");
 					return true;
 				}
+				if (!plugin.chargeTimeBased) {
+					return true;
+				}
+				if (MagicCarpet.getCarpets().getTime(player) == 0L) {
+					player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
+					return true;
+				}
 			}
-			Carpet.create(player, plugin).show();
-			player.sendMessage("A glass carpet appears below your feet.");
+			Carpet.create(player).show();
 			return true;
 		}
 		if (args.length < 1) {
 			if (carpet.isVisible()) {
-				player.sendMessage("Poof! The magic carpet disappears.");
 				carpet.hide();
 				return true;
 			} else {
@@ -130,31 +125,27 @@ public class CarpetCommand implements CommandExecutor {
 						&& !player.getLocation().getBlock().isLiquid()) {
 					return true;
 				}
-				if (!plugin.canFlyHere(player.getLocation())) {
-					player.sendMessage("The carpet is forbidden in this area.");
-					return true;
-				}
 				if (MagicCarpet.getCarpets().wasGiven(player)) {
-					player.sendMessage("A glass carpet appears below your feet.");
 					carpet.show();
 					return true;
 				}
 				if (plugin.getVault() != null) {
-					if (plugin.canNotPay(player)) {
-						Carpet.create(player, plugin).show();
-						player.sendMessage("A glass carpet appears below your feet.");
-						return true;
-					}
-					if (MagicCarpet.getCarpets().getTime(player) == 0L) {
-						player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
+					if (MagicCarpet.canNotPay(player)) {
+						Carpet.create(player).show();
 						return true;
 					}
 					if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
 						player.sendMessage("You need to pay a one time fee before you can use Magic Carpet. Use /mcb.");
 						return true;
 					}
+					if (!plugin.chargeTimeBased) {
+						return true;
+					}
+					if (MagicCarpet.getCarpets().getTime(player) == 0L) {
+						player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
+						return true;
+					}
 				}
-				player.sendMessage("A glass carpet appears below your feet.");
 				carpet.show();
 				return true;
 			}
@@ -210,18 +201,6 @@ public class CarpetCommand implements CommandExecutor {
 					player.sendMessage("You don't have permission to use this.");
 					return true;
 				}
-			} else if (args.length == 1 && args[0].equals("t")
-					|| args.length == 1 && args[0].equals("tools")) {
-				if (!plugin.canTool(player)) {
-					player.sendMessage("You cannot use the magic tools, no permission.");
-					return true;
-				}
-				if (carpet.hasTools()) {
-					carpet.toolsOff();
-					return true;
-				}
-				carpet.toolsOn();
-				return true;
 			}
 			if (carpet.isVisible()) {
 				try {

@@ -1,6 +1,6 @@
 name: MagicCarpet
 main: net.digiex.magiccarpet.MagicCarpet
-version: 3.0
+version: 2.3
 website: http://dev.bukkit.org/server-mods/magiccarpet/
 description: Take yourself wonder by wonder on a carpet made of glass.
 database: false
@@ -28,6 +28,10 @@ commands:
     description: Allows you to buy time for Magic Carpet.
     aliases: [mcb]
     usage: /<command> [plan] [-p] [-a] [-b]
+  magictools:
+    description: Gives your carpet some essential tools!
+    aliases: [mct]
+    usage: /<command>
 permissions:
   magiccarpet.ml:
     description: Allows a bright light for your carpet ride.

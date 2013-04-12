@@ -24,12 +24,6 @@ import org.bukkit.entity.Player;
  */
 public class LightCommand implements CommandExecutor {
 
-	private final MagicCarpet plugin;
-
-	LightCommand(MagicCarpet plugin) {
-		this.plugin = plugin;
-	}
-
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
@@ -38,7 +32,7 @@ public class LightCommand implements CommandExecutor {
 			return true;
 		}
 		Player player = (Player) sender;
-		if (plugin.canFly(player) && plugin.canLight(player)) {
+		if (MagicCarpet.canFly(player) && MagicCarpet.canLight(player)) {
 			Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
 			if (carpet == null || !carpet.isVisible()) {
 				player.sendMessage("You don't have a carpet yet, use /mc!");
@@ -75,7 +69,7 @@ public class LightCommand implements CommandExecutor {
 				}
 			}
 		} else {
-			if (plugin.canFly(player)) {
+			if (MagicCarpet.canFly(player)) {
 				player.sendMessage("You do not have permission to use magic light!");
 				return true;
 			} else {

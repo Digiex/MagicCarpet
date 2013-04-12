@@ -2,6 +2,7 @@ package net.digiex.magiccarpet;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,19 +42,14 @@ import org.bukkit.util.Vector;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class MagicListener implements Listener {
-
-	private final MagicCarpet plugin;
+	
 	private boolean falling = false;
-
-	MagicListener(MagicCarpet plugin) {
-		this.plugin = plugin;
-	}
 
 	@EventHandler()
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		if (MagicCarpet.getCarpets().has(player)) {
-			Carpet.create(player, plugin).show();
+			Carpet.create(player).show();
 		}
 	}
 
@@ -83,7 +79,7 @@ public class MagicListener implements Listener {
 		if (carpet == null || !carpet.isVisible()) {
 			return;
 		}
-		if (carpet.getLocation() == event.getTo()) {
+		if (event.getTo().distance(event.getFrom()) <= 0) {
 			return;
 		}
 		Location to = event.getTo().clone();
@@ -124,10 +120,10 @@ public class MagicListener implements Listener {
 			return;
 		}
 		Location to = event.getTo();
-		if (carpet.getLocation() == to) {
+		if (carpet.getLocation().distance(to) <= 0) {
 			return;
 		}
-		carpet.moveTo(to);
+		carpet.teleportTo(to);
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -161,14 +157,9 @@ public class MagicListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onBlockForm(BlockFormEvent event) {
-		for (Carpet carpet : MagicCarpet.getCarpets().all()) {
-			if (carpet == null || !carpet.isVisible()) {
-				continue;
-			}
-			if (carpet.touches(event.getBlock())) {
-				event.setCancelled(true);
-				return;
-			}
+		Block block = event.getBlock().getRelative(BlockFace.DOWN);
+		if (block.hasMetadata("Carpet")) {
+			event.setCancelled(true);
 		}
 	}
 
@@ -211,11 +202,9 @@ public class MagicListener implements Listener {
 		default:
 			break;
 		}
-		for (Carpet carpet : MagicCarpet.getCarpets().all()) {
-			if (carpet == null || !carpet.isVisible()) {
-				continue;
-			}
-			if (carpet.touches(event.getBlock())) {
+		for (BlockFace face : BlockFace.values()) {
+			Block block = event.getBlock().getRelative(face);
+			if (block.hasMetadata("Carpet")) {
 				event.setCancelled(true);
 				return;
 			}
@@ -274,11 +263,10 @@ public class MagicListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onHangingingBreak(HangingBreakEvent event) {
-		for (Carpet carpet : MagicCarpet.getCarpets().all()) {
-			if (carpet == null || !carpet.isVisible()) {
-				continue;
-			}
-			if (carpet.touches(event.getEntity().getLocation().getBlock())) {
+		for (BlockFace face : BlockFace.values()) {
+			Block block = event.getEntity().getLocation().getBlock()
+					.getRelative(face);
+			if (block.hasMetadata("Carpet")) {
 				event.setCancelled(true);
 				return;
 			}

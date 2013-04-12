@@ -59,8 +59,12 @@ import net.digiex.magiccarpet.Metrics.Graph;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -98,8 +102,8 @@ public class MagicCarpet extends JavaPlugin {
 	private static EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE,
 			JACK_O_LANTERN);
 	private static CarpetStorage carpets = new CarpetStorage();
-	private MagicListener magicListener = new MagicListener(this);
-	private static WorldGuardHandler worldGuardHandler;
+	private MagicListener magicListener = new MagicListener();
+	private static Magic magic = new Magic();
 	private VaultHandler vault;
 	private FileConfiguration config;
 	private File configFile;
@@ -121,26 +125,7 @@ public class MagicCarpet extends JavaPlugin {
 	boolean tools = false;
 	List<?> chargePackages = Arrays.asList("alpha:3600:5.0", "beta:7200:10.0");
 	long chargeTime = 1800;
-
-	private enum Permission {
-		CARPET("magiccarpet.mc"), LIGHT("magiccarpet.ml"), SWITCH(
-				"magiccarpet.mcs"), TOOL("magiccarpet.mct"), RELOAD(
-				"magiccarpet.mr"), NOPAY("magiccarpet.np"), All("magiccarpet.*");
-
-		private final String permission;
-
-		Permission(String permission) {
-			this.permission = permission;
-		}
-
-		static boolean has(Player player, Permission permission) {
-			return has(player, permission.permission);
-		}
-
-		static boolean has(Player player, String node) {
-			return player.hasPermission(node);
-		}
-	}
+	boolean chargeTimeBased = false;
 
 	private String saveString(String s) {
 		return s.toLowerCase().replace("_", " ");
@@ -156,8 +141,8 @@ public class MagicCarpet extends JavaPlugin {
 
 	private void registerCommands() {
 		getCommand("magiccarpet").setExecutor(new CarpetCommand(this));
-		getCommand("magiclight").setExecutor(new LightCommand(this));
-		getCommand("carpetswitch").setExecutor(new SwitchCommand(this));
+		getCommand("magiclight").setExecutor(new LightCommand());
+		getCommand("carpetswitch").setExecutor(new SwitchCommand());
 		getCommand("magicreload").setExecutor(new ReloadCommand(this));
 		getCommand("magiccarpetbuy").setExecutor(new CarpetBuyCommand(this));
 	}
@@ -235,20 +220,9 @@ public class MagicCarpet extends JavaPlugin {
 		}
 		registerEvents(magicListener);
 		registerCommands();
-		getWorldGuard();
 		getVault();
 		startStats();
 		log.info("is now enabled!");
-	}
-
-	void getWorldGuard() {
-		Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
-		if (plugin == null
-				|| !(plugin instanceof com.sk89q.worldguard.bukkit.WorldGuardPlugin)) {
-			return;
-		}
-		worldGuardHandler = new WorldGuardHandler(
-				(com.sk89q.worldguard.bukkit.WorldGuardPlugin) plugin);
 	}
 
 	VaultHandler getVault() {
@@ -274,58 +248,48 @@ public class MagicCarpet extends JavaPlugin {
 		return carpets;
 	}
 
-	boolean canFly(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : Permission.has(player,
-				Permission.CARPET);
+	public static boolean canFly(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.mc");
 	}
 
-	boolean canLight(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : Permission.has(player,
-				Permission.LIGHT);
+	public static boolean canLight(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.ml");
 	}
 
-	boolean canSwitch(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : Permission.has(player,
-				Permission.SWITCH);
+	public static boolean canSwitch(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.mcs");
 	}
 
-	boolean canTool(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : Permission.has(player,
-				Permission.TOOL);
+	public static boolean canTool(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.mct");
 	}
 
-	boolean canReload(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : Permission.has(player,
-				Permission.RELOAD);
-	}
-
-	boolean canFlyHere(Location location) {
-		return (worldGuardHandler == null) ? true : worldGuardHandler
-				.canFlyHere(location);
+	public static boolean canReload(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.mr");
 	}
 	
-	boolean canNotPay(Player player) {
-		return (getVault() == null) ? false : Permission.has(player, Permission.NOPAY);
+	public static boolean canNotPay(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.np");
 	}
 
-	boolean canFlyAt(Player player, int i) {
+	public boolean canFlyAt(Player player, int i) {
 		if (i == carpSize) {
 			return true;
 		}
 		if (carpets.wasGiven(player)) {
 			return true;
 		}
-		if (Permission.has(player, Permission.All)) {
+		if (player.hasPermission("magiccarpet.*")) {
 			return true;
 		}
 		return player.hasPermission("magiccarpet.mc." + i);
 	}
 
-	EnumSet<Material> getAcceptableCarpetMaterial() {
+	public static EnumSet<Material> getAcceptableCarpetMaterial() {
 		return acceptableCarpet;
 	}
 
-	EnumSet<Material> getAcceptableLightMaterial() {
+	public static EnumSet<Material> getAcceptableLightMaterial() {
 		return acceptableLight;
 	}
 
@@ -384,6 +348,7 @@ public class MagicCarpet extends JavaPlugin {
 		config.set("change-liquids", changeLiquids);
 		config.set("tools", tools);
 		config.set("charge", charge);
+		config.set("charge-timebased", chargeTimeBased);
 		config.set("charge-amount", chargeAmount);
 		config.set("charge-time", chargeTime);
 		config.set("charge-packages", chargePackages);
@@ -451,6 +416,7 @@ public class MagicCarpet extends JavaPlugin {
 		chargeTime = config.getLong("charge-time", 1800);
 		chargePackages = config.getList("charge-packages",
 				Arrays.asList("alpha:3600:5.0", "beta:7200:10.0"));
+		chargeTimeBased = config.getBoolean("charge-timebased", false);
 	}
 
 	boolean canChangeLiquids(String type) {
@@ -460,5 +426,16 @@ public class MagicCarpet extends JavaPlugin {
 			return true;
 		else
 			return changeLiquids.equals(type);
+	}
+	
+	static void addMagic(World world, Location location, Color color) {
+		try {
+			magic.playFirework(
+					world,
+					location,
+					FireworkEffect.builder().with(Type.BALL_LARGE)
+							.withColor(color).build());
+		} catch (Exception e) {
+		}
 	}
 }
