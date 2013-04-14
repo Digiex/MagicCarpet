@@ -1,7 +1,6 @@
 package net.digiex.magiccarpet;
 
 import static java.lang.Math.abs;
-
 import net.digiex.magiccarpet.events.CarpetMoveEvent;
 import net.digiex.magiccarpet.events.CarpetSpawnEvent;
 import net.digiex.magiccarpet.events.CarpetTeleportEvent;
@@ -45,7 +44,7 @@ public class Carpet {
 		}
 
 		void set(Block bl, Material material) {
-			bl.setTypeId(material.getId(), false);
+			bl.setType(material);
 			bl.setMetadata("Carpet", new FixedMetadataValue(plugin, carpet));
 		}
 
@@ -54,6 +53,8 @@ public class Carpet {
 				return false;
 			}
 			if (!MagicCarpet.canLight(who)) {
+				light = false;
+				who.sendMessage("The luminous stones in the carpet slowly fade away.");
 				return false;
 			}
 			if (dx == 0 && dz == 0) {
@@ -67,6 +68,8 @@ public class Carpet {
 				return false;
 			}
 			if (!MagicCarpet.canTool(who)) {
+				tools = false;
+				who.sendMessage("The magic tools have disappeared.");
 				return false;
 			}
 			if (dx == 2 && dz == 0) {
@@ -80,6 +83,8 @@ public class Carpet {
 				return false;
 			}
 			if (!MagicCarpet.canTool(who)) {
+				tools = false;
+				who.sendMessage("The magic tools have disappeared.");
 				return false;
 			}
 			if (dx == -2 && dz == 0) {
@@ -150,7 +155,7 @@ public class Carpet {
 				} else if (fibre.shouldWork()) {
 					fibre.set(bl, Material.WORKBENCH);
 				} else {
-					fibre.set(bl, getThread());
+					fibre.set(bl, thread);
 				}
 			}
 	}
@@ -209,6 +214,17 @@ public class Carpet {
 	}
 	
 	private void makeMagic(Color color) {
+		/*
+		 * The code below is trickery and may not work
+		 * this however does but not in the best way.
+		 * 
+		 * Just in case the below code doesn't work out
+		 * 
+		 * Firework firework = who.getWorld().spawn(currentCentre.getLocation(), Firework.class);
+        FireworkMeta data = (FireworkMeta) firework.getFireworkMeta();
+        data.addEffects(FireworkEffect.builder().withColor(Color.GREEN).with(Type.BALL_LARGE).build());
+        data.setPower(0);
+        firework.setFireworkMeta(data);*/
 		MagicCarpet.addMagic(currentCentre.getWorld(),
 				currentCentre.getLocation(), color);
 	}
@@ -371,7 +387,7 @@ public class Carpet {
 			drawCarpet();
 			makeMagic(Color.BLUE);
 			MagicCarpet.getCarpets().update(who);
-			who.sendMessage("A glass carpet appears below your feet.");
+			who.sendMessage("Poof! A magic carpet appears below your feet.");
 		}
 	}
 
