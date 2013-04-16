@@ -55,6 +55,7 @@ public class Carpet {
 			if (!MagicCarpet.canLight(who)) {
 				light = false;
 				who.sendMessage("The luminous stones in the carpet slowly fade away.");
+				MagicCarpet.getCarpets().update(who);
 				return false;
 			}
 			if (dx == 0 && dz == 0) {
@@ -70,6 +71,7 @@ public class Carpet {
 			if (!MagicCarpet.canTool(who)) {
 				tools = false;
 				who.sendMessage("The magic tools have disappeared.");
+				MagicCarpet.getCarpets().update(who);
 				return false;
 			}
 			if (dx == 2 && dz == 0) {
@@ -85,6 +87,7 @@ public class Carpet {
 			if (!MagicCarpet.canTool(who)) {
 				tools = false;
 				who.sendMessage("The magic tools have disappeared.");
+				MagicCarpet.getCarpets().update(who);
 				return false;
 			}
 			if (dx == -2 && dz == 0) {
@@ -137,7 +140,6 @@ public class Carpet {
 	private void drawCarpet() {
 		if (!MagicCarpet.canFly(who)) {
 			hide();
-			who.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
 			return;
 		}
 		for (CarpetFibre fibre : fibres) {
@@ -214,17 +216,6 @@ public class Carpet {
 	}
 	
 	private void makeMagic(Color color) {
-		/*
-		 * The code below is trickery and may not work
-		 * this however does but not in the best way.
-		 * 
-		 * Just in case the below code doesn't work out
-		 * 
-		 * Firework firework = who.getWorld().spawn(currentCentre.getLocation(), Firework.class);
-        FireworkMeta data = (FireworkMeta) firework.getFireworkMeta();
-        data.addEffects(FireworkEffect.builder().withColor(Color.GREEN).with(Type.BALL_LARGE).build());
-        data.setPower(0);
-        firework.setFireworkMeta(data);*/
 		MagicCarpet.addMagic(currentCentre.getWorld(),
 				currentCentre.getLocation(), color);
 	}
@@ -268,7 +259,7 @@ public class Carpet {
 
 	public void descend() {
 		removeCarpet();
-		currentCentre = who.getLocation().getBlock().getRelative(0, -1, 0);
+		currentCentre = currentCentre.getLocation().getBlock().getRelative(0, -1, 0);
 		drawCarpet();
 	}
 
@@ -387,7 +378,7 @@ public class Carpet {
 			drawCarpet();
 			makeMagic(Color.BLUE);
 			MagicCarpet.getCarpets().update(who);
-			who.sendMessage("Poof! A magic carpet appears below your feet.");
+			who.sendMessage("Poof! The magic carpet appears below your feet!");
 		}
 	}
 

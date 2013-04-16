@@ -8,7 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 /*
- * Magic Carpet 3.0 Copyright (C) 2012-2013 Android, Celtic Minstrel, xzKinGzxBuRnzx
+ * Magic Carpet 2.3 Copyright (C) 2012-2013 Android, Celtic Minstrel, xzKinGzxBuRnzx
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -126,7 +126,7 @@ public class CarpetStorage implements Serializable {
 
 	public void clear() {
 		for (CarpetEntry entry : carpets.values()) {
-			if (entry.carpet == null) {
+			if (entry.carpet == null || !entry.carpet.isVisible()) {
 				continue;
 			}
 			entry.carpet.removeCarpet();
@@ -159,11 +159,6 @@ public class CarpetStorage implements Serializable {
 			if (!MagicCarpet.getAcceptableLightMaterial().contains(entry.light)) {
 				entry.light = plugin.lightMaterial;
 			}
-			if (plugin.getVault() != null
-					&& plugin.getVault().getPackage(entry.autoPackage) == null) {
-				entry.autoPackage = null;
-				entry.autoRenew = false;
-			}
 			if (entry.lastSize > plugin.maxCarpSize) {
 				entry.lastSize = plugin.carpSize;
 			}
@@ -178,6 +173,11 @@ public class CarpetStorage implements Serializable {
 			}
 			if (entry.tools && !plugin.tools) {
 				entry.tools = false;
+			}
+			if (plugin.getVault() != null) {
+				if (entry.hasCarpet && !entry.oneTimeFee) {
+					entry.hasCarpet = false;
+				}
 			}
 		}
 	}

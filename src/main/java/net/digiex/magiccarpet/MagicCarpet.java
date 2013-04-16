@@ -74,7 +74,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /*
- * Magic Carpet 3.0 Copyright (C) 2012-2013 Android, Celtic Minstrel, xzKinGzxBuRnzx
+ * Magic Carpet 2.3 Copyright (C) 2012-2013 Android, Celtic Minstrel, xzKinGzxBuRnzx
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -186,6 +186,42 @@ public class MagicCarpet extends JavaPlugin {
 			log.warning("Failed to submit stats.");
 		}
 	}
+	
+	public static CarpetStorage getCarpets() {
+		return carpets;
+	}
+
+	public static boolean canFly(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.mc");
+	}
+
+	public static boolean canLight(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.ml");
+	}
+
+	public static boolean canSwitch(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.mcs");
+	}
+
+	public static boolean canTool(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.mct");
+	}
+
+	public static boolean canReload(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.mr");
+	}
+	
+	public static boolean canNotPay(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.np");
+	}
+	
+	public static EnumSet<Material> getAcceptableCarpetMaterial() {
+		return acceptableCarpet;
+	}
+
+	public static EnumSet<Material> getAcceptableLightMaterial() {
+		return acceptableLight;
+	}
 
 	@Override
 	public void onDisable() {
@@ -226,6 +262,19 @@ public class MagicCarpet extends JavaPlugin {
 		log.info("is now enabled!");
 	}
 
+	public boolean canFlyAt(Player player, int i) {
+		if (i == carpSize) {
+			return true;
+		}
+		if (carpets.wasGiven(player)) {
+			return true;
+		}
+		if (player.hasPermission("magiccarpet.*")) {
+			return true;
+		}
+		return player.hasPermission("magiccarpet.mc." + i);
+	}
+	
 	VaultHandler getVault() {
 		if (!charge) {
 			return null;
@@ -243,55 +292,6 @@ public class MagicCarpet extends JavaPlugin {
 			return null;
 		}
 		return vault = new VaultHandler(this, rsp.getProvider());
-	}
-
-	public static CarpetStorage getCarpets() {
-		return carpets;
-	}
-
-	public static boolean canFly(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.mc");
-	}
-
-	public static boolean canLight(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.ml");
-	}
-
-	public static boolean canSwitch(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.mcs");
-	}
-
-	public static boolean canTool(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.mct");
-	}
-
-	public static boolean canReload(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.mr");
-	}
-	
-	public static boolean canNotPay(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.np");
-	}
-
-	public boolean canFlyAt(Player player, int i) {
-		if (i == carpSize) {
-			return true;
-		}
-		if (carpets.wasGiven(player)) {
-			return true;
-		}
-		if (player.hasPermission("magiccarpet.*")) {
-			return true;
-		}
-		return player.hasPermission("magiccarpet.mc." + i);
-	}
-
-	public static EnumSet<Material> getAcceptableCarpetMaterial() {
-		return acceptableCarpet;
-	}
-
-	public static EnumSet<Material> getAcceptableLightMaterial() {
-		return acceptableLight;
 	}
 
 	void saveCarpets() {
