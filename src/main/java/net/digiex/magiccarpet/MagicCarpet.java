@@ -59,12 +59,8 @@ import net.digiex.magiccarpet.Metrics.Graph;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.FireworkEffect.Type;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -102,30 +98,32 @@ public class MagicCarpet extends JavaPlugin {
 	private static EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE,
 			JACK_O_LANTERN);
 	private static CarpetStorage carpets = new CarpetStorage();
-	private MagicListener magicListener = new MagicListener();
 	private static Magic magic = new Magic();
+	
+	private MagicListener magicListener = new MagicListener();
+	private static WorldGuardHandler worldGuardHandler;
 	private VaultHandler vault;
 	private FileConfiguration config;
 	private File configFile;
 	private Logger log;
 
-	Material carpMaterial = GLASS;
-	int carpSize = 5;
-	boolean crouchDef = true;
-	boolean customCarpets = false;
-	boolean glowCenter = false;
-	Material lightMaterial = GLOWSTONE;
-	int maxCarpSize = 9;
-	boolean saveCarpets = true;
-	boolean lights = false;
-	boolean customLights = false;
-	boolean charge = false;
-	double chargeAmount = 20.0;
-	String changeLiquids = "true";
-	boolean tools = false;
-	List<?> chargePackages = Arrays.asList("alpha:3600:5.0", "beta:7200:10.0");
-	long chargeTime = 1800;
-	boolean chargeTimeBased = false;
+	static Material carpMaterial = GLASS;
+	static int carpSize = 5;
+	static boolean crouchDef = true;
+	static boolean customCarpets = false;
+	static boolean glowCenter = false;
+	static Material lightMaterial = GLOWSTONE;
+	static int maxCarpSize = 9;
+	static boolean saveCarpets = true;
+	static boolean lights = false;
+	static boolean customLights = false;
+	static boolean charge = false;
+	static double chargeAmount = 20.0;
+	static String changeLiquids = "true";
+	static boolean tools = false;
+	static List<?> chargePackages = Arrays.asList("alpha:3600:5.0", "beta:7200:10.0");
+	static long chargeTime = 1800;
+	static boolean chargeTimeBased = false;
 
 	private String saveString(String s) {
 		return s.toLowerCase().replace("_", " ");
@@ -222,6 +220,24 @@ public class MagicCarpet extends JavaPlugin {
 	public static EnumSet<Material> getAcceptableLightMaterial() {
 		return acceptableLight;
 	}
+	
+	public static boolean canFlyHere(Location location) {
+		return (worldGuardHandler == null) ? true : worldGuardHandler
+				.canFlyHere(location);
+	}
+	
+	public static boolean canFlyAt(Player player, int i) {
+		if (i == carpSize) {
+			return true;
+		}
+		if (carpets.wasGiven(player)) {
+			return true;
+		}
+		if (player.hasPermission("magiccarpet.*")) {
+			return true;
+		}
+		return player.hasPermission("magiccarpet.mc." + i);
+	}
 
 	@Override
 	public void onDisable() {
@@ -261,18 +277,9 @@ public class MagicCarpet extends JavaPlugin {
 		startStats();
 		log.info("is now enabled!");
 	}
-
-	public boolean canFlyAt(Player player, int i) {
-		if (i == carpSize) {
-			return true;
-		}
-		if (carpets.wasGiven(player)) {
-			return true;
-		}
-		if (player.hasPermission("magiccarpet.*")) {
-			return true;
-		}
-		return player.hasPermission("magiccarpet.mc." + i);
+	
+	static Magic getMagic() {
+		return magic;
 	}
 	
 	VaultHandler getVault() {
@@ -292,6 +299,16 @@ public class MagicCarpet extends JavaPlugin {
 			return null;
 		}
 		return vault = new VaultHandler(this, rsp.getProvider());
+	}
+	
+	void getWorldGuard() {
+		Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
+		if (plugin == null
+				|| !(plugin instanceof com.sk89q.worldguard.bukkit.WorldGuardPlugin)) {
+			return;
+		}
+		worldGuardHandler = new WorldGuardHandler(
+				(com.sk89q.worldguard.bukkit.WorldGuardPlugin) plugin);
 	}
 
 	void saveCarpets() {
@@ -427,16 +444,5 @@ public class MagicCarpet extends JavaPlugin {
 			return true;
 		else
 			return changeLiquids.equals(type);
-	}
-	
-	static void addMagic(World world, Location location, Color color) {
-		try {
-			magic.playFirework(
-					world,
-					location,
-					FireworkEffect.builder().with(Type.BALL_LARGE)
-							.withColor(color).build());
-		} catch (Exception e) {
-		}
 	}
 }

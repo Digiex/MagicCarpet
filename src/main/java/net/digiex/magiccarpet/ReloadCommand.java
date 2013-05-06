@@ -58,7 +58,7 @@ public class ReloadCommand implements CommandExecutor {
 		if (plugin.getVault() != null) {
 			plugin.getVault().loadPackages();
 		}
-		if (plugin.saveCarpets) {
+		if (MagicCarpet.saveCarpets) {
 			plugin.saveCarpets();
 			plugin.loadCarpets();
 		}

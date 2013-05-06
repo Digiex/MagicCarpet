@@ -1,12 +1,11 @@
 package net.digiex.magiccarpet;
 
 import static java.lang.Math.abs;
-import net.digiex.magiccarpet.events.CarpetMoveEvent;
-import net.digiex.magiccarpet.events.CarpetSpawnEvent;
-import net.digiex.magiccarpet.events.CarpetTeleportEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -142,6 +141,10 @@ public class Carpet {
 			hide();
 			return;
 		}
+		if (!MagicCarpet.canFlyHere(currentCentre.getLocation())) {
+			hide();
+			return;
+		}
 		for (CarpetFibre fibre : fibres) {
 				Block bl = currentCentre.getRelative(fibre.dx, fibre.dy, fibre.dz);
 				Material type = bl.getType();
@@ -216,21 +219,27 @@ public class Carpet {
 	}
 	
 	private void makeMagic(Color color) {
-		MagicCarpet.addMagic(currentCentre.getWorld(),
-				currentCentre.getLocation(), color);
+		try {
+			MagicCarpet.getMagic().playFirework(
+					currentCentre.getWorld(),
+					currentCentre.getLocation(),
+					FireworkEffect.builder().with(Type.BALL_LARGE)
+							.withColor(color).build());
+		} catch (Exception e) {
+		}
 	}
 
 	public void changeCarpet(int sz) {
-		if (sz % 2 == 0 || sz < 1 || sz > plugin.maxCarpSize) {
+		if (sz % 2 == 0 || sz < 1 || sz > MagicCarpet.maxCarpSize) {
 			who.sendMessage("The size must be an odd number from 1 to "
-					+ String.valueOf(plugin.maxCarpSize) + ".");
+					+ String.valueOf(MagicCarpet.maxCarpSize) + ".");
 			return;
 		}
 		if (sz == edge) {
 			who.sendMessage("The carpet size is already equal to " + sz);
 			return;
 		}
-		if (!plugin.canFlyAt(who, sz)) {
+		if (!MagicCarpet.canFlyAt(who, sz)) {
 			who.sendMessage("A carpet of that size is not allowed for you.");
 			return;
 		}
@@ -242,7 +251,7 @@ public class Carpet {
 	}
 
 	public void changeCarpet(Material material) {
-		if (!plugin.customCarpets) {
+		if (!MagicCarpet.customCarpets) {
 			who.sendMessage("The carpet isn't allowed to change material.");
 			return;
 		}
@@ -294,7 +303,7 @@ public class Carpet {
 	}
 
 	public boolean isCustom() {
-		if (thread != plugin.carpMaterial || shine != plugin.lightMaterial) {
+		if (thread != MagicCarpet.carpMaterial || shine != MagicCarpet.lightMaterial) {
 			return true;
 		}
 		return false;
@@ -317,7 +326,7 @@ public class Carpet {
 	}
 
 	public void lightOn() {
-		if (!plugin.lights) {
+		if (!MagicCarpet.lights) {
 			who.sendMessage("The magic light is disabled");
 			return;
 		}
@@ -329,29 +338,13 @@ public class Carpet {
 	}
 
 	public void moveTo(Location to) {
-		CarpetMoveEvent event = new CarpetMoveEvent(this, to);
-		Bukkit.getServer().getPluginManager().callEvent(event);
-		if (event.isCancelled()) {
-			return;
-		}
-		removeCarpet();
-		currentCentre = to.getBlock();
-		drawCarpet();
-	}
-
-	public void teleportTo(Location to) {
-		CarpetTeleportEvent event = new CarpetTeleportEvent(this, to);
-		Bukkit.getServer().getPluginManager().callEvent(event);
-		if (event.isCancelled()) {
-			return;
-		}
 		removeCarpet();
 		currentCentre = to.getBlock();
 		drawCarpet();
 	}
 
 	public void setLight(Material material) {
-		if (!plugin.customLights) {
+		if (!MagicCarpet.customLights) {
 			who.sendMessage("The magic light isn't allowed to change material.");
 			return;
 		}
@@ -368,11 +361,6 @@ public class Carpet {
 
 	public void show() {
 		if (hidden) {
-			CarpetSpawnEvent event = new CarpetSpawnEvent(this);
-			Bukkit.getServer().getPluginManager().callEvent(event);
-			if (event.isCancelled()) {
-				return;
-			}
 			currentCentre = who.getLocation().getBlock();
 			hidden = false;
 			drawCarpet();
@@ -408,7 +396,7 @@ public class Carpet {
 	}
 
 	public void toolsOn() {
-		if (!plugin.tools) {
+		if (!MagicCarpet.tools) {
 			who.sendMessage("The magic tools are not enabled.");
 			return;
 		}
@@ -426,5 +414,9 @@ public class Carpet {
 			}
 			fibre.block = null;
 		}
+	}
+	
+	public CarpetFibre[] getFibres() {
+		return fibres;
 	}
 }

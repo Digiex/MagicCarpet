@@ -176,7 +176,7 @@ public class VaultHandler {
 				.runTaskTimerAsynchronously(plugin, new Runnable() {
 					@Override
 					public void run() {
-						if (!plugin.chargeTimeBased) {
+						if (!MagicCarpet.chargeTimeBased) {
 							return;
 						}
 						for (Player player : plugin.getServer()
@@ -215,7 +215,7 @@ public class VaultHandler {
 
 	void loadPackages() {
 		try {
-			for (Object o : plugin.chargePackages) {
+			for (Object o : MagicCarpet.chargePackages) {
 				String[] s = o.toString().split(":");
 				String name = s[0];
 				long time = Long.valueOf(s[1]);

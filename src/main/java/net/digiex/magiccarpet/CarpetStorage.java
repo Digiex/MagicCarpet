@@ -30,15 +30,15 @@ public class CarpetStorage implements Serializable {
 		private static final long serialVersionUID = -1655870844571882460L;
 
 		public transient Carpet carpet;
-		public boolean crouch = plugin.crouchDef;
+		public boolean crouch = MagicCarpet.crouchDef;
 		public boolean hasCarpet = false;
-		public int lastSize = plugin.carpSize;
-		public Material light = plugin.lightMaterial;
-		public boolean lightsOn = plugin.glowCenter;
-		public Material thread = plugin.carpMaterial;
+		public int lastSize = MagicCarpet.carpSize;
+		public Material light = MagicCarpet.lightMaterial;
+		public boolean lightsOn = MagicCarpet.glowCenter;
+		public Material thread = MagicCarpet.carpMaterial;
 		public boolean given = false;
 		public boolean tools = false;
-		public long time = plugin.chargeTime;
+		public long time = MagicCarpet.chargeTime;
 		public boolean autoRenew = false;
 		public boolean oneTimeFee = false;
 		public String autoPackage = null;
@@ -154,24 +154,24 @@ public class CarpetStorage implements Serializable {
 	void checkCarpets() {
 		for (CarpetEntry entry : carpets.values()) {
 			if (!MagicCarpet.getAcceptableCarpetMaterial().contains(entry.thread)) {
-				entry.thread = plugin.carpMaterial;
+				entry.thread = MagicCarpet.carpMaterial;
 			}
 			if (!MagicCarpet.getAcceptableLightMaterial().contains(entry.light)) {
-				entry.light = plugin.lightMaterial;
+				entry.light = MagicCarpet.lightMaterial;
 			}
-			if (entry.lastSize > plugin.maxCarpSize) {
-				entry.lastSize = plugin.carpSize;
+			if (entry.lastSize > MagicCarpet.maxCarpSize) {
+				entry.lastSize = MagicCarpet.carpSize;
 			}
-			if (entry.thread != plugin.carpMaterial && !plugin.customCarpets) {
-				entry.thread = plugin.carpMaterial;
+			if (entry.thread != MagicCarpet.carpMaterial && !MagicCarpet.customCarpets) {
+				entry.thread = MagicCarpet.carpMaterial;
 			}
-			if (entry.light != plugin.lightMaterial && !plugin.customLights) {
-				entry.light = plugin.lightMaterial;
+			if (entry.light != MagicCarpet.lightMaterial && !MagicCarpet.customLights) {
+				entry.light = MagicCarpet.lightMaterial;
 			}
-			if (entry.lightsOn && !plugin.lights) {
+			if (entry.lightsOn && !MagicCarpet.lights) {
 				entry.lightsOn = false;
 			}
-			if (entry.tools && !plugin.tools) {
+			if (entry.tools && !MagicCarpet.tools) {
 				entry.tools = false;
 			}
 			if (plugin.getVault() != null) {
@@ -185,7 +185,7 @@ public class CarpetStorage implements Serializable {
 	boolean crouches(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return plugin.crouchDef;
+			return MagicCarpet.crouchDef;
 		}
 		return entry.crouch;
 	}
@@ -193,7 +193,7 @@ public class CarpetStorage implements Serializable {
 	int getLastSize(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return plugin.carpSize;
+			return MagicCarpet.carpSize;
 		}
 		return entry.lastSize;
 	}
@@ -201,7 +201,7 @@ public class CarpetStorage implements Serializable {
 	Material getMaterial(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return plugin.carpMaterial;
+			return MagicCarpet.carpMaterial;
 		}
 		return entry.thread;
 	}
@@ -209,7 +209,7 @@ public class CarpetStorage implements Serializable {
 	Material getLightMaterial(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return plugin.lightMaterial;
+			return MagicCarpet.lightMaterial;
 		}
 		return entry.light;
 	}
@@ -225,7 +225,7 @@ public class CarpetStorage implements Serializable {
 	boolean hasLight(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return plugin.glowCenter;
+			return MagicCarpet.glowCenter;
 		}
 		return entry.lightsOn;
 	}
@@ -258,7 +258,7 @@ public class CarpetStorage implements Serializable {
 	boolean hasTools(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return plugin.tools;
+			return MagicCarpet.tools;
 		}
 		return entry.tools;
 	}
@@ -274,7 +274,7 @@ public class CarpetStorage implements Serializable {
 	long getTime(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return plugin.chargeTime;
+			return MagicCarpet.chargeTime;
 		}
 		return entry.time;
 	}

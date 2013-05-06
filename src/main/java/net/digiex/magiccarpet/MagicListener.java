@@ -123,7 +123,7 @@ public class MagicListener implements Listener {
 		if (carpet.getLocation().distance(to) <= 0) {
 			return;
 		}
-		carpet.teleportTo(to);
+		carpet.moveTo(to);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

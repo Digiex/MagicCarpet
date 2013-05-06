@@ -73,13 +73,13 @@ public class CarpetBuyCommand implements CommandExecutor {
 				}
 				if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
 					player.sendMessage("You need to pay a one time fee of "
-							+ String.valueOf(plugin.chargeAmount)
+							+ String.valueOf(MagicCarpet.chargeAmount)
 							+ " "
 							+ plugin.getVault().getCurrencyNamePlural()
 							+ " before you can use Magic Carpet. Use /mcb -b to accept this charge.");
 					return true;
 				}
-				if (!plugin.chargeTimeBased) {
+				if (!MagicCarpet.chargeTimeBased) {
 					return true;
 				}
 				player.sendMessage("You have "
@@ -105,13 +105,13 @@ public class CarpetBuyCommand implements CommandExecutor {
 				}
 				if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
 					player.sendMessage("You need to pay a one time fee of "
-							+ String.valueOf(plugin.chargeAmount)
+							+ String.valueOf(MagicCarpet.chargeAmount)
 							+ " "
 							+ plugin.getVault().getCurrencyNamePlural()
 							+ " before you can use Magic Carpet. Use /mcb -b to accept this charge.");
 					return true;
 				}
-				if (!plugin.chargeTimeBased) {
+				if (!MagicCarpet.chargeTimeBased) {
 					return true;
 				}
 				player.sendMessage("Here are some of the time packages currently available.");
@@ -136,13 +136,13 @@ public class CarpetBuyCommand implements CommandExecutor {
 				}
 				if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
 					player.sendMessage("You need to pay a one time fee of "
-							+ String.valueOf(plugin.chargeAmount)
+							+ String.valueOf(MagicCarpet.chargeAmount)
 							+ " "
 							+ plugin.getVault().getCurrencyNamePlural()
 							+ " before you can use Magic Carpet. Use /mcb -b to accept this charge.");
 					return true;
 				}
-				if (!plugin.chargeTimeBased) {
+				if (!MagicCarpet.chargeTimeBased) {
 					return true;
 				}
 				if (MagicCarpet.getCarpets().canAutoRenew(player)) {
@@ -170,9 +170,9 @@ public class CarpetBuyCommand implements CommandExecutor {
 					return true;
 				}
 				if (plugin.getVault().hasEnough(player.getName(),
-						plugin.chargeAmount)) {
+						MagicCarpet.chargeAmount)) {
 					plugin.getVault().subtract(player.getName(),
-							plugin.chargeAmount);
+							MagicCarpet.chargeAmount);
 					MagicCarpet.getCarpets().setPaidFee(player, true);
 					player.sendMessage("You have successfully paid the one time fee. Use /mc!");
 					return true;
@@ -192,13 +192,13 @@ public class CarpetBuyCommand implements CommandExecutor {
 				}
 				if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
 					player.sendMessage("You need to pay a one time fee of "
-							+ String.valueOf(plugin.chargeAmount)
+							+ String.valueOf(MagicCarpet.chargeAmount)
 							+ " "
 							+ plugin.getVault().getCurrencyNamePlural()
 							+ " before you can use Magic Carpet. Use /mcb -b to accept this charge.");
 					return true;
 				}
-				if (!plugin.chargeTimeBased) {
+				if (!MagicCarpet.chargeTimeBased) {
 					return true;
 				}
 				if (plugin.getVault().getPackage(args[0]) == null) {
@@ -228,13 +228,13 @@ public class CarpetBuyCommand implements CommandExecutor {
 				}
 				if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
 					player.sendMessage("You need to pay a one time fee of "
-							+ String.valueOf(plugin.chargeAmount)
+							+ String.valueOf(MagicCarpet.chargeAmount)
 							+ " "
 							+ plugin.getVault().getCurrencyNamePlural()
 							+ " before you can use Magic Carpet. Use /mcb -b to accept this charge.");
 					return true;
 				}
-				if (!plugin.chargeTimeBased) {
+				if (!MagicCarpet.chargeTimeBased) {
 					return true;
 				}
 				TimePackage tp = plugin.getVault().getPackage(args[0]);
