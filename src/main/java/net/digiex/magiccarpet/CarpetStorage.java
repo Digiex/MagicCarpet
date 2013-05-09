@@ -174,7 +174,7 @@ public class CarpetStorage implements Serializable {
 			if (entry.tools && !MagicCarpet.tools) {
 				entry.tools = false;
 			}
-			if (plugin.getVault() != null) {
+			if (plugin.getVault() != null && MagicCarpet.charge) {
 				if (entry.hasCarpet && !entry.oneTimeFee) {
 					entry.hasCarpet = false;
 				}
