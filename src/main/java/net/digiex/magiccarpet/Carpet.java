@@ -219,13 +219,15 @@ public class Carpet {
 	}
 	
 	private void makeMagic(Color color) {
-		try {
-			MagicCarpet.getMagic().playFirework(
+		if (MagicCarpet.magicEffect) {
+			try {
+				MagicCarpet.getMagic().playFirework(
 					currentCentre.getWorld(),
 					currentCentre.getLocation(),
 					FireworkEffect.builder().with(Type.BALL_LARGE)
 							.withColor(color).build());
-		} catch (Exception e) {
+			} catch (Exception e) {
+			}
 		}
 	}
 
