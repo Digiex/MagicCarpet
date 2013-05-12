@@ -275,6 +275,7 @@ public class MagicCarpet extends JavaPlugin {
 		registerEvents(magicListener);
 		registerCommands();
 		getVault();
+		getWorldGuard();
 		startStats();
 		log.info("is now enabled!");
 	}
