@@ -79,10 +79,12 @@ public class MagicListener implements Listener {
 		if (carpet == null || !carpet.isVisible()) {
 			return;
 		}
-		if (event.getTo().distance(event.getFrom()) <= 0) {
-			return;
-		}
 		Location to = event.getTo().clone();
+		Location last = carpet.getLocation();
+        if (last.getWorld() == to.getWorld() 
+        		&& last.distance(to) == 0) {
+            return;
+        }
 		Location from = event.getFrom();
 		if (player.getLocation().getBlock().isLiquid()
 				&& !player.getEyeLocation().getBlock().isLiquid()
@@ -120,9 +122,11 @@ public class MagicListener implements Listener {
 			return;
 		}
 		Location to = event.getTo();
-		if (carpet.getLocation().distance(to) <= 0) {
-			return;
-		}
+		Location last = carpet.getLocation();
+        if (last.getWorld() == to.getWorld() 
+        		&& last.distance(to) == 0) {
+            return;
+        }
 		carpet.moveTo(to);
 	}
 
