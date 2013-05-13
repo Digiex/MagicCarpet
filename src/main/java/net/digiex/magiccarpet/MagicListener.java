@@ -176,35 +176,23 @@ public class MagicListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPhysics(BlockPhysicsEvent event) {
-		switch (event.getBlock().getType()) {
-		case REDSTONE:
-			return;
-		case DIODE_BLOCK_ON:
-			return;
-		case DIODE_BLOCK_OFF:
-			return;
-		case REDSTONE_WIRE:
-			return;
-		case REDSTONE_LAMP_ON:
-			return;
-		case REDSTONE_LAMP_OFF:
-			return;
-		case RAILS:
-			return;
-		case POWERED_RAIL:
-			return;
-		case DETECTOR_RAIL:
-			return;
-		case TORCH:
-			return;
-		case REDSTONE_TORCH_ON:
-			return;
-		case REDSTONE_TORCH_OFF:
-			return;
-		case LEVER:
-			return;
-		default:
+		switch(event.getBlock().getType()) {
+		case SAND:
 			break;
+		case CACTUS:
+			break;
+		case VINE:
+			break;
+		case STATIONARY_WATER:
+			break;
+		case WATER:
+			break;
+		case STATIONARY_LAVA:
+			break;
+		case LAVA:
+			break;
+		default:
+			return;
 		}
 		for (Carpet carpet : MagicCarpet.getCarpets().all()) {
 			if (carpet == null || !carpet.isVisible()) {
