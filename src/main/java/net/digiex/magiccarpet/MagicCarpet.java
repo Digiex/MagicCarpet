@@ -125,6 +125,7 @@ public class MagicCarpet extends JavaPlugin {
 	static long chargeTime = 1800;
 	static boolean chargeTimeBased = false;
 	static boolean magicEffect = true;
+	static boolean pvp = true;
 
 	private String saveString(String s) {
 		return s.toLowerCase().replace("_", " ");
@@ -373,6 +374,7 @@ public class MagicCarpet extends JavaPlugin {
 		config.set("charge-time", chargeTime);
 		config.set("charge-packages", chargePackages);
 		config.set("magic", magicEffect);
+		config.set("pvp", pvp);
 		config.options()
 				.header("Be sure to use /mr if you change any settings here while the server is running.");
 		try {
@@ -439,6 +441,7 @@ public class MagicCarpet extends JavaPlugin {
 				Arrays.asList("alpha:3600:5.0", "beta:7200:10.0"));
 		chargeTimeBased = config.getBoolean("charge-timebased", false);
 		magicEffect = config.getBoolean("magic", true);
+		pvp = config.getBoolean("pvp", true);
 	}
 
 	boolean canChangeLiquids(String type) {

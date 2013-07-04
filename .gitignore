@@ -4,3 +4,4 @@ test.sh
 bin/
 magiccarpet.jar
 target/
+dist/
