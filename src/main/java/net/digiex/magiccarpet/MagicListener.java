@@ -94,7 +94,7 @@ public class MagicListener implements Listener {
 		if (MagicCarpet.getCarpets().crouches(player)) {
 			if (player.isSneaking()) {
 				if (!falling) {
-					to.setY(last.getY() - 1);
+					to.setY(to.getY() - 1);
 				}
 				falling = true;
 			}
@@ -102,13 +102,13 @@ public class MagicListener implements Listener {
 			if (from.getPitch() == 90
 					&& (to.getX() != from.getX() || to.getZ() != from.getZ())) {
 				if (!falling) {
-					to.setY(last.getY() - 1);
+					to.setY(to.getY() - 1);
 				}
 				falling = true;
 			}
 		}
 		if (from.getY() > to.getY() && !falling) {
-			to.setY(last.getY());
+			to.setY(from.getY());
 		}
 		carpet.moveTo(to);
 		falling = false;
