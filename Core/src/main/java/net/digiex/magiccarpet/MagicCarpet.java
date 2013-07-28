@@ -56,6 +56,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import net.digiex.magiccarpet.Metrics.Graph;
+import net.digiex.magiccarpet.nms.NMSHelper;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
@@ -260,6 +261,11 @@ public class MagicCarpet extends JavaPlugin {
 	public void onEnable() {
 		carpets = carpets.attach(this);
 		log = getLogger();
+		try {
+			NMSHelper.init(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		if (!getDataFolder().exists()) {
 			getDataFolder().mkdirs();
 		}

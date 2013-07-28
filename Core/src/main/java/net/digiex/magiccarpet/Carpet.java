@@ -2,9 +2,16 @@ package net.digiex.magiccarpet;
 
 import static java.lang.Math.abs;
 
+import java.util.concurrent.TimeUnit;
+
+import net.digiex.magiccarpet.nms.BlockUpdate;
+import net.digiex.magiccarpet.nms.CraftBlockUpdate;
+import net.digiex.magiccarpet.nms.BlockUpdate.RelightingStrategy;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
+import org.bukkit.World;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,7 +50,8 @@ public class Carpet {
 		}
 
 		void set(Block bl, Material material) {
-			bl.setType(material);
+			setBlockFast(bl.getWorld(), bl.getX(), bl.getY(), bl.getZ(), material);
+			//bl.setType(material);
 			bl.setMetadata("Carpet", new FixedMetadataValue(plugin, carpet));
 		}
 
@@ -420,5 +428,12 @@ public class Carpet {
 	
 	public CarpetFibre[] getFibres() {
 		return fibres;
+	}
+	
+	private void setBlockFast(World world, int x, int y, int z, Material material) {
+		BlockUpdate bu = CraftBlockUpdate.createBlockUpdater(plugin, world);
+		bu.setRelightingStrategy(RelightingStrategy.DEFERRED);
+		bu.setMaxRelightTimePerTick(2, TimeUnit.MILLISECONDS);
+		bu.setBlock(x, y, z, material.getId());
 	}
 }
