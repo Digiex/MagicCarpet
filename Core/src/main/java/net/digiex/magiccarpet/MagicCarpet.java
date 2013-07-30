@@ -104,7 +104,7 @@ public class MagicCarpet extends JavaPlugin {
 
 	private Logger log;
 	private Config config;
-	private Carpets carpets = new Carpets();
+	private Carpets carpets;
 
 	private VaultHandler vault;
 	private static WorldGuardHandler worldGuardHandler;
@@ -315,6 +315,7 @@ public class MagicCarpet extends JavaPlugin {
 	public void loadCarpets() {
 		File carpetDat = carpetsFile();
 		if (!carpetDat.exists()) {
+			carpets = new Carpets();
 			return;
 		}
 		log.info("Loading carpets...");

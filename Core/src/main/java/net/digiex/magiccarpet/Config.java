@@ -7,7 +7,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import org.bukkit.Material;
@@ -16,6 +18,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public final class Config {
 
+	private HashMap<String, Object> options = new HashMap<String, Object>();
 	private final FileConfiguration config;
 	private final File configFile;
 	private final Logger log;
@@ -25,7 +28,39 @@ public final class Config {
 		this.config = plugin.getConfig();
 		this.configFile = new File(plugin.getDataFolder(), "config.yml");
 
+		options.put("crouch-descent", this.crouchDef);
+		options.put("center-light", this.glowCenter);
+		options.put("default-size", this.carpSize);
+		options.put("carpet-material", saveString(this.carpMaterial.name()));
+		options.put("light-material", saveString(this.lightMaterial.name()));
+		options.put("max-size", this.maxCarpSize);
+		options.put("custom-carpets", this.customCarpets);
+		options.put("custom-lights", this.customLights);
+		options.put("lights", this.lights);
+		options.put("save-carpets", this.saveCarpets);
+		options.put("change-liquids", this.changeLiquids);
+		options.put("tools", this.tools);
+		options.put("charge", this.charge);
+		options.put("charge-timebased", this.chargeTimeBased);
+		options.put("charge-amount", this.chargeAmount);
+		options.put("charge-time", this.chargeTime);
+		options.put("charge-packages", this.chargePackages);
+		options.put("magic", this.magicEffect);
+		options.put("pvp", this.pvp);
+
 		if (configFile.exists()) {
+			try {
+				config.load(configFile);
+			} catch (FileNotFoundException e) {
+				log.warning("Error loading config.yml; file not found.");
+				log.warning("Creating new config.yml since the old one has disappeared.");
+				saveSettings();
+			} catch (IOException e) {
+				log.warning("Error loading config.yml; IOException");
+			} catch (InvalidConfigurationException e) {
+				log.warning("Error loading config.yml; InvalidConfigurationException");
+			}
+			checkConfig();
 			loadSettings();
 		} else {
 			saveSettings();
@@ -52,7 +87,7 @@ public final class Config {
 	private boolean chargeTimeBased = false;
 	private boolean magicEffect = true;
 	private boolean pvp = true;
-	
+
 	public Material getDefaultCarpetMaterial() {
 		return carpMaterial;
 	}
@@ -206,25 +241,9 @@ public final class Config {
 	}
 
 	public void saveSettings() {
-		config.set("crouch-descent", crouchDef);
-		config.set("center-light", glowCenter);
-		config.set("default-size", carpSize);
-		config.set("carpet-material", saveString(carpMaterial.name()));
-		config.set("light-material", saveString(lightMaterial.name()));
-		config.set("max-size", maxCarpSize);
-		config.set("custom-carpets", customCarpets);
-		config.set("custom-lights", customLights);
-		config.set("lights", lights);
-		config.set("save-carpets", saveCarpets);
-		config.set("change-liquids", changeLiquids);
-		config.set("tools", tools);
-		config.set("charge", charge);
-		config.set("charge-timebased", chargeTimeBased);
-		config.set("charge-amount", chargeAmount);
-		config.set("charge-time", chargeTime);
-		config.set("charge-packages", chargePackages);
-		config.set("magic", magicEffect);
-		config.set("pvp", pvp);
+		for (Entry<String, Object> o : options.entrySet()) {
+			config.set(o.getKey(), o.getValue());
+		}
 		config.options()
 				.header("Be sure to use /mr if you change any settings here while the server is running.");
 		try {
@@ -235,17 +254,6 @@ public final class Config {
 	}
 
 	public void loadSettings() {
-		try {
-			config.load(configFile);
-		} catch (FileNotFoundException e) {
-			log.warning("Error loading config.yml; file not found.");
-			log.warning("Creating new config.yml since the old one has disappeared.");
-			saveSettings();
-		} catch (IOException e) {
-			log.warning("Error loading config.yml; IOException");
-		} catch (InvalidConfigurationException e) {
-			log.warning("Error loading config.yml; InvalidConfigurationException");
-		}
 		crouchDef = config.getBoolean("crouch-descent", true);
 		glowCenter = config.getBoolean("center-light", false);
 		carpSize = config.getInt("default-size", 5);
@@ -292,6 +300,25 @@ public final class Config {
 		chargeTimeBased = config.getBoolean("charge-timebased", false);
 		magicEffect = config.getBoolean("magic", true);
 		pvp = config.getBoolean("pvp", true);
+	}
+
+	public void checkConfig() {
+		boolean updated = false;
+		for (Entry<String, Object> o : options.entrySet()) {
+			String key = o.getKey();
+			if (!config.contains(key)) {
+				config.set(key, o.getValue());
+				updated = true;
+			}
+		}
+		try {
+			config.save(configFile);
+		} catch (IOException e) {
+			log.severe("Unable to modify config.yml; IOException");
+		}
+		if (updated) {
+			log.info("New options have been added to config");
+		}
 	}
 
 	private String saveString(String s) {
