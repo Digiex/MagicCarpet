@@ -45,24 +45,31 @@ import org.bukkit.util.Vector;
 public class MagicListener implements Listener {
 
 	private boolean falling = false;
+	private final Config config;
+	private final Carpets carpets;
+	
+	public MagicListener(MagicCarpet plugin) {
+		this.config = plugin.getMCConfig();
+		this.carpets = plugin.getCarpets();
+	}
 
 	@EventHandler()
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		if (MagicCarpet.getCarpets().has(player)) {
-			Carpet.create(player).show();
+		if (carpets.has(player)) {
+			new Carpet(player).show();
 		}
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		MagicCarpet.getCarpets().remove(event.getPlayer());
+		carpets.remove(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerKick(PlayerKickEvent event) {
 		Player who = event.getPlayer();
-		Carpet carpet = MagicCarpet.getCarpets().getCarpet(who);
+		Carpet carpet = carpets.getCarpet(who);
 		if (carpet != null && carpet.isVisible()) {
 			String reason = event.getReason();
 			if (reason != null
@@ -76,22 +83,22 @@ public class MagicListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerMove(PlayerMoveEvent event) {
 		Player player = event.getPlayer();
-		Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+		Carpet carpet = carpets.getCarpet(player);
 		if (carpet == null || !carpet.isVisible()) {
 			return;
 		}
 		Location to = event.getTo().clone();
-		/*Location last = carpet.getLocation();
+		Location last = carpet.getLocation();
 		if (last.getWorld() == to.getWorld() && last.distance(to) == 0) {
 			return;
-		}*/
+		}
 		Location from = event.getFrom();
 		if (player.getLocation().getBlock().isLiquid()
 				&& !player.getEyeLocation().getBlock().isLiquid()
 				&& to.getY() > from.getY()) {
 			player.setVelocity(player.getVelocity().add(new Vector(0, 0.1, 0)));
 		}
-		if (MagicCarpet.getCarpets().crouches(player)) {
+		if (carpets.crouches(player)) {
 			if (player.isSneaking()) {
 				if (!falling) {
 					to.setY(to.getY() - 1);
@@ -117,7 +124,7 @@ public class MagicListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
-		Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+		Carpet carpet = carpets.getCarpet(player);
 		if (carpet == null || !carpet.isVisible()) {
 			return;
 		}
@@ -132,11 +139,11 @@ public class MagicListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
 		Player player = event.getPlayer();
-		Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+		Carpet carpet = carpets.getCarpet(player);
 		if (carpet == null || !carpet.isVisible()) {
 			return;
 		}
-		if (!MagicCarpet.getCarpets().crouches(player)) {
+		if (!carpets.crouches(player)) {
 			return;
 		}
 		if (event.isSneaking()) {
@@ -147,7 +154,7 @@ public class MagicListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockFade(BlockFadeEvent event) {
-		for (Carpet carpet : MagicCarpet.getCarpets().all()) {
+		for (Carpet carpet : carpets.all()) {
 			if (carpet == null || !carpet.isVisible() || !carpet.hasLight()) {
 				continue;
 			}
@@ -195,7 +202,7 @@ public class MagicListener implements Listener {
 		default:
 			return;
 		}
-		for (Carpet carpet : MagicCarpet.getCarpets().all()) {
+		for (Carpet carpet : carpets.all()) {
 			if (carpet == null || !carpet.isVisible()) {
 				continue;
 			}
@@ -244,7 +251,7 @@ public class MagicListener implements Listener {
 			if (!(event.getEntity() instanceof Player)) {
 				return;
 			}
-			if (MagicCarpet.getCarpets().has((Player) event.getEntity())) {
+			if (carpets.has((Player) event.getEntity())) {
 				event.setCancelled(true);
 			}
 		case ENTITY_ATTACK:
@@ -256,18 +263,18 @@ public class MagicListener implements Listener {
 					|| !(e.getDamager() instanceof Player)) {
 				return;
 			}
-			Carpet carpet = MagicCarpet.getCarpets().getCarpet(
+			Carpet carpet = carpets.getCarpet(
 					(Player) e.getEntity());
-			Carpet c = MagicCarpet.getCarpets().getCarpet(
+			Carpet c = carpets.getCarpet(
 					(Player) e.getDamager());
 			if (carpet != null && carpet.isVisible()) {
-				if (!MagicCarpet.pvp) {
+				if (!config.getDefaultPvp()) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 			if (c != null && c.isVisible()) {
-				if (!MagicCarpet.pvp) {
+				if (!config.getDefaultPvp()) {
 					event.setCancelled(true);
 					return;
 				}

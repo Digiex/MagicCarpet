@@ -1,4 +1,8 @@
-package net.digiex.magiccarpet;
+package net.digiex.magiccarpet.commands;
+
+import net.digiex.magiccarpet.Carpet;
+import net.digiex.magiccarpet.Carpets;
+import net.digiex.magiccarpet.MagicCarpet;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -21,30 +25,43 @@ import org.bukkit.entity.Player;
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class ToolCommand implements CommandExecutor {
+public class SwitchCommand implements CommandExecutor {
+	
+	private final MagicCarpet plugin;
+	private final Carpets carpets;
+	
+	public SwitchCommand(MagicCarpet plugin) {
+		this.plugin = plugin;
+		this.carpets = plugin.getCarpets();
+	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 		if (!(sender instanceof Player)) {
-			sender.sendMessage("Sorry, this command is in game only.");
+			sender.sendMessage("Sorry, only players can use the carpet!");
 			return true;
 		}
 		Player player = (Player) sender;
-		if (!MagicCarpet.canTool(player)) {
-			player.sendMessage("You cannot use the magic tools, no permission.");
-			return true;
+		if (plugin.canFly(player) && plugin.canSwitch(player)) {
+			Carpet carpet = carpets.getCarpet(player);
+			if (carpet == null || !carpet.isVisible()) {
+				player.sendMessage("You don't have a carpet yet, use /mc!");
+				return true;
+			}
+			carpets.toggleCrouch(player);
+			if (carpets.crouches(player)) {
+				player.sendMessage("You now crouch to descend");
+			} else {
+				player.sendMessage("You now look down to descend");
+			}
+		} else {
+			if (plugin.canFly(player)) {
+				player.sendMessage("You don't have permission to switch your mode of descent.");
+			} else {
+				player.sendMessage("You aren't allowed to use the magic carpet!");
+			}
 		}
-		Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
-		if (carpet == null || !carpet.isVisible()) {
-			player.sendMessage("You must activate the carpet first using /mc.");
-			return true;
-		}
-		if (carpet.hasTools()) {
-			carpet.toolsOff();
-			return true;
-		}
-		carpet.toolsOn();
 		return true;
 	}
 }

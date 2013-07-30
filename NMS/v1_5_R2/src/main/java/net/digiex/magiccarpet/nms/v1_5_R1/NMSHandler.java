@@ -1,15 +1,15 @@
-package net.digiex.magiccarpet.nms.v1_4_R1;
+package net.digiex.magiccarpet.nms.v1_5_R1;
 
 import net.digiex.magiccarpet.nms.api.NMSAbstraction;
-import net.minecraft.server.v1_4_R1.Chunk;
-import net.minecraft.server.v1_4_R1.EntityFireworks;
-import net.minecraft.server.v1_4_R1.EnumSkyBlock;
-import net.minecraft.server.v1_4_R1.World;
+import net.minecraft.server.v1_5_R1.Chunk;
+import net.minecraft.server.v1_5_R1.EntityFireworks;
+import net.minecraft.server.v1_5_R1.EnumSkyBlock;
+import net.minecraft.server.v1_5_R1.World;
 
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_4_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_5_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_5_R1.entity.CraftEntity;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 

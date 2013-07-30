@@ -44,26 +44,29 @@ import static org.bukkit.Material.WOOL;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.logging.Logger;
 
 import net.digiex.magiccarpet.Metrics.Graph;
+import net.digiex.magiccarpet.commands.BuyCommand;
+import net.digiex.magiccarpet.commands.CarpetCommand;
+import net.digiex.magiccarpet.commands.LightCommand;
+import net.digiex.magiccarpet.commands.ReloadCommand;
+import net.digiex.magiccarpet.commands.SwitchCommand;
+import net.digiex.magiccarpet.commands.ToolCommand;
+import net.digiex.magiccarpet.lib.VaultHandler;
+import net.digiex.magiccarpet.lib.WorldGuardHandler;
 import net.digiex.magiccarpet.nms.NMSHelper;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -98,55 +101,21 @@ public class MagicCarpet extends JavaPlugin {
 			HUGE_MUSHROOM_2, MELON_BLOCK);
 	private static EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE,
 			JACK_O_LANTERN);
-	private static CarpetStorage carpets = new CarpetStorage();
-	private static Magic magic = new Magic();
-	
-	private MagicListener magicListener = new MagicListener();
-	private static WorldGuardHandler worldGuardHandler;
-	private VaultHandler vault;
-	private FileConfiguration config;
-	private File configFile;
+
 	private Logger log;
+	private Config config;
+	private Carpets carpets = new Carpets();
 
-	static Material carpMaterial = GLASS;
-	static int carpSize = 5;
-	static boolean crouchDef = true;
-	static boolean customCarpets = false;
-	static boolean glowCenter = false;
-	static Material lightMaterial = GLOWSTONE;
-	static int maxCarpSize = 9;
-	static boolean saveCarpets = true;
-	static boolean lights = false;
-	static boolean customLights = false;
-	static boolean charge = false;
-	static double chargeAmount = 20.0;
-	static String changeLiquids = "true";
-	static boolean tools = false;
-	static List<?> chargePackages = Arrays.asList("alpha:3600:5.0", "beta:7200:10.0");
-	static long chargeTime = 1800;
-	static boolean chargeTimeBased = false;
-	static boolean magicEffect = true;
-	static boolean pvp = true;
-
-	private String saveString(String s) {
-		return s.toLowerCase().replace("_", " ");
-	}
-
-	private String loadString(String s) {
-		return s.toUpperCase().replace(" ", "_");
-	}
-
-	private File carpetsFile() {
-		return new File(getDataFolder(), "carpets.dat");
-	}
+	private VaultHandler vault;
+	private static WorldGuardHandler worldGuardHandler;
 
 	private void registerCommands() {
 		getCommand("magiccarpet").setExecutor(new CarpetCommand(this));
-		getCommand("magiclight").setExecutor(new LightCommand());
-		getCommand("carpetswitch").setExecutor(new SwitchCommand());
+		getCommand("magiclight").setExecutor(new LightCommand(this));
+		getCommand("carpetswitch").setExecutor(new SwitchCommand(this));
 		getCommand("magicreload").setExecutor(new ReloadCommand(this));
-		getCommand("magiccarpetbuy").setExecutor(new CarpetBuyCommand(this));
-		getCommand("magictools").setExecutor(new ToolCommand());
+		getCommand("magiccarpetbuy").setExecutor(new BuyCommand(this));
+		getCommand("magictools").setExecutor(new ToolCommand(this));
 	}
 
 	private void registerEvents(Listener listener) {
@@ -161,10 +130,9 @@ public class MagicCarpet extends JavaPlugin {
 				@Override
 				public int getValue() {
 					int i = 0;
-					for (Iterator<Carpet> iterator = carpets.all().iterator(); iterator
-							.hasNext();) {
+					Iterator<Carpet> c = getCarpets().all().iterator();
+					while (c.hasNext()) {
 						i = i + 1;
-						iterator.next();
 					}
 					return i;
 				}
@@ -173,8 +141,10 @@ public class MagicCarpet extends JavaPlugin {
 				@Override
 				public int getValue() {
 					int i = 0;
-					for (Carpet c : carpets.all()) {
-						if (c == null || !c.isVisible()) {
+					Iterator<Carpet> c = getCarpets().all().iterator();
+					while (c.hasNext()) {
+						Carpet carpet = c.next();
+						if (carpet == null || !carpet.isVisible()) {
 							continue;
 						}
 						i = i + 1;
@@ -187,35 +157,45 @@ public class MagicCarpet extends JavaPlugin {
 			log.warning("Failed to submit stats.");
 		}
 	}
-	
-	public static CarpetStorage getCarpets() {
+
+	public Carpets getCarpets() {
 		return carpets;
 	}
 
-	public static boolean canFly(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.mc");
+	public Config getMCConfig() {
+		return config;
 	}
 
-	public static boolean canLight(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.ml");
+	public boolean canFly(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player
+				.hasPermission("magiccarpet.mc");
 	}
 
-	public static boolean canSwitch(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.mcs");
+	public boolean canLight(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player
+				.hasPermission("magiccarpet.ml");
 	}
 
-	public static boolean canTool(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.mct");
+	public boolean canSwitch(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player
+				.hasPermission("magiccarpet.mcs");
 	}
 
-	public static boolean canReload(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.mr");
+	public boolean canTool(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player
+				.hasPermission("magiccarpet.mct");
 	}
-	
-	public static boolean canNotPay(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : player.hasPermission("magiccarpet.np");
+
+	public boolean canReload(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player
+				.hasPermission("magiccarpet.mr");
 	}
-	
+
+	public boolean canNotPay(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player
+				.hasPermission("magiccarpet.np");
+	}
+
 	public static EnumSet<Material> getAcceptableCarpetMaterial() {
 		return acceptableCarpet;
 	}
@@ -223,17 +203,17 @@ public class MagicCarpet extends JavaPlugin {
 	public static EnumSet<Material> getAcceptableLightMaterial() {
 		return acceptableLight;
 	}
-	
-	public static boolean canFlyHere(Location location) {
+
+	public boolean canFlyHere(Location location) {
 		return (worldGuardHandler == null) ? true : worldGuardHandler
 				.canFlyHere(location);
 	}
-	
-	public static boolean canFlyAt(Player player, int i) {
-		if (i == carpSize) {
+
+	public boolean canFlyAt(Player player, int i) {
+		if (i == config.getDefaultCarpSize()) {
 			return true;
 		}
-		if (carpets.wasGiven(player)) {
+		if (getCarpets().wasGiven(player)) {
 			return true;
 		}
 		if (player.hasPermission("magiccarpet.*")) {
@@ -244,14 +224,16 @@ public class MagicCarpet extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		if (saveCarpets) {
+		if (config.getDefaultSaveCarpets()) {
 			saveCarpets();
 		} else {
-			for (Carpet c : carpets.all()) {
-				if (c == null || !c.isVisible()) {
+			Iterator<Carpet> c = getCarpets().all().iterator();
+			while (c.hasNext()) {
+				Carpet carpet = c.next();
+				if (carpet == null || !carpet.isVisible()) {
 					continue;
 				}
-				c.removeCarpet();
+				carpet.removeCarpet();
 			}
 		}
 		log.info("is now disabled!");
@@ -259,40 +241,25 @@ public class MagicCarpet extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		carpets = carpets.attach(this);
 		log = getLogger();
-		try {
-			NMSHelper.init(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		new NMSHelper(this);
 		if (!getDataFolder().exists()) {
 			getDataFolder().mkdirs();
 		}
-		config = getConfig();
-		configFile = new File(getDataFolder(), "config.yml");
-		if (configFile.exists()) {
-			loadSettings();
-		} else {
-			saveSettings();
-		}
-		if (saveCarpets) {
+		config = new Config(this);
+		if (config.getDefaultSaveCarpets()) {
 			loadCarpets();
 		}
-		registerEvents(magicListener);
+		registerEvents(new MagicListener(this));
 		registerCommands();
 		getVault();
 		getWorldGuard();
 		startStats();
 		log.info("is now enabled!");
 	}
-	
-	static Magic getMagic() {
-		return magic;
-	}
-	
-	VaultHandler getVault() {
-		if (!charge) {
+
+	public VaultHandler getVault() {
+		if (!config.getDefaultCharge()) {
 			return null;
 		}
 		if (vault != null) {
@@ -309,8 +276,8 @@ public class MagicCarpet extends JavaPlugin {
 		}
 		return vault = new VaultHandler(this, rsp.getProvider());
 	}
-	
-	void getWorldGuard() {
+
+	private void getWorldGuard() {
 		Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
 		if (plugin == null
 				|| !(plugin instanceof com.sk89q.worldguard.bukkit.WorldGuardPlugin)) {
@@ -319,8 +286,12 @@ public class MagicCarpet extends JavaPlugin {
 		worldGuardHandler = new WorldGuardHandler(
 				(com.sk89q.worldguard.bukkit.WorldGuardPlugin) plugin);
 	}
-
-	void saveCarpets() {
+	
+	private File carpetsFile() {
+		return new File(getDataFolder(), "carpets.dat");
+	}
+	
+	public void saveCarpets() {
 		File carpetDat = carpetsFile();
 		log.info("Saving carpets...");
 		if (!carpetDat.exists()) {
@@ -341,7 +312,7 @@ public class MagicCarpet extends JavaPlugin {
 		carpets.clear();
 	}
 
-	void loadCarpets() {
+	public void loadCarpets() {
 		File carpetDat = carpetsFile();
 		if (!carpetDat.exists()) {
 			return;
@@ -350,112 +321,21 @@ public class MagicCarpet extends JavaPlugin {
 		try {
 			FileInputStream file = new FileInputStream(carpetDat);
 			ObjectInputStream in = new ObjectInputStream(file);
-			carpets = (CarpetStorage) in.readObject();
+			carpets = (Carpets) in.readObject();
 			carpets.attach(this);
 			in.close();
 		} catch (IOException e) {
-			log.warning("Error loading carpets.dat; carpets data has not been loaded.");
+			log.warning("Error loading carpets.dat; it may be corrupt and will be overwritten with new data.");
+			carpets = new Carpets();
+			return;
 		} catch (ClassNotFoundException e) {
 			log.severe("CarpetStorage class not found! This should never happen!");
+			return;
+		} catch (NullPointerException e) {
+			log.warning("Error loading carpets.dat; it may be corrupt and will be overwritten with new data.");
+			carpets = new Carpets();
+			return;
 		}
 		carpets.checkCarpets();
-	}
-
-	void saveSettings() {
-		config.set("crouch-descent", crouchDef);
-		config.set("center-light", glowCenter);
-		config.set("default-size", carpSize);
-		config.set("carpet-material", saveString(carpMaterial.name()));
-		config.set("light-material", saveString(lightMaterial.name()));
-		config.set("max-size", maxCarpSize);
-		config.set("custom-carpets", customCarpets);
-		config.set("custom-lights", customLights);
-		config.set("lights", lights);
-		config.set("save-carpets", saveCarpets);
-		config.set("change-liquids", changeLiquids);
-		config.set("tools", tools);
-		config.set("charge", charge);
-		config.set("charge-timebased", chargeTimeBased);
-		config.set("charge-amount", chargeAmount);
-		config.set("charge-time", chargeTime);
-		config.set("charge-packages", chargePackages);
-		config.set("magic", magicEffect);
-		config.set("pvp", pvp);
-		config.options()
-				.header("Be sure to use /mr if you change any settings here while the server is running.");
-		try {
-			config.save(configFile);
-		} catch (IOException e) {
-			log.severe("Unable to create config.yml; IOException");
-		}
-	}
-
-	void loadSettings() {
-		try {
-			config.load(configFile);
-		} catch (FileNotFoundException e) {
-			log.warning("Error loading config.yml; file not found.");
-			log.warning("Creating new config.yml since the old one has disappeared.");
-			saveSettings();
-		} catch (IOException e) {
-			log.warning("Error loading config.yml; IOException");
-		} catch (InvalidConfigurationException e) {
-			log.warning("Error loading config.yml; InvalidConfigurationException");
-		}
-		crouchDef = config.getBoolean("crouch-descent", true);
-		glowCenter = config.getBoolean("center-light", false);
-		carpSize = config.getInt("default-size", 5);
-		carpMaterial = Material.getMaterial(loadString(config.getString(
-				"carpet-material", GLASS.name())));
-		if (carpMaterial == null) {
-			carpMaterial = Material.getMaterial(config.getInt(
-					"carpet-material", GLASS.getId()));
-		}
-		if (!acceptableCarpet.contains(carpMaterial)) {
-			carpMaterial = GLASS;
-			log.warning("Config error; Invaild carpet material.");
-		}
-		lightMaterial = Material.getMaterial(loadString(config.getString(
-				"light-material", GLOWSTONE.name())));
-		if (lightMaterial == null) {
-			lightMaterial = Material.getMaterial(config.getInt(
-					"light-material", GLOWSTONE.getId()));
-		}
-		if (!acceptableLight.contains(lightMaterial)) {
-			lightMaterial = GLOWSTONE;
-			log.warning("Config error; Invalid light material.");
-		}
-		maxCarpSize = config.getInt("max-size", 9);
-		if (carpSize > maxCarpSize) {
-			carpSize = 5;
-			maxCarpSize = 9;
-			log.warning("Config error; Default-size is larger than max-size.");
-		}
-		customCarpets = config.getBoolean("custom-carpets", false);
-		customLights = config.getBoolean("custom-lights", false);
-		saveCarpets = config.getBoolean("save-carpets", true);
-		lights = config.getBoolean("lights", false);
-		charge = config.getBoolean("charge", false);
-		chargeAmount = config.getDouble("charge-amount", 5.0);
-		changeLiquids = config.getString("change-liquids", "true");
-		if (!changeLiquids.equals("lava") && !changeLiquids.equals("water")
-				&& !changeLiquids.equals("false"))
-			changeLiquids = "true";
-		tools = config.getBoolean("tools", false);
-		chargeTime = config.getLong("charge-time", 1800);
-		chargePackages = config.getList("charge-packages",
-				Arrays.asList("alpha:3600:5.0", "beta:7200:10.0"));
-		chargeTimeBased = config.getBoolean("charge-timebased", false);
-		magicEffect = config.getBoolean("magic", true);
-		pvp = config.getBoolean("pvp", true);
-	}
-
-	boolean canChangeLiquids(String type) {
-		if (changeLiquids.equals("false"))
-			return false;
-		else if (changeLiquids.equals("true"))
-			return true;
-		else
-			return changeLiquids.equals(type);
 	}
 }

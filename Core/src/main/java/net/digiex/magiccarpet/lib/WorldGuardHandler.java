@@ -1,4 +1,4 @@
-package net.digiex.magiccarpet;
+package net.digiex.magiccarpet.lib;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -93,12 +93,12 @@ public class WorldGuardHandler {
 
 	private WorldGuardPlugin worldGuard;
 
-	WorldGuardHandler(WorldGuardPlugin worldGuard) {
+	public WorldGuardHandler(WorldGuardPlugin worldGuard) {
 		this.worldGuard = worldGuard;
 		CarpetFlag.injectHax();
 	}
 
-	boolean canFlyHere(Location location) {
+	public boolean canFlyHere(Location location) {
 		ApplicableRegionSet regions = getApplicableRegions(location);
 		return CarpetFlag.setAllowsFlag(regions);
 	}

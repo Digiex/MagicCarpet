@@ -1,7 +1,11 @@
-package net.digiex.magiccarpet;
+package net.digiex.magiccarpet.lib;
 
 import java.util.HashMap;
 
+import net.digiex.magiccarpet.Carpet;
+import net.digiex.magiccarpet.Carpets;
+import net.digiex.magiccarpet.Config;
+import net.digiex.magiccarpet.MagicCarpet;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.entity.Player;
@@ -24,36 +28,40 @@ import org.bukkit.entity.Player;
  */
 public class VaultHandler {
 
-	class TimePackage {
+	public class TimePackage {
 		private final String name;
 		private final long time;
 		private final double amount;
 
-		TimePackage(String name, Long time, Double amount) {
+		public TimePackage(String name, Long time, Double amount) {
 			this.name = name;
 			this.time = time;
 			this.amount = amount;
 		}
 
-		String getName() {
+		public String getName() {
 			return name;
 		}
 
-		Long getTime() {
+		public Long getTime() {
 			return time;
 		}
 
-		Double getAmount() {
+		public Double getAmount() {
 			return amount;
 		}
 	}
 
 	private final MagicCarpet plugin;
+	private final Config config;
+	private final Carpets carpets;
 	private final Economy vaultPlugin;
 	private HashMap<String, TimePackage> packages = new HashMap<String, TimePackage>();
 
-	VaultHandler(MagicCarpet plugin, Economy vaultPlugin) {
+	public VaultHandler(MagicCarpet plugin, Economy vaultPlugin) {
 		this.plugin = plugin;
+		this.config = plugin.getMCConfig();
+		this.carpets = plugin.getCarpets();
 		this.vaultPlugin = vaultPlugin;
 		startCharge();
 	}
@@ -62,23 +70,23 @@ public class VaultHandler {
 		return vaultPlugin.depositPlayer(player, amount).transactionSuccess();
 	}
 
-	boolean subtract(String player, double amount) {
+	public boolean subtract(String player, double amount) {
 		return vaultPlugin.withdrawPlayer(player, amount).transactionSuccess();
 	}
 
-	boolean hasEnough(String player, double amount) {
+	public boolean hasEnough(String player, double amount) {
 		return vaultPlugin.has(player, amount);
 	}
 
-	double balance(String player) {
+	public double balance(String player) {
 		return vaultPlugin.getBalance(player);
 	}
 
-	String format(double amount) {
+	public String format(double amount) {
 		return vaultPlugin.format(amount);
 	}
 
-	String getPluginName() {
+	public String getPluginName() {
 		if (vaultPlugin == null) {
 			return "";
 		} else {
@@ -86,23 +94,23 @@ public class VaultHandler {
 		}
 	}
 
-	String getCurrencyName() {
+	public String getCurrencyName() {
 		return vaultPlugin.currencyNameSingular();
 	}
 
-	String getCurrencyNamePlural() {
+	public String getCurrencyNamePlural() {
 		return vaultPlugin.currencyNamePlural();
 	}
 
-	long get(Player player) {
-		return MagicCarpet.getCarpets().getTime(player);
+	public long get(Player player) {
+		return carpets.getTime(player);
 	}
 
-	String getTime(Player player) {
+	public String getTime(Player player) {
 		return getTime(get(player));
 	}
 
-	String getTime(Long time) {
+	public String getTime(Long time) {
 		long days = time / 86400L;
 		long remainder = time % 86400L;
 		long hours = remainder / 3600L;
@@ -126,24 +134,24 @@ public class VaultHandler {
 		return s;
 	}
 
-	void substractTime(Player player, long time) {
+	public void substractTime(Player player, long time) {
 		long rTime = get(player) - time;
 		if (rTime <= 0L) {
-			Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+			Carpet carpet = carpets.getCarpet(player);
 			if (carpet == null || !carpet.isVisible()) {
 				return;
 			}
 			carpet.hide();
 			player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
 		}
-		MagicCarpet.getCarpets().setTime(player, rTime);
+		carpets.setTime(player, rTime);
 	}
 
-	boolean addTime(Player player, Long time, Double amount) {
+	public boolean addTime(Player player, Long time, Double amount) {
 		long rTime = get(player) + time;
 		if (hasEnough(player.getName(), amount)) {
 			subtract(player.getName(), amount);
-			MagicCarpet.getCarpets().setTime(player, rTime);
+			carpets.setTime(player, rTime);
 			return true;
 		} else {
 			player.sendMessage("You don't have enough "
@@ -152,22 +160,22 @@ public class VaultHandler {
 		return false;
 	}
 
-	void addTime(Player player, Long time) {
+	public void addTime(Player player, Long time) {
 		long rTime = get(player) + time;
-		MagicCarpet.getCarpets().setTime(player, rTime);
+		carpets.setTime(player, rTime);
 		player.sendMessage("Console has given you " + getTime(time)
 				+ " of time to use Magic Carpet");
 	}
 
-	HashMap<String, TimePackage> getPackages() {
+	public HashMap<String, TimePackage> getPackages() {
 		return packages;
 	}
 
-	TimePackage getPackage(String name) {
+	public TimePackage getPackage(String name) {
 		return getPackages().get(name);
 	}
 
-	void addPackage(String name, Long time, Double amount) {
+	public void addPackage(String name, Long time, Double amount) {
 		packages.put(name, new TimePackage(name, time, amount));
 	}
 
@@ -176,28 +184,26 @@ public class VaultHandler {
 				.runTaskTimerAsynchronously(plugin, new Runnable() {
 					@Override
 					public void run() {
-						if (!MagicCarpet.chargeTimeBased) {
+						if (!config.getDefaultChargeTimeBased()) {
 							return;
 						}
 						for (Player player : plugin.getServer()
 								.getOnlinePlayers()) {
-							Carpet carpet = MagicCarpet.getCarpets().getCarpet(
-									player);
+							Carpet carpet = carpets.getCarpet(player);
 							if (carpet == null || !carpet.isVisible()) {
 								continue;
 							}
-							if (MagicCarpet.canNotPay(player)) {
+							if (plugin.canNotPay(player)) {
 								continue;
 							}
 							if (get(player) == 300) {
-								if (!MagicCarpet.getCarpets().canAutoRenew(
-										player)) {
+								if (!carpets.canAutoRenew(player)) {
 									player.sendMessage("You are running low on time to use the Magic Carpet. If you wish to continue using it please purchase more time using /mcb.");
 									substractTime(player, 1L);
 									continue;
 								}
-								TimePackage pack = getPackage(MagicCarpet
-										.getCarpets().getAutoPackage(player));
+								TimePackage pack = getPackage(carpets
+										.getAutoPackage(player));
 								if (addTime(player, pack.getTime(),
 										pack.getAmount())) {
 									player.sendMessage("Your Magic Carpet has auto renewed for "
@@ -213,9 +219,9 @@ public class VaultHandler {
 		loadPackages();
 	}
 
-	void loadPackages() {
+	public void loadPackages() {
 		try {
-			for (Object o : MagicCarpet.chargePackages) {
+			for (Object o : config.getDefaultChargePackages()) {
 				String[] s = o.toString().split(":");
 				String name = s[0];
 				long time = Long.valueOf(s[1]);

@@ -1,4 +1,9 @@
-package net.digiex.magiccarpet;
+package net.digiex.magiccarpet.commands;
+
+import net.digiex.magiccarpet.Carpet;
+import net.digiex.magiccarpet.Carpets;
+import net.digiex.magiccarpet.Config;
+import net.digiex.magiccarpet.MagicCarpet;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,9 +29,13 @@ import org.bukkit.entity.Player;
 public class ReloadCommand implements CommandExecutor {
 
 	private final MagicCarpet plugin;
+	private final Config config;
+	private final Carpets carpets;
 
-	ReloadCommand(MagicCarpet plugin) {
+	public ReloadCommand(MagicCarpet plugin) {
 		this.plugin = plugin;
+		this.config = plugin.getMCConfig();
+		this.carpets = plugin.getCarpets();
 	}
 
 	@Override
@@ -38,7 +47,7 @@ public class ReloadCommand implements CommandExecutor {
 			return true;
 		} else if (sender instanceof Player) {
 			Player player = (Player) sender;
-			if (MagicCarpet.canReload(player)) {
+			if (plugin.canReload(player)) {
 				reload();
 				player.sendMessage("MagicCarpet has been reloaded!");
 			} else {
@@ -50,22 +59,25 @@ public class ReloadCommand implements CommandExecutor {
 	}
 
 	private void reload() {
-		MagicCarpet.getCarpets().clear();
+		if (config.getDefaultSaveCarpets()) {
+			plugin.saveCarpets();
+		}
 		if (plugin.getVault() != null) {
 			plugin.getVault().getPackages().clear();
 		}
-		plugin.loadSettings();
+		config.loadSettings();
 		if (plugin.getVault() != null) {
 			plugin.getVault().loadPackages();
 		}
-		if (MagicCarpet.saveCarpets) {
-			plugin.saveCarpets();
+		if (config.getDefaultSaveCarpets()) {
 			plugin.loadCarpets();
-		}
-		for (Player p : plugin.getServer().getOnlinePlayers()) {
-			if (MagicCarpet.getCarpets().has(p)) {
-				Carpet.create(p).show();
+			for (Player p : plugin.getServer().getOnlinePlayers()) {
+				if (carpets.has(p)) {
+					new Carpet(p).show();
+				}
 			}
+		} else {
+			carpets.checkCarpets();
 		}
 	}
 }

@@ -1,15 +1,17 @@
 package net.digiex.magiccarpet.nms.v1_6_R2;
 
 import net.digiex.magiccarpet.nms.api.NMSAbstraction;
-import net.minecraft.server.v1_6_R2.Block;
 import net.minecraft.server.v1_6_R2.Chunk;
-import net.minecraft.server.v1_6_R2.ChunkCoordIntPair;
+import net.minecraft.server.v1_6_R2.EntityFireworks;
 import net.minecraft.server.v1_6_R2.EnumSkyBlock;
+import net.minecraft.server.v1_6_R2.World;
 
-import org.bukkit.World;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
-import org.bukkit.entity.Player;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
+import org.bukkit.entity.Firework;
+import org.bukkit.inventory.meta.FireworkMeta;
 
 /*
  * Magic Carpet 2.3 Copyright (C) 2012 Android, Celtic Minstrel, xzKinGzxBuRnzx
@@ -31,39 +33,33 @@ import org.bukkit.entity.Player;
 public class NMSHandler implements NMSAbstraction {
 
 	@Override
-	public boolean setBlockFast(World world, int x, int y, int z, int blockId,
-			byte data) {
-		net.minecraft.server.v1_6_R2.World w = ((CraftWorld) world).getHandle();
+	public boolean setBlockFast(org.bukkit.World world, int x, int y, int z,
+			int blockId, byte data) {
+		World w = ((CraftWorld) world).getHandle();
 		Chunk chunk = w.getChunkAt(x >> 4, z >> 4);
 		return chunk.a(x & 0x0f, y, z & 0x0f, blockId, data);
 	}
 
 	@Override
-	public void forceBlockLightLevel(World world, int x, int y, int z, int level) {
-		net.minecraft.server.v1_6_R2.World w = ((CraftWorld) world).getHandle();
+	public void forceBlockLightLevel(org.bukkit.World world, int x, int y,
+			int z, int level) {
+		World w = ((CraftWorld) world).getHandle();
 		w.b(EnumSkyBlock.BLOCK, x, y, z, level);
 	}
 
 	@Override
-	public int getBlockLightEmission(int blockId) {
-		return Block.lightEmission[blockId];
-	}
-
-	@Override
-	public int getBlockLightBlocking(int blockId) {
-		return Block.lightBlock[blockId];
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void queueChunkForUpdate(Player player, int cx, int cz) {
-		((CraftPlayer) player).getHandle().chunkCoordIntPairQueue
-				.add(new ChunkCoordIntPair(cx, cz));
-	}
-
-	@Override
-	public void recalculateBlockLighting(World world, int x, int y, int z) {
-		net.minecraft.server.v1_6_R2.World w = ((CraftWorld) world).getHandle();
-		w.A(x, y, z);
+	public void playFirework(Location loc, FireworkEffect effect) {
+		org.bukkit.World world = loc.getWorld();
+		Firework fw = (Firework) world.spawn(loc, Firework.class);
+		World nmsWorld = ((CraftWorld) world).getHandle();
+		EntityFireworks nmsFirework = (EntityFireworks) ((CraftEntity) fw)
+				.getHandle();
+		FireworkMeta fm = (FireworkMeta) fw.getFireworkMeta();
+		fm.clearEffects();
+		fm.setPower(1);
+		fm.addEffect(effect);
+		fw.setFireworkMeta(fm);
+		nmsWorld.broadcastEntityEffect(nmsFirework, (byte) 17);
+		fw.remove();
 	}
 }

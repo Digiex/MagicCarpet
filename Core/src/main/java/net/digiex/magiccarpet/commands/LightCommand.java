@@ -1,4 +1,8 @@
-package net.digiex.magiccarpet;
+package net.digiex.magiccarpet.commands;
+
+import net.digiex.magiccarpet.Carpet;
+import net.digiex.magiccarpet.Carpets;
+import net.digiex.magiccarpet.MagicCarpet;
 
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -23,6 +27,14 @@ import org.bukkit.entity.Player;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class LightCommand implements CommandExecutor {
+	
+	private final MagicCarpet plugin;
+	private final Carpets carpets;
+	
+	public LightCommand(MagicCarpet plugin) {
+		this.plugin = plugin;
+		this.carpets = plugin.getCarpets();
+	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,
@@ -32,20 +44,20 @@ public class LightCommand implements CommandExecutor {
 			return true;
 		}
 		Player player = (Player) sender;
-		if (MagicCarpet.canFly(player) && MagicCarpet.canLight(player)) {
-			Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+		if (plugin.canFly(player) && plugin.canLight(player)) {
+			Carpet carpet = carpets.getCarpet(player);
 			if (carpet == null || !carpet.isVisible()) {
 				player.sendMessage("You don't have a carpet yet, use /mc!");
 				return true;
 			}
 			if (args.length < 1) {
-				if (MagicCarpet.getCarpets().hasLight(player)) {
+				if (carpets.hasLight(player)) {
 					carpet.lightOff();
 				} else {
 					carpet.lightOn();
 				}
 			} else {
-				if (MagicCarpet.getCarpets().hasLight(player)) {
+				if (carpets.hasLight(player)) {
 					String word = "";
 					for (String a : args) {
 						if (word.isEmpty()) {
@@ -69,7 +81,7 @@ public class LightCommand implements CommandExecutor {
 				}
 			}
 		} else {
-			if (MagicCarpet.canFly(player)) {
+			if (plugin.canFly(player)) {
 				player.sendMessage("You do not have permission to use magic light!");
 				return true;
 			} else {

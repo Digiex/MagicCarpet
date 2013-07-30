@@ -2,6 +2,7 @@ package net.digiex.magiccarpet.nms;
 
 import java.lang.reflect.InvocationTargetException;
 
+import net.digiex.magiccarpet.MagicCarpet;
 import net.digiex.magiccarpet.nms.api.NMSAbstraction;
 
 import org.bukkit.plugin.Plugin;
@@ -24,11 +25,20 @@ import org.bukkit.plugin.Plugin;
  */
 
 public class NMSHelper {
-	private static NMSAbstraction nms = null;
 
-	public static NMSAbstraction init(Plugin plugin)
-			throws ClassNotFoundException, IllegalArgumentException,
-			SecurityException, InstantiationException, IllegalAccessException,
+	private static NMSAbstraction nms;
+
+	public NMSHelper(MagicCarpet plugin) {
+		try {
+			NMSHelper.nms = init(plugin);
+		} catch (Exception e) {
+			NMSHelper.nms = null;
+		}
+	}
+
+	private NMSAbstraction init(Plugin plugin) throws ClassNotFoundException,
+			IllegalArgumentException, SecurityException,
+			InstantiationException, IllegalAccessException,
 			InvocationTargetException, NoSuchMethodException {
 
 		String serverPackageName = plugin.getServer().getClass().getPackage()
@@ -53,8 +63,12 @@ public class NMSHelper {
 
 		return nms;
 	}
-
+	
 	public static NMSAbstraction getNMS() {
 		return nms;
+	}
+	
+	public static boolean isEnabled() {
+		return (nms != null) ? true : false;
 	}
 }
