@@ -53,7 +53,8 @@ public class Carpet {
 			} else {
 				bl.setType(material);
 			}
-			bl.setMetadata("Carpet", new FixedMetadataValue(plugin, who.getName()));
+			bl.setMetadata("Carpet",
+					new FixedMetadataValue(plugin, who.getName()));
 		}
 
 		boolean shouldGlow() {

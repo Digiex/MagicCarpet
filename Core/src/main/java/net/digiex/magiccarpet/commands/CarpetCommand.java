@@ -137,7 +137,7 @@ public class CarpetCommand implements CommandExecutor {
 				}
 				if (plugin.getVault() != null) {
 					if (plugin.canNotPay(player)) {
-						new Carpet(player).show();
+						carpet.show();
 						return true;
 					}
 					if (!carpets.hasPaidFee(player)) {

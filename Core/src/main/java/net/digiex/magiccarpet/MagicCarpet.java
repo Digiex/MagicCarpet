@@ -316,6 +316,7 @@ public class MagicCarpet extends JavaPlugin {
 		File carpetDat = carpetsFile();
 		if (!carpetDat.exists()) {
 			carpets = new Carpets();
+			carpets.attach(this);
 			return;
 		}
 		log.info("Loading carpets...");
@@ -325,16 +326,10 @@ public class MagicCarpet extends JavaPlugin {
 			carpets = (Carpets) in.readObject();
 			carpets.attach(this);
 			in.close();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.warning("Error loading carpets.dat; it may be corrupt and will be overwritten with new data.");
 			carpets = new Carpets();
-			return;
-		} catch (ClassNotFoundException e) {
-			log.severe("CarpetStorage class not found! This should never happen!");
-			return;
-		} catch (NullPointerException e) {
-			log.warning("Error loading carpets.dat; it may be corrupt and will be overwritten with new data.");
-			carpets = new Carpets();
+			carpets.attach(this);
 			return;
 		}
 		carpets.checkCarpets();
