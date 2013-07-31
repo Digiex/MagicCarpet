@@ -65,8 +65,65 @@ public class VaultHandler {
 		this.vaultPlugin = vaultPlugin;
 		startCharge();
 	}
+	
+	private void startCharge() {
+		plugin.getServer().getScheduler()
+				.runTaskTimerAsynchronously(plugin, new Runnable() {
+					@Override
+					public void run() {
+						if (!config.getDefaultChargeTimeBased()) {
+							return;
+						}
+						for (Player player : plugin.getServer()
+								.getOnlinePlayers()) {
+							Carpet carpet = carpets.getCarpet(player);
+							if (carpet == null || !carpet.isVisible()) {
+								continue;
+							}
+							if (plugin.canNotPay(player)) {
+								continue;
+							}
+							if (get(player) == 300) {
+								if (!carpets.canAutoRenew(player)) {
+									player.sendMessage("You are running low on time to use the Magic Carpet. If you wish to continue using it please purchase more time using /mcb.");
+									substractTime(player, 1L);
+									continue;
+								}
+								TimePackage pack = getPackage(carpets
+										.getAutoPackage(player));
+								if (addTime(player, pack.getTime(),
+										pack.getAmount())) {
+									player.sendMessage("Your Magic Carpet has auto renewed for "
+											+ getTime(pack.getTime())
+											+ " and you was charged "
+											+ format(pack.getAmount()) + ".");
+								}
+							}
+							substractTime(player, 1L);
+						}
+					}
+				}, 20L, 20L);
+		loadPackages();
+	}
+	
+	public void loadPackages() {
+		try {
+			for (Object o : config.getDefaultChargePackages()) {
+				String[] s = o.toString().split(":");
+				String name = s[0];
+				long time = Long.valueOf(s[1]);
+				double amount = Double.valueOf(s[2]);
+				addPackage(name, time, amount);
+			}
+		} catch (NumberFormatException e) {
+			plugin.getLogger().severe(
+					"Unable to read charge-packages; defaulting.");
+			addPackage("alpha", 3600L, 5.0);
+			addPackage("beta", 7200L, 10.0);
+		}
+	}
 
-	boolean add(String player, double amount) {
+	public boolean add(String player, double amount) {
 		return vaultPlugin.depositPlayer(player, amount).transactionSuccess();
 	}
 
@@ -177,62 +234,5 @@ public class VaultHandler {
 
 	public void addPackage(String name, Long time, Double amount) {
 		packages.put(name, new TimePackage(name, time, amount));
-	}
-
-	private void startCharge() {
-		plugin.getServer().getScheduler()
-				.runTaskTimerAsynchronously(plugin, new Runnable() {
-					@Override
-					public void run() {
-						if (!config.getDefaultChargeTimeBased()) {
-							return;
-						}
-						for (Player player : plugin.getServer()
-								.getOnlinePlayers()) {
-							Carpet carpet = carpets.getCarpet(player);
-							if (carpet == null || !carpet.isVisible()) {
-								continue;
-							}
-							if (plugin.canNotPay(player)) {
-								continue;
-							}
-							if (get(player) == 300) {
-								if (!carpets.canAutoRenew(player)) {
-									player.sendMessage("You are running low on time to use the Magic Carpet. If you wish to continue using it please purchase more time using /mcb.");
-									substractTime(player, 1L);
-									continue;
-								}
-								TimePackage pack = getPackage(carpets
-										.getAutoPackage(player));
-								if (addTime(player, pack.getTime(),
-										pack.getAmount())) {
-									player.sendMessage("Your Magic Carpet has auto renewed for "
-											+ getTime(pack.getTime())
-											+ " and you was charged "
-											+ format(pack.getAmount()) + ".");
-								}
-							}
-							substractTime(player, 1L);
-						}
-					}
-				}, 20L, 20L);
-		loadPackages();
-	}
-
-	public void loadPackages() {
-		try {
-			for (Object o : config.getDefaultChargePackages()) {
-				String[] s = o.toString().split(":");
-				String name = s[0];
-				long time = Long.valueOf(s[1]);
-				double amount = Double.valueOf(s[2]);
-				addPackage(name, time, amount);
-			}
-		} catch (NumberFormatException e) {
-			plugin.getLogger().severe(
-					"Unable to read charge-packages; defaulting.");
-			addPackage("alpha", 3600L, 5.0);
-			addPackage("beta", 7200L, 10.0);
-		}
 	}
 }

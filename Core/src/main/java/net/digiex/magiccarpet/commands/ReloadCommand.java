@@ -1,6 +1,5 @@
 package net.digiex.magiccarpet.commands;
 
-import net.digiex.magiccarpet.Carpet;
 import net.digiex.magiccarpet.Carpets;
 import net.digiex.magiccarpet.Config;
 import net.digiex.magiccarpet.MagicCarpet;
@@ -43,7 +42,7 @@ public class ReloadCommand implements CommandExecutor {
 			String commandLabel, String[] args) {
 		if (!(sender instanceof Player)) {
 			reload();
-			sender.sendMessage("has been reloaded!");
+			plugin.getLogger().info("has been reloaded!");
 			return true;
 		} else if (sender instanceof Player) {
 			Player player = (Player) sender;
@@ -59,25 +58,11 @@ public class ReloadCommand implements CommandExecutor {
 	}
 
 	private void reload() {
-		if (config.getDefaultSaveCarpets()) {
-			plugin.saveCarpets();
-		}
-		if (plugin.getVault() != null) {
-			plugin.getVault().getPackages().clear();
-		}
 		config.loadSettings();
 		if (plugin.getVault() != null) {
+			plugin.getVault().getPackages().clear();
 			plugin.getVault().loadPackages();
 		}
-		if (config.getDefaultSaveCarpets()) {
-			plugin.loadCarpets();
-			for (Player p : plugin.getServer().getOnlinePlayers()) {
-				if (carpets.has(p)) {
-					new Carpet(p).show();
-				}
-			}
-		} else {
-			carpets.checkCarpets();
-		}
+		carpets.checkCarpets();
 	}
 }

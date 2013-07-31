@@ -16,6 +16,23 @@ import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 
+/*
+ * Magic Carpet 2.3 Copyright (C) 2012-2013 Android, Celtic Minstrel, xzKinGzxBuRnzx
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 public final class Config {
 
 	private HashMap<String, Object> options = new HashMap<String, Object>();
@@ -49,18 +66,6 @@ public final class Config {
 		options.put("pvp", this.pvp);
 
 		if (configFile.exists()) {
-			try {
-				config.load(configFile);
-			} catch (FileNotFoundException e) {
-				log.warning("Error loading config.yml; file not found.");
-				log.warning("Creating new config.yml since the old one has disappeared.");
-				saveSettings();
-			} catch (IOException e) {
-				log.warning("Error loading config.yml; IOException");
-			} catch (InvalidConfigurationException e) {
-				log.warning("Error loading config.yml; InvalidConfigurationException");
-			}
-			checkConfig();
 			loadSettings();
 		} else {
 			saveSettings();
@@ -248,12 +253,27 @@ public final class Config {
 				.header("Be sure to use /mr if you change any settings here while the server is running.");
 		try {
 			config.save(configFile);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.severe("Unable to create config.yml; IOException");
 		}
 	}
 
 	public void loadSettings() {
+
+		try {
+			config.load(configFile);
+		} catch (FileNotFoundException e) {
+			log.warning("Error loading config.yml; file not found.");
+			log.warning("Creating new config.yml since the old one has disappeared.");
+			saveSettings();
+		} catch (IOException e) {
+			log.warning("Error loading config.yml; IOException");
+		} catch (InvalidConfigurationException e) {
+			log.warning("Error loading config.yml; InvalidConfigurationException");
+		}
+		
+		checkConfig();
+		
 		crouchDef = config.getBoolean("crouch-descent", true);
 		glowCenter = config.getBoolean("center-light", false);
 		carpSize = config.getInt("default-size", 5);
@@ -313,7 +333,7 @@ public final class Config {
 		}
 		try {
 			config.save(configFile);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.severe("Unable to modify config.yml; IOException");
 		}
 		if (updated) {

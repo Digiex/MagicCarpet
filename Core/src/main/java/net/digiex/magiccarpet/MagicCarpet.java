@@ -130,9 +130,10 @@ public class MagicCarpet extends JavaPlugin {
 				@Override
 				public int getValue() {
 					int i = 0;
-					Iterator<Carpet> c = getCarpets().all().iterator();
-					while (c.hasNext()) {
+					for (Iterator<Carpet> iterator = carpets.all().iterator(); iterator
+							.hasNext();) {
 						i = i + 1;
+						iterator.next();
 					}
 					return i;
 				}
@@ -141,10 +142,8 @@ public class MagicCarpet extends JavaPlugin {
 				@Override
 				public int getValue() {
 					int i = 0;
-					Iterator<Carpet> c = getCarpets().all().iterator();
-					while (c.hasNext()) {
-						Carpet carpet = c.next();
-						if (carpet == null || !carpet.isVisible()) {
+					for (Carpet c : carpets.all()) {
+						if (c == null || !c.isVisible()) {
 							continue;
 						}
 						i = i + 1;
@@ -227,13 +226,11 @@ public class MagicCarpet extends JavaPlugin {
 		if (config.getDefaultSaveCarpets()) {
 			saveCarpets();
 		} else {
-			Iterator<Carpet> c = getCarpets().all().iterator();
-			while (c.hasNext()) {
-				Carpet carpet = c.next();
-				if (carpet == null || !carpet.isVisible()) {
+			for (Carpet c : carpets.all()) {
+				if (c == null || !c.isVisible()) {
 					continue;
 				}
-				carpet.removeCarpet();
+				c.removeCarpet();
 			}
 		}
 		log.info("is now disabled!");
@@ -247,6 +244,7 @@ public class MagicCarpet extends JavaPlugin {
 			getDataFolder().mkdirs();
 		}
 		config = new Config(this);
+		carpets = new Carpets().attach(this);
 		if (config.getDefaultSaveCarpets()) {
 			loadCarpets();
 		}
@@ -297,8 +295,8 @@ public class MagicCarpet extends JavaPlugin {
 		if (!carpetDat.exists()) {
 			try {
 				carpetDat.createNewFile();
-			} catch (IOException e) {
-				log.severe("Unable to create carpets.dat; IOException");
+			} catch (Exception e) {
+				log.severe("Unable to create carpets.dat");
 			}
 		}
 		try {
@@ -306,7 +304,7 @@ public class MagicCarpet extends JavaPlugin {
 			ObjectOutputStream out = new ObjectOutputStream(file);
 			out.writeObject(carpets);
 			out.close();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.warning("Error writing to carpets.dat; carpets data has not been saved!");
 		}
 		carpets.clear();
@@ -315,8 +313,6 @@ public class MagicCarpet extends JavaPlugin {
 	public void loadCarpets() {
 		File carpetDat = carpetsFile();
 		if (!carpetDat.exists()) {
-			carpets = new Carpets();
-			carpets.attach(this);
 			return;
 		}
 		log.info("Loading carpets...");
@@ -328,8 +324,6 @@ public class MagicCarpet extends JavaPlugin {
 			in.close();
 		} catch (Exception e) {
 			log.warning("Error loading carpets.dat; it may be corrupt and will be overwritten with new data.");
-			carpets = new Carpets();
-			carpets.attach(this);
 			return;
 		}
 		carpets.checkCarpets();

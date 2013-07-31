@@ -179,7 +179,7 @@ public class Carpets implements Serializable {
 				entry.tools = false;
 			}
 			if (plugin.getVault() != null && config.getDefaultCharge()) {
-				if (entry.hasCarpet && !entry.oneTimeFee) {
+				if (entry.hasCarpet && !entry.oneTimeFee && !entry.given) {
 					entry.hasCarpet = false;
 				}
 			}

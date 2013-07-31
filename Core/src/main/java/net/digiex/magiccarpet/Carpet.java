@@ -44,17 +44,14 @@ public class Carpet {
 		}
 
 		void set(Block bl, Material material) {
-			if (bl.hasMetadata("Carpet")) {
-				return;
-			}
+			bl.setMetadata("Carpet",
+					new FixedMetadataValue(plugin, who.getName()));
 			if (NMSHelper.isEnabled()) {
 				NMSHelper.getNMS().setBlockFast(bl.getWorld(), bl.getX(),
 						bl.getY(), bl.getZ(), material.getId(), (byte) 0);
 			} else {
 				bl.setType(material);
 			}
-			bl.setMetadata("Carpet",
-					new FixedMetadataValue(plugin, who.getName()));
 		}
 
 		boolean shouldGlow() {
@@ -107,9 +104,6 @@ public class Carpet {
 
 		void update() {
 			if (!block.hasMetadata("Carpet")) {
-				return;
-			}
-			if (block.getMetadata("Carpet").get(0).asString() != who.getName()) {
 				return;
 			}
 			block.removeMetadata("Carpet", plugin);

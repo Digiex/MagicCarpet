@@ -11,6 +11,10 @@
 	<url>https://github.com/Digiex/MagicCarpet</url>
 	<description>A Bukkit Plugin for Minecraft.</description>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
 	<repositories>
 		<repository>
 			<id>bukkit-repo</id>
