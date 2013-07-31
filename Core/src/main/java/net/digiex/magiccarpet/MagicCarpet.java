@@ -4,18 +4,21 @@ import static org.bukkit.Material.BEDROCK;
 import static org.bukkit.Material.BOOKSHELF;
 import static org.bukkit.Material.BRICK;
 import static org.bukkit.Material.CLAY;
+import static org.bukkit.Material.COAL_BLOCK;
 import static org.bukkit.Material.COAL_ORE;
 import static org.bukkit.Material.COBBLESTONE;
 import static org.bukkit.Material.DIAMOND_BLOCK;
 import static org.bukkit.Material.DIAMOND_ORE;
 import static org.bukkit.Material.DIRT;
 import static org.bukkit.Material.DOUBLE_STEP;
+import static org.bukkit.Material.EMERALD_BLOCK;
 import static org.bukkit.Material.ENDER_STONE;
 import static org.bukkit.Material.GLASS;
 import static org.bukkit.Material.GLOWSTONE;
 import static org.bukkit.Material.GOLD_BLOCK;
 import static org.bukkit.Material.GOLD_ORE;
 import static org.bukkit.Material.GRASS;
+import static org.bukkit.Material.HARD_CLAY;
 import static org.bukkit.Material.HUGE_MUSHROOM_1;
 import static org.bukkit.Material.HUGE_MUSHROOM_2;
 import static org.bukkit.Material.IRON_BLOCK;
@@ -33,6 +36,7 @@ import static org.bukkit.Material.NETHER_BRICK;
 import static org.bukkit.Material.NOTE_BLOCK;
 import static org.bukkit.Material.OBSIDIAN;
 import static org.bukkit.Material.PUMPKIN;
+import static org.bukkit.Material.QUARTZ_BLOCK;
 import static org.bukkit.Material.SANDSTONE;
 import static org.bukkit.Material.SNOW_BLOCK;
 import static org.bukkit.Material.SOIL;
@@ -98,7 +102,8 @@ public class MagicCarpet extends JavaPlugin {
 			BRICK, BOOKSHELF, MOSSY_COBBLESTONE, OBSIDIAN, DIAMOND_ORE,
 			DIAMOND_BLOCK, SOIL, SNOW_BLOCK, CLAY, PUMPKIN, NETHERRACK,
 			SOUL_SAND, MYCEL, NETHER_BRICK, ENDER_STONE, HUGE_MUSHROOM_1,
-			HUGE_MUSHROOM_2, MELON_BLOCK);
+			HUGE_MUSHROOM_2, MELON_BLOCK, COAL_BLOCK, EMERALD_BLOCK, HARD_CLAY,
+			QUARTZ_BLOCK);
 	private static EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE,
 			JACK_O_LANTERN);
 
@@ -284,11 +289,11 @@ public class MagicCarpet extends JavaPlugin {
 		worldGuardHandler = new WorldGuardHandler(
 				(com.sk89q.worldguard.bukkit.WorldGuardPlugin) plugin);
 	}
-	
+
 	private File carpetsFile() {
 		return new File(getDataFolder(), "carpets.dat");
 	}
-	
+
 	public void saveCarpets() {
 		File carpetDat = carpetsFile();
 		log.info("Saving carpets...");
