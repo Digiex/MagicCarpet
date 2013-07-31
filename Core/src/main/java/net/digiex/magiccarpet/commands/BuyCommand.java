@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import net.digiex.magiccarpet.Carpets;
 import net.digiex.magiccarpet.Config;
 import net.digiex.magiccarpet.MagicCarpet;
+import net.digiex.magiccarpet.lib.VaultHandler;
 import net.digiex.magiccarpet.lib.VaultHandler.TimePackage;
 
 import org.bukkit.command.Command;
@@ -33,17 +34,19 @@ public class BuyCommand implements CommandExecutor {
 	private final MagicCarpet plugin;
 	private final Config config;
 	private final Carpets carpets;
+	private final VaultHandler vault;
 
 	public BuyCommand(MagicCarpet plugin) {
 		this.plugin = plugin;
 		this.config = plugin.getMCConfig();
 		this.carpets = plugin.getCarpets();
+		this.vault = plugin.getVault();
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
-		if (plugin.getVault() == null) {
+		if (vault == null) {
 			sender.sendMessage("Economy support is not enabled or the required dependencies are missing.");
 			return true;
 		}
@@ -60,7 +63,7 @@ public class BuyCommand implements CommandExecutor {
 				}
 				try {
 					long time = Long.valueOf(args[1]);
-					plugin.getVault().addTime(who, time);
+					vault.addTime(who, time);
 					sender.sendMessage("Time sent to " + who.getName() + ".");
 					return true;
 				} catch (NumberFormatException e) {
@@ -82,7 +85,7 @@ public class BuyCommand implements CommandExecutor {
 					player.sendMessage("You need to pay a one time fee of "
 							+ String.valueOf(config.getDefaultChargeAmount())
 							+ " "
-							+ plugin.getVault().getCurrencyNamePlural()
+							+ vault.getCurrencyNamePlural()
 							+ " before you can use Magic Carpet. Use /mcb -b to accept this charge.");
 					return true;
 				}
@@ -90,14 +93,14 @@ public class BuyCommand implements CommandExecutor {
 					return true;
 				}
 				player.sendMessage("You have "
-						+ plugin.getVault().getTime(player) + " of time left.");
+						+ vault.getTime(player) + " of time left.");
 				if (carpets.canAutoRenew(player)) {
 					player.sendMessage("You have auto-renew enabled for plan "
 							+ carpets.getAutoPackage(player)
 							+ ".");
 					return true;
 				}
-				if (plugin.getVault().get(player) <= 300) {
+				if (vault.get(player) <= 300) {
 					player.sendMessage("You are running low on time. Take a look a /mcb -p for a list of available plans you can purchase.");
 				}
 				return true;
@@ -114,7 +117,7 @@ public class BuyCommand implements CommandExecutor {
 					player.sendMessage("You need to pay a one time fee of "
 							+ String.valueOf(config.getDefaultChargeAmount())
 							+ " "
-							+ plugin.getVault().getCurrencyNamePlural()
+							+ vault.getCurrencyNamePlural()
 							+ " before you can use Magic Carpet. Use /mcb -b to accept this charge.");
 					return true;
 				}
@@ -122,13 +125,13 @@ public class BuyCommand implements CommandExecutor {
 					return true;
 				}
 				player.sendMessage("Here are some of the time packages currently available.");
-				for (Entry<String, TimePackage> set : plugin.getVault()
+				for (Entry<String, TimePackage> set : vault
 						.getPackages().entrySet()) {
 					TimePackage tp = set.getValue();
 					player.sendMessage("Plan '" + set.getKey() + "' gives "
-							+ plugin.getVault().getTime(tp.getTime())
+							+ vault.getTime(tp.getTime())
 							+ " and costs "
-							+ plugin.getVault().format(tp.getAmount()) + ".");
+							+ vault.format(tp.getAmount()) + ".");
 				}
 				player.sendMessage("Use /mcb to purchase plan by typing it's name in.");
 				return true;
@@ -145,7 +148,7 @@ public class BuyCommand implements CommandExecutor {
 					player.sendMessage("You need to pay a one time fee of "
 							+ String.valueOf(config.getDefaultChargeAmount())
 							+ " "
-							+ plugin.getVault().getCurrencyNamePlural()
+							+ vault.getCurrencyNamePlural()
 							+ " before you can use Magic Carpet. Use /mcb -b to accept this charge.");
 					return true;
 				}
@@ -176,16 +179,16 @@ public class BuyCommand implements CommandExecutor {
 					player.sendMessage("You've already paid the fee, use /mc!");
 					return true;
 				}
-				if (plugin.getVault().hasEnough(player.getName(),
+				if (vault.hasEnough(player.getName(),
 						config.getDefaultChargeAmount())) {
-					plugin.getVault().subtract(player.getName(),
+					vault.subtract(player.getName(),
 							config.getDefaultChargeAmount());
 					carpets.setPaidFee(player, true);
 					player.sendMessage("You have successfully paid the one time fee. Use /mc!");
 					return true;
 				} else {
 					player.sendMessage("You don't have enough "
-							+ plugin.getVault().getCurrencyNamePlural() + ".");
+							+ vault.getCurrencyNamePlural() + ".");
 					return true;
 				}
 			} else if (args.length == 2 && args[1].equalsIgnoreCase("-a")) {
@@ -201,14 +204,14 @@ public class BuyCommand implements CommandExecutor {
 					player.sendMessage("You need to pay a one time fee of "
 							+ String.valueOf(config.getDefaultChargeAmount())
 							+ " "
-							+ plugin.getVault().getCurrencyNamePlural()
+							+ vault.getCurrencyNamePlural()
 							+ " before you can use Magic Carpet. Use /mcb -b to accept this charge.");
 					return true;
 				}
 				if (!config.getDefaultChargeTimeBased()) {
 					return true;
 				}
-				if (plugin.getVault().getPackage(args[0]) == null) {
+				if (vault.getPackage(args[0]) == null) {
 					player.sendMessage("That plan doesn't exist");
 					return true;
 				}
@@ -237,22 +240,22 @@ public class BuyCommand implements CommandExecutor {
 					player.sendMessage("You need to pay a one time fee of "
 							+ String.valueOf(config.getDefaultChargeAmount())
 							+ " "
-							+ plugin.getVault().getCurrencyNamePlural()
+							+ vault.getCurrencyNamePlural()
 							+ " before you can use Magic Carpet. Use /mcb -b to accept this charge.");
 					return true;
 				}
 				if (!config.getDefaultChargeTimeBased()) {
 					return true;
 				}
-				TimePackage tp = plugin.getVault().getPackage(args[0]);
+				TimePackage tp = vault.getPackage(args[0]);
 				if (tp != null && tp.getName().equalsIgnoreCase(args[0])) {
-					if (plugin.getVault().addTime(player, tp.getTime(),
+					if (vault.addTime(player, tp.getTime(),
 							tp.getAmount())) {
 						player.sendMessage("You have purchased plan "
 								+ tp.getName() + " with "
-								+ plugin.getVault().getTime(tp.getTime())
+								+ vault.getTime(tp.getTime())
 								+ " of time and was charged "
-								+ plugin.getVault().format(tp.getAmount())
+								+ vault.format(tp.getAmount())
 								+ ".");
 					}
 					return true;
