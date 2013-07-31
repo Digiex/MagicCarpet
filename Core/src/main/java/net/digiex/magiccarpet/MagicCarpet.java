@@ -33,7 +33,6 @@ import static org.bukkit.Material.MOSSY_COBBLESTONE;
 import static org.bukkit.Material.MYCEL;
 import static org.bukkit.Material.NETHERRACK;
 import static org.bukkit.Material.NETHER_BRICK;
-import static org.bukkit.Material.NOTE_BLOCK;
 import static org.bukkit.Material.OBSIDIAN;
 import static org.bukkit.Material.PUMPKIN;
 import static org.bukkit.Material.QUARTZ_BLOCK;
@@ -98,7 +97,7 @@ public class MagicCarpet extends JavaPlugin {
 	private static EnumSet<Material> acceptableCarpet = EnumSet.of(STONE,
 			GRASS, DIRT, COBBLESTONE, WOOD, BEDROCK, GOLD_ORE, IRON_ORE,
 			COAL_ORE, LOG, LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK,
-			SANDSTONE, NOTE_BLOCK, WOOL, GOLD_BLOCK, IRON_BLOCK, DOUBLE_STEP,
+			SANDSTONE, WOOL, GOLD_BLOCK, IRON_BLOCK, DOUBLE_STEP,
 			BRICK, BOOKSHELF, MOSSY_COBBLESTONE, OBSIDIAN, DIAMOND_ORE,
 			DIAMOND_BLOCK, SOIL, SNOW_BLOCK, CLAY, PUMPKIN, NETHERRACK,
 			SOUL_SAND, MYCEL, NETHER_BRICK, ENDER_STONE, HUGE_MUSHROOM_1,

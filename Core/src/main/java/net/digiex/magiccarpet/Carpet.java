@@ -135,14 +135,10 @@ public class Carpet {
 		carpets.assign(player, this);
 	}
 
-	private void drawCarpet() {
+	private boolean drawCarpet() {
 		if (!plugin.canFly(who)) {
 			hide();
-			return;
-		}
-		if (!plugin.canFlyHere(currentCentre.getLocation())) {
-			hide();
-			return;
+			return false;
 		}
 		for (CarpetFibre fibre : fibres) {
 			Block bl = currentCentre.getRelative(fibre.dx, fibre.dy, fibre.dz);
@@ -150,6 +146,14 @@ public class Carpet {
 			if (!canReplace(type)) {
 				fibre.block = null;
 				continue;
+			}
+			if (!plugin.canFlyHere(bl.getLocation())) {
+				hidden = true;
+				removeCarpet();
+				makeMagic(Color.RED);
+				carpets.update(who);
+				who.sendMessage("Poof! The magic carpet is not allowed in this area.");
+				return false;
 			}
 			fibre.block = bl.getState();
 			if (fibre.shouldGlow()) {
@@ -162,6 +166,7 @@ public class Carpet {
 				fibre.set(bl, thread);
 			}
 		}
+		return true;
 	}
 
 	private boolean canReplace(Material type) {
@@ -254,9 +259,10 @@ public class Carpet {
 		}
 		removeCarpet();
 		setSize(sz);
-		drawCarpet();
-		who.sendMessage("The carpet reacts to your words and suddenly changes!");
-		carpets.update(who);
+		if (drawCarpet()) {
+			who.sendMessage("The carpet reacts to your words and suddenly changes!");
+			carpets.update(who);
+		}
 	}
 
 	public void changeCarpet(Material material) {
@@ -270,9 +276,10 @@ public class Carpet {
 		}
 		removeCarpet();
 		thread = material;
-		drawCarpet();
-		who.sendMessage("The carpet reacts to your words and suddenly changes!");
-		carpets.update(who);
+		if (drawCarpet()) {
+			who.sendMessage("The carpet reacts to your words and suddenly changes!");
+			carpets.update(who);
+		}
 	}
 
 	public void descend() {
@@ -331,9 +338,10 @@ public class Carpet {
 	public void lightOff() {
 		removeCarpet();
 		light = false;
-		drawCarpet();
-		who.sendMessage("The luminous stones in the carpet slowly fade away.");
-		carpets.update(who);
+		if (drawCarpet()) {
+			who.sendMessage("The luminous stones in the carpet slowly fade away.");
+			carpets.update(who);
+		}
 	}
 
 	public void lightOn() {
@@ -343,9 +351,10 @@ public class Carpet {
 		}
 		removeCarpet();
 		light = true;
-		drawCarpet();
-		who.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
-		carpets.update(who);
+		if (drawCarpet()) {
+			who.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
+			carpets.update(who);
+		}
 	}
 
 	public void moveTo(Location to) {
@@ -365,19 +374,21 @@ public class Carpet {
 		}
 		removeCarpet();
 		shine = material;
-		drawCarpet();
-		who.sendMessage("The carpet reacts to your words and suddenly changes!");
-		carpets.update(who);
+		if (drawCarpet()) {
+			who.sendMessage("The carpet reacts to your words and suddenly changes!");
+			carpets.update(who);
+		}
 	}
 
 	public void show() {
 		if (hidden) {
 			currentCentre = who.getLocation().getBlock().getRelative(0, -1, 0);
 			hidden = false;
-			drawCarpet();
-			makeMagic(Color.BLUE);
-			carpets.update(who);
-			who.sendMessage("Poof! The magic carpet appears below your feet!");
+			if (drawCarpet()) {
+				makeMagic(Color.BLUE);
+				carpets.update(who);
+				who.sendMessage("Poof! The magic carpet appears below your feet!");
+			}
 		}
 	}
 
@@ -401,9 +412,10 @@ public class Carpet {
 	public void toolsOff() {
 		removeCarpet();
 		tools = false;
-		drawCarpet();
-		who.sendMessage("The magic tools have disappeared.");
-		carpets.update(who);
+		if (drawCarpet()) {
+			who.sendMessage("The magic tools have disappeared.");
+			carpets.update(who);
+		}
 	}
 
 	public void toolsOn() {
@@ -413,9 +425,10 @@ public class Carpet {
 		}
 		removeCarpet();
 		tools = true;
-		drawCarpet();
-		who.sendMessage("The magic tools have appeared!");
-		carpets.update(who);
+		if (drawCarpet()) {
+			who.sendMessage("The magic tools have appeared!");
+			carpets.update(who);
+		}
 	}
 
 	void removeCarpet() {

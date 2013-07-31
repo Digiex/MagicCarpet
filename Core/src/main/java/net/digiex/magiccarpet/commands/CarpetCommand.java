@@ -101,6 +101,10 @@ public class CarpetCommand implements CommandExecutor {
 					&& !player.getLocation().getBlock().isLiquid()) {
 				return true;
 			}
+			if (!plugin.canFlyHere(player.getLocation())) {
+				player.sendMessage("The magic carpet is not allowed in this area.");
+				return true;
+			}
 			if (carpets.wasGiven(player)) {
 				new Carpet(player).show();
 				return true;
@@ -129,6 +133,10 @@ public class CarpetCommand implements CommandExecutor {
 			} else {
 				if (player.getFallDistance() > 0
 						&& !player.getLocation().getBlock().isLiquid()) {
+					return true;
+				}
+				if (!plugin.canFlyHere(player.getLocation())) {
+					player.sendMessage("The magic carpet is not allowed in this area.");
 					return true;
 				}
 				if (carpets.wasGiven(player)) {
