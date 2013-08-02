@@ -2,6 +2,7 @@ package net.digiex.magiccarpet;
 
 import static java.lang.Math.abs;
 import net.digiex.magiccarpet.lib.Vault;
+import net.digiex.magiccarpet.lib.WorldGuard;
 import net.digiex.magiccarpet.nms.NMSHelper;
 
 import org.bukkit.Bukkit;
@@ -157,7 +158,7 @@ public class Carpet {
 				fibre.block = null;
 				continue;
 			}
-			if (!plugin.canFlyHere(bl.getLocation())) {
+			if (!canFlyHere(bl.getLocation())) {
 				hide("Poof! The magic carpet is not allowed in this area.");
 				return false;
 			}
@@ -270,7 +271,7 @@ public class Carpet {
 			who.sendMessage("The carpet size is already equal to " + sz);
 			return;
 		}
-		if (!plugin.canFlyAt(who, sz)) {
+		if (!canFlyAt()) {
 			who.sendMessage("A carpet of that size is not allowed for you.");
 			return;
 		}
@@ -467,6 +468,34 @@ public class Carpet {
 
 	private boolean canTool() {
 		return hasPermission("magiccarpet.mct");
+	}
+	
+	private boolean canFlyHere(Location location) {
+		WorldGuard worldguard = plugin.getWorldGuard();
+		return (!worldguard.isEnabled()) ? true : worldguard.canFlyHere(location);
+	}
+	
+	private boolean canFlyAt() {
+		if (edge == getConfig().getDefaultCarpSize()) {
+			return true;
+		}
+		if (getCarpets().wasGiven(who)) {
+			return true;
+		}
+		if (who.hasPermission("magiccarpet.*")) {
+			return true;
+		}
+		if (getVault().isEnabled()) {
+			if (who.hasPermission("magiccarpet.np")) {
+				return true;
+			}
+			if (getConfig().getDefaultChargeTimeBased()) {
+				return (getCarpets().getTime(who) <= 0L) ? false : true;
+			} else {
+				return getCarpets().hasPaidFee(who);
+			}
+		}
+		return who.hasPermission("magiccarpet.mc." + edge);
 	}
 
 	private boolean hasPermission(String permission) {

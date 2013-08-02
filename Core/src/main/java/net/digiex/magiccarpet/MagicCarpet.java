@@ -238,19 +238,6 @@ public class MagicCarpet extends JavaPlugin {
 				.canFlyHere(location);
 	}
 
-	public boolean canFlyAt(Player player, int i) {
-		if (i == config.getDefaultCarpSize()) {
-			return true;
-		}
-		if (getCarpets().wasGiven(player)) {
-			return true;
-		}
-		if (player.hasPermission("magiccarpet.*")) {
-			return true;
-		}
-		return player.hasPermission("magiccarpet.mc." + i);
-	}
-
 	public void saveCarpets() {
 		File carpetDat = carpetsFile();
 		log.info("Saving carpets...");
