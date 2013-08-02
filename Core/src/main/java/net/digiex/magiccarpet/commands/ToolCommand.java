@@ -26,13 +26,11 @@ import org.bukkit.entity.Player;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class ToolCommand implements CommandExecutor {
-	
+
 	private final MagicCarpet plugin;
-	private final Carpets carpets;
-	
+
 	public ToolCommand(MagicCarpet plugin) {
 		this.plugin = plugin;
-		this.carpets = plugin.getCarpets();
 	}
 
 	@Override
@@ -43,20 +41,43 @@ public class ToolCommand implements CommandExecutor {
 			return true;
 		}
 		Player player = (Player) sender;
-		if (!plugin.canTool(player)) {
-			player.sendMessage("You cannot use the magic tools, no permission.");
-			return true;
+		if (plugin.getVault().isEnabled()) {
+			if (plugin.getMCConfig().getDefaultChargeTimeBased()) {
+				if (getCarpets().getTime(player) <= 0L) {
+					player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
+					return true;
+				}
+			} else {
+				if (!getCarpets().hasPaidFee(player)) {
+					player.sendMessage("You need to pay a one time fee before you can use Magic Carpet. Use /mcb");
+					return true;
+				}
+			}
+		} else {
+			if (!canTool(player)) {
+				player.sendMessage("You do not have permission to use the magic light.");
+				return true;
+			}
 		}
-		Carpet carpet = carpets.getCarpet(player);
+		Carpet carpet = plugin.getCarpets().getCarpet(player);
 		if (carpet == null || !carpet.isVisible()) {
 			player.sendMessage("You must activate the carpet first using /mc.");
 			return true;
 		}
 		if (carpet.hasTools()) {
 			carpet.toolsOff();
-			return true;
+		} else {
+			carpet.toolsOn();
 		}
-		carpet.toolsOn();
 		return true;
+	}
+
+	private Carpets getCarpets() {
+		return plugin.getCarpets();
+	}
+
+	private boolean canTool(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player
+				.hasPermission("magiccarpet.mct");
 	}
 }

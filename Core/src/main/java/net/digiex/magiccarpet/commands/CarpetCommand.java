@@ -30,13 +30,9 @@ import org.bukkit.entity.Player;
 public class CarpetCommand implements CommandExecutor {
 
 	private final MagicCarpet plugin;
-	private final Config config;
-	private final Carpets carpets;
 
 	public CarpetCommand(MagicCarpet plugin) {
 		this.plugin = plugin;
-		this.config = plugin.getMCConfig();
-		this.carpets = plugin.getCarpets();
 	}
 
 	@Override
@@ -53,7 +49,7 @@ public class CarpetCommand implements CommandExecutor {
 					}
 				}
 				if (who != null) {
-					carpets.setGiven(who, true);
+					getCarpets().setGiven(who, true);
 					who.sendMessage("The magic carpet has been given to you. Use /mc");
 					sender.sendMessage("The magic carpet was given to "
 							+ who.getName());
@@ -72,10 +68,10 @@ public class CarpetCommand implements CommandExecutor {
 					}
 				}
 				if (who != null) {
-					if (carpets.has(who)) {
-						carpets.getCarpet(who).hide();
+					if (getCarpets().has(who)) {
+						getCarpets().getCarpet(who).hide();
 					}
-					carpets.setGiven(who, false);
+					getCarpets().setGiven(who, false);
 					who.sendMessage("The magic carpet has been taken from you.");
 					sender.sendMessage("The magic carpet was taken from "
 							+ who.getName());
@@ -89,13 +85,9 @@ public class CarpetCommand implements CommandExecutor {
 				return true;
 			}
 		}
-		Player player = (Player) sender;
-		Carpet carpet = carpets.getCarpet(player);
-		if (!plugin.canFly(player)) {
-			player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
-			return true;
-		}
 		int c;
+		Player player = (Player) sender;
+		Carpet carpet = getCarpets().getCarpet(player);
 		if (carpet == null) {
 			if (player.getFallDistance() > 0
 					&& !player.getLocation().getBlock().isLiquid()) {
@@ -105,23 +97,34 @@ public class CarpetCommand implements CommandExecutor {
 				player.sendMessage("The magic carpet is not allowed in this area.");
 				return true;
 			}
-			if (carpets.wasGiven(player)) {
+			if (getCarpets().wasGiven(player)) {
 				new Carpet(player).show();
 				return true;
 			}
-			if (plugin.getVault() != null) {
+			if (plugin.getVault().isEnabled()) {
 				if (plugin.canNotPay(player)) {
 					new Carpet(player).show();
 					return true;
 				}
-				if (!carpets.hasPaidFee(player)) {
-					player.sendMessage("You need to pay a one time fee before you can use Magic Carpet. Use /mcb.");
+				if (getConfig().getDefaultChargeTimeBased()) {
+					if (getCarpets().getTime(player) == 0L) {
+						player.sendMessage("You have ran out of time to use the Magic Carpet. Please refill using /mcb");
+						return true;
+					}
+					new Carpet(player).show();
+					return true;
+				} else {
+					if (!getCarpets().hasPaidFee(player)) {
+						player.sendMessage("You need to pay a one time fee before you can use Magic Carpet. Use /mcb.");
+						return true;
+					}
+					new Carpet(player).show();
 					return true;
 				}
-				if (config.getDefaultChargeTimeBased() && carpets.getTime(player) == 0L) {
-					player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
-					return true;
-				}
+			}
+			if (!plugin.canFly(player)) {
+				player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
+				return true;
 			}
 			new Carpet(player).show();
 			return true;
@@ -139,23 +142,34 @@ public class CarpetCommand implements CommandExecutor {
 					player.sendMessage("The magic carpet is not allowed in this area.");
 					return true;
 				}
-				if (carpets.wasGiven(player)) {
+				if (getCarpets().wasGiven(player)) {
 					carpet.show();
 					return true;
 				}
-				if (plugin.getVault() != null) {
+				if (plugin.getVault().isEnabled()) {
 					if (plugin.canNotPay(player)) {
 						carpet.show();
 						return true;
 					}
-					if (!carpets.hasPaidFee(player)) {
-						player.sendMessage("You need to pay a one time fee before you can use Magic Carpet. Use /mcb.");
+					if (getConfig().getDefaultChargeTimeBased()) {
+						if (getCarpets().getTime(player) <= 0L) {
+							player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
+							return true;
+						}
+						carpet.show();
+						return true;
+					} else {
+						if (!getCarpets().hasPaidFee(player)) {
+							player.sendMessage("You need to pay a one time fee before you can use Magic Carpet. Use /mcb.");
+							return true;
+						}
+						carpet.show();
 						return true;
 					}
-					if (config.getDefaultChargeTimeBased() && carpets.getTime(player) == 0L) {
-						player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
-						return true;
-					}
+				}
+				if (!plugin.canFly(player)) {
+					player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
+					return true;
 				}
 				carpet.show();
 				return true;
@@ -172,7 +186,7 @@ public class CarpetCommand implements CommandExecutor {
 						}
 					}
 					if (who != null) {
-						carpets.setGiven(who, true);
+						getCarpets().setGiven(who, true);
 						who.sendMessage("The magic carpet has been given to you. Use /mc");
 						player.sendMessage("You've given the magic carpet to "
 								+ who.getName());
@@ -196,10 +210,10 @@ public class CarpetCommand implements CommandExecutor {
 						}
 					}
 					if (who != null) {
-						if (carpets.has(who)) {
-							carpets.getCarpet(who).hide();
+						if (getCarpets().has(who)) {
+							getCarpets().getCarpet(who).hide();
 						}
-						carpets.setGiven(who, false);
+						getCarpets().setGiven(who, false);
 						who.sendMessage("The magic carpet has been taken from you.");
 						player.sendMessage("You've taken the magic carpet from "
 								+ who.getName());
@@ -242,5 +256,13 @@ public class CarpetCommand implements CommandExecutor {
 				return true;
 			}
 		}
+	}
+
+	private Carpets getCarpets() {
+		return plugin.getCarpets();
+	}
+
+	private Config getConfig() {
+		return plugin.getMCConfig();
 	}
 }

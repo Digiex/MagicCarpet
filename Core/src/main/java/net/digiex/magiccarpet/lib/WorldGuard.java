@@ -6,8 +6,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import net.digiex.magiccarpet.MagicCarpet;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.plugin.Plugin;
 
 import com.sk89q.worldedit.bukkit.BukkitUtil;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -33,7 +36,7 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class WorldGuardHandler {
+public class WorldGuard {
 
 	public static class CarpetFlag extends StateFlag {
 		public static CarpetFlag flag = new CarpetFlag();
@@ -91,20 +94,36 @@ public class WorldGuardHandler {
 		}
 	}
 
+	private final MagicCarpet plugin;
 	private WorldGuardPlugin worldGuard;
 
-	public WorldGuardHandler(WorldGuardPlugin worldGuard) {
-		this.worldGuard = worldGuard;
+	public WorldGuard(MagicCarpet plugin) {
+		this.plugin = plugin;
+		getWorldGuard();
 		CarpetFlag.injectHax();
 	}
 
-	public boolean canFlyHere(Location location) {
-		ApplicableRegionSet regions = getApplicableRegions(location);
-		return CarpetFlag.setAllowsFlag(regions);
+	private void getWorldGuard() {
+		Plugin p = plugin.getServer().getPluginManager()
+				.getPlugin("WorldGuard");
+		if (p == null
+				|| !(p instanceof com.sk89q.worldguard.bukkit.WorldGuardPlugin)) {
+			return;
+		}
+		worldGuard = (WorldGuardPlugin) p;
 	}
 
 	private ApplicableRegionSet getApplicableRegions(Location location) {
 		return worldGuard.getGlobalRegionManager().get(location.getWorld())
 				.getApplicableRegions(BukkitUtil.toVector(location));
+	}
+
+	public boolean isEnabled() {
+		return (worldGuard != null) ? true : false;
+	}
+
+	public boolean canFlyHere(Location location) {
+		ApplicableRegionSet regions = getApplicableRegions(location);
+		return CarpetFlag.setAllowsFlag(regions);
 	}
 }

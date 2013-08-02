@@ -40,7 +40,7 @@ public final class Config {
 	private final File configFile;
 	private final Logger log;
 
-	public Config(MagicCarpet plugin) {
+	Config(MagicCarpet plugin) {
 		this.log = plugin.getLogger();
 		this.config = plugin.getConfig();
 		this.configFile = new File(plugin.getDataFolder(), "config.yml");
@@ -254,7 +254,7 @@ public final class Config {
 		try {
 			config.save(configFile);
 		} catch (Exception e) {
-			log.severe("Unable to create config.yml; IOException");
+			log.severe("Unable to create config.yml");
 		}
 	}
 
@@ -271,9 +271,9 @@ public final class Config {
 		} catch (InvalidConfigurationException e) {
 			log.warning("Error loading config.yml; InvalidConfigurationException");
 		}
-		
+
 		checkConfig();
-		
+
 		crouchDef = config.getBoolean("crouch-descent", true);
 		glowCenter = config.getBoolean("center-light", false);
 		carpSize = config.getInt("default-size", 5);
@@ -334,7 +334,7 @@ public final class Config {
 		try {
 			config.save(configFile);
 		} catch (Exception e) {
-			log.severe("Unable to modify config.yml; IOException");
+			log.warning("Unable to modify config.yml");
 		}
 		if (updated) {
 			log.info("New options have been added to config");

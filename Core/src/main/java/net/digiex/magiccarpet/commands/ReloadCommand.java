@@ -1,8 +1,7 @@
 package net.digiex.magiccarpet.commands;
 
-import net.digiex.magiccarpet.Carpets;
-import net.digiex.magiccarpet.Config;
 import net.digiex.magiccarpet.MagicCarpet;
+import net.digiex.magiccarpet.lib.Vault;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -28,13 +27,9 @@ import org.bukkit.entity.Player;
 public class ReloadCommand implements CommandExecutor {
 
 	private final MagicCarpet plugin;
-	private final Config config;
-	private final Carpets carpets;
 
 	public ReloadCommand(MagicCarpet plugin) {
 		this.plugin = plugin;
-		this.config = plugin.getMCConfig();
-		this.carpets = plugin.getCarpets();
 	}
 
 	@Override
@@ -46,7 +41,7 @@ public class ReloadCommand implements CommandExecutor {
 			return true;
 		} else if (sender instanceof Player) {
 			Player player = (Player) sender;
-			if (plugin.canReload(player)) {
+			if (canReload(player)) {
 				reload();
 				player.sendMessage("MagicCarpet has been reloaded!");
 			} else {
@@ -57,12 +52,20 @@ public class ReloadCommand implements CommandExecutor {
 		return false;
 	}
 
+	private Vault getVault() {
+		return plugin.getVault();
+	}
+
+	private boolean canReload(Player player) {
+		return player.hasPermission("magiccarpet.mr");
+	}
+
 	private void reload() {
-		config.loadSettings();
-		if (plugin.getVault() != null) {
-			plugin.getVault().getPackages().clear();
-			plugin.getVault().loadPackages();
+		plugin.getMCConfig().loadSettings();
+		if (getVault().isEnabled()) {
+			getVault().getPackages().clear();
+			getVault().loadPackages();
 		}
-		carpets.checkCarpets();
+		plugin.getCarpets().checkCarpets();
 	}
 }

@@ -26,13 +26,11 @@ import org.bukkit.entity.Player;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class SwitchCommand implements CommandExecutor {
-	
+
 	private final MagicCarpet plugin;
-	private final Carpets carpets;
-	
+
 	public SwitchCommand(MagicCarpet plugin) {
 		this.plugin = plugin;
-		this.carpets = plugin.getCarpets();
 	}
 
 	@Override
@@ -43,25 +41,44 @@ public class SwitchCommand implements CommandExecutor {
 			return true;
 		}
 		Player player = (Player) sender;
-		if (plugin.canFly(player) && plugin.canSwitch(player)) {
-			Carpet carpet = carpets.getCarpet(player);
-			if (carpet == null || !carpet.isVisible()) {
-				player.sendMessage("You don't have a carpet yet, use /mc!");
-				return true;
-			}
-			carpets.toggleCrouch(player);
-			if (carpets.crouches(player)) {
-				player.sendMessage("You now crouch to descend");
+		if (plugin.getVault().isEnabled()) {
+			if (plugin.getMCConfig().getDefaultChargeTimeBased()) {
+				if (getCarpets().getTime(player) <= 0L) {
+					player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
+					return true;
+				}
 			} else {
-				player.sendMessage("You now look down to descend");
+				if (!getCarpets().hasPaidFee(player)) {
+					player.sendMessage("You need to pay a one time fee before you can use Magic Carpet. Use /mcb");
+					return true;
+				}
 			}
 		} else {
-			if (plugin.canFly(player)) {
-				player.sendMessage("You don't have permission to switch your mode of descent.");
-			} else {
-				player.sendMessage("You aren't allowed to use the magic carpet!");
+			if (!canSwitch(player)) {
+				player.sendMessage("You do not have permission to use the magic light.");
+				return true;
 			}
 		}
+		Carpet carpet = getCarpets().getCarpet(player);
+		if (carpet == null || !carpet.isVisible()) {
+			player.sendMessage("You don't have a carpet yet, use /mc!");
+			return true;
+		}
+		getCarpets().toggleCrouch(player);
+		if (getCarpets().crouches(player)) {
+			player.sendMessage("You now crouch to descend");
+		} else {
+			player.sendMessage("You now look down to descend");
+		}
 		return true;
+	}
+
+	private Carpets getCarpets() {
+		return plugin.getCarpets();
+	}
+
+	private boolean canSwitch(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player
+				.hasPermission("magiccarpet.mcs");
 	}
 }

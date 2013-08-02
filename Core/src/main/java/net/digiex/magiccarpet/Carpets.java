@@ -30,30 +30,32 @@ public class Carpets implements Serializable {
 		private static final long serialVersionUID = 3933699983307706213L;
 
 		public transient Carpet carpet;
-		
+
 		public boolean hasCarpet = false;
 		public boolean given = false;
 		public boolean tools = false;
 		public boolean autoRenew = false;
 		public boolean oneTimeFee = false;
 		public String autoPackage = null;
-		
-		public boolean crouch = config.getDefaultCrouch();
-		public int lastSize = config.getDefaultCarpSize();
-		public Material light = config.getDefaultLightMaterial();
-		public boolean lightsOn = config.getDefaultGlowing();
-		public Material thread = config.getDefaultCarpetMaterial();
-		public long time = config.getDefaultChargeTime();
+
+		public boolean crouch = getConfig().getDefaultCrouch();
+		public int lastSize = getConfig().getDefaultCarpSize();
+		public Material light = getConfig().getDefaultLightMaterial();
+		public boolean lightsOn = getConfig().getDefaultGlowing();
+		public Material thread = getConfig().getDefaultCarpetMaterial();
+		public long time = getConfig().getDefaultChargeTime();
 	}
 
 	private HashMap<String, CarpetEntry> carpets = new HashMap<String, CarpetEntry>();
 	private transient MagicCarpet plugin;
-	private transient Config config;
-	
+
 	Carpets attach(MagicCarpet plugin) {
 		this.plugin = plugin;
-		this.config = plugin.getMCConfig();
 		return this;
+	}
+
+	private Config getConfig() {
+		return plugin.getMCConfig();
 	}
 
 	private CarpetEntry getEntry(Player player) {
@@ -157,39 +159,52 @@ public class Carpets implements Serializable {
 
 	public void checkCarpets() {
 		for (CarpetEntry entry : carpets.values()) {
-			if (!MagicCarpet.getAcceptableCarpetMaterial().contains(entry.thread)) {
-				entry.thread = config.getDefaultCarpetMaterial();
+			if (!MagicCarpet.getAcceptableCarpetMaterial().contains(
+					entry.thread)) {
+				entry.thread = getConfig().getDefaultCarpetMaterial();
 			}
 			if (!MagicCarpet.getAcceptableLightMaterial().contains(entry.light)) {
-				entry.light = config.getDefaultLightMaterial();
+				entry.light = getConfig().getDefaultLightMaterial();
 			}
-			if (entry.lastSize > config.getDefaultMaxCarpetSize()) {
-				entry.lastSize = config.getDefaultCarpSize();
+			if (entry.lastSize > getConfig().getDefaultMaxCarpetSize()) {
+				entry.lastSize = getConfig().getDefaultCarpSize();
 			}
-			if (entry.thread != config.getDefaultCarpetMaterial() && !config.getDefaultCustomCarpets()) {
-				entry.thread = config.getDefaultCarpetMaterial();
+			if (entry.thread != getConfig().getDefaultCarpetMaterial()
+					&& !getConfig().getDefaultCustomCarpets()) {
+				entry.thread = getConfig().getDefaultCarpetMaterial();
 			}
-			if (entry.light != config.getDefaultLightMaterial() && !config.getDefaultCustomLights()) {
-				entry.light = config.getDefaultLightMaterial();
+			if (entry.light != getConfig().getDefaultLightMaterial()
+					&& !getConfig().getDefaultCustomLights()) {
+				entry.light = getConfig().getDefaultLightMaterial();
 			}
-			if (entry.lightsOn && !config.getDefaultLights()) {
+			if (entry.lightsOn && !getConfig().getDefaultLights()) {
 				entry.lightsOn = false;
 			}
-			if (entry.tools && !config.getDefaultTools()) {
+			if (entry.tools && !getConfig().getDefaultTools()) {
 				entry.tools = false;
 			}
-			if (plugin.getVault() != null && config.getDefaultCharge()) {
-				if (entry.hasCarpet && !entry.oneTimeFee && !entry.given) {
-					entry.hasCarpet = false;
+			if (plugin.getVault().isEnabled() && getConfig().getDefaultCharge()) {
+				if (getConfig().getDefaultChargeTimeBased()) {
+					if (entry.hasCarpet && entry.time <= 0L && !entry.given) {
+						entry.hasCarpet = false;
+					}
+					if (plugin.getVault().getPackage(entry.autoPackage) == null) {
+						entry.autoPackage = null;
+						entry.autoRenew = false;
+					}
+				} else {
+					if (entry.hasCarpet && !entry.oneTimeFee && !entry.given) {
+						entry.hasCarpet = false;
+					}
 				}
 			}
 		}
 	}
-	
+
 	public boolean crouches(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return config.getDefaultCrouch();
+			return getConfig().getDefaultCrouch();
 		}
 		return entry.crouch;
 	}
@@ -197,7 +212,7 @@ public class Carpets implements Serializable {
 	public int getLastSize(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return config.getDefaultCarpSize();
+			return getConfig().getDefaultCarpSize();
 		}
 		return entry.lastSize;
 	}
@@ -205,7 +220,7 @@ public class Carpets implements Serializable {
 	public Material getMaterial(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return config.getDefaultCarpetMaterial();
+			return getConfig().getDefaultCarpetMaterial();
 		}
 		return entry.thread;
 	}
@@ -213,7 +228,7 @@ public class Carpets implements Serializable {
 	public Material getLightMaterial(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return config.getDefaultLightMaterial();
+			return getConfig().getDefaultLightMaterial();
 		}
 		return entry.light;
 	}
@@ -278,7 +293,7 @@ public class Carpets implements Serializable {
 	public long getTime(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return config.getDefaultChargeTime();
+			return getConfig().getDefaultChargeTime();
 		}
 		return entry.time;
 	}

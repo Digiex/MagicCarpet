@@ -63,11 +63,11 @@ public class NMSHelper {
 
 		return nms;
 	}
-	
+
 	public static NMSAbstraction getNMS() {
 		return nms;
 	}
-	
+
 	public static boolean isEnabled() {
 		return (nms != null) ? true : false;
 	}

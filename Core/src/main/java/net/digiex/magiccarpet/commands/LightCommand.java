@@ -27,68 +27,80 @@ import org.bukkit.entity.Player;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class LightCommand implements CommandExecutor {
-	
+
 	private final MagicCarpet plugin;
-	private final Carpets carpets;
-	
+
 	public LightCommand(MagicCarpet plugin) {
 		this.plugin = plugin;
-		this.carpets = plugin.getCarpets();
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 		if (!(sender instanceof Player)) {
-			sender.sendMessage("Sorry, only players can use the carpet!");
+			plugin.getLogger().info("Sorry, only players can use the carpet!");
 			return true;
 		}
 		Player player = (Player) sender;
-		if (plugin.canFly(player) && plugin.canLight(player)) {
-			Carpet carpet = carpets.getCarpet(player);
-			if (carpet == null || !carpet.isVisible()) {
-				player.sendMessage("You don't have a carpet yet, use /mc!");
-				return true;
-			}
-			if (args.length < 1) {
-				if (carpets.hasLight(player)) {
-					carpet.lightOff();
-				} else {
-					carpet.lightOn();
+		if (plugin.getVault().isEnabled()) {
+			if (plugin.getMCConfig().getDefaultChargeTimeBased()) {
+				if (getCarpets().getTime(player) <= 0L) {
+					player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
+					return true;
 				}
 			} else {
-				if (carpets.hasLight(player)) {
-					String word = "";
-					for (String a : args) {
-						if (word.isEmpty()) {
-							word = a;
-						} else {
-							word += " " + a;
-						}
-					}
-					Material m = Material.getMaterial(word.toUpperCase()
-							.replace(" ", "_"));
-					if (m != null) {
-						carpet.setLight(m);
-						return true;
-					} else {
-						player.sendMessage("Material error; Material may be entered as JACK_O_LANTERN or just plain jack o lantern");
-						return true;
-					}
-				} else {
-					player.sendMessage("You haven't enabled the magic light yet.");
+				if (!getCarpets().hasPaidFee(player)) {
+					player.sendMessage("You need to pay a one time fee before you can use Magic Carpet. Use /mcb");
 					return true;
 				}
 			}
 		} else {
-			if (plugin.canFly(player)) {
-				player.sendMessage("You do not have permission to use magic light!");
-				return true;
-			} else {
-				player.sendMessage("You are not allowed to use the magic carpet!");
+			if (!canLight(player)) {
+				player.sendMessage("You do not have permission to use the magic light.");
 				return true;
 			}
 		}
+		Carpet carpet = getCarpets().getCarpet(player);
+		if (carpet == null || !carpet.isVisible()) {
+			player.sendMessage("You do not have a carpet yet, use /mc");
+			return true;
+		}
+		if (args.length < 1) {
+			if (getCarpets().hasLight(player)) {
+				carpet.lightOff();
+			} else {
+				carpet.lightOn();
+			}
+		} else {
+			if (getCarpets().hasLight(player)) {
+				String word = "";
+				for (String a : args) {
+					if (word.isEmpty()) {
+						word = a;
+					} else {
+						word += " " + a;
+					}
+				}
+				Material m = Material.getMaterial(word.toUpperCase().replace(
+						" ", "_"));
+				if (m != null) {
+					carpet.setLight(m);
+				} else {
+					player.sendMessage("Material error; Material may be entered as JACK_O_LANTERN or jack o lantern");
+				}
+			} else {
+				player.sendMessage("You have not enabled the magic light yet.");
+			}
+		}
 		return true;
+	}
+
+	private Carpets getCarpets() {
+		return plugin.getCarpets();
+	}
+
+	private boolean canLight(Player player) {
+		return (getCarpets().wasGiven(player)) ? true : player
+				.hasPermission("magiccarpet.ml");
 	}
 }

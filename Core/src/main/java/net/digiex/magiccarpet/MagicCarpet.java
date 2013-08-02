@@ -62,18 +62,14 @@ import net.digiex.magiccarpet.commands.LightCommand;
 import net.digiex.magiccarpet.commands.ReloadCommand;
 import net.digiex.magiccarpet.commands.SwitchCommand;
 import net.digiex.magiccarpet.commands.ToolCommand;
-import net.digiex.magiccarpet.lib.VaultHandler;
-import net.digiex.magiccarpet.lib.WorldGuardHandler;
+import net.digiex.magiccarpet.lib.Vault;
+import net.digiex.magiccarpet.lib.WorldGuard;
 import net.digiex.magiccarpet.nms.NMSHelper;
-import net.milkbowl.vault.economy.Economy;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /*
@@ -97,12 +93,11 @@ public class MagicCarpet extends JavaPlugin {
 	private static EnumSet<Material> acceptableCarpet = EnumSet.of(STONE,
 			GRASS, DIRT, COBBLESTONE, WOOD, BEDROCK, GOLD_ORE, IRON_ORE,
 			COAL_ORE, LOG, LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK,
-			SANDSTONE, WOOL, GOLD_BLOCK, IRON_BLOCK, DOUBLE_STEP,
-			BRICK, BOOKSHELF, MOSSY_COBBLESTONE, OBSIDIAN, DIAMOND_ORE,
-			DIAMOND_BLOCK, SOIL, SNOW_BLOCK, CLAY, PUMPKIN, NETHERRACK,
-			SOUL_SAND, MYCEL, NETHER_BRICK, ENDER_STONE, HUGE_MUSHROOM_1,
-			HUGE_MUSHROOM_2, MELON_BLOCK, COAL_BLOCK, EMERALD_BLOCK, HARD_CLAY,
-			QUARTZ_BLOCK);
+			SANDSTONE, WOOL, GOLD_BLOCK, IRON_BLOCK, DOUBLE_STEP, BRICK,
+			BOOKSHELF, MOSSY_COBBLESTONE, OBSIDIAN, DIAMOND_ORE, DIAMOND_BLOCK,
+			SOIL, SNOW_BLOCK, CLAY, PUMPKIN, NETHERRACK, SOUL_SAND, MYCEL,
+			NETHER_BRICK, ENDER_STONE, HUGE_MUSHROOM_1, HUGE_MUSHROOM_2,
+			MELON_BLOCK, COAL_BLOCK, EMERALD_BLOCK, HARD_CLAY, QUARTZ_BLOCK);
 	private static EnumSet<Material> acceptableLight = EnumSet.of(GLOWSTONE,
 			JACK_O_LANTERN);
 
@@ -110,8 +105,8 @@ public class MagicCarpet extends JavaPlugin {
 	private Config config;
 	private Carpets carpets;
 
-	private VaultHandler vault;
-	private static WorldGuardHandler worldGuardHandler;
+	private Vault vault;
+	private static WorldGuard worldGuard;
 
 	private void registerCommands() {
 		getCommand("magiccarpet").setExecutor(new CarpetCommand(this));
@@ -161,68 +156,8 @@ public class MagicCarpet extends JavaPlugin {
 		}
 	}
 
-	public Carpets getCarpets() {
-		return carpets;
-	}
-
-	public Config getMCConfig() {
-		return config;
-	}
-
-	public boolean canFly(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : player
-				.hasPermission("magiccarpet.mc");
-	}
-
-	public boolean canLight(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : player
-				.hasPermission("magiccarpet.ml");
-	}
-
-	public boolean canSwitch(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : player
-				.hasPermission("magiccarpet.mcs");
-	}
-
-	public boolean canTool(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : player
-				.hasPermission("magiccarpet.mct");
-	}
-
-	public boolean canReload(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : player
-				.hasPermission("magiccarpet.mr");
-	}
-
-	public boolean canNotPay(Player player) {
-		return (getCarpets().wasGiven(player)) ? true : player
-				.hasPermission("magiccarpet.np");
-	}
-
-	public static EnumSet<Material> getAcceptableCarpetMaterial() {
-		return acceptableCarpet;
-	}
-
-	public static EnumSet<Material> getAcceptableLightMaterial() {
-		return acceptableLight;
-	}
-
-	public boolean canFlyHere(Location location) {
-		return (worldGuardHandler == null) ? true : worldGuardHandler
-				.canFlyHere(location);
-	}
-
-	public boolean canFlyAt(Player player, int i) {
-		if (i == config.getDefaultCarpSize()) {
-			return true;
-		}
-		if (getCarpets().wasGiven(player)) {
-			return true;
-		}
-		if (player.hasPermission("magiccarpet.*")) {
-			return true;
-		}
-		return player.hasPermission("magiccarpet.mc." + i);
+	private File carpetsFile() {
+		return new File(getDataFolder(), "carpets.dat");
 	}
 
 	@Override
@@ -249,48 +184,71 @@ public class MagicCarpet extends JavaPlugin {
 		}
 		config = new Config(this);
 		carpets = new Carpets().attach(this);
+		vault = new Vault(this);
+		worldGuard = new WorldGuard(this);
 		if (config.getDefaultSaveCarpets()) {
 			loadCarpets();
 		}
 		registerEvents(new MagicListener(this));
 		registerCommands();
-		getVault();
-		getWorldGuard();
 		startStats();
 		log.info("is now enabled!");
 	}
 
-	public VaultHandler getVault() {
-		if (!config.getDefaultCharge()) {
-			return null;
-		}
-		if (vault != null) {
-			return vault;
-		}
-		Plugin plugin = getServer().getPluginManager().getPlugin("Vault");
-		if (plugin == null || !(plugin instanceof net.milkbowl.vault.Vault)) {
-			return null;
-		}
-		RegisteredServiceProvider<Economy> rsp = Bukkit.getServer()
-				.getServicesManager().getRegistration(Economy.class);
-		if (rsp == null) {
-			return null;
-		}
-		return vault = new VaultHandler(this, rsp.getProvider());
+	public Vault getVault() {
+		return vault;
 	}
 
-	private void getWorldGuard() {
-		Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
-		if (plugin == null
-				|| !(plugin instanceof com.sk89q.worldguard.bukkit.WorldGuardPlugin)) {
-			return;
-		}
-		worldGuardHandler = new WorldGuardHandler(
-				(com.sk89q.worldguard.bukkit.WorldGuardPlugin) plugin);
+	public WorldGuard getWorldGuard() {
+		return worldGuard;
 	}
 
-	private File carpetsFile() {
-		return new File(getDataFolder(), "carpets.dat");
+	public Carpets getCarpets() {
+		return carpets;
+	}
+
+	public Config getMCConfig() {
+		return config;
+	}
+
+	public boolean canFly(Player player) {
+		return (carpets.wasGiven(player)) ? true : player
+				.hasPermission("magiccarpet.mc");
+	}
+
+	public boolean canNotPay(Player player) {
+		return (carpets.wasGiven(player)) ? true : player
+				.hasPermission("magiccarpet.np");
+	}
+
+	public boolean canReload(Player player) {
+		return player.hasPermission("magiccarpet.mr");
+	}
+
+	public static EnumSet<Material> getAcceptableCarpetMaterial() {
+		return acceptableCarpet;
+	}
+
+	public static EnumSet<Material> getAcceptableLightMaterial() {
+		return acceptableLight;
+	}
+
+	public boolean canFlyHere(Location location) {
+		return (!worldGuard.isEnabled()) ? true : worldGuard
+				.canFlyHere(location);
+	}
+
+	public boolean canFlyAt(Player player, int i) {
+		if (i == config.getDefaultCarpSize()) {
+			return true;
+		}
+		if (getCarpets().wasGiven(player)) {
+			return true;
+		}
+		if (player.hasPermission("magiccarpet.*")) {
+			return true;
+		}
+		return player.hasPermission("magiccarpet.mc." + i);
 	}
 
 	public void saveCarpets() {
