@@ -209,6 +209,7 @@ public class MagicListener implements Listener {
 				return;
 			}
 		}
+
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
