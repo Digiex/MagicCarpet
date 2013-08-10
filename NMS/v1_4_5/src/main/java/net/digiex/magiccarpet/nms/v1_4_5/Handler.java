@@ -1,11 +1,11 @@
-package net.digiex.magiccarpet.nms.pre;
+package net.digiex.magiccarpet.nms.v1_4_5;
 
-import net.digiex.magiccarpet.nms.api.NMSAbstraction;
-import net.minecraft.server.Chunk;
-import net.minecraft.server.EnumSkyBlock;
-import net.minecraft.server.World;
+import net.digiex.magiccarpet.nms.api.Abstraction;
+import net.minecraft.server.v1_4_5.Chunk;
+import net.minecraft.server.v1_4_5.EnumSkyBlock;
+import net.minecraft.server.v1_4_5.World;
 
-import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_5.CraftWorld;
 
 /*
  * Magic Carpet 2.3 Copyright (C) 2012 Android, Celtic Minstrel, xzKinGzxBuRnzx
@@ -24,7 +24,7 @@ import org.bukkit.craftbukkit.CraftWorld;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class NMSHandler implements NMSAbstraction {
+public abstract class Handler implements Abstraction {
 
 	@Override
 	public boolean setBlockFast(org.bukkit.World world, int x, int y, int z,

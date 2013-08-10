@@ -1,9 +1,10 @@
 package net.digiex.magiccarpet.commands;
 
 import net.digiex.magiccarpet.Carpet;
-import net.digiex.magiccarpet.Carpets;
+import net.digiex.magiccarpet.Storage;
 import net.digiex.magiccarpet.MagicCarpet;
 
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,11 +26,11 @@ import org.bukkit.entity.Player;
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class SwitchCommand implements CommandExecutor {
+public class Light implements CommandExecutor {
 
 	private final MagicCarpet plugin;
 
-	public SwitchCommand(MagicCarpet plugin) {
+	public Light(MagicCarpet plugin) {
 		this.plugin = plugin;
 	}
 
@@ -37,7 +38,7 @@ public class SwitchCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 		if (!(sender instanceof Player)) {
-			sender.sendMessage("Sorry, only players can use the carpet!");
+			plugin.getLogger().info("Sorry, only players can use the carpet!");
 			return true;
 		}
 		Player player = (Player) sender;
@@ -54,31 +55,52 @@ public class SwitchCommand implements CommandExecutor {
 				}
 			}
 		} else {
-			if (!canSwitch(player)) {
+			if (!canLight(player)) {
 				player.sendMessage("You do not have permission to use the magic light.");
 				return true;
 			}
 		}
 		Carpet carpet = getCarpets().getCarpet(player);
 		if (carpet == null || !carpet.isVisible()) {
-			player.sendMessage("You don't have a carpet yet, use /mc!");
+			player.sendMessage("You do not have a carpet yet, use /mc");
 			return true;
 		}
-		getCarpets().toggleCrouch(player);
-		if (getCarpets().crouches(player)) {
-			player.sendMessage("You now crouch to descend");
+		if (args.length < 1) {
+			if (getCarpets().hasLight(player)) {
+				carpet.lightOff();
+			} else {
+				carpet.lightOn();
+			}
 		} else {
-			player.sendMessage("You now look down to descend");
+			if (getCarpets().hasLight(player)) {
+				String word = "";
+				for (String a : args) {
+					if (word.isEmpty()) {
+						word = a;
+					} else {
+						word += " " + a;
+					}
+				}
+				Material m = Material.getMaterial(word.toUpperCase().replace(
+						" ", "_"));
+				if (m != null) {
+					carpet.setLight(m);
+				} else {
+					player.sendMessage("Material error; Material may be entered as JACK_O_LANTERN or jack o lantern");
+				}
+			} else {
+				player.sendMessage("You have not enabled the magic light yet.");
+			}
 		}
 		return true;
 	}
 
-	private Carpets getCarpets() {
+	private Storage getCarpets() {
 		return plugin.getCarpets();
 	}
 
-	private boolean canSwitch(Player player) {
+	private boolean canLight(Player player) {
 		return (getCarpets().wasGiven(player)) ? true : player
-				.hasPermission("magiccarpet.mcs");
+				.hasPermission("magiccarpet.ml");
 	}
 }

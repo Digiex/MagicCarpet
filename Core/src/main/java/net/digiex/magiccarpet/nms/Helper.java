@@ -3,7 +3,7 @@ package net.digiex.magiccarpet.nms;
 import java.lang.reflect.InvocationTargetException;
 
 import net.digiex.magiccarpet.MagicCarpet;
-import net.digiex.magiccarpet.nms.api.NMSAbstraction;
+import net.digiex.magiccarpet.nms.api.Abstraction;
 
 import org.bukkit.plugin.Plugin;
 
@@ -24,19 +24,19 @@ import org.bukkit.plugin.Plugin;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class NMSHelper {
+public class Helper {
 
-	private static NMSAbstraction nms;
+	private static Abstraction nms;
 
-	public NMSHelper(MagicCarpet plugin) {
+	public Helper(MagicCarpet plugin) {
 		try {
-			NMSHelper.nms = init(plugin);
+			Helper.nms = init(plugin);
 		} catch (Exception e) {
-			NMSHelper.nms = null;
+			Helper.nms = null;
 		}
 	}
 
-	private NMSAbstraction init(Plugin plugin) throws ClassNotFoundException,
+	private Abstraction init(Plugin plugin) throws ClassNotFoundException,
 			IllegalArgumentException, SecurityException,
 			InstantiationException, IllegalAccessException,
 			InvocationTargetException, NoSuchMethodException {
@@ -52,10 +52,10 @@ public class NMSHelper {
 		}
 
 		final Class<?> clazz = Class.forName(pluginPackageName + ".nms."
-				+ version + ".NMSHandler");
+				+ version + ".Handler");
 
-		if (NMSAbstraction.class.isAssignableFrom(clazz)) {
-			nms = (NMSAbstraction) clazz.getConstructor().newInstance();
+		if (Abstraction.class.isAssignableFrom(clazz)) {
+			nms = (Abstraction) clazz.getConstructor().newInstance();
 		} else {
 			throw new IllegalStateException("Class " + clazz.getName()
 					+ " does not implement NMSAbstraction");
@@ -64,7 +64,7 @@ public class NMSHelper {
 		return nms;
 	}
 
-	public static NMSAbstraction getNMS() {
+	public static Abstraction getNMS() {
 		return nms;
 	}
 

@@ -42,12 +42,12 @@ import org.bukkit.util.Vector;
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class MagicListener implements Listener {
+public class Listeners implements Listener {
 
 	private final MagicCarpet plugin;
 	private boolean falling = false;
 
-	public MagicListener(MagicCarpet plugin) {
+	Listeners(MagicCarpet plugin) {
 		this.plugin = plugin;
 	}
 
@@ -303,7 +303,7 @@ public class MagicListener implements Listener {
 		}
 	}
 
-	private Carpets getCarpets() {
+	private Storage getCarpets() {
 		return plugin.getCarpets();
 	}
 

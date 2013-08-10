@@ -1,7 +1,7 @@
 package net.digiex.magiccarpet.commands;
 
 import net.digiex.magiccarpet.Carpet;
-import net.digiex.magiccarpet.Carpets;
+import net.digiex.magiccarpet.Storage;
 import net.digiex.magiccarpet.Config;
 import net.digiex.magiccarpet.MagicCarpet;
 
@@ -27,11 +27,11 @@ import org.bukkit.entity.Player;
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class CarpetCommand implements CommandExecutor {
+public class Magic implements CommandExecutor {
 
 	private final MagicCarpet plugin;
 
-	public CarpetCommand(MagicCarpet plugin) {
+	public Magic(MagicCarpet plugin) {
 		this.plugin = plugin;
 	}
 
@@ -258,7 +258,7 @@ public class CarpetCommand implements CommandExecutor {
 		}
 	}
 
-	private Carpets getCarpets() {
+	private Storage getCarpets() {
 		return plugin.getCarpets();
 	}
 

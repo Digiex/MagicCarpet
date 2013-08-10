@@ -30,6 +30,76 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>net.digiex</groupId>
+			<artifactId>magiccarpet-nms-api</artifactId>
+			<version>API</version>
+			<type>jar</type>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>net.digiex</groupId>
+			<artifactId>magiccarpet-nms-v1_6_R2</artifactId>
+			<version>v1_6_R2</version>
+			<type>jar</type>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>net.digiex</groupId>
+			<artifactId>magiccarpet-nms-v1_6_R1</artifactId>
+			<version>v1_6_R1</version>
+			<type>jar</type>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>net.digiex</groupId>
+			<artifactId>magiccarpet-nms-v1_5_R3</artifactId>
+			<version>v1_5_R3</version>
+			<type>jar</type>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>net.digiex</groupId>
+			<artifactId>magiccarpet-nms-v1_5_R2</artifactId>
+			<version>v1_5_R2</version>
+			<type>jar</type>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>net.digiex</groupId>
+			<artifactId>magiccarpet-nms-v1_5_R1</artifactId>
+			<version>v1_5_R1</version>
+			<type>jar</type>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>net.digiex</groupId>
+			<artifactId>magiccarpet-nms-v1_4_R1</artifactId>
+			<version>v1_4_R1</version>
+			<type>jar</type>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>net.digiex</groupId>
+			<artifactId>magiccarpet-nms-v1_4_6</artifactId>
+			<version>v1_4_6</version>
+			<type>jar</type>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>net.digiex</groupId>
+			<artifactId>magiccarpet-nms-v1_4_5</artifactId>
+			<version>v1_4_5</version>
+			<type>jar</type>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>net.digiex</groupId>
+			<artifactId>magiccarpet-nms-pre</artifactId>
+			<version>pre</version>
+			<type>jar</type>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
 			<groupId>com.sk89q</groupId>
 			<artifactId>worldguard</artifactId>
 			<version>5.8</version>
@@ -49,13 +119,6 @@
 			<version>1.2.26</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/Vault.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>net.digiex</groupId>
-			<artifactId>magiccarpet-nms-api</artifactId>
-			<version>API</version>
-			<type>jar</type>
-			<optional>true</optional>
 		</dependency>
 	</dependencies>
 

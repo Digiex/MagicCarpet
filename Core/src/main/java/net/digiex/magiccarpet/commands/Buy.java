@@ -3,11 +3,11 @@ package net.digiex.magiccarpet.commands;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import net.digiex.magiccarpet.Carpets;
+import net.digiex.magiccarpet.Storage;
 import net.digiex.magiccarpet.Config;
 import net.digiex.magiccarpet.MagicCarpet;
-import net.digiex.magiccarpet.lib.Vault;
-import net.digiex.magiccarpet.lib.Vault.TimePackage;
+import net.digiex.magiccarpet.plugins.Vault;
+import net.digiex.magiccarpet.plugins.Vault.TimePackage;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -30,11 +30,11 @@ import org.bukkit.entity.Player;
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class BuyCommand implements CommandExecutor {
+public class Buy implements CommandExecutor {
 
 	private final MagicCarpet plugin;
 
-	public BuyCommand(MagicCarpet plugin) {
+	public Buy(MagicCarpet plugin) {
 		this.plugin = plugin;
 	}
 
@@ -195,7 +195,7 @@ public class BuyCommand implements CommandExecutor {
 		return false;
 	}
 
-	private Carpets getCarpets() {
+	private Storage getCarpets() {
 		return plugin.getCarpets();
 	}
 

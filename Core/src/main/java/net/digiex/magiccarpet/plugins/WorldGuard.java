@@ -1,4 +1,4 @@
-package net.digiex.magiccarpet.lib;
+package net.digiex.magiccarpet.plugins;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

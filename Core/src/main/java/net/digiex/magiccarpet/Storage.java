@@ -23,7 +23,7 @@ import org.bukkit.entity.Player;
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class Carpets implements Serializable {
+public class Storage implements Serializable {
 	private static final long serialVersionUID = 7955229419654662022L;
 
 	private class CarpetEntry implements Serializable {
@@ -49,7 +49,7 @@ public class Carpets implements Serializable {
 	private HashMap<String, CarpetEntry> carpets = new HashMap<String, CarpetEntry>();
 	private transient MagicCarpet plugin;
 
-	Carpets attach(MagicCarpet plugin) {
+	Storage attach(MagicCarpet plugin) {
 		this.plugin = plugin;
 		return this;
 	}

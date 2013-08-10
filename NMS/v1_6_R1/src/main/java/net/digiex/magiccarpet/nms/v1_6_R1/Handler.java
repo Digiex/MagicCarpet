@@ -1,6 +1,6 @@
 package net.digiex.magiccarpet.nms.v1_6_R1;
 
-import net.digiex.magiccarpet.nms.api.NMSAbstraction;
+import net.digiex.magiccarpet.nms.api.Abstraction;
 import net.minecraft.server.v1_6_R1.Chunk;
 import net.minecraft.server.v1_6_R1.EntityFireworks;
 import net.minecraft.server.v1_6_R1.EnumSkyBlock;
@@ -30,7 +30,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class NMSHandler implements NMSAbstraction {
+public class Handler implements Abstraction {
 
 	@Override
 	public boolean setBlockFast(org.bukkit.World world, int x, int y, int z,

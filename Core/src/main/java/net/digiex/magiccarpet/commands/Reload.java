@@ -1,7 +1,7 @@
 package net.digiex.magiccarpet.commands;
 
 import net.digiex.magiccarpet.MagicCarpet;
-import net.digiex.magiccarpet.lib.Vault;
+import net.digiex.magiccarpet.plugins.Vault;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,11 +24,11 @@ import org.bukkit.entity.Player;
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class ReloadCommand implements CommandExecutor {
+public class Reload implements CommandExecutor {
 
 	private final MagicCarpet plugin;
 
-	public ReloadCommand(MagicCarpet plugin) {
+	public Reload(MagicCarpet plugin) {
 		this.plugin = plugin;
 	}
 

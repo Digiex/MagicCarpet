@@ -21,7 +21,7 @@ import org.bukkit.World;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-public interface NMSAbstraction {
+public interface Abstraction {
 
 	public boolean setBlockFast(World world, int x, int y, int z, int blockId,
 			byte data);

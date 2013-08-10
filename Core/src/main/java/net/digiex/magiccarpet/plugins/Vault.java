@@ -1,9 +1,9 @@
-package net.digiex.magiccarpet.lib;
+package net.digiex.magiccarpet.plugins;
 
 import java.util.HashMap;
 
 import net.digiex.magiccarpet.Carpet;
-import net.digiex.magiccarpet.Carpets;
+import net.digiex.magiccarpet.Storage;
 import net.digiex.magiccarpet.Config;
 import net.digiex.magiccarpet.MagicCarpet;
 import net.milkbowl.vault.economy.Economy;
@@ -79,7 +79,7 @@ public class Vault {
 		startCharge();
 	}
 
-	private Carpets getCarpets() {
+	private Storage getCarpets() {
 		return plugin.getCarpets();
 	}
 

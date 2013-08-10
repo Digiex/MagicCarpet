@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>magiccarpet-nms-v1_6_R2</artifactId>
+	<artifactId>magiccarpet-nms-v1_6_R3</artifactId>
 	<packaging>jar</packaging>
-	<name>MagicCarpet NMS v1.6-R2</name>
-	<version>v1_6_R2</version>
+	<name>MagicCarpet NMS v1.6-R3</name>
+	<version>v1_6_R3</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>craftbukkit</artifactId>
-			<version>1.6.2-R0.1-SNAPSHOT</version>
+			<version>1.6.2-R0.2-SNAPSHOT</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>

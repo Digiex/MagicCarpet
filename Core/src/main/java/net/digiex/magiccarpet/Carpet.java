@@ -1,9 +1,9 @@
 package net.digiex.magiccarpet;
 
 import static java.lang.Math.abs;
-import net.digiex.magiccarpet.lib.Vault;
-import net.digiex.magiccarpet.lib.WorldGuard;
-import net.digiex.magiccarpet.nms.NMSHelper;
+import net.digiex.magiccarpet.nms.Helper;
+import net.digiex.magiccarpet.plugins.Vault;
+import net.digiex.magiccarpet.plugins.WorldGuard;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -48,8 +48,8 @@ public class Carpet {
 		void set(Block bl, Material material) {
 			bl.setMetadata("Carpet",
 					new FixedMetadataValue(plugin, who.getName()));
-			if (NMSHelper.isEnabled()) {
-				NMSHelper.getNMS().setBlockFast(bl.getWorld(), bl.getX(),
+			if (Helper.isEnabled()) {
+				Helper.getNMS().setBlockFast(bl.getWorld(), bl.getX(),
 						bl.getY(), bl.getZ(), material.getId(), (byte) 0);
 			} else {
 				bl.setType(material);
@@ -134,7 +134,7 @@ public class Carpet {
 		getCarpets().assign(player, this);
 	}
 
-	private Carpets getCarpets() {
+	private Storage getCarpets() {
 		return plugin.getCarpets();
 	}
 
@@ -230,9 +230,9 @@ public class Carpet {
 	}
 
 	private void makeMagic(Color color) {
-		if (getConfig().getDefaultMagicEffect() && NMSHelper.isEnabled()) {
+		if (getConfig().getDefaultMagicEffect() && Helper.isEnabled()) {
 			try {
-				NMSHelper.getNMS().playFirework(
+				Helper.getNMS().playFirework(
 						getLocation(),
 						FireworkEffect.builder().with(Type.BALL_LARGE)
 								.withColor(color).build());

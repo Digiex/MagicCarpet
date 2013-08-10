@@ -56,15 +56,15 @@ import java.util.Iterator;
 import java.util.logging.Logger;
 
 import net.digiex.magiccarpet.Metrics.Graph;
-import net.digiex.magiccarpet.commands.BuyCommand;
-import net.digiex.magiccarpet.commands.CarpetCommand;
-import net.digiex.magiccarpet.commands.LightCommand;
-import net.digiex.magiccarpet.commands.ReloadCommand;
-import net.digiex.magiccarpet.commands.SwitchCommand;
-import net.digiex.magiccarpet.commands.ToolCommand;
-import net.digiex.magiccarpet.lib.Vault;
-import net.digiex.magiccarpet.lib.WorldGuard;
-import net.digiex.magiccarpet.nms.NMSHelper;
+import net.digiex.magiccarpet.commands.Buy;
+import net.digiex.magiccarpet.commands.Magic;
+import net.digiex.magiccarpet.commands.Light;
+import net.digiex.magiccarpet.commands.Reload;
+import net.digiex.magiccarpet.commands.Switch;
+import net.digiex.magiccarpet.commands.Tool;
+import net.digiex.magiccarpet.nms.Helper;
+import net.digiex.magiccarpet.plugins.Vault;
+import net.digiex.magiccarpet.plugins.WorldGuard;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -103,18 +103,18 @@ public class MagicCarpet extends JavaPlugin {
 
 	private Logger log;
 	private Config config;
-	private Carpets carpets;
+	private Storage carpets;
 
 	private Vault vault;
 	private static WorldGuard worldGuard;
 
 	private void registerCommands() {
-		getCommand("magiccarpet").setExecutor(new CarpetCommand(this));
-		getCommand("magiclight").setExecutor(new LightCommand(this));
-		getCommand("carpetswitch").setExecutor(new SwitchCommand(this));
-		getCommand("magicreload").setExecutor(new ReloadCommand(this));
-		getCommand("magiccarpetbuy").setExecutor(new BuyCommand(this));
-		getCommand("magictools").setExecutor(new ToolCommand(this));
+		getCommand("magiccarpet").setExecutor(new Magic(this));
+		getCommand("magiclight").setExecutor(new Light(this));
+		getCommand("carpetswitch").setExecutor(new Switch(this));
+		getCommand("magicreload").setExecutor(new Reload(this));
+		getCommand("magiccarpetbuy").setExecutor(new Buy(this));
+		getCommand("magictools").setExecutor(new Tool(this));
 	}
 
 	private void registerEvents(Listener listener) {
@@ -178,18 +178,18 @@ public class MagicCarpet extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		log = getLogger();
-		new NMSHelper(this);
+		new Helper(this);
 		if (!getDataFolder().exists()) {
 			getDataFolder().mkdirs();
 		}
 		config = new Config(this);
-		carpets = new Carpets().attach(this);
+		carpets = new Storage().attach(this);
 		vault = new Vault(this);
 		worldGuard = new WorldGuard(this);
 		if (config.getDefaultSaveCarpets()) {
 			loadCarpets();
 		}
-		registerEvents(new MagicListener(this));
+		registerEvents(new Listeners(this));
 		registerCommands();
 		startStats();
 		log.info("is now enabled!");
@@ -203,7 +203,7 @@ public class MagicCarpet extends JavaPlugin {
 		return worldGuard;
 	}
 
-	public Carpets getCarpets() {
+	public Storage getCarpets() {
 		return carpets;
 	}
 
@@ -268,7 +268,7 @@ public class MagicCarpet extends JavaPlugin {
 		try {
 			FileInputStream file = new FileInputStream(carpetDat);
 			ObjectInputStream in = new ObjectInputStream(file);
-			carpets = (Carpets) in.readObject();
+			carpets = (Storage) in.readObject();
 			carpets.attach(this);
 			in.close();
 		} catch (Exception e) {

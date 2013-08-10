@@ -1,15 +1,15 @@
-package net.digiex.magiccarpet.nms.v1_5_R3;
+package net.digiex.magiccarpet.nms.v1_4_R1;
 
-import net.digiex.magiccarpet.nms.api.NMSAbstraction;
-import net.minecraft.server.v1_5_R3.Chunk;
-import net.minecraft.server.v1_5_R3.EntityFireworks;
-import net.minecraft.server.v1_5_R3.EnumSkyBlock;
-import net.minecraft.server.v1_5_R3.World;
+import net.digiex.magiccarpet.nms.api.Abstraction;
+import net.minecraft.server.v1_4_R1.Chunk;
+import net.minecraft.server.v1_4_R1.EntityFireworks;
+import net.minecraft.server.v1_4_R1.EnumSkyBlock;
+import net.minecraft.server.v1_4_R1.World;
 
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_5_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_4_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_R1.entity.CraftEntity;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 
@@ -30,7 +30,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class NMSHandler implements NMSAbstraction {
+public class Handler implements Abstraction {
 
 	@Override
 	public boolean setBlockFast(org.bukkit.World world, int x, int y, int z,
