@@ -64,6 +64,7 @@ public final class Config {
 		options.put("charge-packages", this.chargePackages);
 		options.put("magic", this.magicEffect);
 		options.put("pvp", this.pvp);
+		options.put("physics-fun", this.physics);
 
 		if (configFile.exists()) {
 			loadSettings();
@@ -92,6 +93,7 @@ public final class Config {
 	private boolean chargeTimeBased = false;
 	private boolean magicEffect = true;
 	private boolean pvp = true;
+	private boolean physics = false;
 
 	public Material getDefaultCarpetMaterial() {
 		return carpMaterial;
@@ -244,6 +246,14 @@ public final class Config {
 	public void setDefaultPvp(boolean pvp) {
 		this.pvp = pvp;
 	}
+	
+	public boolean getDefaultPhysics() {
+		return physics;
+	}
+	
+	public void setPhysics(boolean physics) {
+		this.physics = physics;
+	}
 
 	public void saveSettings() {
 		for (Entry<String, Object> o : options.entrySet()) {
@@ -320,6 +330,7 @@ public final class Config {
 		chargeTimeBased = config.getBoolean("charge-timebased", false);
 		magicEffect = config.getBoolean("magic", true);
 		pvp = config.getBoolean("pvp", true);
+		physics = config.getBoolean("physics-fun", false);
 	}
 
 	public void checkConfig() {

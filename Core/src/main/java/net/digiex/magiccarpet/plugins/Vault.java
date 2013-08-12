@@ -89,7 +89,7 @@ public class Vault {
 
 	private void startCharge() {
 		plugin.getServer().getScheduler()
-				.runTaskTimerAsynchronously(plugin, new Runnable() {
+				.runTaskTimer(plugin, new Runnable() {
 					@Override
 					public void run() {
 						if (!isEnabled()

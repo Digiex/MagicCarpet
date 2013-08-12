@@ -48,12 +48,14 @@ public class Carpet {
 		void set(Block bl, Material material) {
 			bl.setMetadata("Carpet",
 					new FixedMetadataValue(plugin, who.getName()));
-			if (Helper.isEnabled()) {
-				Helper.getNMS().setBlockFast(bl.getWorld(), bl.getX(),
-						bl.getY(), bl.getZ(), material.getId(), (byte) 0);
-			} else {
-				bl.setType(material);
-			}
+			bl.setType(material);
+		}
+
+		void setFast(Block bl, Material material) {
+			bl.setMetadata("Carpet",
+					new FixedMetadataValue(plugin, who.getName()));
+			Helper.getNMS().setBlockFast(bl.getWorld(), bl.getX(), bl.getY(),
+					bl.getZ(), material.getId(), (byte) 0);
 		}
 
 		boolean shouldGlow() {
@@ -163,14 +165,24 @@ public class Carpet {
 				return false;
 			}
 			fibre.block = bl.getState();
-			if (fibre.shouldGlow()) {
-				fibre.set(bl, shine);
-			} else if (fibre.shouldEnder()) {
-				fibre.set(bl, Material.ENDER_CHEST);
-			} else if (fibre.shouldWork()) {
-				fibre.set(bl, Material.WORKBENCH);
+			if (Helper.isEnabled()) {
+				if (fibre.shouldGlow()) {
+					fibre.setFast(bl, shine);
+				} else if (fibre.shouldEnder()) {
+					fibre.setFast(bl, Material.ENDER_CHEST);
+				} else if (fibre.shouldWork()) {
+					fibre.setFast(bl, Material.WORKBENCH);
+				} else {
+					fibre.setFast(bl, thread);
+				}
 			} else {
-				fibre.set(bl, thread);
+				if (fibre.shouldEnder()) {
+					fibre.set(bl, Material.ENDER_CHEST);
+				} else if (fibre.shouldWork()) {
+					fibre.set(bl, Material.WORKBENCH);
+				} else {
+					fibre.set(bl, thread);
+				}
 			}
 		}
 		return true;
@@ -469,12 +481,13 @@ public class Carpet {
 	private boolean canTool() {
 		return hasPermission("magiccarpet.mct");
 	}
-	
+
 	private boolean canFlyHere(Location location) {
 		WorldGuard worldguard = plugin.getWorldGuard();
-		return (!worldguard.isEnabled()) ? true : worldguard.canFlyHere(location);
+		return (!worldguard.isEnabled()) ? true : worldguard
+				.canFlyHere(location);
 	}
-	
+
 	private boolean canFlyAt() {
 		if (edge == getConfig().getDefaultCarpSize()) {
 			return true;
