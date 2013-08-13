@@ -5,6 +5,7 @@ import net.digiex.magiccarpet.Storage;
 import net.digiex.magiccarpet.Config;
 import net.digiex.magiccarpet.MagicCarpet;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -93,7 +94,7 @@ public class Magic implements CommandExecutor {
 					&& !player.getLocation().getBlock().isLiquid()) {
 				return true;
 			}
-			if (!plugin.canFlyHere(player.getLocation())) {
+			if (!canFlyHere(player.getLocation())) {
 				player.sendMessage("The magic carpet is not allowed in this area.");
 				return true;
 			}
@@ -138,7 +139,7 @@ public class Magic implements CommandExecutor {
 						&& !player.getLocation().getBlock().isLiquid()) {
 					return true;
 				}
-				if (!plugin.canFlyHere(player.getLocation())) {
+				if (!canFlyHere(player.getLocation())) {
 					player.sendMessage("The magic carpet is not allowed in this area.");
 					return true;
 				}
@@ -264,5 +265,10 @@ public class Magic implements CommandExecutor {
 
 	private Config getConfig() {
 		return plugin.getMCConfig();
+	}
+
+	private boolean canFlyHere(Location location) {
+		return (!plugin.getWorldGuard().isEnabled()) ? true : plugin
+				.getWorldGuard().canFlyHere(location);
 	}
 }

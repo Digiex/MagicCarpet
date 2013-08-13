@@ -127,8 +127,8 @@ public class Listeners implements Listener {
 			return;
 		}
 		Location to = event.getTo();
-		Location last = carpet.getLocation();
-		if (last.getWorld() == to.getWorld() && last.distance(to) == 0) {
+		Location from = event.getFrom();
+		if (from.getWorld() == to.getWorld() && from.distance(to) == 0) {
 			return;
 		}
 		carpet.moveTo(to);
@@ -290,16 +290,9 @@ public class Listeners implements Listener {
 			}
 			Carpet carpet = getCarpets().getCarpet((Player) e.getEntity());
 			Carpet c = getCarpets().getCarpet((Player) e.getDamager());
-			if (carpet != null && carpet.isVisible()) {
+			if (carpet != null && carpet.isVisible() || c != null && c.isVisible()) {
 				if (!getConfig().getDefaultPvp()) {
 					event.setCancelled(true);
-					return;
-				}
-			}
-			if (c != null && c.isVisible()) {
-				if (!getConfig().getDefaultPvp()) {
-					event.setCancelled(true);
-					return;
 				}
 			}
 		default:

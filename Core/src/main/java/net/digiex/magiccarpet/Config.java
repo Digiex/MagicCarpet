@@ -269,7 +269,6 @@ public final class Config {
 	}
 
 	public void loadSettings() {
-
 		try {
 			config.load(configFile);
 		} catch (FileNotFoundException e) {
@@ -281,9 +280,7 @@ public final class Config {
 		} catch (InvalidConfigurationException e) {
 			log.warning("Error loading config.yml; InvalidConfigurationException");
 		}
-
 		checkConfig();
-
 		crouchDef = config.getBoolean("crouch-descent", true);
 		glowCenter = config.getBoolean("center-light", false);
 		carpSize = config.getInt("default-size", 5);
@@ -348,7 +345,7 @@ public final class Config {
 			log.warning("Unable to modify config.yml");
 		}
 		if (updated) {
-			log.info("New options have been added to config");
+			log.info("New options have been added to the config");
 		}
 	}
 

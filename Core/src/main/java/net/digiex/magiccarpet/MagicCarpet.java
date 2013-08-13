@@ -57,8 +57,8 @@ import java.util.logging.Logger;
 
 import net.digiex.magiccarpet.Metrics.Graph;
 import net.digiex.magiccarpet.commands.Buy;
-import net.digiex.magiccarpet.commands.Magic;
 import net.digiex.magiccarpet.commands.Light;
+import net.digiex.magiccarpet.commands.Magic;
 import net.digiex.magiccarpet.commands.Reload;
 import net.digiex.magiccarpet.commands.Switch;
 import net.digiex.magiccarpet.commands.Tool;
@@ -66,7 +66,6 @@ import net.digiex.magiccarpet.nms.Helper;
 import net.digiex.magiccarpet.plugins.Vault;
 import net.digiex.magiccarpet.plugins.WorldGuard;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -220,22 +219,13 @@ public class MagicCarpet extends JavaPlugin {
 		return (carpets.wasGiven(player)) ? true : player
 				.hasPermission("magiccarpet.np");
 	}
-
-	public boolean canReload(Player player) {
-		return player.hasPermission("magiccarpet.mr");
-	}
-
+	
 	public static EnumSet<Material> getAcceptableCarpetMaterial() {
 		return acceptableCarpet;
 	}
 
 	public static EnumSet<Material> getAcceptableLightMaterial() {
 		return acceptableLight;
-	}
-
-	public boolean canFlyHere(Location location) {
-		return (!worldGuard.isEnabled()) ? true : worldGuard
-				.canFlyHere(location);
 	}
 
 	public void saveCarpets() {
