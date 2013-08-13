@@ -26,7 +26,5 @@ public interface Abstraction {
 	public boolean setBlockFast(World world, int x, int y, int z, int blockId,
 			byte data);
 
-	public void forceBlockLightLevel(World world, int x, int y, int z, int level);
-
 	public void playFirework(Location loc, FireworkEffect effect);
 }

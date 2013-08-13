@@ -27,7 +27,7 @@ commands:
   magiccarpetbuy:
     description: Allows you to buy time for Magic Carpet.
     aliases: [mcb]
-    usage: /<command> [plan] [-p] [-a] [-b]
+    usage: /<command> [plan] [-l] [-a] [-b]
   magictools:
     description: Gives your carpet some essential tools!
     aliases: [mct]

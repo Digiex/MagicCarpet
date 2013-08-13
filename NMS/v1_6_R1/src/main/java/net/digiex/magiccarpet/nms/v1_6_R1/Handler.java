@@ -3,7 +3,6 @@ package net.digiex.magiccarpet.nms.v1_6_R1;
 import net.digiex.magiccarpet.nms.api.Abstraction;
 import net.minecraft.server.v1_6_R1.Chunk;
 import net.minecraft.server.v1_6_R1.EntityFireworks;
-import net.minecraft.server.v1_6_R1.EnumSkyBlock;
 import net.minecraft.server.v1_6_R1.World;
 
 import org.bukkit.FireworkEffect;
@@ -38,13 +37,6 @@ public class Handler implements Abstraction {
 		World w = ((CraftWorld) world).getHandle();
 		Chunk chunk = w.getChunkAt(x >> 4, z >> 4);
 		return chunk.a(x & 0x0f, y, z & 0x0f, blockId, data);
-	}
-
-	@Override
-	public void forceBlockLightLevel(org.bukkit.World world, int x, int y,
-			int z, int level) {
-		World w = ((CraftWorld) world).getHandle();
-		w.b(EnumSkyBlock.BLOCK, x, y, z, level);
 	}
 
 	@Override
