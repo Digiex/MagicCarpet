@@ -1,8 +1,4 @@
-package net.digiex.magiccarpet.commands;
-
-import net.digiex.magiccarpet.Carpet;
-import net.digiex.magiccarpet.Storage;
-import net.digiex.magiccarpet.MagicCarpet;
+package net.digiex.magiccarpet;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -25,11 +21,11 @@ import org.bukkit.entity.Player;
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class Switch implements CommandExecutor {
+public class Tool implements CommandExecutor {
 
 	private final MagicCarpet plugin;
 
-	public Switch(MagicCarpet plugin) {
+	public Tool(MagicCarpet plugin) {
 		this.plugin = plugin;
 	}
 
@@ -37,7 +33,7 @@ public class Switch implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 		if (!(sender instanceof Player)) {
-			sender.sendMessage("Sorry, only players can use the carpet!");
+			sender.sendMessage("Sorry, this command is in game only.");
 			return true;
 		}
 		Player player = (Player) sender;
@@ -54,21 +50,20 @@ public class Switch implements CommandExecutor {
 				}
 			}
 		} else {
-			if (!canSwitch(player)) {
+			if (!canTool(player)) {
 				player.sendMessage("You do not have permission to use the magic light.");
 				return true;
 			}
 		}
-		Carpet carpet = getCarpets().getCarpet(player);
+		Carpet carpet = plugin.getCarpets().getCarpet(player);
 		if (carpet == null || !carpet.isVisible()) {
-			player.sendMessage("You don't have a carpet yet, use /mc!");
+			player.sendMessage("You must activate the carpet first using /mc.");
 			return true;
 		}
-		getCarpets().toggleCrouch(player);
-		if (getCarpets().crouches(player)) {
-			player.sendMessage("You now crouch to descend");
+		if (carpet.hasTools()) {
+			carpet.toolsOff();
 		} else {
-			player.sendMessage("You now look down to descend");
+			carpet.toolsOn();
 		}
 		return true;
 	}
@@ -77,8 +72,8 @@ public class Switch implements CommandExecutor {
 		return plugin.getCarpets();
 	}
 
-	private boolean canSwitch(Player player) {
+	private boolean canTool(Player player) {
 		return (getCarpets().wasGiven(player)) ? true : player
-				.hasPermission("magiccarpet.mcs");
+				.hasPermission("magiccarpet.mct");
 	}
 }

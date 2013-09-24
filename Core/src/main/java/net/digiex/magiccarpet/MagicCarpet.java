@@ -56,15 +56,6 @@ import java.util.Iterator;
 import java.util.logging.Logger;
 
 import net.digiex.magiccarpet.Metrics.Graph;
-import net.digiex.magiccarpet.commands.Buy;
-import net.digiex.magiccarpet.commands.Light;
-import net.digiex.magiccarpet.commands.Magic;
-import net.digiex.magiccarpet.commands.Reload;
-import net.digiex.magiccarpet.commands.Switch;
-import net.digiex.magiccarpet.commands.Tool;
-import net.digiex.magiccarpet.nms.Helper;
-import net.digiex.magiccarpet.plugins.Vault;
-import net.digiex.magiccarpet.plugins.WorldGuard;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

@@ -1,12 +1,10 @@
-package net.digiex.magiccarpet.plugins;
+package net.digiex.magiccarpet;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import net.digiex.magiccarpet.MagicCarpet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -100,7 +98,6 @@ public class WorldGuard {
 	public WorldGuard(MagicCarpet plugin) {
 		this.plugin = plugin;
 		getWorldGuard();
-		CarpetFlag.injectHax();
 	}
 
 	private void getWorldGuard() {
@@ -111,6 +108,7 @@ public class WorldGuard {
 			return;
 		}
 		worldGuard = (WorldGuardPlugin) p;
+		CarpetFlag.injectHax();
 	}
 
 	private ApplicableRegionSet getApplicableRegions(Location location) {

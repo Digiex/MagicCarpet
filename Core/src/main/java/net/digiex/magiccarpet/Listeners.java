@@ -24,6 +24,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.util.Vector;
 
 /*
@@ -49,6 +50,18 @@ public class Listeners implements Listener {
 
 	Listeners(MagicCarpet plugin) {
 		this.plugin = plugin;
+	}
+	
+	private Storage getCarpets() {
+		return plugin.getCarpets();
+	}
+
+	private Config getConfig() {
+		return plugin.getMCConfig();
+	}
+	
+	private Vault getVault() {
+		return plugin.getVault();
 	}
 
 	@EventHandler()
@@ -321,12 +334,16 @@ public class Listeners implements Listener {
 			}
 		}
 	}
-
-	private Storage getCarpets() {
-		return plugin.getCarpets();
-	}
-
-	private Config getConfig() {
-		return plugin.getMCConfig();
+	
+	@EventHandler()
+	public void onPluginDisable(PluginDisableEvent event) {
+		if (plugin == event.getPlugin()) {
+			plugin.getMCConfig().loadSettings();
+			if (getVault().isEnabled()) {
+				getVault().getPackages().clear();
+				getVault().loadPackages();
+			}
+			plugin.getCarpets().checkCarpets();
+		}
 	}
 }

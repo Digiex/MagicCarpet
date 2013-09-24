@@ -1,7 +1,4 @@
-package net.digiex.magiccarpet.commands;
-
-import net.digiex.magiccarpet.MagicCarpet;
-import net.digiex.magiccarpet.plugins.Vault;
+package net.digiex.magiccarpet;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

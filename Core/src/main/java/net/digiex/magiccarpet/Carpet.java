@@ -1,9 +1,6 @@
 package net.digiex.magiccarpet;
 
 import static java.lang.Math.abs;
-import net.digiex.magiccarpet.nms.Helper;
-import net.digiex.magiccarpet.plugins.Vault;
-import net.digiex.magiccarpet.plugins.WorldGuard;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;

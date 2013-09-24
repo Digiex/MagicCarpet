@@ -1,8 +1,7 @@
-package net.digiex.magiccarpet.nms;
+package net.digiex.magiccarpet;
 
 import java.lang.reflect.InvocationTargetException;
 
-import net.digiex.magiccarpet.MagicCarpet;
 import net.digiex.magiccarpet.nms.api.Abstraction;
 
 import org.bukkit.plugin.Plugin;

@@ -94,6 +94,14 @@ public final class Config {
 	private boolean magicEffect = true;
 	private boolean pvp = true;
 	private boolean physics = false;
+	
+	private String saveString(String s) {
+		return s.toLowerCase().replace("_", " ");
+	}
+
+	private String loadString(String s) {
+		return s.toUpperCase().replace(" ", "_");
+	}
 
 	public Material getDefaultCarpetMaterial() {
 		return carpMaterial;
@@ -289,6 +297,7 @@ public final class Config {
 		if (carpMaterial == null) {
 			carpMaterial = Material.getMaterial(config.getInt(
 					"carpet-material", GLASS.getId()));
+			
 		}
 		if (!MagicCarpet.getAcceptableCarpetMaterial().contains(carpMaterial)) {
 			carpMaterial = GLASS;
@@ -347,13 +356,5 @@ public final class Config {
 		if (updated) {
 			log.info("New options have been added to the config");
 		}
-	}
-
-	private String saveString(String s) {
-		return s.toLowerCase().replace("_", " ");
-	}
-
-	private String loadString(String s) {
-		return s.toUpperCase().replace(" ", "_");
 	}
 }
