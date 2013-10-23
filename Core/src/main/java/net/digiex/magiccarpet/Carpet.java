@@ -162,27 +162,27 @@ public class Carpet {
 				return false;
 			}
 			fibre.block = bl.getState();
-			if (Helper.isEnabled()) {
-				if (fibre.shouldGlow()) {
-					fibre.setFast(bl, shine);
-				} else if (fibre.shouldEnder()) {
-					fibre.setFast(bl, Material.ENDER_CHEST);
-				} else if (fibre.shouldWork()) {
-					fibre.setFast(bl, Material.WORKBENCH);
-				} else {
-					fibre.setFast(bl, thread);
-				}
+			if (fibre.shouldGlow()) {
+				setFibre(fibre, bl, shine);
+			} else if (fibre.shouldEnder()) {
+				setFibre(fibre, bl, Material.ENDER_CHEST);
+			} else if (fibre.shouldWork()) {
+				setFibre(fibre, bl, Material.WORKBENCH);
 			} else {
-				if (fibre.shouldEnder()) {
-					fibre.set(bl, Material.ENDER_CHEST);
-				} else if (fibre.shouldWork()) {
-					fibre.set(bl, Material.WORKBENCH);
-				} else {
-					fibre.set(bl, thread);
-				}
+				setFibre(fibre, bl, thread);
 			}
 		}
 		return true;
+	}
+
+	private void setFibre(CarpetFibre fibre, Block bl, Material material) {
+		if (Helper.isEnabled()) {
+			fibre.setFast(bl, material);	
+		} else if (material == shine && plugin.getMCConfig().getLightsNMS()) {
+			fibre.set(bl, thread);
+		} else {
+			fibre.set(bl, material);
+		}
 	}
 
 	private boolean canReplace(Material type) {

@@ -1,4 +1,8 @@
-package net.digiex.magiccarpet;
+package net.digiex.magiccarpet.commands;
+
+import net.digiex.magiccarpet.Config;
+import net.digiex.magiccarpet.MagicCarpet;
+import net.digiex.magiccarpet.Storage;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,11 +27,11 @@ import org.bukkit.entity.Player;
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class Magic implements CommandExecutor {
+public class Carpet implements CommandExecutor {
 
 	private final MagicCarpet plugin;
 
-	public Magic(MagicCarpet plugin) {
+	public Carpet(MagicCarpet plugin) {
 		this.plugin = plugin;
 	}
 
@@ -83,7 +87,7 @@ public class Magic implements CommandExecutor {
 		}
 		int c;
 		Player player = (Player) sender;
-		Carpet carpet = getCarpets().getCarpet(player);
+		net.digiex.magiccarpet.Carpet carpet = getCarpets().getCarpet(player);
 		if (carpet == null) {
 			if (player.getFallDistance() > 0
 					&& !player.getLocation().getBlock().isLiquid()) {
@@ -94,12 +98,12 @@ public class Magic implements CommandExecutor {
 				return true;
 			}
 			if (getCarpets().wasGiven(player)) {
-				new Carpet(player).show();
+				new net.digiex.magiccarpet.Carpet(player).show();
 				return true;
 			}
 			if (plugin.getVault().isEnabled()) {
 				if (plugin.canNotPay(player)) {
-					new Carpet(player).show();
+					new net.digiex.magiccarpet.Carpet(player).show();
 					return true;
 				}
 				if (getConfig().getDefaultChargeTimeBased()) {
@@ -107,14 +111,14 @@ public class Magic implements CommandExecutor {
 						player.sendMessage("You have ran out of time to use the Magic Carpet. Please refill using /mcb");
 						return true;
 					}
-					new Carpet(player).show();
+					new net.digiex.magiccarpet.Carpet(player).show();
 					return true;
 				} else {
 					if (!getCarpets().hasPaidFee(player)) {
 						player.sendMessage("You need to pay a one time fee before you can use Magic Carpet. Use /mcb.");
 						return true;
 					}
-					new Carpet(player).show();
+					new net.digiex.magiccarpet.Carpet(player).show();
 					return true;
 				}
 			}
@@ -122,7 +126,7 @@ public class Magic implements CommandExecutor {
 				player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
 				return true;
 			}
-			new Carpet(player).show();
+			new net.digiex.magiccarpet.Carpet(player).show();
 			return true;
 		}
 		if (args.length < 1) {

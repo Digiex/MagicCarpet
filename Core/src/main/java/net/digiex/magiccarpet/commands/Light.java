@@ -1,4 +1,8 @@
-package net.digiex.magiccarpet;
+package net.digiex.magiccarpet.commands;
+
+import net.digiex.magiccarpet.Carpet;
+import net.digiex.magiccarpet.MagicCarpet;
+import net.digiex.magiccarpet.Storage;
 
 import org.bukkit.Material;
 import org.bukkit.command.Command;

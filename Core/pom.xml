@@ -36,6 +36,13 @@
 			<type>jar</type>
 			<optional>true</optional>
 		</dependency>
+        <dependency>
+			<groupId>net.digiex</groupId>
+			<artifactId>magiccarpet-nms-v1_6_R3</artifactId>
+			<version>v1_6_R3</version>
+			<type>jar</type>
+			<optional>true</optional>
+		</dependency>
 		<dependency>
 			<groupId>net.digiex</groupId>
 			<artifactId>magiccarpet-nms-v1_6_R2</artifactId>

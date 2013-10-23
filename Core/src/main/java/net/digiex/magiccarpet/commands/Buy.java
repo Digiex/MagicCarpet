@@ -1,8 +1,12 @@
-package net.digiex.magiccarpet;
+package net.digiex.magiccarpet.commands;
 
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
+import net.digiex.magiccarpet.Config;
+import net.digiex.magiccarpet.MagicCarpet;
+import net.digiex.magiccarpet.Storage;
+import net.digiex.magiccarpet.Vault;
 import net.digiex.magiccarpet.Vault.TimePackage;
 
 import org.bukkit.command.Command;

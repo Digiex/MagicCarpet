@@ -55,8 +55,6 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
-import net.digiex.magiccarpet.Metrics.Graph;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -99,12 +97,12 @@ public class MagicCarpet extends JavaPlugin {
 	private static WorldGuard worldGuard;
 
 	private void registerCommands() {
-		getCommand("magiccarpet").setExecutor(new Magic(this));
-		getCommand("magiclight").setExecutor(new Light(this));
-		getCommand("carpetswitch").setExecutor(new Switch(this));
-		getCommand("magicreload").setExecutor(new Reload(this));
-		getCommand("magiccarpetbuy").setExecutor(new Buy(this));
-		getCommand("magictools").setExecutor(new Tool(this));
+		getCommand("magiccarpet").setExecutor(new net.digiex.magiccarpet.commands.Carpet(this));
+		getCommand("magiclight").setExecutor(new net.digiex.magiccarpet.commands.Light(this));
+		getCommand("carpetswitch").setExecutor(new net.digiex.magiccarpet.commands.Switch(this));
+		getCommand("magicreload").setExecutor(new net.digiex.magiccarpet.commands.Reload(this));
+		getCommand("magiccarpetbuy").setExecutor(new net.digiex.magiccarpet.commands.Buy(this));
+		getCommand("magictools").setExecutor(new net.digiex.magiccarpet.commands.Tool(this));
 	}
 
 	private void registerEvents(Listener listener) {
@@ -114,7 +112,7 @@ public class MagicCarpet extends JavaPlugin {
 	private void startStats() {
 		try {
 			Metrics metrics = new Metrics(this);
-			Graph graph = metrics.createGraph("Carpets");
+			net.digiex.magiccarpet.Metrics.Graph graph = metrics.createGraph("Carpets");
 			graph.addPlotter(new Metrics.Plotter("Total") {
 				@Override
 				public int getValue() {
@@ -182,7 +180,11 @@ public class MagicCarpet extends JavaPlugin {
 		registerEvents(new Listeners(this));
 		registerCommands();
 		startStats();
-		log.info("is now enabled!");
+		if (Helper.isEnabled()) {
+			log.info("is now enabled! Using NMS.");
+		} else {
+			log.info("is now enabled!");
+		}
 	}
 
 	public Vault getVault() {

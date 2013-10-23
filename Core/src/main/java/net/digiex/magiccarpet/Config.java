@@ -65,6 +65,7 @@ public final class Config {
 		options.put("magic", this.magicEffect);
 		options.put("pvp", this.pvp);
 		options.put("physics-fun", this.physics);
+		options.put("lights-nms", this.lightsnms);
 
 		if (configFile.exists()) {
 			loadSettings();
@@ -94,6 +95,7 @@ public final class Config {
 	private boolean magicEffect = true;
 	private boolean pvp = true;
 	private boolean physics = false;
+	private boolean lightsnms = true;
 	
 	private String saveString(String s) {
 		return s.toLowerCase().replace("_", " ");
@@ -262,6 +264,14 @@ public final class Config {
 	public void setPhysics(boolean physics) {
 		this.physics = physics;
 	}
+	
+	public boolean getLightsNMS() {
+		return lightsnms;
+	}
+	
+	public void setLightsNMS(boolean lightsnms) {
+		this.lightsnms = lightsnms;
+	}
 
 	public void saveSettings() {
 		for (Entry<String, Object> o : options.entrySet()) {
@@ -337,6 +347,7 @@ public final class Config {
 		magicEffect = config.getBoolean("magic", true);
 		pvp = config.getBoolean("pvp", true);
 		physics = config.getBoolean("physics-fun", false);
+		lightsnms = config.getBoolean("lights-nms", true);
 	}
 
 	public void checkConfig() {

@@ -1,15 +1,14 @@
-package net.digiex.magiccarpet.nms.v1_6_R2;
+package net.digiex.magiccarpet.nms.v1_6_R3;
 
-import net.digiex.magiccarpet.nms.api.NMSAbstraction;
-import net.minecraft.server.v1_6_R2.Chunk;
-import net.minecraft.server.v1_6_R2.EntityFireworks;
-import net.minecraft.server.v1_6_R2.EnumSkyBlock;
-import net.minecraft.server.v1_6_R2.World;
+import net.digiex.magiccarpet.nms.api.Abstraction;
+import net.minecraft.server.v1_6_R3.Chunk;
+import net.minecraft.server.v1_6_R3.EntityFireworks;
+import net.minecraft.server.v1_6_R3.World;
 
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_6_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 
@@ -30,7 +29,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class NMSHandler implements NMSAbstraction {
+public class Handler implements Abstraction {
 
 	@Override
 	public boolean setBlockFast(org.bukkit.World world, int x, int y, int z,
@@ -38,13 +37,6 @@ public class NMSHandler implements NMSAbstraction {
 		World w = ((CraftWorld) world).getHandle();
 		Chunk chunk = w.getChunkAt(x >> 4, z >> 4);
 		return chunk.a(x & 0x0f, y, z & 0x0f, blockId, data);
-	}
-
-	@Override
-	public void forceBlockLightLevel(org.bukkit.World world, int x, int y,
-			int z, int level) {
-		World w = ((CraftWorld) world).getHandle();
-		w.b(EnumSkyBlock.BLOCK, x, y, z, level);
 	}
 
 	@Override
