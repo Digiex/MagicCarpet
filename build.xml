@@ -1,49 +1,50 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="build" name="magiccarpet">
 
-    <property name="bukkit-location" value="../lib/bukkit.jar"/>
-    <property name="output-jar" value="${ant.project.name}.jar"/>
-	<property name="src" value="src/main/java"/>
-	<property name="rsrc" value="src/main/resources"/>
-	
-    <property name="debuglevel" value="source,lines"/>
-	
-    <path id="classpath">
-        <pathelement location="bin"/>
-        <pathelement location="${bukkit-location}"/>
-    </path>
-	
+	<property name="bukkit-location" value="../lib/bukkit.jar" />
+	<property name="output-jar" value="${ant.project.name}.jar" />
+	<property name="src" value="src/main/java" />
+	<property name="rsrc" value="src/main/resources" />
+
+	<property name="debuglevel" value="source,lines" />
+
+	<path id="classpath">
+		<pathelement location="bin" />
+		<pathelement location="${bukkit-location}" />
+	</path>
+
 	<loadfile srcFile="${rsrc}/plugin.yml" property="version">
 		<filterchain>
 			<linecontainsregexp>
-				<regexp pattern="^version:\s*.*$"/>
+				<regexp pattern="^version:\s*.*$" />
 			</linecontainsregexp>
 			<tokenfilter>
-				<replaceregex pattern="^version:\s*(.*)$" replace="\1"/>
+				<replaceregex pattern="^version:\s*(.*)$" replace="\1" />
 			</tokenfilter>
-			<striplinebreaks/>
+			<striplinebreaks />
 		</filterchain>
 	</loadfile>
-	
-    <target name="init">
-        <mkdir dir="bin"/>
-        <copy file="${rsrc}/plugin.yml" todir="bin" />
-    </target>
-	
-    <target name="clean">
-        <delete dir="bin"/>
-        <delete file="${output-jar}"/>
-    </target>
-	
-    <target depends="init" name="build">
-        <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false">
-            <src path="${src}"/>
-            <classpath refid="classpath"/>
-        </javac>
-    </target>
-	
-    <target name="dist" depends="build">
-        <jar destfile="${output-jar}" basedir="bin" />
-    </target>
+
+	<target name="init">
+		<mkdir dir="bin" />
+		<copy file="${rsrc}/plugin.yml" todir="bin" />
+	</target>
+
+	<target name="clean">
+		<delete dir="bin" />
+		<delete file="${output-jar}" />
+	</target>
+
+	<target depends="init" name="build">
+		<echo message="${ant.project.name}: ${ant.file}" />
+		<javac debug="true" debuglevel="${debuglevel}" destdir="bin"
+			includeantruntime="false">
+			<src path="${src}" />
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+
+	<target name="dist" depends="build">
+		<jar destfile="${output-jar}" basedir="bin" />
+	</target>
 </project>

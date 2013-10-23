@@ -177,7 +177,7 @@ public class Carpet {
 
 	private void setFibre(CarpetFibre fibre, Block bl, Material material) {
 		if (Helper.isEnabled()) {
-			fibre.setFast(bl, material);	
+			fibre.setFast(bl, material);
 		} else if (material == shine && plugin.getMCConfig().getLightsNMS()) {
 			fibre.set(bl, thread);
 		} else {

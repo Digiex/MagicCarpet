@@ -3,8 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>magiccarpet-nms-v1_5_R1</artifactId>
 	<packaging>jar</packaging>
-	<name>MagicCarpet NMS v1.5-R1</name>
 	<version>v1_5_R1</version>
+
+	<name>MagicCarpet NMS v1.5-R1</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -14,6 +15,7 @@
 		<groupId>net.digiex</groupId>
 		<artifactId>magiccarpet-parent</artifactId>
 		<version>parent</version>
+		<relativePath>../..</relativePath>
 	</parent>
 
 	<dependencies>

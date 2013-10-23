@@ -84,46 +84,42 @@ public class Vault {
 	}
 
 	private void startCharge() {
-		plugin.getServer().getScheduler()
-				.runTaskTimer(plugin, new Runnable() {
-					@Override
-					public void run() {
-						if (!isEnabled()
-								|| !getConfig().getDefaultChargeTimeBased()) {
-							return;
-						}
-						for (Player player : plugin.getServer()
-								.getOnlinePlayers()) {
-							Carpet carpet = getCarpets().getCarpet(player);
-							if (carpet == null || !carpet.isVisible()) {
-								continue;
-							}
-							if (plugin.canNotPay(player)
-									|| getCarpets().wasGiven(player)) {
-								continue;
-							}
-							if (get(player) == 300) {
-								if (!getCarpets().canAutoRenew(player)) {
-									player.sendMessage("You are running low on time to use the Magic Carpet. If you wish to continue using it please purchase more time using /mcb.");
-									substractTime(carpet, 1L);
-									continue;
-								} else {
-									TimePackage pack = getPackage(getCarpets()
-											.getAutoPackage(player));
-									if (addTime(player, pack.getTime(),
-											pack.getAmount())) {
-										player.sendMessage("Your Magic Carpet has auto renewed for "
-												+ getTime(pack.getTime())
-												+ " and you was charged "
-												+ format(pack.getAmount())
-												+ ".");
-									}
-								}
-							}
+		plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
+			@Override
+			public void run() {
+				if (!isEnabled() || !getConfig().getDefaultChargeTimeBased()) {
+					return;
+				}
+				for (Player player : plugin.getServer().getOnlinePlayers()) {
+					Carpet carpet = getCarpets().getCarpet(player);
+					if (carpet == null || !carpet.isVisible()) {
+						continue;
+					}
+					if (plugin.canNotPay(player)
+							|| getCarpets().wasGiven(player)) {
+						continue;
+					}
+					if (get(player) == 300) {
+						if (!getCarpets().canAutoRenew(player)) {
+							player.sendMessage("You are running low on time to use the Magic Carpet. If you wish to continue using it please purchase more time using /mcb.");
 							substractTime(carpet, 1L);
+							continue;
+						} else {
+							TimePackage pack = getPackage(getCarpets()
+									.getAutoPackage(player));
+							if (addTime(player, pack.getTime(),
+									pack.getAmount())) {
+								player.sendMessage("Your Magic Carpet has auto renewed for "
+										+ getTime(pack.getTime())
+										+ " and you was charged "
+										+ format(pack.getAmount()) + ".");
+							}
 						}
 					}
-				}, 20L, 20L);
+					substractTime(carpet, 1L);
+				}
+			}
+		}, 20L, 20L);
 	}
 
 	public boolean isEnabled() {

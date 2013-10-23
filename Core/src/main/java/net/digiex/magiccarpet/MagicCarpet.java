@@ -97,12 +97,18 @@ public class MagicCarpet extends JavaPlugin {
 	private static WorldGuard worldGuard;
 
 	private void registerCommands() {
-		getCommand("magiccarpet").setExecutor(new net.digiex.magiccarpet.commands.Carpet(this));
-		getCommand("magiclight").setExecutor(new net.digiex.magiccarpet.commands.Light(this));
-		getCommand("carpetswitch").setExecutor(new net.digiex.magiccarpet.commands.Switch(this));
-		getCommand("magicreload").setExecutor(new net.digiex.magiccarpet.commands.Reload(this));
-		getCommand("magiccarpetbuy").setExecutor(new net.digiex.magiccarpet.commands.Buy(this));
-		getCommand("magictools").setExecutor(new net.digiex.magiccarpet.commands.Tool(this));
+		getCommand("magiccarpet").setExecutor(
+				new net.digiex.magiccarpet.commands.Carpet(this));
+		getCommand("magiclight").setExecutor(
+				new net.digiex.magiccarpet.commands.Light(this));
+		getCommand("carpetswitch").setExecutor(
+				new net.digiex.magiccarpet.commands.Switch(this));
+		getCommand("magicreload").setExecutor(
+				new net.digiex.magiccarpet.commands.Reload(this));
+		getCommand("magiccarpetbuy").setExecutor(
+				new net.digiex.magiccarpet.commands.Buy(this));
+		getCommand("magictools").setExecutor(
+				new net.digiex.magiccarpet.commands.Tool(this));
 	}
 
 	private void registerEvents(Listener listener) {
@@ -112,7 +118,8 @@ public class MagicCarpet extends JavaPlugin {
 	private void startStats() {
 		try {
 			Metrics metrics = new Metrics(this);
-			net.digiex.magiccarpet.Metrics.Graph graph = metrics.createGraph("Carpets");
+			net.digiex.magiccarpet.Metrics.Graph graph = metrics
+					.createGraph("Carpets");
 			graph.addPlotter(new Metrics.Plotter("Total") {
 				@Override
 				public int getValue() {
@@ -212,7 +219,7 @@ public class MagicCarpet extends JavaPlugin {
 		return (carpets.wasGiven(player)) ? true : player
 				.hasPermission("magiccarpet.np");
 	}
-	
+
 	public static EnumSet<Material> getAcceptableCarpetMaterial() {
 		return acceptableCarpet;
 	}

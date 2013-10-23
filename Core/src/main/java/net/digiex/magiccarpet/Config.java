@@ -96,7 +96,7 @@ public final class Config {
 	private boolean pvp = true;
 	private boolean physics = false;
 	private boolean lightsnms = true;
-	
+
 	private String saveString(String s) {
 		return s.toLowerCase().replace("_", " ");
 	}
@@ -256,19 +256,19 @@ public final class Config {
 	public void setDefaultPvp(boolean pvp) {
 		this.pvp = pvp;
 	}
-	
+
 	public boolean getDefaultPhysics() {
 		return physics;
 	}
-	
+
 	public void setPhysics(boolean physics) {
 		this.physics = physics;
 	}
-	
+
 	public boolean getLightsNMS() {
 		return lightsnms;
 	}
-	
+
 	public void setLightsNMS(boolean lightsnms) {
 		this.lightsnms = lightsnms;
 	}
@@ -307,7 +307,7 @@ public final class Config {
 		if (carpMaterial == null) {
 			carpMaterial = Material.getMaterial(config.getInt(
 					"carpet-material", GLASS.getId()));
-			
+
 		}
 		if (!MagicCarpet.getAcceptableCarpetMaterial().contains(carpMaterial)) {
 			carpMaterial = GLASS;

@@ -51,7 +51,7 @@ public class Listeners implements Listener {
 	Listeners(MagicCarpet plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	private Storage getCarpets() {
 		return plugin.getCarpets();
 	}
@@ -59,7 +59,7 @@ public class Listeners implements Listener {
 	private Config getConfig() {
 		return plugin.getMCConfig();
 	}
-	
+
 	private Vault getVault() {
 		return plugin.getVault();
 	}
@@ -216,7 +216,7 @@ public class Listeners implements Listener {
 				return;
 			}
 		} else {
-			switch(block.getType()) {
+			switch (block.getType()) {
 			case REDSTONE:
 				return;
 			case REDSTONE_WIRE:
@@ -303,7 +303,8 @@ public class Listeners implements Listener {
 			}
 			Carpet carpet = getCarpets().getCarpet((Player) e.getEntity());
 			Carpet c = getCarpets().getCarpet((Player) e.getDamager());
-			if (carpet != null && carpet.isVisible() || c != null && c.isVisible()) {
+			if (carpet != null && carpet.isVisible() || c != null
+					&& c.isVisible()) {
 				if (!getConfig().getDefaultPvp()) {
 					event.setCancelled(true);
 				}
@@ -334,7 +335,7 @@ public class Listeners implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler()
 	public void onPluginDisable(PluginDisableEvent event) {
 		if (plugin == event.getPlugin()) {
