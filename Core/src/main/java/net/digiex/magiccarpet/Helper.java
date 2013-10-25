@@ -7,7 +7,7 @@ import net.digiex.magiccarpet.nms.api.Abstraction;
 import org.bukkit.plugin.Plugin;
 
 /*
- * Magic Carpet 2.3 Copyright (C) 2012 Android, Celtic Minstrel, xzKinGzxBuRnzx
+ * Magic Carpet 2.3 Copyright (C) 2012-2013 Android, Celtic Minstrel, xzKinGzxBuRnzx
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
