@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import net.digiex.magiccarpet.Carpet.LightMode;
-
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -68,7 +66,6 @@ public final class Config {
 		options.put("pvp", this.pvp);
 		options.put("physics-fun", this.physics);
 		options.put("lights-nms", this.lightsnms);
-		options.put("light-mode", "center");
 
 		if (configFile.exists()) {
 			loadSettings();
@@ -99,7 +96,6 @@ public final class Config {
 	private boolean pvp = true;
 	private boolean physics = false;
 	private boolean lightsnms = true;
-	private LightMode lightmode = LightMode.CENTER;
 
 	private String saveString(String s) {
 		return s.toLowerCase().replace("_", " ");
@@ -276,14 +272,6 @@ public final class Config {
 	public void setLightsNMS(boolean lightsnms) {
 		this.lightsnms = lightsnms;
 	}
-	
-	public LightMode getLightMode() {
-		return lightmode;
-	}
-	
-	public void setLightMode(LightMode lightmode) {
-		this.lightmode = lightmode;
-	}
 
 	public void saveSettings() {
 		for (Entry<String, Object> o : options.entrySet()) {
@@ -360,19 +348,6 @@ public final class Config {
 		pvp = config.getBoolean("pvp", true);
 		physics = config.getBoolean("physics-fun", false);
 		lightsnms = config.getBoolean("lights-nms", true);
-		String mode = config.getString("light-mode", "center");
-		if (mode.equals("center")) {
-			lightmode = LightMode.CENTER;
-		} else if (mode.equals("centre")) {
-			lightmode = LightMode.CENTER;
-		} else if (mode.equals("ring")) {
-			lightmode = LightMode.RING;
-		} else if (mode.equals("both")) {
-			lightmode = LightMode.BOTH;
-		} else {
-			lightmode = LightMode.CENTER;
-			log.warning("Config error: Light-mode is unknown.");
-		}
 	}
 
 	public void checkConfig() {

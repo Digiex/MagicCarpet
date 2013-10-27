@@ -66,16 +66,7 @@ public class Carpet {
 				return false;
 			}
 			if (dx == 0 && dz == 0) {
-				return lightMode != LightMode.RING;
-			}
-
-			if (dx == rad || dx == -rad || dz == rad || dz == -rad) {
-				if (tools) {
-					if (dx == 2 && dz == 0 || dx == -2 && dz == 0) {
-						return false;
-					}
-				}
-				return lightMode != LightMode.CENTER;
+				return true;
 			}
 			return false;
 		}
@@ -130,17 +121,11 @@ public class Carpet {
 	private boolean hidden = true, light, tools;
 	private Material thread, shine;
 	private Player who;
-	private LightMode lightMode;
-
-	public enum LightMode {
-		RING, CENTER, BOTH
-	}
 
 	public Carpet(Player player) {
 		who = player;
 		currentCentre = player.getLocation().getBlock();
 		light = getCarpets().hasLight(player);
-		lightMode = getCarpets().getLightMode(player);
 		thread = getCarpets().getMaterial(player);
 		shine = getCarpets().getLightMaterial(player);
 		tools = getCarpets().hasTools(player);
@@ -471,18 +456,6 @@ public class Carpet {
 			who.sendMessage("The magic tools have appeared!");
 		}
 		getCarpets().update(who);
-	}
-
-	public LightMode getLights() {
-		return lightMode;
-	}
-
-	public void setLights(LightMode lightmode) {
-		lightMode = lightmode;
-		removeCarpet();
-		drawCarpet();
-		getCarpets().update(who);
-		who.sendMessage("The carpet seems to react to your words, and suddenly glows in different places!");
 	}
 
 	void removeCarpet() {

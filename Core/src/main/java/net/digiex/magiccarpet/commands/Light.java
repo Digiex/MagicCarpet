@@ -1,7 +1,6 @@
 package net.digiex.magiccarpet.commands;
 
 import net.digiex.magiccarpet.Carpet;
-import net.digiex.magiccarpet.Carpet.LightMode;
 import net.digiex.magiccarpet.MagicCarpet;
 import net.digiex.magiccarpet.Storage;
 
@@ -67,34 +66,28 @@ public class Light implements CommandExecutor {
 			return true;
 		}
 		if (args.length < 1) {
-			hideOrShow(carpet, player);
+			if (getCarpets().hasLight(player)) {
+				carpet.lightOff();
+			} else {
+				carpet.lightOn();
+			}
 		} else {
 			if (getCarpets().hasLight(player)) {
-				LightMode mode = parseMode(args, player);
-				if (mode == null) {
-					String word = "";
-					for (String a : args) {
-						if (word.isEmpty()) {
-							word = a;
-						} else {
-							word += " " + a;
-						}
-					}
-					Material m = Material.getMaterial(word.toUpperCase()
-							.replace(" ", "_"));
-					if (m != null) {
-						carpet.setLight(m);
+				String word = "";
+				for (String a : args) {
+					if (word.isEmpty()) {
+						word = a;
 					} else {
-						player.sendMessage("Material or Lightmode is unknown.");
-						return true;
+						word += " " + a;
 					}
 				}
-				if (mode == getCarpets().getLightMode(player)) {
-					hideOrShow(carpet, player);
+				Material m = Material.getMaterial(word.toUpperCase().replace(
+						" ", "_"));
+				if (m != null) {
+					carpet.setLight(m);
 				} else {
-					carpet.setLights(mode);
+					player.sendMessage("Material error; Material may be entered as JACK_O_LANTERN or jack o lantern");
 				}
-
 			} else {
 				player.sendMessage("You have not enabled the magic light yet.");
 			}
@@ -110,29 +103,4 @@ public class Light implements CommandExecutor {
 		return (getCarpets().wasGiven(player)) ? true : player
 				.hasPermission("magiccarpet.ml");
 	}
-	
-	private void hideOrShow(Carpet carpet, Player player) {
-		if (getCarpets().hasLight(player)) {
-			carpet.lightOff();
-		} else {
-			carpet.lightOn();
-		}
-	}
-
-	private LightMode parseMode(String[] args, Player player) {
-		LightMode mode;
-		if (args[0].equalsIgnoreCase("ring")) {
-			mode = LightMode.RING;
-		} else if (args[0].equalsIgnoreCase("centre")) {
-			mode = LightMode.CENTER;
-		} else if (args[0].equalsIgnoreCase("center")) {
-			mode = LightMode.CENTER;
-		} else if (args[0].equalsIgnoreCase("both")) {
-			mode = LightMode.BOTH;
-		} else {
-			return null;
-		}
-		return mode;
-	}
-
 }

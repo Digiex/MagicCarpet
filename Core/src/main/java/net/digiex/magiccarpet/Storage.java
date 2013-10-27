@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import net.digiex.magiccarpet.Carpet.LightMode;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -26,10 +24,10 @@ import org.bukkit.entity.Player;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class Storage implements Serializable {
-	private static final long serialVersionUID = -4171824321514205419L;
+	private static final long serialVersionUID = -8012136157219277220L;
 
 	private class CarpetEntry implements Serializable {
-		private static final long serialVersionUID = -4877931595830392092L;
+		private static final long serialVersionUID = -7450775531719615210L;
 
 		public transient Carpet carpet;
 
@@ -46,7 +44,6 @@ public class Storage implements Serializable {
 		public boolean lightsOn = getConfig().getDefaultGlowing();
 		public Material thread = getConfig().getDefaultCarpetMaterial();
 		public long time = getConfig().getDefaultChargeTime();
-		public LightMode lightMode = getConfig().getLightMode();
 	}
 
 	private HashMap<String, CarpetEntry> carpets = new HashMap<String, CarpetEntry>();
@@ -158,7 +155,6 @@ public class Storage implements Serializable {
 		entry.thread = entry.carpet.getThread();
 		entry.light = entry.carpet.getShine();
 		entry.tools = entry.carpet.hasTools();
-		entry.lightMode = entry.carpet.getLights();
 	}
 
 	public void checkCarpets() {
@@ -349,21 +345,5 @@ public class Storage implements Serializable {
 			carpets.put(player.getName(), entry);
 		}
 		entry.oneTimeFee = paid;
-	}
-	
-	public LightMode getLightMode(Player player) {
-		CarpetEntry entry = getEntry(player);
-		if (entry == null) {
-			return getConfig().getLightMode();
-		}
-		return entry.lightMode;
-	}
-	
-	public void setLightMode(Player player, LightMode lightmode) {
-		CarpetEntry entry = getEntry(player);
-		if (entry == null) {
-			return;
-		}
-		entry.lightMode = lightmode;
 	}
 }
