@@ -1,15 +1,16 @@
-package net.digiex.magiccarpet.nms.v1_4_6;
+package net.digiex.magiccarpet.nms.v1_7_R1;
 
 import net.digiex.magiccarpet.nms.api.Abstraction;
-import net.minecraft.server.v1_4_6.Chunk;
-import net.minecraft.server.v1_4_6.EntityFireworks;
-import net.minecraft.server.v1_4_6.World;
+import net.minecraft.server.v1_7_R1.Block;
+import net.minecraft.server.v1_7_R1.Chunk;
+import net.minecraft.server.v1_7_R1.EntityFireworks;
+import net.minecraft.server.v1_7_R1.World;
 
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_4_6.CraftWorld;
-import org.bukkit.craftbukkit.v1_4_6.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_7_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 
@@ -31,13 +32,14 @@ import org.bukkit.inventory.meta.FireworkMeta;
  */
 
 public class Handler implements Abstraction {
-
+	
 	@Override
 	public boolean setBlockFast(org.bukkit.World world, int x, int y, int z,
 			Material material, byte data) {
 		World w = ((CraftWorld) world).getHandle();
 		Chunk chunk = w.getChunkAt(x >> 4, z >> 4);
-		return chunk.a(x & 0x0f, y, z & 0x0f, material.getId(), data);
+		Block block = Block.b(material.name().toLowerCase().replace(" ", "_"));
+		return chunk.a(x & 0x0f, y, z & 0x0f, block, data);
 	}
 
 	@Override

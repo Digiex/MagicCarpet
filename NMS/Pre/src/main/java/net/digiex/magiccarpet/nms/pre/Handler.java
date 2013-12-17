@@ -4,6 +4,7 @@ import net.digiex.magiccarpet.nms.api.Abstraction;
 import net.minecraft.server.Chunk;
 import net.minecraft.server.World;
 
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftWorld;
 
 /*
@@ -27,9 +28,9 @@ public abstract class Handler implements Abstraction {
 
 	@Override
 	public boolean setBlockFast(org.bukkit.World world, int x, int y, int z,
-			int blockId, byte data) {
+			Material material, byte data) {
 		World w = ((CraftWorld) world).getHandle();
 		Chunk chunk = w.getChunkAt(x >> 4, z >> 4);
-		return chunk.a(x & 0x0f, y, z & 0x0f, blockId, data);
+		return chunk.a(x & 0x0f, y, z & 0x0f, material.getId(), data);
 	}
 }

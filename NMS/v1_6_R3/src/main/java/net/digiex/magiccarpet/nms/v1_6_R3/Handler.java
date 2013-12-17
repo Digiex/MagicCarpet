@@ -7,6 +7,7 @@ import net.minecraft.server.v1_6_R3.World;
 
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
 import org.bukkit.entity.Firework;
@@ -31,12 +32,13 @@ import org.bukkit.inventory.meta.FireworkMeta;
 
 public class Handler implements Abstraction {
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean setBlockFast(org.bukkit.World world, int x, int y, int z,
-			int blockId, byte data) {
+			Material material, byte data) {
 		World w = ((CraftWorld) world).getHandle();
 		Chunk chunk = w.getChunkAt(x >> 4, z >> 4);
-		return chunk.a(x & 0x0f, y, z & 0x0f, blockId, data);
+		return chunk.a(x & 0x0f, y, z & 0x0f, material.getId(), data);
 	}
 
 	@Override

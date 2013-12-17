@@ -48,11 +48,12 @@ public class Carpet {
 			bl.setType(material);
 		}
 
+		
 		void setFast(Block bl, Material material) {
 			bl.setMetadata("Carpet",
 					new FixedMetadataValue(plugin, who.getName()));
 			Helper.getNMS().setBlockFast(bl.getWorld(), bl.getX(), bl.getY(),
-					bl.getZ(), material.getId(), (byte) 0);
+					bl.getZ(), material, (byte) 0);
 		}
 
 		boolean shouldGlow() {
@@ -175,13 +176,11 @@ public class Carpet {
 		return true;
 	}
 
-	private void setFibre(CarpetFibre fibre, Block bl, Material material) {
+	private void setFibre(CarpetFibre fibre, Block block, Material material) {
 		if (Helper.isEnabled()) {
-			fibre.setFast(bl, material);
-		} else if (material == shine && plugin.getMCConfig().getLightsNMS()) {
-			fibre.set(bl, thread);
+			fibre.setFast(block, material);
 		} else {
-			fibre.set(bl, material);
+			fibre.set(block, material);
 		}
 	}
 

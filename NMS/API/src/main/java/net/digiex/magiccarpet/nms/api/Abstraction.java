@@ -2,6 +2,7 @@ package net.digiex.magiccarpet.nms.api;
 
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 
 /*
@@ -22,8 +23,8 @@ import org.bukkit.World;
  */
 
 public interface Abstraction {
-
-	public boolean setBlockFast(World world, int x, int y, int z, int blockId,
+	
+	public boolean setBlockFast(World world, int x, int y, int z, Material material,
 			byte data);
 
 	public void playFirework(Location loc, FireworkEffect effect);
