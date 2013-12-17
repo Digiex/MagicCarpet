@@ -239,13 +239,69 @@ public class Carpet implements CommandExecutor {
 							word += " " + a;
 						}
 					}
-					Material m = Material.getMaterial(word.toUpperCase()
-							.replace(" ", "_"));
+					byte d = (byte) 0;
+					if (word.contains("orange")) {
+						d = (byte) 1;
+						word = word.replace("orange", "");
+					} else if (word.contains("magenta")) {
+						d = (byte) 2;
+						word = word.replace("magenta", "");
+					} else if (word.contains("light blue")) {
+						d = (byte) 3;
+						word = word.replace("light blue", "");
+					} else if (word.contains("yellow")) {
+						d = (byte) 4;
+						word = word.replace("yellow", "");
+					} else if (word.contains("lime")) {
+						d = (byte) 5;
+						word = word.replace("lime", "");
+					} else if (word.contains("pink")) {
+						d = (byte) 6;
+						word = word.replace("pink", "");
+					} else if (word.contains("gray")) {
+						d = (byte) 7;
+						word = word.replace("gray", "");
+					} else if (word.contains("light gray")) {
+						d = (byte) 8;
+						word = word.replace("light gray", "");
+					} else if (word.contains("cyan")) {
+						d = (byte) 9;
+						word = word.replace("cyan", "");
+					} else if (word.contains("purple")) {
+						d = (byte) 10;
+						word = word.replace("purple", "");
+					} else if (word.contains("blue")) {
+						d = (byte) 11;
+						word = word.replace("blue", "");
+					} else if (word.contains("brown")) {
+						d = (byte) 12;
+						word = word.replace("brown", "");
+					} else if (word.contains("green")) {
+						d = (byte) 13;
+						word = word.replace("green", "");
+					} else if (word.contains("red")) {
+						d = (byte) 14;
+						word = word.replace("red", "");
+					} else if (word.contains("black")) {
+						d = (byte) 15;
+						word = word.replace("black", "");
+					}
+					word = word.trim();
+					Material m = Material.matchMaterial(word);
 					if (m != null) {
-						carpet.changeCarpet(m);
+						if (canHaveData(m)) {
+							carpet.changeCarpet(m, d);
+						} else {
+							carpet.changeCarpet(m);
+						}
+						return true;
+					} else if (carpet.getData() != d) {
+						if (canHaveData(carpet.getThread())) {
+							carpet.setData(d);
+						}
 						return true;
 					} else {
-						player.sendMessage("Material error; Material may be entered as GOLD_BLOCK or just plain gold block");
+						player.sendMessage("Material error; Usage example: /mc green stained glass");
 						return true;
 					}
 				}
@@ -269,5 +325,18 @@ public class Carpet implements CommandExecutor {
 	private boolean canFlyHere(Location location) {
 		return (!plugin.getWorldGuard().isEnabled()) ? true : plugin
 				.getWorldGuard().canFlyHere(location);
+	}
+	
+	private boolean canHaveData(Material material) {
+		switch(material) {
+		case WOOL:
+			return true;
+		case STAINED_GLASS:
+			return true;
+		case STAINED_CLAY:
+			return true;
+		default:
+			return false;
+		}
 	}
 }

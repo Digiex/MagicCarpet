@@ -38,7 +38,7 @@ public class Handler implements Abstraction {
 			Material material, byte data) {
 		World w = ((CraftWorld) world).getHandle();
 		Chunk chunk = w.getChunkAt(x >> 4, z >> 4);
-		Block block = Block.b(material.name().toLowerCase().replace(" ", "_"));
+		Block block = Block.b(material.name().toLowerCase());
 		return chunk.a(x & 0x0f, y, z & 0x0f, block, data);
 	}
 

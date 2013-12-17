@@ -335,16 +335,4 @@ public class Listeners implements Listener {
 			}
 		}
 	}
-
-	@EventHandler()
-	public void onPluginDisable(PluginDisableEvent event) {
-		if (plugin == event.getPlugin()) {
-			plugin.getMCConfig().loadSettings();
-			if (getVault().isEnabled()) {
-				getVault().getPackages().clear();
-				getVault().loadPackages();
-			}
-			plugin.getCarpets().checkCarpets();
-		}
-	}
 }

@@ -56,6 +56,14 @@ public class Carpet {
 					bl.getZ(), material, (byte) 0);
 		}
 
+		
+		void setFast(Block bl, Material material, byte data) {
+			bl.setMetadata("Carpet",
+					new FixedMetadataValue(plugin, who.getName()));
+			Helper.getNMS().setBlockFast(bl.getWorld(), bl.getX(), bl.getY(),
+					bl.getZ(), material, data);
+		}
+
 		boolean shouldGlow() {
 			if (!light) {
 				return false;
@@ -122,6 +130,7 @@ public class Carpet {
 	private boolean hidden = true, light, tools;
 	private Material thread, shine;
 	private Player who;
+	private byte data;
 
 	public Carpet(Player player) {
 		who = player;
@@ -130,6 +139,7 @@ public class Carpet {
 		thread = getCarpets().getMaterial(player);
 		shine = getCarpets().getLightMaterial(player);
 		tools = getCarpets().hasTools(player);
+		data = getCarpets().getData(player);
 		setSize(getCarpets().getLastSize(player));
 		getCarpets().assign(player, this);
 	}
@@ -170,7 +180,7 @@ public class Carpet {
 			} else if (fibre.shouldWork()) {
 				setFibre(fibre, bl, Material.WORKBENCH);
 			} else {
-				setFibre(fibre, bl, thread);
+				setFibre(fibre, bl, thread, data);
 			}
 		}
 		return true;
@@ -179,6 +189,14 @@ public class Carpet {
 	private void setFibre(CarpetFibre fibre, Block block, Material material) {
 		if (Helper.isEnabled()) {
 			fibre.setFast(block, material);
+		} else {
+			fibre.set(block, material);
+		}
+	}
+	
+	private void setFibre(CarpetFibre fibre, Block block, Material material, byte data) {
+		if (Helper.isEnabled()) {
+			fibre.setFast(block, material, data);
 		} else {
 			fibre.set(block, material);
 		}
@@ -213,6 +231,8 @@ public class Carpet {
 		case RED_MUSHROOM:
 			return true;
 		case VINE:
+			return true;
+		case DOUBLE_PLANT:
 			return true;
 		default:
 			return false;
@@ -302,6 +322,24 @@ public class Carpet {
 		}
 		removeCarpet();
 		thread = material;
+		if (drawCarpet()) {
+			who.sendMessage("The carpet reacts to your words and suddenly changes!");
+		}
+		getCarpets().update(who);
+	}
+	
+	public void changeCarpet(Material material, byte data) {
+		if (!getConfig().getDefaultCustomCarpets()) {
+			who.sendMessage("The carpet isn't allowed to change material.");
+			return;
+		}
+		if (!MagicCarpet.getAcceptableCarpetMaterial().contains(material)) {
+			who.sendMessage("A carpet of that material would not support you!");
+			return;
+		}
+		removeCarpet();
+		thread = material;
+		this.data = data;
 		if (drawCarpet()) {
 			who.sendMessage("The carpet reacts to your words and suddenly changes!");
 		}
@@ -453,6 +491,19 @@ public class Carpet {
 		tools = true;
 		if (drawCarpet()) {
 			who.sendMessage("The magic tools have appeared!");
+		}
+		getCarpets().update(who);
+	}
+	
+	public byte getData() {
+		return data;
+	}
+	
+	public void setData(byte data) {
+		removeCarpet();
+		this.data = data;
+		if (drawCarpet()) {
+			who.sendMessage("The carpet reacts to your words and suddenly changes!");
 		}
 		getCarpets().update(who);
 	}
