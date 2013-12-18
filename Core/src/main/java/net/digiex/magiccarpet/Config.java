@@ -79,7 +79,7 @@ public final class Config {
 	private boolean customCarpets = false;
 	private boolean glowCenter = false;
 	private Material lightMaterial = GLOWSTONE;
-	private int maxCarpSize = 9;
+	private int maxCarpSize = 7;
 	private boolean saveCarpets = true;
 	private boolean lights = false;
 	private boolean customLights = false;
@@ -313,10 +313,10 @@ public final class Config {
 			lightMaterial = GLOWSTONE;
 			log.warning("Config error; Invalid light material.");
 		}
-		maxCarpSize = config.getInt("max-size", 9);
+		maxCarpSize = config.getInt("max-size", 7);
 		if (carpSize > maxCarpSize) {
 			setDefaultCarpSize(5);
-			maxCarpSize = 9;
+			maxCarpSize = 7;
 			log.warning("Config error; Default-size is larger than max-size.");
 		}
 		customCarpets = config.getBoolean("custom-carpets", false);

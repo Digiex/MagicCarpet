@@ -289,16 +289,10 @@ public class Carpet implements CommandExecutor {
 					word = word.trim();
 					Material m = Material.matchMaterial(word);
 					if (m != null) {
-						if (canHaveData(m)) {
-							carpet.changeCarpet(m, d);
-						} else {
-							carpet.changeCarpet(m);
-						}
+						carpet.changeCarpet(m, d);
 						return true;
 					} else if (carpet.getData() != d) {
-						if (canHaveData(carpet.getThread())) {
-							carpet.setData(d);
-						}
+						carpet.setData(d);
 						return true;
 					} else {
 						player.sendMessage("Material error; Usage example: /mc green stained glass");
@@ -325,18 +319,5 @@ public class Carpet implements CommandExecutor {
 	private boolean canFlyHere(Location location) {
 		return (!plugin.getWorldGuard().isEnabled()) ? true : plugin
 				.getWorldGuard().canFlyHere(location);
-	}
-	
-	private boolean canHaveData(Material material) {
-		switch(material) {
-		case WOOL:
-			return true;
-		case STAINED_GLASS:
-			return true;
-		case STAINED_CLAY:
-			return true;
-		default:
-			return false;
-		}
 	}
 }

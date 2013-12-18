@@ -48,7 +48,6 @@ public class Carpet {
 			bl.setType(material);
 		}
 
-		
 		void setFast(Block bl, Material material) {
 			bl.setMetadata("Carpet",
 					new FixedMetadataValue(plugin, who.getName()));
@@ -56,7 +55,6 @@ public class Carpet {
 					bl.getZ(), material, (byte) 0);
 		}
 
-		
 		void setFast(Block bl, Material material, byte data) {
 			bl.setMetadata("Carpet",
 					new FixedMetadataValue(plugin, who.getName()));
@@ -180,7 +178,11 @@ public class Carpet {
 			} else if (fibre.shouldWork()) {
 				setFibre(fibre, bl, Material.WORKBENCH);
 			} else {
-				setFibre(fibre, bl, thread, data);
+				if (canHaveData(thread)) {
+					setFibre(fibre, bl, thread, data);
+				} else {
+					setFibre(fibre, bl, thread);
+				}
 			}
 		}
 		return true;
@@ -193,8 +195,9 @@ public class Carpet {
 			fibre.set(block, material);
 		}
 	}
-	
-	private void setFibre(CarpetFibre fibre, Block block, Material material, byte data) {
+
+	private void setFibre(CarpetFibre fibre, Block block, Material material,
+			byte data) {
 		if (Helper.isEnabled()) {
 			fibre.setFast(block, material, data);
 		} else {
@@ -327,7 +330,7 @@ public class Carpet {
 		}
 		getCarpets().update(who);
 	}
-	
+
 	public void changeCarpet(Material material, byte data) {
 		if (!getConfig().getDefaultCustomCarpets()) {
 			who.sendMessage("The carpet isn't allowed to change material.");
@@ -494,11 +497,11 @@ public class Carpet {
 		}
 		getCarpets().update(who);
 	}
-	
+
 	public byte getData() {
 		return data;
 	}
-	
+
 	public void setData(byte data) {
 		removeCarpet();
 		this.data = data;
@@ -573,5 +576,18 @@ public class Carpet {
 			}
 		}
 		return who.hasPermission(permission);
+	}
+
+	private boolean canHaveData(Material material) {
+		switch (material) {
+		case WOOL:
+			return true;
+		case STAINED_GLASS:
+			return true;
+		case STAINED_CLAY:
+			return true;
+		default:
+			return false;
+		}
 	}
 }

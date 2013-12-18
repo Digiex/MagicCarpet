@@ -348,7 +348,7 @@ public class Storage implements Serializable {
 		}
 		entry.oneTimeFee = paid;
 	}
-	
+
 	public byte getData(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
@@ -356,7 +356,7 @@ public class Storage implements Serializable {
 		}
 		return entry.data;
 	}
-	
+
 	public void setData(Player player, byte data) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {

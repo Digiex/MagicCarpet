@@ -24,7 +24,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
-import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.util.Vector;
 
 /*
@@ -58,10 +57,6 @@ public class Listeners implements Listener {
 
 	private Config getConfig() {
 		return plugin.getMCConfig();
-	}
-
-	private Vault getVault() {
-		return plugin.getVault();
 	}
 
 	@EventHandler()

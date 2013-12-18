@@ -32,13 +32,14 @@ import org.bukkit.inventory.meta.FireworkMeta;
  */
 
 public class Handler implements Abstraction {
-	
+
 	@Override
 	public boolean setBlockFast(org.bukkit.World world, int x, int y, int z,
 			Material material, byte data) {
 		World w = ((CraftWorld) world).getHandle();
 		Chunk chunk = w.getChunkAt(x >> 4, z >> 4);
-		Block block = Block.b(material.name().toLowerCase());
+		Block block = Block.b(material.toString().toLowerCase());
+		if (block == null) block = Block.e(material.getId());
 		return chunk.a(x & 0x0f, y, z & 0x0f, block, data);
 	}
 

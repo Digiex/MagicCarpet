@@ -31,7 +31,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
  */
 
 public class Handler implements Abstraction {
-	
+
 	@Override
 	public boolean setBlockFast(org.bukkit.World world, int x, int y, int z,
 			Material material, byte data) {
