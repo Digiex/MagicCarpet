@@ -291,7 +291,7 @@ public class Carpet implements CommandExecutor {
 					if (m != null) {
 						carpet.changeCarpet(m, d);
 						return true;
-					} else if (carpet.getData() != d) {
+					} else if (carpet.getData() != d && canHaveData(carpet.getThread())) {
 						carpet.setData(d);
 						return true;
 					} else {
@@ -319,5 +319,18 @@ public class Carpet implements CommandExecutor {
 	private boolean canFlyHere(Location location) {
 		return (!plugin.getWorldGuard().isEnabled()) ? true : plugin
 				.getWorldGuard().canFlyHere(location);
+	}
+	
+	private boolean canHaveData(Material material) {
+		switch (material) {
+		case WOOL:
+			return true;
+		case STAINED_GLASS:
+			return true;
+		case STAINED_CLAY:
+			return true;
+		default:
+			return false;
+		}
 	}
 }

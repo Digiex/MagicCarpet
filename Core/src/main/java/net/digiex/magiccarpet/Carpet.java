@@ -309,6 +309,7 @@ public class Carpet {
 		removeCarpet();
 		setSize(sz);
 		if (drawCarpet()) {
+			makeMagic(Color.SILVER);
 			who.sendMessage("The carpet reacts to your words and suddenly changes!");
 		}
 		getCarpets().update(who);
@@ -326,6 +327,7 @@ public class Carpet {
 		removeCarpet();
 		thread = material;
 		if (drawCarpet()) {
+			makeMagic(Color.SILVER);
 			who.sendMessage("The carpet reacts to your words and suddenly changes!");
 		}
 		getCarpets().update(who);
@@ -344,6 +346,7 @@ public class Carpet {
 		thread = material;
 		this.data = data;
 		if (drawCarpet()) {
+			makeMagic(getMagicColor());
 			who.sendMessage("The carpet reacts to your words and suddenly changes!");
 		}
 		getCarpets().update(who);
@@ -406,6 +409,7 @@ public class Carpet {
 		removeCarpet();
 		light = false;
 		if (drawCarpet()) {
+			makeMagic(Color.YELLOW);
 			who.sendMessage("The luminous stones in the carpet slowly fade away.");
 		}
 		getCarpets().update(who);
@@ -419,6 +423,7 @@ public class Carpet {
 		removeCarpet();
 		light = true;
 		if (drawCarpet()) {
+			makeMagic(Color.YELLOW);
 			who.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
 		}
 		getCarpets().update(who);
@@ -506,6 +511,7 @@ public class Carpet {
 		removeCarpet();
 		this.data = data;
 		if (drawCarpet()) {
+			makeMagic(getMagicColor());
 			who.sendMessage("The carpet reacts to your words and suddenly changes!");
 		}
 		getCarpets().update(who);
@@ -588,6 +594,43 @@ public class Carpet {
 			return true;
 		default:
 			return false;
+		}
+	}
+	
+	private Color getMagicColor() {
+		switch(data) {
+		case 1:
+			return Color.ORANGE;
+		case 2:
+			return Color.fromRGB(255, 0, 255);
+		case 3:
+			return Color.AQUA;
+		case 4:
+			return Color.YELLOW;
+		case 5:
+			return Color.LIME;
+		case 6:
+			return Color.fromRGB(255, 192, 203);
+		case 7:
+			return Color.GRAY;
+		case 8:
+			return Color.fromRGB(211, 211, 211);
+		case 9:
+			return Color.fromRGB(0, 255, 255);
+		case 10:
+			return Color.PURPLE;
+		case 11:
+			return Color.BLUE;
+		case 12:
+			return Color.fromRGB(165, 42, 42);
+		case 13:
+			return Color.GREEN;
+		case 14:
+			return Color.RED;
+		case 15:
+			return Color.BLACK;
+		default:
+			return Color.SILVER;
 		}
 	}
 }
