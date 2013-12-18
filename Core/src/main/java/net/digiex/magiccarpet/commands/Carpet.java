@@ -239,6 +239,7 @@ public class Carpet implements CommandExecutor {
 							word += " " + a;
 						}
 					}
+					word = word.toLowerCase();
 					byte d = (byte) 0;
 					if (word.contains("orange")) {
 						d = (byte) 1;

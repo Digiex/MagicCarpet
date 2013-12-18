@@ -604,7 +604,7 @@ public class Carpet {
 		case 2:
 			return Color.fromRGB(255, 0, 255);
 		case 3:
-			return Color.AQUA;
+			return Color.fromRGB(173, 216, 230);
 		case 4:
 			return Color.YELLOW;
 		case 5:
