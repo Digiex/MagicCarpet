@@ -292,7 +292,7 @@ public class Carpet implements CommandExecutor {
 					if (m != null) {
 						carpet.changeCarpet(m, d);
 						return true;
-					} else if (carpet.getData() != d && canHaveData(carpet.getThread())) {
+					} else if (d > 0 && carpet.getData() != d && canHaveData(carpet.getThread())) {
 						carpet.setData(d);
 						return true;
 					} else {

@@ -161,8 +161,7 @@ public class Carpet {
 		}
 		for (CarpetFibre fibre : fibres) {
 			Block bl = currentCentre.getRelative(fibre.dx, fibre.dy, fibre.dz);
-			Material type = bl.getType();
-			if (!canReplace(type)) {
+			if (!canReplace(bl.getType())) {
 				fibre.block = null;
 				continue;
 			}
