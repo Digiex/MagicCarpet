@@ -63,7 +63,7 @@ public class Helper {
 		return nms;
 	}
 
-	public static Abstraction getNMS() {
+	public static Abstraction getHandler() {
 		return nms;
 	}
 

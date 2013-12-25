@@ -27,6 +27,12 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.bukkit</groupId>
+			<artifactId>craftbukkit</artifactId>
+			<version>1.7.2-R0.1-SNAPSHOT</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
 			<groupId>net.digiex</groupId>
 			<artifactId>magiccarpet-nms-api</artifactId>
 			<version>API</version>
@@ -79,34 +85,6 @@
 			<groupId>net.digiex</groupId>
 			<artifactId>magiccarpet-nms-v1_5_R1</artifactId>
 			<version>v1_5_R1</version>
-			<type>jar</type>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>net.digiex</groupId>
-			<artifactId>magiccarpet-nms-v1_4_R1</artifactId>
-			<version>v1_4_R1</version>
-			<type>jar</type>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>net.digiex</groupId>
-			<artifactId>magiccarpet-nms-v1_4_6</artifactId>
-			<version>v1_4_6</version>
-			<type>jar</type>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>net.digiex</groupId>
-			<artifactId>magiccarpet-nms-v1_4_5</artifactId>
-			<version>v1_4_5</version>
-			<type>jar</type>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>net.digiex</groupId>
-			<artifactId>magiccarpet-nms-pre</artifactId>
-			<version>pre</version>
 			<type>jar</type>
 			<optional>true</optional>
 		</dependency>

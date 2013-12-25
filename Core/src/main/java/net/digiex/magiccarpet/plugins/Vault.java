@@ -1,7 +1,11 @@
-package net.digiex.magiccarpet;
+package net.digiex.magiccarpet.plugins;
 
 import java.util.HashMap;
 
+import net.digiex.magiccarpet.Carpet;
+import net.digiex.magiccarpet.Config;
+import net.digiex.magiccarpet.MagicCarpet;
+import net.digiex.magiccarpet.Storage;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;

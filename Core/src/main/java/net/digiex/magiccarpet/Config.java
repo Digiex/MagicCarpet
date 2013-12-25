@@ -299,7 +299,7 @@ public final class Config {
 					"carpet-material", GLASS.name()));
 
 		}
-		if (!MagicCarpet.getAcceptableCarpetMaterial().contains(carpMaterial)) {
+		if (!Helper.getHandler().getAcceptableCarpetMaterial().contains(carpMaterial)) {
 			carpMaterial = GLASS;
 			log.warning("Config error; Invaild carpet material.");
 		}
@@ -309,7 +309,7 @@ public final class Config {
 			lightMaterial = Material.matchMaterial(config.getString(
 					"light-material", GLOWSTONE.name()));
 		}
-		if (!MagicCarpet.getAcceptableLightMaterial().contains(lightMaterial)) {
+		if (!Helper.getHandler().getAcceptableLightMaterial().contains(lightMaterial)) {
 			lightMaterial = GLOWSTONE;
 			log.warning("Config error; Invalid light material.");
 		}

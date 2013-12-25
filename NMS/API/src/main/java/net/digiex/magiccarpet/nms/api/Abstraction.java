@@ -1,5 +1,7 @@
 package net.digiex.magiccarpet.nms.api;
 
+import java.util.EnumSet;
+
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,4 +30,10 @@ public interface Abstraction {
 			Material material, byte data);
 
 	public void playFirework(Location loc, FireworkEffect effect);
+	
+	public EnumSet<Material> getAcceptableCarpetMaterial();
+	
+	public EnumSet<Material> getAcceptableLightMaterial();
+	
+	
 }

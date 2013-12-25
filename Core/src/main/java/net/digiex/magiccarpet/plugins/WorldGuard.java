@@ -1,10 +1,12 @@
-package net.digiex.magiccarpet;
+package net.digiex.magiccarpet.plugins;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import net.digiex.magiccarpet.MagicCarpet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

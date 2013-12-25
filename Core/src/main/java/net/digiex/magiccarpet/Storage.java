@@ -161,11 +161,11 @@ public class Storage implements Serializable {
 
 	public void checkCarpets() {
 		for (CarpetEntry entry : carpets.values()) {
-			if (!MagicCarpet.getAcceptableCarpetMaterial().contains(
+			if (!Helper.getHandler().getAcceptableCarpetMaterial().contains(
 					entry.thread)) {
 				entry.thread = getConfig().getDefaultCarpetMaterial();
 			}
-			if (!MagicCarpet.getAcceptableLightMaterial().contains(entry.light)) {
+			if (!Helper.getHandler().getAcceptableLightMaterial().contains(entry.light)) {
 				entry.light = getConfig().getDefaultLightMaterial();
 			}
 			if (entry.lastSize > getConfig().getDefaultMaxCarpetSize()) {

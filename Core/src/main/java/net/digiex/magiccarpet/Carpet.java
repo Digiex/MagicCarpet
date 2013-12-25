@@ -1,6 +1,8 @@
 package net.digiex.magiccarpet;
 
 import static java.lang.Math.abs;
+import net.digiex.magiccarpet.plugins.Vault;
+import net.digiex.magiccarpet.plugins.WorldGuard;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -51,14 +53,14 @@ public class Carpet {
 		void setFast(Block bl, Material material) {
 			bl.setMetadata("Carpet",
 					new FixedMetadataValue(plugin, who.getName()));
-			Helper.getNMS().setBlockFast(bl.getWorld(), bl.getX(), bl.getY(),
+			Helper.getHandler().setBlockFast(bl.getWorld(), bl.getX(), bl.getY(),
 					bl.getZ(), material, (byte) 0);
 		}
 
 		void setFast(Block bl, Material material, byte data) {
 			bl.setMetadata("Carpet",
 					new FixedMetadataValue(plugin, who.getName()));
-			Helper.getNMS().setBlockFast(bl.getWorld(), bl.getX(), bl.getY(),
+			Helper.getHandler().setBlockFast(bl.getWorld(), bl.getX(), bl.getY(),
 					bl.getZ(), material, data);
 		}
 
@@ -262,7 +264,7 @@ public class Carpet {
 	private void makeMagic(Color color) {
 		if (getConfig().getDefaultMagicEffect() && Helper.isEnabled()) {
 			try {
-				Helper.getNMS().playFirework(
+				Helper.getHandler().playFirework(
 						getLocation(),
 						FireworkEffect.builder().with(Type.BALL_LARGE)
 								.withColor(color).build());
@@ -319,7 +321,7 @@ public class Carpet {
 			who.sendMessage("The carpet isn't allowed to change material.");
 			return;
 		}
-		if (!MagicCarpet.getAcceptableCarpetMaterial().contains(material)) {
+		if (!Helper.getHandler().getAcceptableCarpetMaterial().contains(material)) {
 			who.sendMessage("A carpet of that material would not support you!");
 			return;
 		}
@@ -337,7 +339,7 @@ public class Carpet {
 			who.sendMessage("The carpet isn't allowed to change material.");
 			return;
 		}
-		if (!MagicCarpet.getAcceptableCarpetMaterial().contains(material)) {
+		if (!Helper.getHandler().getAcceptableCarpetMaterial().contains(material)) {
 			who.sendMessage("A carpet of that material would not support you!");
 			return;
 		}
@@ -439,7 +441,7 @@ public class Carpet {
 			who.sendMessage("The magic light isn't allowed to change material.");
 			return;
 		}
-		if (!MagicCarpet.getAcceptableLightMaterial().contains(material)) {
+		if (!Helper.getHandler().getAcceptableLightMaterial().contains(material)) {
 			who.sendMessage("A magic light of that material would not light up!");
 			return;
 		}
