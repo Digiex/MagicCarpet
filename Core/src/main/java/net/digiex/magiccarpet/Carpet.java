@@ -1,8 +1,6 @@
 package net.digiex.magiccarpet;
 
 import static java.lang.Math.abs;
-import net.digiex.magiccarpet.plugins.Vault;
-import net.digiex.magiccarpet.plugins.WorldGuard;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -16,7 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
 /*
- * Magic Carpet 2.3 Copyright (C) 2012-2013 Android, Celtic Minstrel, xzKinGzxBuRnzx
+ * Magic Carpet 2.4 Copyright (C) 2012-2014 Android, Celtic Minstrel, xzKinGzxBuRnzx
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -53,25 +51,25 @@ public class Carpet {
 		void setFast(Block bl, Material material) {
 			bl.setMetadata("Carpet",
 					new FixedMetadataValue(plugin, who.getName()));
-			Helper.getHandler().setBlockFast(bl.getWorld(), bl.getX(), bl.getY(),
-					bl.getZ(), material, (byte) 0);
+			Helper.getHandler().setBlockFast(bl.getWorld(), bl.getX(),
+					bl.getY(), bl.getZ(), material, (byte) 0);
 		}
 
 		void setFast(Block bl, Material material, byte data) {
 			bl.setMetadata("Carpet",
 					new FixedMetadataValue(plugin, who.getName()));
-			Helper.getHandler().setBlockFast(bl.getWorld(), bl.getX(), bl.getY(),
-					bl.getZ(), material, data);
+			Helper.getHandler().setBlockFast(bl.getWorld(), bl.getX(),
+					bl.getY(), bl.getZ(), material, data);
 		}
 
 		boolean shouldGlow() {
 			if (!light) {
 				return false;
 			}
-			if (!canLight()) {
+			if (!Permissions.canLight(who)) {
 				light = false;
 				who.sendMessage("The luminous stones in the carpet slowly fade away.");
-				getCarpets().update(who);
+				MagicCarpet.getCarpets().update(who);
 				return false;
 			}
 			if (dx == 0 && dz == 0) {
@@ -84,10 +82,10 @@ public class Carpet {
 			if (!tools) {
 				return false;
 			}
-			if (!canTool()) {
+			if (!Permissions.canTool(who)) {
 				tools = false;
 				who.sendMessage("The magic tools have disappeared.");
-				getCarpets().update(who);
+				MagicCarpet.getCarpets().update(who);
 				return false;
 			}
 			if (dx == 2 && dz == 0) {
@@ -100,10 +98,10 @@ public class Carpet {
 			if (!tools) {
 				return false;
 			}
-			if (!canTool()) {
+			if (!Permissions.canTool(who)) {
 				tools = false;
 				who.sendMessage("The magic tools have disappeared.");
-				getCarpets().update(who);
+				MagicCarpet.getCarpets().update(who);
 				return false;
 			}
 			if (dx == -2 && dz == 0) {
@@ -135,29 +133,21 @@ public class Carpet {
 	public Carpet(Player player) {
 		who = player;
 		currentCentre = player.getLocation().getBlock();
-		light = getCarpets().hasLight(player);
-		thread = getCarpets().getMaterial(player);
-		shine = getCarpets().getLightMaterial(player);
-		tools = getCarpets().hasTools(player);
-		data = getCarpets().getData(player);
-		setSize(getCarpets().getLastSize(player));
-		getCarpets().assign(player, this);
-	}
-
-	private Storage getCarpets() {
-		return plugin.getCarpets();
+		light = MagicCarpet.getCarpets().hasLight(player);
+		thread = MagicCarpet.getCarpets().getMaterial(player);
+		shine = MagicCarpet.getCarpets().getLightMaterial(player);
+		tools = MagicCarpet.getCarpets().hasTools(player);
+		data = MagicCarpet.getCarpets().getData(player);
+		setSize(MagicCarpet.getCarpets().getLastSize(player));
+		MagicCarpet.getCarpets().assign(player, this);
 	}
 
 	private Config getConfig() {
-		return plugin.getMCConfig();
-	}
-
-	private Vault getVault() {
-		return plugin.getVault();
+		return MagicCarpet.getMagicConfig();
 	}
 
 	private boolean drawCarpet() {
-		if (!canFly()) {
+		if (!Permissions.canFly(who)) {
 			hide();
 			return false;
 		}
@@ -167,7 +157,7 @@ public class Carpet {
 				fibre.block = null;
 				continue;
 			}
-			if (!canFlyHere(bl.getLocation())) {
+			if (!Permissions.canFlyHere(bl.getLocation())) {
 				hide("Poof! The magic carpet is not allowed in this area.");
 				return false;
 			}
@@ -262,7 +252,7 @@ public class Carpet {
 	}
 
 	private void makeMagic(Color color) {
-		if (getConfig().getDefaultMagicEffect() && Helper.isEnabled()) {
+		if (getConfig().getMagicEffect() && Helper.isEnabled()) {
 			try {
 				Helper.getHandler().playFirework(
 						getLocation(),
@@ -274,12 +264,12 @@ public class Carpet {
 	}
 
 	private boolean canChangeLiquids(String type) {
-		if (getConfig().getDefaultChangeLiquids().equals("false"))
+		if (getConfig().getChangeLiquids().equals("false"))
 			return false;
-		else if (getConfig().getDefaultChangeLiquids().equals("true"))
+		else if (getConfig().getChangeLiquids().equals("true"))
 			return true;
 		else
-			return getConfig().getDefaultChangeLiquids().equals(type);
+			return getConfig().getChangeLiquids().equals(type);
 	}
 
 	public void hide(String message) {
@@ -287,23 +277,22 @@ public class Carpet {
 			hidden = true;
 			removeCarpet();
 			makeMagic(Color.RED);
-			getCarpets().update(who);
+			MagicCarpet.getCarpets().update(who);
 			who.sendMessage(message);
 		}
 	}
 
 	public void changeCarpet(int sz) {
-		if (sz % 2 == 0 || sz < 1 || sz > getConfig().getDefaultMaxCarpetSize()) {
+		if (sz % 2 == 0 || sz < 1 || sz > getConfig().getMaxCarpetSize()) {
 			who.sendMessage("The size must be an odd number from 1 to "
-					+ String.valueOf(getConfig().getDefaultMaxCarpetSize())
-					+ ".");
+					+ String.valueOf(getConfig().getMaxCarpetSize()) + ".");
 			return;
 		}
 		if (sz == edge) {
 			who.sendMessage("The carpet size is already equal to " + sz);
 			return;
 		}
-		if (!canFlyAt()) {
+		if (!Permissions.canFlyAt(who, sz)) {
 			who.sendMessage("A carpet of that size is not allowed for you.");
 			return;
 		}
@@ -313,15 +302,16 @@ public class Carpet {
 			makeMagic(Color.SILVER);
 			who.sendMessage("The carpet reacts to your words and suddenly changes!");
 		}
-		getCarpets().update(who);
+		MagicCarpet.getCarpets().update(who);
 	}
 
 	public void changeCarpet(Material material) {
-		if (!getConfig().getDefaultCustomCarpets()) {
+		if (!getConfig().getCustomCarpets()) {
 			who.sendMessage("The carpet isn't allowed to change material.");
 			return;
 		}
-		if (!Helper.getHandler().getAcceptableCarpetMaterial().contains(material)) {
+		if (!Helper.getHandler().getAcceptableCarpetMaterial()
+				.contains(material)) {
 			who.sendMessage("A carpet of that material would not support you!");
 			return;
 		}
@@ -331,15 +321,16 @@ public class Carpet {
 			makeMagic(Color.SILVER);
 			who.sendMessage("The carpet reacts to your words and suddenly changes!");
 		}
-		getCarpets().update(who);
+		MagicCarpet.getCarpets().update(who);
 	}
 
 	public void changeCarpet(Material material, byte data) {
-		if (!getConfig().getDefaultCustomCarpets()) {
+		if (!getConfig().getCustomCarpets()) {
 			who.sendMessage("The carpet isn't allowed to change material.");
 			return;
 		}
-		if (!Helper.getHandler().getAcceptableCarpetMaterial().contains(material)) {
+		if (!Helper.getHandler().getAcceptableCarpetMaterial()
+				.contains(material)) {
 			who.sendMessage("A carpet of that material would not support you!");
 			return;
 		}
@@ -350,7 +341,7 @@ public class Carpet {
 			makeMagic(getMagicColor());
 			who.sendMessage("The carpet reacts to your words and suddenly changes!");
 		}
-		getCarpets().update(who);
+		MagicCarpet.getCarpets().update(who);
 	}
 
 	public void descend() {
@@ -385,14 +376,14 @@ public class Carpet {
 			hidden = true;
 			removeCarpet();
 			makeMagic(Color.RED);
-			getCarpets().update(who);
+			MagicCarpet.getCarpets().update(who);
 			who.sendMessage("Poof! The magic carpet disappears.");
 		}
 	}
 
 	public boolean isCustom() {
-		if (thread != getConfig().getDefaultCarpetMaterial()
-				|| shine != getConfig().getDefaultLightMaterial()) {
+		if (thread != getConfig().getCarpetMaterial()
+				|| shine != getConfig().getLightMaterial()) {
 			return true;
 		}
 		return false;
@@ -413,11 +404,11 @@ public class Carpet {
 			makeMagic(Color.YELLOW);
 			who.sendMessage("The luminous stones in the carpet slowly fade away.");
 		}
-		getCarpets().update(who);
+		MagicCarpet.getCarpets().update(who);
 	}
 
 	public void lightOn() {
-		if (!getConfig().getDefaultLights()) {
+		if (!getConfig().getLights()) {
 			who.sendMessage("The magic light is disabled");
 			return;
 		}
@@ -427,7 +418,7 @@ public class Carpet {
 			makeMagic(Color.YELLOW);
 			who.sendMessage("A bright flash shines as glowing stones appear in the carpet.");
 		}
-		getCarpets().update(who);
+		MagicCarpet.getCarpets().update(who);
 	}
 
 	public void moveTo(Location to) {
@@ -437,11 +428,12 @@ public class Carpet {
 	}
 
 	public void setLight(Material material) {
-		if (!getConfig().getDefaultCustomLights()) {
+		if (!getConfig().getCustomLights()) {
 			who.sendMessage("The magic light isn't allowed to change material.");
 			return;
 		}
-		if (!Helper.getHandler().getAcceptableLightMaterial().contains(material)) {
+		if (!Helper.getHandler().getAcceptableLightMaterial()
+				.contains(material)) {
 			who.sendMessage("A magic light of that material would not light up!");
 			return;
 		}
@@ -450,7 +442,7 @@ public class Carpet {
 		if (drawCarpet()) {
 			who.sendMessage("The carpet reacts to your words and suddenly changes!");
 		}
-		getCarpets().update(who);
+		MagicCarpet.getCarpets().update(who);
 	}
 
 	public void show() {
@@ -461,7 +453,7 @@ public class Carpet {
 				makeMagic(Color.BLUE);
 				who.sendMessage("Poof! The magic carpet appears below your feet!");
 			}
-			getCarpets().update(who);
+			MagicCarpet.getCarpets().update(who);
 		}
 	}
 
@@ -488,11 +480,11 @@ public class Carpet {
 		if (drawCarpet()) {
 			who.sendMessage("The magic tools have disappeared.");
 		}
-		getCarpets().update(who);
+		MagicCarpet.getCarpets().update(who);
 	}
 
 	public void toolsOn() {
-		if (!getConfig().getDefaultTools()) {
+		if (!getConfig().getTools()) {
 			who.sendMessage("The magic tools are not enabled.");
 			return;
 		}
@@ -501,7 +493,7 @@ public class Carpet {
 		if (drawCarpet()) {
 			who.sendMessage("The magic tools have appeared!");
 		}
-		getCarpets().update(who);
+		MagicCarpet.getCarpets().update(who);
 	}
 
 	public byte getData() {
@@ -515,7 +507,7 @@ public class Carpet {
 			makeMagic(getMagicColor());
 			who.sendMessage("The carpet reacts to your words and suddenly changes!");
 		}
-		getCarpets().update(who);
+		MagicCarpet.getCarpets().update(who);
 	}
 
 	void removeCarpet() {
@@ -525,64 +517,6 @@ public class Carpet {
 			}
 			fibre.block = null;
 		}
-	}
-
-	private boolean canFly() {
-		return hasPermission("magiccarpet.mc");
-	}
-
-	private boolean canLight() {
-		return hasPermission("magiccarpet.ml");
-	}
-
-	private boolean canTool() {
-		return hasPermission("magiccarpet.mct");
-	}
-
-	private boolean canFlyHere(Location location) {
-		WorldGuard worldguard = plugin.getWorldGuard();
-		return (!worldguard.isEnabled()) ? true : worldguard
-				.canFlyHere(location);
-	}
-
-	private boolean canFlyAt() {
-		if (edge == getConfig().getDefaultCarpSize()) {
-			return true;
-		}
-		if (getCarpets().wasGiven(who)) {
-			return true;
-		}
-		if (who.hasPermission("magiccarpet.*")) {
-			return true;
-		}
-		if (getVault().isEnabled()) {
-			if (who.hasPermission("magiccarpet.np")) {
-				return true;
-			}
-			if (getConfig().getDefaultChargeTimeBased()) {
-				return (getCarpets().getTime(who) <= 0L) ? false : true;
-			} else {
-				return getCarpets().hasPaidFee(who);
-			}
-		}
-		return who.hasPermission("magiccarpet.mc." + edge);
-	}
-
-	private boolean hasPermission(String permission) {
-		if (getCarpets().wasGiven(who)) {
-			return true;
-		}
-		if (getVault().isEnabled()) {
-			if (who.hasPermission("magiccarpet.np")) {
-				return true;
-			}
-			if (getConfig().getDefaultChargeTimeBased()) {
-				return (getCarpets().getTime(who) <= 0L) ? false : true;
-			} else {
-				return getCarpets().hasPaidFee(who);
-			}
-		}
-		return who.hasPermission(permission);
 	}
 
 	private boolean canHaveData(Material material) {
@@ -597,9 +531,9 @@ public class Carpet {
 			return false;
 		}
 	}
-	
+
 	private Color getMagicColor() {
-		switch(data) {
+		switch (data) {
 		case 1:
 			return Color.ORANGE;
 		case 2:

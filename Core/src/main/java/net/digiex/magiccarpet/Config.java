@@ -17,7 +17,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 
 /*
- * Magic Carpet 2.3 Copyright (C) 2012-2013 Android, Celtic Minstrel, xzKinGzxBuRnzx
+ * Magic Carpet 2.4 Copyright (C) 2012-2014 Android, Celtic Minstrel, xzKinGzxBuRnzx
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -103,135 +103,135 @@ public final class Config {
 		return s.toUpperCase().replace(" ", "_");
 	}
 
-	public Material getDefaultCarpetMaterial() {
+	public Material getCarpetMaterial() {
 		return carpMaterial;
 	}
 
-	public void setDefaultCarpetMaterial(Material material) {
+	public void setCarpetMaterial(Material material) {
 		this.carpMaterial = material;
 	}
 
-	public int getDefaultCarpSize() {
+	public int getCarpSize() {
 		return carpSize;
 	}
 
-	public void setDefaultCarpSize(int carpSize) {
+	public void setCarpSize(int carpSize) {
 		this.carpSize = carpSize;
 	}
 
-	public boolean getDefaultCrouch() {
+	public boolean getCrouch() {
 		return crouchDef;
 	}
 
-	public void setDefaultCrouch(boolean crouchDef) {
+	public void setCrouch(boolean crouchDef) {
 		this.crouchDef = crouchDef;
 	}
 
-	public boolean getDefaultCustomCarpets() {
+	public boolean getCustomCarpets() {
 		return customCarpets;
 	}
 
-	public void setDefaultCustomCarpets(boolean customCarpets) {
+	public void setCustomCarpets(boolean customCarpets) {
 		this.customCarpets = customCarpets;
 	}
 
-	public boolean getDefaultGlowing() {
+	public boolean getGlowing() {
 		return glowCenter;
 	}
 
-	public void setDefaultGlowing(boolean glowCenter) {
+	public void setGlowing(boolean glowCenter) {
 		this.glowCenter = glowCenter;
 	}
 
-	public Material getDefaultLightMaterial() {
+	public Material getLightMaterial() {
 		return lightMaterial;
 	}
 
-	public void setDefaultLightMaterial(Material lightMaterial) {
+	public void setLightMaterial(Material lightMaterial) {
 		this.lightMaterial = lightMaterial;
 	}
 
-	public int getDefaultMaxCarpetSize() {
+	public int getMaxCarpetSize() {
 		return maxCarpSize;
 	}
 
-	public void setDefaultMaxCarpetSize(int maxCarpSize) {
+	public void setMaxCarpetSize(int maxCarpSize) {
 		this.maxCarpSize = maxCarpSize;
 	}
 
-	public boolean getDefaultSaveCarpets() {
+	public boolean getSaveCarpets() {
 		return saveCarpets;
 	}
 
-	public void setDefaultSaveCarpets(boolean saveCarpets) {
+	public void setSaveCarpets(boolean saveCarpets) {
 		this.saveCarpets = saveCarpets;
 	}
 
-	public boolean getDefaultLights() {
+	public boolean getLights() {
 		return lights;
 	}
 
-	public void setDefaultLights(boolean lights) {
+	public void setLights(boolean lights) {
 		this.lights = lights;
 	}
 
-	public boolean getDefaultCustomLights() {
+	public boolean getCustomLights() {
 		return customLights;
 	}
 
-	public void setDefaultCustomLights(boolean customLights) {
+	public void setCustomLights(boolean customLights) {
 		this.customLights = customLights;
 	}
 
-	public boolean getDefaultCharge() {
+	public boolean getCharge() {
 		return charge;
 	}
 
-	public void setDefaultCharge(boolean charge) {
+	public void setCharge(boolean charge) {
 		this.charge = charge;
 	}
 
-	public double getDefaultChargeAmount() {
+	public double getChargeAmount() {
 		return chargeAmount;
 	}
 
-	public void setDefaultChargeAmount(double chargeAmount) {
+	public void setChargeAmount(double chargeAmount) {
 		this.chargeAmount = chargeAmount;
 	}
 
-	public String getDefaultChangeLiquids() {
+	public String getChangeLiquids() {
 		return changeLiquids;
 	}
 
-	public void setDefaultChangeLiquids(String changeLiquids) {
+	public void setChangeLiquids(String changeLiquids) {
 		this.changeLiquids = changeLiquids;
 	}
 
-	public boolean getDefaultTools() {
+	public boolean getTools() {
 		return tools;
 	}
 
-	public void setDefaultTools(boolean tools) {
+	public void setTools(boolean tools) {
 		this.tools = tools;
 	}
 
-	public List<?> getDefaultChargePackages() {
+	public List<?> getChargePackages() {
 		return chargePackages;
 	}
 
-	public void setDefaultChargePackages(List<?> chargePackages) {
+	public void setChargePackages(List<?> chargePackages) {
 		this.chargePackages = chargePackages;
 	}
 
-	public long getDefaultChargeTime() {
+	public long getChargeTime() {
 		return chargeTime;
 	}
 
-	public void setDefaultChargeTime(long chargeTime) {
+	public void setChargeTime(long chargeTime) {
 		this.chargeTime = chargeTime;
 	}
 
-	public boolean getDefaultChargeTimeBased() {
+	public boolean getChargeTimeBased() {
 		return chargeTimeBased;
 	}
 
@@ -239,23 +239,23 @@ public final class Config {
 		this.chargeTimeBased = chargeTimeBased;
 	}
 
-	public boolean getDefaultMagicEffect() {
+	public boolean getMagicEffect() {
 		return magicEffect;
 	}
 
-	public void setDefaultMagicEffect(boolean magicEffect) {
+	public void setMagicEffect(boolean magicEffect) {
 		this.magicEffect = magicEffect;
 	}
 
-	public boolean getDefaultPvp() {
+	public boolean getPvp() {
 		return pvp;
 	}
 
-	public void setDefaultPvp(boolean pvp) {
+	public void setPvp(boolean pvp) {
 		this.pvp = pvp;
 	}
 
-	public boolean getDefaultPhysics() {
+	public boolean getPhysics() {
 		return physics;
 	}
 
@@ -299,7 +299,8 @@ public final class Config {
 					"carpet-material", GLASS.name()));
 
 		}
-		if (!Helper.getHandler().getAcceptableCarpetMaterial().contains(carpMaterial)) {
+		if (!Helper.getHandler().getAcceptableCarpetMaterial()
+				.contains(carpMaterial)) {
 			carpMaterial = GLASS;
 			log.warning("Config error; Invaild carpet material.");
 		}
@@ -309,13 +310,14 @@ public final class Config {
 			lightMaterial = Material.matchMaterial(config.getString(
 					"light-material", GLOWSTONE.name()));
 		}
-		if (!Helper.getHandler().getAcceptableLightMaterial().contains(lightMaterial)) {
+		if (!Helper.getHandler().getAcceptableLightMaterial()
+				.contains(lightMaterial)) {
 			lightMaterial = GLOWSTONE;
 			log.warning("Config error; Invalid light material.");
 		}
 		maxCarpSize = config.getInt("max-size", 7);
 		if (carpSize > maxCarpSize) {
-			setDefaultCarpSize(5);
+			setCarpSize(5);
 			maxCarpSize = 7;
 			log.warning("Config error; Default-size is larger than max-size.");
 		}

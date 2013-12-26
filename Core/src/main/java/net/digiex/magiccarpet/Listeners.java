@@ -27,7 +27,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.util.Vector;
 
 /*
- * Magic Carpet 2.3 Copyright (C) 2012-2013 Android, Celtic Minstrel, xzKinGzxBuRnzx
+ * Magic Carpet 2.4 Copyright (C) 2012-2014 Android, Celtic Minstrel, xzKinGzxBuRnzx
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -44,38 +44,25 @@ import org.bukkit.util.Vector;
  */
 public class Listeners implements Listener {
 
-	private final MagicCarpet plugin;
 	private boolean falling = false;
-
-	Listeners(MagicCarpet plugin) {
-		this.plugin = plugin;
-	}
-
-	private Storage getCarpets() {
-		return plugin.getCarpets();
-	}
-
-	private Config getConfig() {
-		return plugin.getMCConfig();
-	}
 
 	@EventHandler()
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		if (getCarpets().has(player)) {
+		if (MagicCarpet.getCarpets().has(player)) {
 			new Carpet(player).show();
 		}
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		getCarpets().remove(event.getPlayer());
+		MagicCarpet.getCarpets().remove(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerKick(PlayerKickEvent event) {
 		Player who = event.getPlayer();
-		Carpet carpet = getCarpets().getCarpet(who);
+		Carpet carpet = MagicCarpet.getCarpets().getCarpet(who);
 		if (carpet != null && carpet.isVisible()) {
 			String reason = event.getReason();
 			if (reason != null
@@ -89,7 +76,7 @@ public class Listeners implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerMove(PlayerMoveEvent event) {
 		Player player = event.getPlayer();
-		Carpet carpet = getCarpets().getCarpet(player);
+		Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
 		if (carpet == null || !carpet.isVisible()) {
 			return;
 		}
@@ -104,7 +91,7 @@ public class Listeners implements Listener {
 			player.setVelocity(player.getVelocity().add(new Vector(0, 0.1, 0)));
 		}
 		to = to.clone();
-		if (getCarpets().crouches(player)) {
+		if (MagicCarpet.getCarpets().crouches(player)) {
 			if (player.isSneaking()) {
 				if (!falling) {
 					to.setY(to.getY() - 1);
@@ -130,7 +117,7 @@ public class Listeners implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
-		Carpet carpet = getCarpets().getCarpet(player);
+		Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
 		if (carpet == null || !carpet.isVisible()) {
 			return;
 		}
@@ -145,11 +132,11 @@ public class Listeners implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
 		Player player = event.getPlayer();
-		Carpet carpet = getCarpets().getCarpet(player);
+		Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
 		if (carpet == null || !carpet.isVisible()) {
 			return;
 		}
-		if (!getCarpets().crouches(player)) {
+		if (!MagicCarpet.getCarpets().crouches(player)) {
 			return;
 		}
 		if (event.isSneaking()) {
@@ -160,7 +147,7 @@ public class Listeners implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockFade(BlockFadeEvent event) {
-		for (Carpet carpet : getCarpets().all()) {
+		for (Carpet carpet : MagicCarpet.getCarpets().all()) {
 			if (carpet == null || !carpet.isVisible() || !carpet.hasLight()) {
 				continue;
 			}
@@ -189,7 +176,7 @@ public class Listeners implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPhysics(BlockPhysicsEvent event) {
 		Block block = event.getBlock();
-		if (!getConfig().getDefaultPhysics()) {
+		if (!MagicCarpet.getMagicConfig().getPhysics()) {
 			switch (block.getType()) {
 			case SAND:
 				break;
@@ -234,7 +221,7 @@ public class Listeners implements Listener {
 				break;
 			}
 		}
-		for (Carpet carpet : getCarpets().all()) {
+		for (Carpet carpet : MagicCarpet.getCarpets().all()) {
 			if (carpet == null || !carpet.isVisible()) {
 				continue;
 			}
@@ -284,7 +271,7 @@ public class Listeners implements Listener {
 			if (!(event.getEntity() instanceof Player)) {
 				return;
 			}
-			if (getCarpets().has((Player) event.getEntity())) {
+			if (MagicCarpet.getCarpets().has((Player) event.getEntity())) {
 				event.setCancelled(true);
 			}
 		case ENTITY_ATTACK:
@@ -296,11 +283,13 @@ public class Listeners implements Listener {
 					|| !(e.getDamager() instanceof Player)) {
 				return;
 			}
-			Carpet carpet = getCarpets().getCarpet((Player) e.getEntity());
-			Carpet c = getCarpets().getCarpet((Player) e.getDamager());
+			Carpet carpet = MagicCarpet.getCarpets().getCarpet(
+					(Player) e.getEntity());
+			Carpet c = MagicCarpet.getCarpets().getCarpet(
+					(Player) e.getDamager());
 			if (carpet != null && carpet.isVisible() || c != null
 					&& c.isVisible()) {
-				if (!getConfig().getDefaultPvp()) {
+				if (!MagicCarpet.getMagicConfig().getPvp()) {
 					event.setCancelled(true);
 				}
 			}

@@ -49,13 +49,12 @@ import java.util.EnumSet;
 
 import net.digiex.magiccarpet.nms.api.Abstraction;
 import net.minecraft.server.v1_7_R1.Block;
-import net.minecraft.server.v1_7_R1.Chunk;
 import net.minecraft.server.v1_7_R1.EntityFireworks;
-import net.minecraft.server.v1_7_R1.World;
 
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_7_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
 import org.bukkit.entity.Firework;
@@ -79,7 +78,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
  */
 
 public class Handler implements Abstraction {
-	
+
 	private static EnumSet<Material> acceptableCarpet = EnumSet.of(STONE,
 			GRASS, DIRT, COBBLESTONE, WOOD, BEDROCK, GOLD_ORE, IRON_ORE,
 			COAL_ORE, LOG, LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK,
@@ -93,36 +92,31 @@ public class Handler implements Abstraction {
 			JACK_O_LANTERN);
 
 	@Override
-	public boolean setBlockFast(org.bukkit.World world, int x, int y, int z,
+	public boolean setBlockFast(World world, int x, int y, int z,
 			Material material, byte data) {
-		World w = ((CraftWorld) world).getHandle();
-		Chunk chunk = w.getChunkAt(x >> 4, z >> 4);
-		Block block = Block.b(material.toString().toLowerCase());
-		if (block == null) block = Block.e(material.getId());
-		return chunk.a(x & 0x0f, y, z & 0x0f, block, data);
+		return ((CraftWorld) world).getHandle().getChunkAt(x >> 4, z >> 4)
+				.a(x & 0x0f, y, z & 0x0f, Block.e(material.getId()), data);
 	}
 
 	@Override
 	public void playFirework(Location loc, FireworkEffect effect) {
-		org.bukkit.World world = loc.getWorld();
+		World world = loc.getWorld();
 		Firework fw = (Firework) world.spawn(loc, Firework.class);
-		World nmsWorld = ((CraftWorld) world).getHandle();
-		EntityFireworks nmsFirework = (EntityFireworks) ((CraftEntity) fw)
-				.getHandle();
 		FireworkMeta fm = (FireworkMeta) fw.getFireworkMeta();
 		fm.clearEffects();
 		fm.setPower(1);
 		fm.addEffect(effect);
 		fw.setFireworkMeta(fm);
-		nmsWorld.broadcastEntityEffect(nmsFirework, (byte) 17);
+		((CraftWorld) world).getHandle().broadcastEntityEffect(
+				(EntityFireworks) ((CraftEntity) fw).getHandle(), (byte) 17);
 		fw.remove();
 	}
-	
+
 	@Override
 	public EnumSet<Material> getAcceptableCarpetMaterial() {
 		return acceptableCarpet;
 	}
-	
+
 	@Override
 	public EnumSet<Material> getAcceptableLightMaterial() {
 		return acceptableLight;

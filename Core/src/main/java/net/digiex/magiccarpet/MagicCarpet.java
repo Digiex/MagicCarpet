@@ -12,12 +12,11 @@ import java.util.logging.Logger;
 import net.digiex.magiccarpet.plugins.Vault;
 import net.digiex.magiccarpet.plugins.WorldGuard;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /*
- * Magic Carpet 2.3 Copyright (C) 2012-2013 Android, Celtic Minstrel, xzKinGzxBuRnzx
+ * Magic Carpet 2.4 Copyright (C) 2012-2014 Android, Celtic Minstrel, xzKinGzxBuRnzx
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -34,26 +33,28 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class MagicCarpet extends JavaPlugin {
 
-	private Logger log;
-	private Config config;
-	private Storage carpets;
+	private static Logger log;
+	private static Config config;
+	private static Storage carpets;
 
-	private Vault vault;
+	private static Vault vault;
 	private static WorldGuard worldGuard;
+
+	private boolean init;
 
 	private void registerCommands() {
 		getCommand("magiccarpet").setExecutor(
-				new net.digiex.magiccarpet.commands.Carpet(this));
+				new net.digiex.magiccarpet.commands.Carpet());
 		getCommand("magiclight").setExecutor(
-				new net.digiex.magiccarpet.commands.Light(this));
-		getCommand("carpetswitch").setExecutor(
-				new net.digiex.magiccarpet.commands.Switch(this));
-		getCommand("magicreload").setExecutor(
-				new net.digiex.magiccarpet.commands.Reload(this));
+				new net.digiex.magiccarpet.commands.Light());
 		getCommand("magiccarpetbuy").setExecutor(
-				new net.digiex.magiccarpet.commands.Buy(this));
+				new net.digiex.magiccarpet.commands.Buy());
+		getCommand("magicreload").setExecutor(
+				new net.digiex.magiccarpet.commands.Reload());
+		getCommand("carpetswitch").setExecutor(
+				new net.digiex.magiccarpet.commands.Switch());
 		getCommand("magictools").setExecutor(
-				new net.digiex.magiccarpet.commands.Tool(this));
+				new net.digiex.magiccarpet.commands.Tool());
 	}
 
 	private void registerEvents(Listener listener) {
@@ -102,16 +103,17 @@ public class MagicCarpet extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		if (config.getDefaultSaveCarpets()) {
-			saveCarpets();
-		} else {
-			for (Carpet c : carpets.all()) {
-				if (c == null || !c.isVisible()) {
-					continue;
+		if (init)
+			if (config.getSaveCarpets()) {
+				saveCarpets();
+			} else {
+				for (Carpet c : carpets.all()) {
+					if (c == null || !c.isVisible()) {
+						continue;
+					}
+					c.removeCarpet();
 				}
-				c.removeCarpet();
 			}
-		}
 		log.info("is now disabled!");
 	}
 
@@ -120,49 +122,25 @@ public class MagicCarpet extends JavaPlugin {
 		log = getLogger();
 		new Helper(this);
 		if (!Helper.isEnabled()) {
-			log.severe("Unable to fully init; Please check this is the latest build.");
+			log.severe("Unable to fully initialize; Please check this is the latest build.");
 			getServer().getPluginManager().disablePlugin(this);
 		}
 		if (!getDataFolder().exists()) {
 			getDataFolder().mkdirs();
 		}
 		config = new Config(this);
-		carpets = new Storage().attach(this);
+		carpets = new Storage();
 		vault = new Vault(this);
 		worldGuard = new WorldGuard(this);
-		if (config.getDefaultSaveCarpets()) {
+		if (config.getSaveCarpets()) {
 			loadCarpets();
 		}
-		registerEvents(new Listeners(this));
+		new Permissions();
+		registerEvents(new Listeners());
 		registerCommands();
 		startStats();
+		init = true;
 		log.info("is now enabled!");
-	}
-
-	public Vault getVault() {
-		return vault;
-	}
-
-	public WorldGuard getWorldGuard() {
-		return worldGuard;
-	}
-
-	public Storage getCarpets() {
-		return carpets;
-	}
-
-	public Config getMCConfig() {
-		return config;
-	}
-
-	public boolean canFly(Player player) {
-		return (carpets.wasGiven(player)) ? true : player
-				.hasPermission("magiccarpet.mc");
-	}
-
-	public boolean canNotPay(Player player) {
-		return (carpets.wasGiven(player)) ? true : player
-				.hasPermission("magiccarpet.np");
 	}
 
 	public void saveCarpets() {
@@ -196,12 +174,31 @@ public class MagicCarpet extends JavaPlugin {
 			FileInputStream file = new FileInputStream(carpetDat);
 			ObjectInputStream in = new ObjectInputStream(file);
 			carpets = (Storage) in.readObject();
-			carpets.attach(this);
 			in.close();
 		} catch (Exception e) {
 			log.warning("Error loading carpets.dat; it may be corrupt and will be overwritten with new data.");
 			return;
 		}
 		carpets.checkCarpets();
+	}
+
+	public static Storage getCarpets() {
+		return carpets;
+	}
+
+	public static Config getMagicConfig() {
+		return config;
+	}
+
+	public static Vault getVault() {
+		return vault;
+	}
+
+	public static WorldGuard getWorldGuard() {
+		return worldGuard;
+	}
+
+	public static Logger getMagicLogger() {
+		return log;
 	}
 }

@@ -3,9 +3,8 @@ package net.digiex.magiccarpet.plugins;
 import java.util.HashMap;
 
 import net.digiex.magiccarpet.Carpet;
-import net.digiex.magiccarpet.Config;
 import net.digiex.magiccarpet.MagicCarpet;
-import net.digiex.magiccarpet.Storage;
+import net.digiex.magiccarpet.Permissions;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
@@ -14,7 +13,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 /*
- * Magic Carpet 2.3 Copyright (C) 2012-2013 Android, Celtic Minstrel, xzKinGzxBuRnzx
+ * Magic Carpet 2.4 Copyright (C) 2012-2014 Android, Celtic Minstrel, xzKinGzxBuRnzx
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -79,38 +78,31 @@ public class Vault {
 		startCharge();
 	}
 
-	private Storage getCarpets() {
-		return plugin.getCarpets();
-	}
-
-	private Config getConfig() {
-		return plugin.getMCConfig();
-	}
-
 	private void startCharge() {
 		plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
 			@Override
 			public void run() {
-				if (!isEnabled() || !getConfig().getDefaultChargeTimeBased()) {
+				if (!isEnabled()
+						|| !MagicCarpet.getMagicConfig().getChargeTimeBased()) {
 					return;
 				}
 				for (Player player : plugin.getServer().getOnlinePlayers()) {
-					Carpet carpet = getCarpets().getCarpet(player);
+					Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
 					if (carpet == null || !carpet.isVisible()) {
 						continue;
 					}
-					if (plugin.canNotPay(player)
-							|| getCarpets().wasGiven(player)) {
+					if (Permissions.canNotPay(player)
+							|| MagicCarpet.getCarpets().wasGiven(player)) {
 						continue;
 					}
 					if (get(player) == 300) {
-						if (!getCarpets().canAutoRenew(player)) {
+						if (!MagicCarpet.getCarpets().canAutoRenew(player)) {
 							player.sendMessage("You are running low on time to use the Magic Carpet. If you wish to continue using it please purchase more time using /mcb.");
 							substractTime(carpet, 1L);
 							continue;
 						} else {
-							TimePackage pack = getPackage(getCarpets()
-									.getAutoPackage(player));
+							TimePackage pack = getPackage(MagicCarpet
+									.getCarpets().getAutoPackage(player));
 							if (addTime(player, pack.getTime(),
 									pack.getAmount())) {
 								player.sendMessage("Your Magic Carpet has auto renewed for "
@@ -127,13 +119,13 @@ public class Vault {
 	}
 
 	public boolean isEnabled() {
-		return (vaultPlugin != null && getConfig().getDefaultCharge()) ? true
+		return (vaultPlugin != null && MagicCarpet.getMagicConfig().getCharge()) ? true
 				: false;
 	}
 
 	public void loadPackages() {
 		try {
-			for (Object o : getConfig().getDefaultChargePackages()) {
+			for (Object o : MagicCarpet.getMagicConfig().getChargePackages()) {
 				String[] s = o.toString().split(":");
 				String name = s[0];
 				long time = Long.valueOf(s[1]);
@@ -185,7 +177,7 @@ public class Vault {
 	}
 
 	public long get(Player player) {
-		return getCarpets().getTime(player);
+		return MagicCarpet.getCarpets().getTime(player);
 	}
 
 	public String getTime(Player player) {
@@ -225,14 +217,14 @@ public class Vault {
 			carpet.hide();
 			player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
 		}
-		getCarpets().setTime(player, rTime);
+		MagicCarpet.getCarpets().setTime(player, rTime);
 	}
 
 	public boolean addTime(Player player, Long time, Double amount) {
 		long rTime = get(player) + time;
 		if (hasEnough(player.getName(), amount)) {
 			subtract(player.getName(), amount);
-			getCarpets().setTime(player, rTime);
+			MagicCarpet.getCarpets().setTime(player, rTime);
 			return true;
 		} else {
 			player.sendMessage("You don't have enough "
@@ -243,7 +235,7 @@ public class Vault {
 
 	public void addTime(Player player, Long time) {
 		long rTime = get(player) + time;
-		getCarpets().setTime(player, rTime);
+		MagicCarpet.getCarpets().setTime(player, rTime);
 		player.sendMessage("Console has given you " + getTime(time)
 				+ " of time to use Magic Carpet");
 	}

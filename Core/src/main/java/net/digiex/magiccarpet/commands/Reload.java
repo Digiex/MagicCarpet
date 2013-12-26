@@ -1,7 +1,7 @@
 package net.digiex.magiccarpet.commands;
 
 import net.digiex.magiccarpet.MagicCarpet;
-import net.digiex.magiccarpet.plugins.Vault;
+import net.digiex.magiccarpet.Permissions;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /*
- * Magic Carpet 2.3 Copyright (C) 2012-2013 Android, Celtic Minstrel, xzKinGzxBuRnzx
+ * Magic Carpet 2.4 Copyright (C) 2012-2014 Android, Celtic Minstrel, xzKinGzxBuRnzx
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -26,22 +26,16 @@ import org.bukkit.entity.Player;
  */
 public class Reload implements CommandExecutor {
 
-	private final MagicCarpet plugin;
-
-	public Reload(MagicCarpet plugin) {
-		this.plugin = plugin;
-	}
-
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,
 			String commandLabel, String[] args) {
 		if (!(sender instanceof Player)) {
 			reload();
-			plugin.getLogger().info("has been reloaded!");
+			MagicCarpet.getMagicLogger().info("has been reloaded!");
 			return true;
 		} else if (sender instanceof Player) {
 			Player player = (Player) sender;
-			if (canReload(player)) {
+			if (Permissions.canReload(player)) {
 				reload();
 				player.sendMessage("MagicCarpet has been reloaded!");
 			} else {
@@ -52,20 +46,12 @@ public class Reload implements CommandExecutor {
 		return false;
 	}
 
-	private Vault getVault() {
-		return plugin.getVault();
-	}
-
-	private boolean canReload(Player player) {
-		return player.hasPermission("magiccarpet.mr");
-	}
-
 	private void reload() {
-		plugin.getMCConfig().loadSettings();
-		if (getVault().isEnabled()) {
-			getVault().getPackages().clear();
-			getVault().loadPackages();
+		MagicCarpet.getMagicConfig().loadSettings();
+		if (MagicCarpet.getVault().isEnabled()) {
+			MagicCarpet.getVault().getPackages().clear();
+			MagicCarpet.getVault().loadPackages();
 		}
-		plugin.getCarpets().checkCarpets();
+		MagicCarpet.getCarpets().checkCarpets();
 	}
 }

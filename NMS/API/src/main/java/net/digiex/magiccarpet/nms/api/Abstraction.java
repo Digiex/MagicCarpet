@@ -34,6 +34,4 @@ public interface Abstraction {
 	public EnumSet<Material> getAcceptableCarpetMaterial();
 	
 	public EnumSet<Material> getAcceptableLightMaterial();
-	
-	
 }
