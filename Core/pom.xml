@@ -98,14 +98,14 @@
 		<dependency>
 			<groupId>com.sk89q</groupId>
 			<artifactId>worldedit</artifactId>
-			<version>5.5.7</version>
+			<version>5.5.8</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/WorldEdit.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>net.milkbowl.vault</groupId>
 			<artifactId>Vault</artifactId>
-			<version>1.2.26</version>
+			<version>1.2.27</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/Vault.jar</systemPath>
 		</dependency>
