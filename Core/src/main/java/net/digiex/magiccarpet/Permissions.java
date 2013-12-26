@@ -29,6 +29,7 @@ public final class Permissions {
 	private static String t = "magiccarpet.mct";
 	private static String p = "magiccarpet.np";
 	private static String i = "magiccarpet.mc.";
+	private static String a = "magiccarpet.*";
 
 	private static boolean hasPermission(Player player, String permission) {
 		if (MagicCarpet.getCarpets().wasGiven(player)) {
@@ -75,7 +76,7 @@ public final class Permissions {
 	public static boolean canFlyAt(Player player, Integer size) {
 		if (size == MagicCarpet.getMagicConfig().getCarpSize()) {
 			return true;
-		} else if (player.hasPermission("magiccarpet.*")) {
+		} else if (player.hasPermission(a)) {
 			return true;
 		}
 		return hasPermission(player, i + size);
