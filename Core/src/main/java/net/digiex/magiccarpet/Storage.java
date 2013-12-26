@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class Storage implements Serializable {
-	private static final long serialVersionUID = -1853121983419602226L;
+	private static final long serialVersionUID = 3417318211816928412L;
 
 	private class CarpetEntry implements Serializable {
 		private static final long serialVersionUID = -365252387220826161L;

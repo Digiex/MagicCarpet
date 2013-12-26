@@ -290,7 +290,7 @@ public class Carpet implements CommandExecutor {
 						carpet.changeCarpet(m, d);
 						return true;
 					} else if (carpet.getData() != d
-							&& canHaveData(carpet.getThread())) {
+							&& carpet.canHaveData(carpet.getThread())) {
 						carpet.setData(d);
 						return true;
 					} else {
@@ -304,19 +304,6 @@ public class Carpet implements CommandExecutor {
 				player.sendMessage("You don't have a carpet yet.");
 				return true;
 			}
-		}
-	}
-
-	private boolean canHaveData(Material material) {
-		switch (material) {
-		case WOOL:
-			return true;
-		case STAINED_GLASS:
-			return true;
-		case STAINED_CLAY:
-			return true;
-		default:
-			return false;
 		}
 	}
 }

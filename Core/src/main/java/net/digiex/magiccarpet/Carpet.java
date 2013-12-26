@@ -496,7 +496,7 @@ public class Carpet {
 		}
 	}
 
-	private boolean canHaveData(Material material) {
+	public boolean canHaveData(Material material) {
 		switch (material) {
 		case WOOL:
 			return true;
