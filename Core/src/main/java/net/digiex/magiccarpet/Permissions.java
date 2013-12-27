@@ -22,14 +22,14 @@ import org.bukkit.entity.Player;
 
 public final class Permissions {
 
-	private static String c = "magiccarpet.mc";
-	private static String l = "magiccarpet.ml";
-	private static String s = "magiccarpet.mcs";
-	private static String r = "magiccarpet.mr";
-	private static String t = "magiccarpet.mct";
-	private static String p = "magiccarpet.np";
-	private static String i = "magiccarpet.mc.";
-	private static String a = "magiccarpet.*";
+	private final static String c = "magiccarpet.mc";
+	private final static String l = "magiccarpet.ml";
+	private final static String s = "magiccarpet.mcs";
+	private final static String r = "magiccarpet.mr";
+	private final static String t = "magiccarpet.mct";
+	private final static String p = "magiccarpet.np";
+	private final static String i = "magiccarpet.mc.";
+	private final static String a = "magiccarpet.*";
 
 	private static boolean hasPermission(Player player, String permission) {
 		if (MagicCarpet.getCarpets().wasGiven(player)) {
