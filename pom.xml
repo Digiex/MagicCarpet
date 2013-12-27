@@ -7,8 +7,8 @@
     <version>dev-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>MCLite</name>
-    <url>https://github.com/Digiex/MagicCarpet/tree/lite</url>
+    <name>MCLITE</name>
+    <url>https://github.com/Digiex/MagicCarpet/tree/LITE</url>
     <description>A Bukkit Plugin for Minecraft.</description>
 
     <properties>
