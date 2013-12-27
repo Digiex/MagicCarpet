@@ -27,7 +27,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.util.Vector;
 
 /*
- * Magic Carpet 2.3 Copyright (C) 2012-2013 Android, Celtic Minstrel, xzKinGzxBuRnzx
+ * Magic Carpet 2.4 Copyright (C) 2012-2014 Android, Celtic Minstrel, xzKinGzxBuRnzx
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -42,7 +42,7 @@ import org.bukkit.util.Vector;
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class MagicListener implements Listener {
+public class Listeners implements Listener {
 
 	private boolean falling = false;
 
@@ -50,7 +50,7 @@ public class MagicListener implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		if (MagicCarpet.getCarpets().has(player)) {
-			Carpet.create(player).show();
+			new Carpet(player).show();
 		}
 	}
 
@@ -80,17 +80,17 @@ public class MagicListener implements Listener {
 		if (carpet == null || !carpet.isVisible()) {
 			return;
 		}
-		Location to = event.getTo().clone();
-		Location last = carpet.getLocation();
-		if (last.getWorld() == to.getWorld() && last.distance(to) == 0) {
+		Location to = event.getTo();
+		Location from = event.getFrom();
+		if (from.getWorld() == to.getWorld() && from.distance(to) == 0) {
 			return;
 		}
-		Location from = event.getFrom();
 		if (player.getLocation().getBlock().isLiquid()
 				&& !player.getEyeLocation().getBlock().isLiquid()
 				&& to.getY() > from.getY()) {
 			player.setVelocity(player.getVelocity().add(new Vector(0, 0.1, 0)));
 		}
+		to = to.clone();
 		if (MagicCarpet.getCarpets().crouches(player)) {
 			if (player.isSneaking()) {
 				if (!falling) {
@@ -122,8 +122,8 @@ public class MagicListener implements Listener {
 			return;
 		}
 		Location to = event.getTo();
-		Location last = carpet.getLocation();
-		if (last.getWorld() == to.getWorld() && last.distance(to) == 0) {
+		Location from = event.getFrom();
+		if (from.getWorld() == to.getWorld() && from.distance(to) == 0) {
 			return;
 		}
 		carpet.moveTo(to);
@@ -175,35 +175,62 @@ public class MagicListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPhysics(BlockPhysicsEvent event) {
-		switch (event.getBlock().getType()) {
-		case SAND:
-			break;
-		case CACTUS:
-			break;
-		case VINE:
-			break;
-		case STATIONARY_WATER:
-			break;
-		case WATER:
-			break;
-		case STATIONARY_LAVA:
-			break;
-		case LAVA:
-			break;
-		case WATER_LILY:
-			break;
-		default:
-			return;
+		Block block = event.getBlock();
+		if (!MagicCarpet.getMagicConfig().getPhysics()) {
+			switch (block.getType()) {
+			case SAND:
+				break;
+			case CACTUS:
+				break;
+			case VINE:
+				break;
+			case STATIONARY_WATER:
+				break;
+			case WATER:
+				break;
+			case STATIONARY_LAVA:
+				break;
+			case LAVA:
+				break;
+			case WATER_LILY:
+				break;
+			default:
+				return;
+			}
+		} else {
+			switch (block.getType()) {
+			case REDSTONE:
+				return;
+			case REDSTONE_WIRE:
+				return;
+			case DIODE_BLOCK_ON:
+				return;
+			case REDSTONE_LAMP_ON:
+				return;
+			case POWERED_RAIL:
+				return;
+			case REDSTONE_TORCH_ON:
+				return;
+			case DIODE_BLOCK_OFF:
+				return;
+			case REDSTONE_LAMP_OFF:
+				return;
+			case REDSTONE_TORCH_OFF:
+				return;
+			default:
+				break;
+			}
 		}
 		for (Carpet carpet : MagicCarpet.getCarpets().all()) {
 			if (carpet == null || !carpet.isVisible()) {
 				continue;
 			}
-			if (carpet.touches(event.getBlock())) {
+			if (carpet.touches(block)) {
 				event.setCancelled(true);
 				return;
 			}
 		}
+
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -260,16 +287,10 @@ public class MagicListener implements Listener {
 					(Player) e.getEntity());
 			Carpet c = MagicCarpet.getCarpets().getCarpet(
 					(Player) e.getDamager());
-			if (carpet != null && carpet.isVisible()) {
-				if (!MagicCarpet.pvp) {
+			if (carpet != null && carpet.isVisible() || c != null
+					&& c.isVisible()) {
+				if (!MagicCarpet.getMagicConfig().getPvp()) {
 					event.setCancelled(true);
-					return;
-				}
-			}
-			if (c != null && c.isVisible()) {
-				if (!MagicCarpet.pvp) {
-					event.setCancelled(true);
-					return;
 				}
 			}
 		default:

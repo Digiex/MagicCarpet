@@ -8,7 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 /*
- * Magic Carpet 2.3 Copyright (C) 2012-2013 Android, Celtic Minstrel, xzKinGzxBuRnzx
+ * Magic Carpet 2.4 Copyright (C) 2012-2014 Android, Celtic Minstrel, xzKinGzxBuRnzx
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -23,34 +23,32 @@ import org.bukkit.entity.Player;
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class CarpetStorage implements Serializable {
-	private static final long serialVersionUID = 1675390921308149672L;
+public class Storage implements Serializable {
+	private static final long serialVersionUID = 3417318211816928412L;
 
 	private class CarpetEntry implements Serializable {
-		private static final long serialVersionUID = -1720624757910521667L;
-		
+		private static final long serialVersionUID = -365252387220826161L;
+
 		public transient Carpet carpet;
-		public boolean crouch = MagicCarpet.crouchDef;
+
 		public boolean hasCarpet = false;
-		public int lastSize = MagicCarpet.carpSize;
-		public Material light = MagicCarpet.lightMaterial;
-		public boolean lightsOn = MagicCarpet.glowCenter;
-		public Material thread = MagicCarpet.carpMaterial;
 		public boolean given = false;
 		public boolean tools = false;
-		public long time = MagicCarpet.chargeTime;
 		public boolean autoRenew = false;
 		public boolean oneTimeFee = false;
 		public String autoPackage = null;
+		public byte data = (byte) 0;
+
+		public boolean crouch = MagicCarpet.getMagicConfig().getCrouch();
+		public int lastSize = MagicCarpet.getMagicConfig().getCarpSize();
+		public Material light = MagicCarpet.getMagicConfig().getLightMaterial();
+		public boolean lightsOn = MagicCarpet.getMagicConfig().getGlowing();
+		public Material thread = MagicCarpet.getMagicConfig()
+				.getCarpetMaterial();
+		public long time = MagicCarpet.getMagicConfig().getChargeTime();
 	}
 
 	private HashMap<String, CarpetEntry> carpets = new HashMap<String, CarpetEntry>();
-	private transient MagicCarpet plugin;
-
-	CarpetStorage attach(MagicCarpet plug) {
-		plugin = plug;
-		return this;
-	}
 
 	private CarpetEntry getEntry(Player player) {
 		if (carpets.containsKey(player.getName())) {
@@ -134,7 +132,7 @@ public class CarpetStorage implements Serializable {
 		carpets.clear();
 	}
 
-	void update(Player player) {
+	public void update(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
 			return;
@@ -149,72 +147,89 @@ public class CarpetStorage implements Serializable {
 		entry.thread = entry.carpet.getThread();
 		entry.light = entry.carpet.getShine();
 		entry.tools = entry.carpet.hasTools();
+		entry.data = entry.carpet.getData();
 	}
 
-	void checkCarpets() {
+	public void checkCarpets() {
 		for (CarpetEntry entry : carpets.values()) {
-			if (!MagicCarpet.getAcceptableCarpetMaterial().contains(entry.thread)) {
-				entry.thread = MagicCarpet.carpMaterial;
+			if (!MagicCarpet.getAcceptableCarpetMaterial().contains(
+					entry.thread)) {
+				entry.thread = MagicCarpet.getMagicConfig().getCarpetMaterial();
 			}
 			if (!MagicCarpet.getAcceptableLightMaterial().contains(entry.light)) {
-				entry.light = MagicCarpet.lightMaterial;
+				entry.light = MagicCarpet.getMagicConfig().getLightMaterial();
 			}
-			if (entry.lastSize > MagicCarpet.maxCarpSize) {
-				entry.lastSize = MagicCarpet.carpSize;
+			if (entry.lastSize > MagicCarpet.getMagicConfig()
+					.getMaxCarpetSize()) {
+				entry.lastSize = MagicCarpet.getMagicConfig().getCarpSize();
 			}
-			if (entry.thread != MagicCarpet.carpMaterial && !MagicCarpet.customCarpets) {
-				entry.thread = MagicCarpet.carpMaterial;
+			if (entry.thread != MagicCarpet.getMagicConfig()
+					.getCarpetMaterial()
+					&& !MagicCarpet.getMagicConfig().getCustomCarpets()) {
+				entry.thread = MagicCarpet.getMagicConfig().getCarpetMaterial();
 			}
-			if (entry.light != MagicCarpet.lightMaterial && !MagicCarpet.customLights) {
-				entry.light = MagicCarpet.lightMaterial;
+			if (entry.light != MagicCarpet.getMagicConfig().getLightMaterial()
+					&& !MagicCarpet.getMagicConfig().getCustomLights()) {
+				entry.light = MagicCarpet.getMagicConfig().getLightMaterial();
 			}
-			if (entry.lightsOn && !MagicCarpet.lights) {
+			if (entry.lightsOn && !MagicCarpet.getMagicConfig().getLights()) {
 				entry.lightsOn = false;
 			}
-			if (entry.tools && !MagicCarpet.tools) {
+			if (entry.tools && !MagicCarpet.getMagicConfig().getTools()) {
 				entry.tools = false;
 			}
-			if (plugin.getVault() != null && MagicCarpet.charge) {
-				if (entry.hasCarpet && !entry.oneTimeFee) {
-					entry.hasCarpet = false;
+			if (MagicCarpet.getVault().isEnabled()
+					&& MagicCarpet.getMagicConfig().getCharge()) {
+				if (MagicCarpet.getMagicConfig().getChargeTimeBased()) {
+					if (entry.hasCarpet && entry.time <= 0L && !entry.given) {
+						entry.hasCarpet = false;
+					}
+					if (MagicCarpet.getVault().getPackage(entry.autoPackage) == null) {
+						entry.autoPackage = null;
+						entry.autoRenew = false;
+					}
+				} else {
+					if (entry.hasCarpet && !entry.oneTimeFee && !entry.given) {
+						entry.hasCarpet = false;
+					}
 				}
 			}
 		}
 	}
 
-	boolean crouches(Player player) {
+	public boolean crouches(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return MagicCarpet.crouchDef;
+			return MagicCarpet.getMagicConfig().getCrouch();
 		}
 		return entry.crouch;
 	}
 
-	int getLastSize(Player player) {
+	public int getLastSize(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return MagicCarpet.carpSize;
+			return MagicCarpet.getMagicConfig().getCarpSize();
 		}
 		return entry.lastSize;
 	}
 
-	Material getMaterial(Player player) {
+	public Material getMaterial(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return MagicCarpet.carpMaterial;
+			return MagicCarpet.getMagicConfig().getCarpetMaterial();
 		}
 		return entry.thread;
 	}
 
-	Material getLightMaterial(Player player) {
+	public Material getLightMaterial(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return MagicCarpet.lightMaterial;
+			return MagicCarpet.getMagicConfig().getLightMaterial();
 		}
 		return entry.light;
 	}
 
-	boolean has(Player player) {
+	public boolean has(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
 			return false;
@@ -222,15 +237,15 @@ public class CarpetStorage implements Serializable {
 		return entry.hasCarpet;
 	}
 
-	boolean hasLight(Player player) {
+	public boolean hasLight(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return MagicCarpet.glowCenter;
+			return false;
 		}
 		return entry.lightsOn;
 	}
 
-	void toggleCrouch(Player player) {
+	public void toggleCrouch(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
 			return;
@@ -238,7 +253,7 @@ public class CarpetStorage implements Serializable {
 		entry.crouch = !entry.crouch;
 	}
 
-	boolean wasGiven(Player player) {
+	public boolean wasGiven(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
 			return false;
@@ -246,7 +261,7 @@ public class CarpetStorage implements Serializable {
 		return entry.given;
 	}
 
-	void setGiven(Player player, Boolean given) {
+	public void setGiven(Player player, Boolean given) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
 			entry = new CarpetEntry();
@@ -255,15 +270,15 @@ public class CarpetStorage implements Serializable {
 		entry.given = given;
 	}
 
-	boolean hasTools(Player player) {
+	public boolean hasTools(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return MagicCarpet.tools;
+			return false;
 		}
 		return entry.tools;
 	}
 
-	void setTime(Player player, Long time) {
+	public void setTime(Player player, Long time) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
 			return;
@@ -271,15 +286,15 @@ public class CarpetStorage implements Serializable {
 		entry.time = time;
 	}
 
-	long getTime(Player player) {
+	public long getTime(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
-			return MagicCarpet.chargeTime;
+			return MagicCarpet.getMagicConfig().getChargeTime();
 		}
 		return entry.time;
 	}
 
-	boolean canAutoRenew(Player player) {
+	public boolean canAutoRenew(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
 			return false;
@@ -287,7 +302,7 @@ public class CarpetStorage implements Serializable {
 		return entry.autoRenew;
 	}
 
-	void setAutoRenew(Player player, Boolean renew) {
+	public void setAutoRenew(Player player, Boolean renew) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
 			return;
@@ -295,7 +310,7 @@ public class CarpetStorage implements Serializable {
 		entry.autoRenew = renew;
 	}
 
-	String getAutoPackage(Player player) {
+	public String getAutoPackage(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
 			return null;
@@ -303,7 +318,7 @@ public class CarpetStorage implements Serializable {
 		return entry.autoPackage;
 	}
 
-	void setAutoPackage(Player player, String auto) {
+	public void setAutoPackage(Player player, String auto) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
 			return;
@@ -311,7 +326,7 @@ public class CarpetStorage implements Serializable {
 		entry.autoPackage = auto;
 	}
 
-	boolean hasPaidFee(Player player) {
+	public boolean hasPaidFee(Player player) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
 			return false;
@@ -319,12 +334,28 @@ public class CarpetStorage implements Serializable {
 		return entry.oneTimeFee;
 	}
 
-	void setPaidFee(Player player, Boolean paid) {
+	public void setPaidFee(Player player, Boolean paid) {
 		CarpetEntry entry = getEntry(player);
 		if (entry == null) {
 			entry = new CarpetEntry();
 			carpets.put(player.getName(), entry);
 		}
 		entry.oneTimeFee = paid;
+	}
+
+	public byte getData(Player player) {
+		CarpetEntry entry = getEntry(player);
+		if (entry == null) {
+			return (byte) 0;
+		}
+		return entry.data;
+	}
+
+	public void setData(Player player, byte data) {
+		CarpetEntry entry = getEntry(player);
+		if (entry == null) {
+			return;
+		}
+		entry.data = data;
 	}
 }

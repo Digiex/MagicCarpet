@@ -1,11 +1,11 @@
 name: MagicCarpet
 main: net.digiex.magiccarpet.MagicCarpet
-version: 2.3.2
+version: 2.4
 website: http://dev.bukkit.org/server-mods/magiccarpet/
 description: Take yourself wonder by wonder on a carpet made of glass.
 database: false
 load: POSTWORLD
-authors: [Android, Celtic Minstrel, xzKinGzxBuRnzx]
+authors: [Android, Celtic Minstrel, and xzKinGzxBuRnzx]
 softdepend: [WorldGuard, Vault]
 commands:
   magiccarpet:
@@ -27,7 +27,7 @@ commands:
   magiccarpetbuy:
     description: Allows you to buy time for Magic Carpet.
     aliases: [mcb]
-    usage: /<command> [plan] [-p] [-a] [-b]
+    usage: /<command> [plan] [-l] [-a] [-b]
   magictools:
     description: Gives your carpet some essential tools!
     aliases: [mct]
