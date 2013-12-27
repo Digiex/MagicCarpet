@@ -3,18 +3,15 @@ package net.digiex.magiccarpet;
 import static java.lang.Math.abs;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.FireworkEffect.Type;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
 /*
- * Magic Carpet 2.3 Copyright (C) 2012 Android, Celtic Minstrel, xzKinGzxBuRnzx
+ * Magic Carpet 2.4 Copyright (C) 2012-2014 Android, Celtic Minstrel, xzKinGzxBuRnzx
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -44,7 +41,7 @@ public class Carpet {
 
 		void set(Block bl, Material material) {
 			bl.setType(material);
-			bl.setMetadata("Carpet", new FixedMetadataValue(plugin, carpet));
+			bl.setMetadata("Carpet", new FixedMetadataValue(plugin, who.getName()));
 		}
 
 		void update() {
@@ -58,7 +55,6 @@ public class Carpet {
 
 	private final MagicCarpet plugin = (MagicCarpet) Bukkit.getServer()
 			.getPluginManager().getPlugin("MagicCarpet");
-	private Carpet carpet = this;
 
 	public static Carpet create(Player player) {
 		Carpet carpet = new Carpet(player);
@@ -117,6 +113,8 @@ public class Carpet {
 			return true;
 		case VINE:
 			return true;
+		case DOUBLE_PLANT:
+            return true;
 		default:
 			return false;
 		}
