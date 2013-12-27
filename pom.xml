@@ -1,4 +1,3 @@
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -8,8 +7,8 @@
     <version>dev-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>MagicCarpet</name>
-    <url>https://github.com/Digiex/MagicCarpet</url>
+    <name>MCLite</name>
+    <url>https://github.com/Digiex/MagicCarpet/tree/lite</url>
     <description>A Bukkit Plugin for Minecraft.</description>
 
     <properties>
@@ -25,7 +24,7 @@
     
     <ciManagement>
         <system>Jenkins</system>
-        <url>http://kingburn.tk/</url>
+        <url>http://ci.dy.fi/</url>
     </ciManagement>
     
     <issueManagement>
@@ -39,31 +38,10 @@
             <artifactId>bukkit</artifactId>
             <version>LATEST</version>
         </dependency>
-        <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>worldguard</artifactId>
-            <version>5.8</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/WorldGuard.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>worldedit</artifactId>
-            <version>5.5.8</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/WorldEdit.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>net.milkbowl.vault</groupId>
-            <artifactId>Vault</artifactId>
-            <version>1.2.27</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/Vault.jar</systemPath>
-        </dependency>
     </dependencies>
     
     <build>
-    	<finalName>MagicCarpet</finalName>
+        <finalName>MagicCarpet</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
