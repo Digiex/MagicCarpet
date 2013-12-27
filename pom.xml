@@ -6,8 +6,8 @@
 	<version>parent</version>
 	<packaging>pom</packaging>
 
-	<name>MagicCarpet</name>
-	<url>https://github.com/Digiex/MagicCarpet</url>
+	<name>MCNMS</name>
+	<url>https://github.com/Digiex/MagicCarpet/tree/NMS</url>
 	<description>A Bukkit Plugin for Minecraft.</description>
 
 	<properties>
