@@ -46,7 +46,7 @@ public class Listeners implements Listener {
 
 	private boolean falling = false;
 
-	@EventHandler()
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		if (MagicCarpet.getCarpets().has(player)) {
@@ -54,7 +54,7 @@ public class Listeners implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		MagicCarpet.getCarpets().remove(event.getPlayer());
 	}
