@@ -275,23 +275,20 @@ public class Listeners implements Listener {
 				event.setCancelled(true);
 			}
 		case ENTITY_ATTACK:
+			if (!MagicCarpet.getMagicConfig().getPvp()) {
+				return;
+			}
 			if (!(event instanceof EntityDamageByEntityEvent)) {
 				return;
 			}
 			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-			if (!(e.getEntity() instanceof Player)
-					|| !(e.getDamager() instanceof Player)) {
+			if (!(e.getDamager() instanceof Player)) {
 				return;
 			}
 			Carpet carpet = MagicCarpet.getCarpets().getCarpet(
-					(Player) e.getEntity());
-			Carpet c = MagicCarpet.getCarpets().getCarpet(
 					(Player) e.getDamager());
-			if (carpet != null && carpet.isVisible() || c != null
-					&& c.isVisible()) {
-				if (!MagicCarpet.getMagicConfig().getPvp()) {
-					event.setCancelled(true);
-				}
+			if (carpet != null && carpet.isVisible()) {
+				event.setCancelled(true);
 			}
 		default:
 			return;
