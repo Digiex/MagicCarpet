@@ -1,6 +1,5 @@
 package net.digiex.magiccarpet;
 
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,10 +20,10 @@ import org.bukkit.entity.Player;
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class CarpetCommand implements CommandExecutor {
+public class Command implements CommandExecutor {
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
+	public boolean onCommand(CommandSender sender, org.bukkit.command.Command command,
 			String label, String[] args) {
 		if (!(sender instanceof Player)) {
 			sender.sendMessage("Sorry, only players can use the carpet!");

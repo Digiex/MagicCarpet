@@ -22,7 +22,7 @@ import org.bukkit.entity.Player;
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class CarpetStorage implements Serializable {
+public class Storage implements Serializable {
 	private static final long serialVersionUID = -7050427936329191014L;
 
 	private class CarpetEntry implements Serializable {

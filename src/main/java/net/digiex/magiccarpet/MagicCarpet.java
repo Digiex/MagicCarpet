@@ -29,7 +29,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class MagicCarpet extends JavaPlugin {
 
-	private static CarpetStorage carpets = new CarpetStorage();
+	private static Storage carpets = new Storage();
 	private Logger log;
 
 	private File carpetsFile() {
@@ -37,15 +37,15 @@ public class MagicCarpet extends JavaPlugin {
 	}
 
 	private void registerCommands() {
-		getCommand("magiccarpet").setExecutor(new CarpetCommand());
+		getCommand("magiccarpet").setExecutor(new Command());
 	}
 
 	private void registerEvents() {
 		getServer().getPluginManager()
-				.registerEvents(new MagicListener(), this);
+				.registerEvents(new Listeners(), this);
 	}
 	
-	public static CarpetStorage getCarpets() {
+	public static Storage getCarpets() {
 		return carpets;
 	}
 
@@ -101,7 +101,7 @@ public class MagicCarpet extends JavaPlugin {
 		try {
 			FileInputStream file = new FileInputStream(carpetDat);
 			ObjectInputStream in = new ObjectInputStream(file);
-			carpets = (CarpetStorage) in.readObject();
+			carpets = (Storage) in.readObject();
 			in.close();
 		} catch (IOException e) {
 			log.warning("Error loading carpets.dat; carpets data has not been loaded.");

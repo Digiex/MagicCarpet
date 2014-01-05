@@ -40,7 +40,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class MagicListener implements Listener {
+public class Listeners implements Listener {
 
 	private boolean falling = false;
 
