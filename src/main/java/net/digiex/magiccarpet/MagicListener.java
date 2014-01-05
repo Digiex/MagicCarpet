@@ -13,6 +13,7 @@ import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
@@ -211,6 +212,19 @@ public class MagicListener implements Listener {
 					return;
 				}
 				if (MagicCarpet.getCarpets().has((Player) event.getEntity())) {
+					event.setCancelled(true);
+				}
+			case ENTITY_ATTACK:
+				if (!(event instanceof EntityDamageByEntityEvent)) {
+					return;
+				}
+				EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
+				if (!(e.getDamager() instanceof Player)) {
+					return;
+				}
+				Carpet carpet = MagicCarpet.getCarpets().getCarpet(
+						(Player) e.getDamager());
+				if (carpet != null && carpet.isVisible()) {
 					event.setCancelled(true);
 				}
 			default:
