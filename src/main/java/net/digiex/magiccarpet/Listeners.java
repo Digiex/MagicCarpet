@@ -284,6 +284,9 @@ public class Listeners implements Listener {
 			Carpet carpet = MagicCarpet.getCarpets().getCarpet(
 					(Player) e.getDamager());
 			if (carpet != null && carpet.isVisible()) {
+				if (MagicCarpet.getMagicConfig().getPVPHide()) {
+					carpet.hide();
+				}
 				event.setCancelled(true);
 			}
 		default:
