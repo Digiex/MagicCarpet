@@ -117,7 +117,7 @@ public class Carpet {
 	private Block currentCentre;
 	private int edge = 0, area = 0, rad = 0, radplsq = 0;
 	private CarpetFibre[] fibres;
-	private boolean hidden = true, light, tools;
+	private boolean hidden = true, light, tools, falling, descending;
 	private Material thread, shine;
 	private Player who;
 	private byte data;
@@ -540,5 +540,21 @@ public class Carpet {
 		default:
 			return Color.SILVER;
 		}
+	}
+
+	public boolean isFalling() {
+		return falling;
+	}
+
+	public void setFalling(boolean falling) {
+		this.falling = falling;
+	}
+
+	public boolean isDescending() {
+		return descending;
+	}
+
+	public void setDescending(boolean descending) {
+		this.descending = descending;
 	}
 }
