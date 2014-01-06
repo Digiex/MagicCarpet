@@ -37,6 +37,7 @@ public class Command implements CommandExecutor {
 		}
 		if (player.getFallDistance() > 0
 				&& !player.getLocation().getBlock().isLiquid()) {
+			player.sendMessage("You can only activate the Magic Carpet while on solid ground.");
 			return true;
 		}
 		if (carpet == null) {

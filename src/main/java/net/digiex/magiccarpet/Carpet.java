@@ -101,8 +101,6 @@ public class Carpet {
 			return true;
 		case DEAD_BUSH:
 			return true;
-		case WATER_LILY:
-			return true;
 		case RED_ROSE:
 			return true;
 		case YELLOW_FLOWER:

@@ -78,19 +78,18 @@ public class Listeners implements Listener {
 		if (carpet == null || !carpet.isVisible()) {
 			return;
 		}
-		Location to = event.getTo().clone();
-		Location last = carpet.getLocation();
-        if (last.getWorld() == to.getWorld() 
-        		&& last.distance(to) == 0) {
-            return;
-        }
+		Location to = event.getTo();
+		Location from = event.getFrom();
+		if (from.getWorld() == to.getWorld() && from.distance(to) == 0) {
+			return;
+		}
+		to = to.clone();
 		if (player.isSneaking()) {
 			if (!falling) {
 				to.setY(to.getY() - 1);
 			}
 			falling = true;
 		}
-		Location from = event.getFrom();
 		if (from.getY() > to.getY() && !falling) {
 			to.setY(from.getY());
 		}
@@ -106,11 +105,10 @@ public class Listeners implements Listener {
 			return;
 		}
 		Location to = event.getTo();
-		Location last = carpet.getLocation();
-        if (last.getWorld() == to.getWorld() 
-        		&& last.distance(to) == 0) {
-            return;
-        }
+		Location from = event.getFrom();
+		if (from.getWorld() == to.getWorld() && from.distance(to) == 0) {
+			return;
+		}
 		carpet.moveTo(to);
 	}
 
@@ -129,31 +127,26 @@ public class Listeners implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPhysics(BlockPhysicsEvent event) {
-		switch(event.getBlock().getType()) {
+		Block block = event.getBlock();
+		switch (block.getType()) {
 		case SAND:
 			break;
 		case CACTUS:
 			break;
 		case VINE:
 			break;
-		case STATIONARY_WATER:
-			break;
-		case WATER:
-			break;
-		case STATIONARY_LAVA:
-			break;
-		case LAVA:
-			break;
 		default:
 			return;
 		}
-		for (Carpet carpet : MagicCarpet.getCarpets().all()) {
-			if (carpet == null || !carpet.isVisible()) {
-				continue;
-			}
-			if (carpet.touches(event.getBlock())) {
-				event.setCancelled(true);
-				return;
+		int radius = 3;
+		for (int x = -(radius); x <= radius; x++) {
+			for (int y = -(radius); y <= radius; y++) {
+				for (int z = -(radius); z <= radius; z++) {
+					if (block.getRelative(x, y, z).hasMetadata("Carpet")) {
+						event.setCancelled(true);
+						return;
+					}
+				}
 			}
 		}
 	}
@@ -197,38 +190,38 @@ public class Listeners implements Listener {
 		if (!(event.getEntity() instanceof LivingEntity)) {
 			return;
 		}
-		switch(event.getCause()) {
-			case SUFFOCATION:
-				for (BlockFace face : BlockFace.values()) {
-					Block block = event.getEntity().getLocation().getBlock()
-							.getRelative(face);
-					if (block.hasMetadata("Carpet")) {
-						event.setCancelled(true);
-						return;
-					}
-				}
-			case FALL:
-				if (!(event.getEntity() instanceof Player)) {
-					return;
-				}
-				if (MagicCarpet.getCarpets().has((Player) event.getEntity())) {
+		switch (event.getCause()) {
+		case SUFFOCATION:
+			for (BlockFace face : BlockFace.values()) {
+				Block block = event.getEntity().getLocation().getBlock()
+						.getRelative(face);
+				if (block.hasMetadata("Carpet")) {
 					event.setCancelled(true);
-				}
-			case ENTITY_ATTACK:
-				if (!(event instanceof EntityDamageByEntityEvent)) {
 					return;
 				}
-				EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-				if (!(e.getDamager() instanceof Player)) {
-					return;
-				}
-				Carpet carpet = MagicCarpet.getCarpets().getCarpet(
-						(Player) e.getDamager());
-				if (carpet != null && carpet.isVisible()) {
-					event.setCancelled(true);
-				}
-			default:
+			}
+		case FALL:
+			if (!(event.getEntity() instanceof Player)) {
 				return;
+			}
+			if (MagicCarpet.getCarpets().has((Player) event.getEntity())) {
+				event.setCancelled(true);
+			}
+		case ENTITY_ATTACK:
+			if (!(event instanceof EntityDamageByEntityEvent)) {
+				return;
+			}
+			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
+			if (!(e.getDamager() instanceof Player)) {
+				return;
+			}
+			Carpet carpet = MagicCarpet.getCarpets().getCarpet(
+					(Player) e.getDamager());
+			if (carpet != null && carpet.isVisible()) {
+				event.setCancelled(true);
+			}
+		default:
+			return;
 		}
 	}
 
@@ -245,9 +238,8 @@ public class Listeners implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onHangingingBreak(HangingBreakEvent event) {
 		for (BlockFace face : BlockFace.values()) {
-			Block block = event.getEntity().getLocation().getBlock()
-					.getRelative(face);
-			if (block.hasMetadata("Carpet")) {
+			if (event.getEntity().getLocation().getBlock().getRelative(face)
+					.hasMetadata("Carpet")) {
 				event.setCancelled(true);
 				return;
 			}
