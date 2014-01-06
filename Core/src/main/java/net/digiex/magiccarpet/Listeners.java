@@ -221,18 +221,12 @@ public class Listeners implements Listener {
 				break;
 			}
 		}
-		int radius = 5;
-		for (int x = -(radius); x <= radius; x++) {
-			for (int y = -(radius); y <= radius; y++) {
-				for (int z = -(radius); z <= radius; z++) {
-					if (block.getRelative(x, y, z).hasMetadata("Carpet")) {
-						event.setCancelled(true);
-						return;
-					}
-				}
+		for (BlockFace face : BlockFace.values()) {
+			if (block.getRelative(face).hasMetadata("Carpet")) {
+				event.setCancelled(true);
+				return;
 			}
 		}
-
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
