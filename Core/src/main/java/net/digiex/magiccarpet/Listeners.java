@@ -44,8 +44,6 @@ import org.bukkit.util.Vector;
  */
 public class Listeners implements Listener {
 
-	private boolean falling = false;
-
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
@@ -93,25 +91,25 @@ public class Listeners implements Listener {
 		to = to.clone();
 		if (MagicCarpet.getCarpets().crouches(player)) {
 			if (player.isSneaking()) {
-				if (!falling) {
+				if (!carpet.isDescending()) {
 					to.setY(to.getY() - 1);
 				}
-				falling = true;
+				carpet.setDescending(true);
 			}
 		} else {
 			if (from.getPitch() == 90
 					&& (to.getX() != from.getX() || to.getZ() != from.getZ())) {
-				if (!falling) {
+				if (!carpet.isDescending()) {
 					to.setY(to.getY() - 1);
 				}
-				falling = true;
+				carpet.setDescending(true);
 			}
 		}
-		if (from.getY() > to.getY() && !falling) {
+		if (from.getY() > to.getY() && !carpet.isDescending()) {
 			to.setY(from.getY());
 		}
 		carpet.moveTo(to);
-		falling = false;
+		carpet.setDescending(false);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -140,7 +138,7 @@ public class Listeners implements Listener {
 			return;
 		}
 		if (event.isSneaking()) {
-			falling = true;
+			carpet.setDescending(true);
 			carpet.descend();
 		}
 	}
@@ -267,8 +265,13 @@ public class Listeners implements Listener {
 			if (!(event.getEntity() instanceof Player)) {
 				return;
 			}
-			if (MagicCarpet.getCarpets().has((Player) event.getEntity())) {
+			Carpet c = MagicCarpet.getCarpets().getCarpet((Player) event.getEntity());
+			if (c == null) {
+				return;
+			}
+			if (c.isVisible() || c.isFalling()) {
 				event.setCancelled(true);
+				c.setFalling(false);
 			}
 		case ENTITY_ATTACK:
 			if (MagicCarpet.getMagicConfig().getPvp()) {
