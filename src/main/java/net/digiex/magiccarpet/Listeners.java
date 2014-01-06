@@ -287,6 +287,9 @@ public class Listeners implements Listener {
 				event.setCancelled(true);
 				return;
 			}
+			if (!(e.getEntity() instanceof Player)) {
+				return;
+			}
 			Carpet c = MagicCarpet.getCarpets().getCarpet(
 					(Player) e.getEntity());
 			if (c != null && c.isVisible()) {
