@@ -108,8 +108,8 @@ public class Carpet {
 			if (!block.hasMetadata("Carpet")) {
 				return;
 			}
-			block.removeMetadata("Carpet", plugin);
 			block.update(true);
+			block.removeMetadata("Carpet", plugin);
 		}
 	}
 
@@ -170,6 +170,7 @@ public class Carpet {
 				}
 			}
 		}
+		hidden = false;
 		return true;
 	}
 
@@ -350,7 +351,6 @@ public class Carpet {
 
 	public void hide() {
 		if (!hidden) {
-			hidden = true;
 			removeCarpet();
 			makeMagic(Color.RED);
 			MagicCarpet.getCarpets().update(who);
@@ -425,7 +425,6 @@ public class Carpet {
 	public void show() {
 		if (hidden) {
 			currentCentre = who.getLocation().getBlock().getRelative(0, -1, 0);
-			hidden = false;
 			if (drawCarpet()) {
 				makeMagic(Color.BLUE);
 				who.sendMessage("Poof! The magic carpet appears below your feet!");
@@ -494,6 +493,7 @@ public class Carpet {
 			}
 			fibre.block = null;
 		}
+		hidden = true;
 	}
 
 	public boolean canHaveData(Material material) {

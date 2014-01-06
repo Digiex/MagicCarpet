@@ -221,7 +221,7 @@ public class Listeners implements Listener {
 				break;
 			}
 		}
-		int radius = 3;
+		int radius = 5;
 		for (int x = -(radius); x <= radius; x++) {
 			for (int y = -(radius); y <= radius; y++) {
 				for (int z = -(radius); z <= radius; z++) {
