@@ -268,6 +268,10 @@ public final class Config {
 	public boolean getPVPHide() {
 		return pvpHide;
 	}
+	
+	public void setPVPHide(boolean pvpHide) {
+		this.pvpHide = pvpHide;
+	}
 
 	public void saveSettings() {
 		for (Entry<String, Object> o : options.entrySet()) {
