@@ -265,7 +265,8 @@ public class Listeners implements Listener {
 			if (!(event.getEntity() instanceof Player)) {
 				return;
 			}
-			Carpet c = MagicCarpet.getCarpets().getCarpet((Player) event.getEntity());
+			Carpet c = MagicCarpet.getCarpets().getCarpet(
+					(Player) event.getEntity());
 			if (c == null) {
 				return;
 			}
@@ -290,7 +291,8 @@ public class Listeners implements Listener {
 					}
 					event.setCancelled(true);
 				}
-			} else if ((e.getDamager() instanceof Player)) {
+			}
+			if ((e.getDamager() instanceof Player)) {
 				Carpet carpet = MagicCarpet.getCarpets().getCarpet(
 						(Player) e.getDamager());
 				if (carpet != null && carpet.isVisible()) {
