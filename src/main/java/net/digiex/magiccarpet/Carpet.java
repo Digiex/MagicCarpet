@@ -48,8 +48,8 @@ public class Carpet {
 			if (!block.hasMetadata("Carpet")) {
 				return;
 			}
-			block.removeMetadata("Carpet", plugin);
 			block.update(true);
+			block.removeMetadata("Carpet", plugin);
 		}
 	}
 
