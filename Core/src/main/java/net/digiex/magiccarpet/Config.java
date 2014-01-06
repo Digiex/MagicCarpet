@@ -93,7 +93,7 @@ public final class Config {
 	private long chargeTime = 1800;
 	private boolean chargeTimeBased = false;
 	private boolean magicEffect = true;
-	private boolean pvp = true;
+	private boolean pvp = false;
 	private boolean physics = false;
 	private boolean pvpHide = true;
 
@@ -347,7 +347,7 @@ public final class Config {
 				Arrays.asList("alpha:3600:5.0", "beta:7200:10.0"));
 		chargeTimeBased = config.getBoolean("charge-timebased", false);
 		magicEffect = config.getBoolean("magic", true);
-		pvp = config.getBoolean("pvp", true);
+		pvp = config.getBoolean("pvp", false);
 		physics = config.getBoolean("physics-fun", false);
 		pvpHide = config.getBoolean("pvp-hide", true);
 	}

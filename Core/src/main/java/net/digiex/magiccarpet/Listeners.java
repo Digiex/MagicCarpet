@@ -271,7 +271,7 @@ public class Listeners implements Listener {
 				event.setCancelled(true);
 			}
 		case ENTITY_ATTACK:
-			if (!MagicCarpet.getMagicConfig().getPvp()) {
+			if (MagicCarpet.getMagicConfig().getPvp()) {
 				return;
 			}
 			if (!(event instanceof EntityDamageByEntityEvent)) {
@@ -284,10 +284,16 @@ public class Listeners implements Listener {
 			Carpet carpet = MagicCarpet.getCarpets().getCarpet(
 					(Player) e.getDamager());
 			if (carpet != null && carpet.isVisible()) {
+				event.setCancelled(true);
+				return;
+			}
+			Carpet c = MagicCarpet.getCarpets().getCarpet(
+					(Player) e.getEntity());
+			if (c != null && c.isVisible()) {
 				if (MagicCarpet.getMagicConfig().getPVPHide()) {
 					carpet.hide();
+					return;
 				}
-				event.setCancelled(true);
 			}
 		default:
 			return;
