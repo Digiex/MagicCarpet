@@ -221,15 +221,17 @@ public class Listeners implements Listener {
 				break;
 			}
 		}
-		for (Carpet carpet : MagicCarpet.getCarpets().all()) {
-			if (carpet == null || !carpet.isVisible()) {
-				continue;
-			}
-			if (carpet.touches(block)) {
-				event.setCancelled(true);
-				return;
-			}
-		}
+		int radius = 3;
+        for (int x = -(radius); x <= radius; x++) {
+                for (int y = -(radius); y <= radius; y++) {
+                        for (int z = -(radius); z <= radius; z++) {
+                                if (block.getRelative(x, y, z).hasMetadata("Carpet")) {
+                                        event.setCancelled(true);
+                                        return;
+                                }
+                        }
+                }
+        }
 
 	}
 
