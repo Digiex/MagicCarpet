@@ -207,13 +207,21 @@ public class Listeners implements Listener {
 				return;
 			}
 			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-			if (!(e.getDamager() instanceof Player)) {
-				return;
+			if ((e.getEntity() instanceof Player)) {
+				Carpet carpet = MagicCarpet.getCarpets().getCarpet(
+						(Player) e.getEntity());
+				if (carpet != null && carpet.isVisible()) {
+					carpet.hide();
+					event.setCancelled(true);
+				}
 			}
-			Carpet carpet = MagicCarpet.getCarpets().getCarpet(
-					(Player) e.getDamager());
-			if (carpet != null && carpet.isVisible()) {
-				event.setCancelled(true);
+			if ((e.getDamager() instanceof Player)) {
+				Carpet carpet = MagicCarpet.getCarpets().getCarpet(
+						(Player) e.getDamager());
+				if (carpet != null && carpet.isVisible()) {
+					carpet.hide();
+					event.setCancelled(true);
+				}
 			}
 		default:
 			return;
