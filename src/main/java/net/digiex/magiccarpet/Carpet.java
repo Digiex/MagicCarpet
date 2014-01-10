@@ -9,6 +9,7 @@ import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -255,6 +256,10 @@ public class Carpet {
 			makeMagic(Color.RED);
 			MagicCarpet.getCarpets().update(who);
 			who.sendMessage(message);
+			if (who.getLocation().getBlock().getRelative(BlockFace.DOWN)
+					.getType() == Material.AIR) {
+				falling = true;
+			}
 		}
 	}
 
@@ -352,6 +357,10 @@ public class Carpet {
 			makeMagic(Color.RED);
 			MagicCarpet.getCarpets().update(who);
 			who.sendMessage("Poof! The magic carpet disappears.");
+			if (who.getLocation().getBlock().getRelative(BlockFace.DOWN)
+					.getType() == Material.AIR) {
+				falling = true;
+			}
 		}
 	}
 
