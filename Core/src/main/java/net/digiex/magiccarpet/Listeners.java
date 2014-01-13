@@ -283,21 +283,23 @@ public class Listeners implements Listener {
 			}
 			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
 			if ((e.getEntity() instanceof Player)) {
-				Carpet carpet = MagicCarpet.getCarpets().getCarpet(
-						(Player) e.getEntity());
+				Player player = (Player) e.getEntity();
+				Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
 				if (carpet != null && carpet.isVisible()) {
 					if (MagicCarpet.getMagicConfig().getPVPHide()) {
 						carpet.hide();
+						player.sendMessage("The carpet cannot be used while in PVP/PVE combat.");
 					}
 					event.setCancelled(true);
 				}
 			}
 			if ((e.getDamager() instanceof Player)) {
-				Carpet carpet = MagicCarpet.getCarpets().getCarpet(
-						(Player) e.getDamager());
+				Player player = (Player) e.getEntity();
+				Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
 				if (carpet != null && carpet.isVisible()) {
 					if (MagicCarpet.getMagicConfig().getPVPHide()) {
 						carpet.hide();
+						player.sendMessage("The carpet cannot be used while in PVP/PVE combat.");
 					}
 					event.setCancelled(true);
 				}
