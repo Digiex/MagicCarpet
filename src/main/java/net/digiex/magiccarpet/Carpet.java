@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -41,7 +42,8 @@ public class Carpet {
 
 		void set(Block bl, Material material) {
 			bl.setType(material);
-			bl.setMetadata("Carpet", new FixedMetadataValue(plugin, who.getName()));
+			bl.setMetadata("Carpet",
+					new FixedMetadataValue(plugin, who.getName()));
 		}
 
 		void update() {
@@ -65,7 +67,7 @@ public class Carpet {
 	private Block currentCentre;
 	private int area = 0, rad = 0, radplsq = 0;
 	private CarpetFibre[] fibres;
-	private boolean hidden;
+	private boolean hidden, falling, descending;
 	private Player who;
 
 	private Carpet(Player player) {
@@ -112,7 +114,7 @@ public class Carpet {
 		case VINE:
 			return true;
 		case DOUBLE_PLANT:
-            return true;
+			return true;
 		default:
 			return false;
 		}
@@ -155,6 +157,10 @@ public class Carpet {
 			removeCarpet();
 			MagicCarpet.getCarpets().update(who);
 			who.sendMessage("Poof! The magic carpet disappears.");
+			if (who.getLocation().getBlock().getRelative(BlockFace.DOWN)
+					.getType() == Material.AIR) {
+				falling = true;
+			}
 		}
 	}
 
@@ -185,7 +191,7 @@ public class Carpet {
 			}
 		}
 	}
-	
+
 	public boolean touches(Block block) {
 		if (currentCentre == null || block == null) {
 			return false;
@@ -197,5 +203,21 @@ public class Carpet {
 			return false;
 		}
 		return true;
+	}
+
+	public boolean isFalling() {
+		return falling;
+	}
+
+	public void setFalling(boolean falling) {
+		this.falling = falling;
+	}
+
+	public boolean isDescending() {
+		return descending;
+	}
+
+	public void setDescending(boolean descending) {
+		this.descending = descending;
 	}
 }

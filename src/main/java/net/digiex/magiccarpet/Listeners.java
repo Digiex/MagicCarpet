@@ -42,8 +42,6 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
  */
 public class Listeners implements Listener {
 
-	private boolean falling = false;
-
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
@@ -85,16 +83,16 @@ public class Listeners implements Listener {
 		}
 		to = to.clone();
 		if (player.isSneaking()) {
-			if (!falling) {
+			if (!carpet.isDescending()) {
 				to.setY(to.getY() - 1);
 			}
-			falling = true;
+			carpet.setDescending(true);
 		}
-		if (from.getY() > to.getY() && !falling) {
+		if (from.getY() > to.getY() && !carpet.isDescending()) {
 			to.setY(from.getY());
 		}
 		carpet.moveTo(to);
-		falling = false;
+		carpet.setDescending(false);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -120,7 +118,7 @@ public class Listeners implements Listener {
 			return;
 		}
 		if (event.isSneaking()) {
-			falling = true;
+			carpet.setDescending(true);
 			carpet.descend();
 		}
 	}
@@ -199,8 +197,14 @@ public class Listeners implements Listener {
 			if (!(event.getEntity() instanceof Player)) {
 				return;
 			}
-			if (MagicCarpet.getCarpets().has((Player) event.getEntity())) {
+			Carpet c = MagicCarpet.getCarpets().getCarpet(
+					(Player) event.getEntity());
+			if (c == null) {
+				return;
+			}
+			if (c.isVisible() || c.isFalling()) {
 				event.setCancelled(true);
+				c.setFalling(false);
 			}
 		case ENTITY_ATTACK:
 			if (!(event instanceof EntityDamageByEntityEvent)) {
@@ -208,18 +212,20 @@ public class Listeners implements Listener {
 			}
 			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
 			if ((e.getEntity() instanceof Player)) {
-				Carpet carpet = MagicCarpet.getCarpets().getCarpet(
-						(Player) e.getEntity());
+				Player player = (Player) e.getEntity();
+				Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
 				if (carpet != null && carpet.isVisible()) {
 					carpet.hide();
+					player.sendMessage("The carpet cannot be used while in PVP/PVE combat.");
 					event.setCancelled(true);
 				}
 			}
 			if ((e.getDamager() instanceof Player)) {
-				Carpet carpet = MagicCarpet.getCarpets().getCarpet(
-						(Player) e.getDamager());
+				Player player = (Player) e.getEntity();
+				Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
 				if (carpet != null && carpet.isVisible()) {
 					carpet.hide();
+					player.sendMessage("The carpet cannot be used while in PVP/PVE combat.");
 					event.setCancelled(true);
 				}
 			}
