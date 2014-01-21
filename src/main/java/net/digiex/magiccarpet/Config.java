@@ -35,337 +35,323 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public final class Config {
 
-	private HashMap<String, Object> options = new HashMap<String, Object>();
-	private final FileConfiguration config;
-	private final File configFile;
-	private final Logger log;
+    private static HashMap<String, Object> options = new HashMap<String, Object>();
+    private static FileConfiguration config;
+    private static File configFile;
+    private static Logger log;
 
-	Config(MagicCarpet plugin) {
-		this.log = plugin.getLogger();
-		this.config = plugin.getConfig();
-		this.configFile = new File(plugin.getDataFolder(), "config.yml");
+    Config(final MagicCarpet plugin) {
+        log = plugin.getLogger();
+        config = plugin.getConfig();
+        configFile = new File(plugin.getDataFolder(), "config.yml");
 
-		options.put("crouch-descent", this.crouchDef);
-		options.put("center-light", this.glowCenter);
-		options.put("default-size", this.carpSize);
-		options.put("carpet-material", saveString(this.carpMaterial.name()));
-		options.put("light-material", saveString(this.lightMaterial.name()));
-		options.put("max-size", this.maxCarpSize);
-		options.put("custom-carpets", this.customCarpets);
-		options.put("custom-lights", this.customLights);
-		options.put("lights", this.lights);
-		options.put("save-carpets", this.saveCarpets);
-		options.put("change-liquids", this.changeLiquids);
-		options.put("tools", this.tools);
-		options.put("charge", this.charge);
-		options.put("charge-timebased", this.chargeTimeBased);
-		options.put("charge-amount", this.chargeAmount);
-		options.put("charge-time", this.chargeTime);
-		options.put("charge-packages", this.chargePackages);
-		options.put("magic", this.magicEffect);
-		options.put("pvp", this.pvp);
-		options.put("physics-fun", this.physics);
-		options.put("pvp-hide", this.pvpHide);
+        options.put("crouch-descent", Config.crouchDef);
+        options.put("center-light", Config.glowCenter);
+        options.put("default-size", Config.carpSize);
+        options.put("carpet-material", saveString(Config.carpMaterial.name()));
+        options.put("light-material", saveString(Config.lightMaterial.name()));
+        options.put("max-size", Config.maxCarpSize);
+        options.put("custom-carpets", Config.customCarpets);
+        options.put("custom-lights", Config.customLights);
+        options.put("lights", Config.lights);
+        options.put("save-carpets", Config.saveCarpets);
+        options.put("change-liquids", Config.changeLiquids);
+        options.put("tools", Config.tools);
+        options.put("charge", Config.charge);
+        options.put("charge-timebased", Config.chargeTimeBased);
+        options.put("charge-amount", Config.chargeAmount);
+        options.put("charge-time", Config.chargeTime);
+        options.put("charge-packages", Config.chargePackages);
+        options.put("magic", Config.magicEffect);
+        options.put("pvp", Config.pvp);
+        options.put("physics-fun", Config.physics);
+        options.put("pvp-hide", Config.pvpHide);
 
-		if (configFile.exists()) {
-			loadSettings();
-		} else {
-			saveSettings();
-		}
-	}
+        if (configFile.exists())
+            loadSettings();
+        else
+            saveSettings();
+    }
 
-	private Material carpMaterial = GLASS;
-	private int carpSize = 5;
-	private boolean crouchDef = true;
-	private boolean customCarpets = false;
-	private boolean glowCenter = false;
-	private Material lightMaterial = GLOWSTONE;
-	private int maxCarpSize = 7;
-	private boolean saveCarpets = true;
-	private boolean lights = false;
-	private boolean customLights = false;
-	private boolean charge = false;
-	private double chargeAmount = 20.0;
-	private String changeLiquids = "true";
-	private boolean tools = false;
-	private List<?> chargePackages = Arrays.asList("alpha:3600:5.0",
-			"beta:7200:10.0");
-	private long chargeTime = 1800;
-	private boolean chargeTimeBased = false;
-	private boolean magicEffect = true;
-	private boolean pvp = false;
-	private boolean physics = false;
-	private boolean pvpHide = true;
+    private static Material carpMaterial = GLASS;
+    private static int carpSize = 5;
+    private static boolean crouchDef = true;
+    private static boolean customCarpets = false;
+    private static boolean glowCenter = false;
+    private static Material lightMaterial = GLOWSTONE;
+    private static int maxCarpSize = 7;
+    private static boolean saveCarpets = true;
+    private static boolean lights = false;
+    private static boolean customLights = false;
+    private static boolean charge = false;
+    private static double chargeAmount = 20.0;
+    private static String changeLiquids = "true";
+    private static boolean tools = false;
+    private static List<?> chargePackages = Arrays.asList("alpha:3600:5.0", "beta:7200:10.0");
+    private static long chargeTime = 1800;
+    private static boolean chargeTimeBased = false;
+    private static boolean magicEffect = true;
+    private static boolean pvp = false;
+    private static boolean physics = false;
+    private static boolean pvpHide = true;
 
-	private String saveString(String s) {
-		return s.toLowerCase().replace("_", " ");
-	}
+    private static String saveString(final String s) {
+        return s.toLowerCase().replace("_", " ");
+    }
 
-	private String loadString(String s) {
-		return s.toUpperCase().replace(" ", "_");
-	}
+    private static String loadString(final String s) {
+        return s.toUpperCase().replace(" ", "_");
+    }
 
-	public Material getCarpetMaterial() {
-		return carpMaterial;
-	}
+    public static Material getCarpetMaterial() {
+        return carpMaterial;
+    }
 
-	public void setCarpetMaterial(Material material) {
-		this.carpMaterial = material;
-	}
+    public static void setCarpetMaterial(final Material material) {
+        Config.carpMaterial = material;
+    }
 
-	public int getCarpSize() {
-		return carpSize;
-	}
+    public static int getCarpSize() {
+        return carpSize;
+    }
 
-	public void setCarpSize(int carpSize) {
-		this.carpSize = carpSize;
-	}
+    public static void setCarpSize(final int carpSize) {
+        Config.carpSize = carpSize;
+    }
 
-	public boolean getCrouch() {
-		return crouchDef;
-	}
+    public static boolean getCrouch() {
+        return crouchDef;
+    }
 
-	public void setCrouch(boolean crouchDef) {
-		this.crouchDef = crouchDef;
-	}
+    public static void setCrouch(final boolean crouchDef) {
+        Config.crouchDef = crouchDef;
+    }
 
-	public boolean getCustomCarpets() {
-		return customCarpets;
-	}
+    public static boolean getCustomCarpets() {
+        return customCarpets;
+    }
 
-	public void setCustomCarpets(boolean customCarpets) {
-		this.customCarpets = customCarpets;
-	}
+    public static void setCustomCarpets(final boolean customCarpets) {
+        Config.customCarpets = customCarpets;
+    }
 
-	public boolean getGlowing() {
-		return glowCenter;
-	}
+    public static boolean getGlowing() {
+        return glowCenter;
+    }
 
-	public void setGlowing(boolean glowCenter) {
-		this.glowCenter = glowCenter;
-	}
+    public static void setGlowing(final boolean glowCenter) {
+        Config.glowCenter = glowCenter;
+    }
 
-	public Material getLightMaterial() {
-		return lightMaterial;
-	}
+    public static Material getLightMaterial() {
+        return lightMaterial;
+    }
 
-	public void setLightMaterial(Material lightMaterial) {
-		this.lightMaterial = lightMaterial;
-	}
+    public static void setLightMaterial(final Material lightMaterial) {
+        Config.lightMaterial = lightMaterial;
+    }
 
-	public int getMaxCarpetSize() {
-		return maxCarpSize;
-	}
+    public static int getMaxCarpetSize() {
+        return maxCarpSize;
+    }
 
-	public void setMaxCarpetSize(int maxCarpSize) {
-		this.maxCarpSize = maxCarpSize;
-	}
+    public static void setMaxCarpetSize(final int maxCarpSize) {
+        Config.maxCarpSize = maxCarpSize;
+    }
 
-	public boolean getSaveCarpets() {
-		return saveCarpets;
-	}
+    public static boolean getSaveCarpets() {
+        return saveCarpets;
+    }
 
-	public void setSaveCarpets(boolean saveCarpets) {
-		this.saveCarpets = saveCarpets;
-	}
+    public static void setSaveCarpets(final boolean saveCarpets) {
+        Config.saveCarpets = saveCarpets;
+    }
 
-	public boolean getLights() {
-		return lights;
-	}
+    public static boolean getLights() {
+        return lights;
+    }
 
-	public void setLights(boolean lights) {
-		this.lights = lights;
-	}
+    public static void setLights(final boolean lights) {
+        Config.lights = lights;
+    }
 
-	public boolean getCustomLights() {
-		return customLights;
-	}
+    public static boolean getCustomLights() {
+        return customLights;
+    }
 
-	public void setCustomLights(boolean customLights) {
-		this.customLights = customLights;
-	}
+    public static void setCustomLights(final boolean customLights) {
+        Config.customLights = customLights;
+    }
 
-	public boolean getCharge() {
-		return charge;
-	}
+    public static boolean getCharge() {
+        return charge;
+    }
 
-	public void setCharge(boolean charge) {
-		this.charge = charge;
-	}
+    public static void setCharge(final boolean charge) {
+        Config.charge = charge;
+    }
 
-	public double getChargeAmount() {
-		return chargeAmount;
-	}
+    public static double getChargeAmount() {
+        return chargeAmount;
+    }
 
-	public void setChargeAmount(double chargeAmount) {
-		this.chargeAmount = chargeAmount;
-	}
+    public static void setChargeAmount(final double chargeAmount) {
+        Config.chargeAmount = chargeAmount;
+    }
 
-	public String getChangeLiquids() {
-		return changeLiquids;
-	}
+    public static String getChangeLiquids() {
+        return changeLiquids;
+    }
 
-	public void setChangeLiquids(String changeLiquids) {
-		this.changeLiquids = changeLiquids;
-	}
+    public static void setChangeLiquids(final String changeLiquids) {
+        Config.changeLiquids = changeLiquids;
+    }
 
-	public boolean getTools() {
-		return tools;
-	}
+    public static boolean getTools() {
+        return tools;
+    }
 
-	public void setTools(boolean tools) {
-		this.tools = tools;
-	}
+    public static void setTools(final boolean tools) {
+        Config.tools = tools;
+    }
 
-	public List<?> getChargePackages() {
-		return chargePackages;
-	}
+    public static List<?> getChargePackages() {
+        return chargePackages;
+    }
 
-	public void setChargePackages(List<?> chargePackages) {
-		this.chargePackages = chargePackages;
-	}
+    public static void setChargePackages(final List<?> chargePackages) {
+        Config.chargePackages = chargePackages;
+    }
 
-	public long getChargeTime() {
-		return chargeTime;
-	}
+    public static long getChargeTime() {
+        return chargeTime;
+    }
 
-	public void setChargeTime(long chargeTime) {
-		this.chargeTime = chargeTime;
-	}
+    public static void setChargeTime(final long chargeTime) {
+        Config.chargeTime = chargeTime;
+    }
 
-	public boolean getChargeTimeBased() {
-		return chargeTimeBased;
-	}
+    public static boolean getChargeTimeBased() {
+        return chargeTimeBased;
+    }
 
-	public void setChargeTimeBased(boolean chargeTimeBased) {
-		this.chargeTimeBased = chargeTimeBased;
-	}
+    public static void setChargeTimeBased(final boolean chargeTimeBased) {
+        Config.chargeTimeBased = chargeTimeBased;
+    }
 
-	public boolean getMagicEffect() {
-		return magicEffect;
-	}
+    public static boolean getMagicEffect() {
+        return magicEffect;
+    }
 
-	public void setMagicEffect(boolean magicEffect) {
-		this.magicEffect = magicEffect;
-	}
+    public static void setMagicEffect(final boolean magicEffect) {
+        Config.magicEffect = magicEffect;
+    }
 
-	public boolean getPvp() {
-		return pvp;
-	}
+    public static boolean getPvp() {
+        return pvp;
+    }
 
-	public void setPvp(boolean pvp) {
-		this.pvp = pvp;
-	}
+    public static void setPvp(final boolean pvp) {
+        Config.pvp = pvp;
+    }
 
-	public boolean getPhysics() {
-		return physics;
-	}
+    public static boolean getPhysics() {
+        return physics;
+    }
 
-	public void setPhysics(boolean physics) {
-		this.physics = physics;
-	}
-	
-	public boolean getPVPHide() {
-		return pvpHide;
-	}
-	
-	public void setPVPHide(boolean pvpHide) {
-		this.pvpHide = pvpHide;
-	}
+    public static void setPhysics(final boolean physics) {
+        Config.physics = physics;
+    }
 
-	public void saveSettings() {
-		for (Entry<String, Object> o : options.entrySet()) {
-			config.set(o.getKey(), o.getValue());
-		}
-		config.options()
-				.header("Be sure to use /mr if you change any settings here while the server is running.");
-		try {
-			config.save(configFile);
-		} catch (Exception e) {
-			log.severe("Unable to create config.yml");
-		}
-	}
+    public static boolean getPVPHide() {
+        return pvpHide;
+    }
 
-	public void loadSettings() {
-		try {
-			config.load(configFile);
-		} catch (FileNotFoundException e) {
-			log.warning("Error loading config.yml; file not found.");
-			log.warning("Creating new config.yml since the old one has disappeared.");
-			saveSettings();
-		} catch (IOException e) {
-			log.warning("Error loading config.yml; IOException");
-		} catch (InvalidConfigurationException e) {
-			log.warning("Error loading config.yml; InvalidConfigurationException");
-		}
-		checkConfig();
-		crouchDef = config.getBoolean("crouch-descent", true);
-		glowCenter = config.getBoolean("center-light", false);
-		carpSize = config.getInt("default-size", 5);
-		carpMaterial = Material.getMaterial(loadString(config.getString(
-				"carpet-material", GLASS.name())));
-		if (carpMaterial == null) {
-			carpMaterial = Material.matchMaterial(config.getString(
-					"carpet-material", GLASS.name()));
+    public static void setPVPHide(final boolean pvpHide) {
+        Config.pvpHide = pvpHide;
+    }
 
-		}
-		if (!MagicCarpet.getAcceptableCarpetMaterial().contains(carpMaterial)) {
-			carpMaterial = GLASS;
-			log.warning("Config error; Invaild carpet material.");
-		}
-		lightMaterial = Material.getMaterial(loadString(config.getString(
-				"light-material", GLOWSTONE.name())));
-		if (lightMaterial == null) {
-			lightMaterial = Material.matchMaterial(config.getString(
-					"light-material", GLOWSTONE.name()));
-		}
-		if (!MagicCarpet.getAcceptableLightMaterial().contains(lightMaterial)) {
-			lightMaterial = GLOWSTONE;
-			log.warning("Config error; Invalid light material.");
-		}
-		maxCarpSize = config.getInt("max-size", 7);
-		if (carpSize > maxCarpSize) {
-			setCarpSize(5);
-			maxCarpSize = 7;
-			log.warning("Config error; Default-size is larger than max-size.");
-		}
-		customCarpets = config.getBoolean("custom-carpets", false);
-		customLights = config.getBoolean("custom-lights", false);
-		saveCarpets = config.getBoolean("save-carpets", true);
-		lights = config.getBoolean("lights", false);
-		charge = config.getBoolean("charge", false);
-		chargeAmount = config.getDouble("charge-amount", 5.0);
-		changeLiquids = config.getString("change-liquids", "true");
-		if (!changeLiquids.equals("lava") && !changeLiquids.equals("water")
-				&& !changeLiquids.equals("false"))
-			changeLiquids = "true";
-		tools = config.getBoolean("tools", false);
-		chargeTime = config.getLong("charge-time", 1800);
-		chargePackages = config.getList("charge-packages",
-				Arrays.asList("alpha:3600:5.0", "beta:7200:10.0"));
-		chargeTimeBased = config.getBoolean("charge-timebased", false);
-		magicEffect = config.getBoolean("magic", true);
-		pvp = config.getBoolean("pvp", false);
-		physics = config.getBoolean("physics-fun", false);
-		pvpHide = config.getBoolean("pvp-hide", true);
-	}
+    public static void saveSettings() {
+        for (final Entry<String, Object> o : options.entrySet())
+            config.set(o.getKey(), o.getValue());
+        config.options().header("Be sure to use /mr if you change any settings here while the server is running.");
+        try {
+            config.save(configFile);
+        } catch (final Exception e) {
+            log.severe("Unable to create config.yml");
+        }
+    }
 
-	public void checkConfig() {
-		boolean updated = false;
-		for (Entry<String, Object> o : options.entrySet()) {
-			String key = o.getKey();
-			if (!config.contains(key)) {
-				config.set(key, o.getValue());
-				updated = true;
-			}
-		}
-		try {
-			config.save(configFile);
-		} catch (Exception e) {
-			log.warning("Unable to modify config.yml");
-		}
-		if (updated) {
-			log.info("New options have been added to the config");
-		}
-	}
+    public static void loadSettings() {
+        try {
+            config.load(configFile);
+        } catch (final FileNotFoundException e) {
+            log.warning("Error loading config.yml; file not found.");
+            log.warning("Creating new config.yml since the old one has disappeared.");
+            saveSettings();
+        } catch (final IOException e) {
+            log.warning("Error loading config.yml; IOException");
+        } catch (final InvalidConfigurationException e) {
+            log.warning("Error loading config.yml; InvalidConfigurationException");
+        }
+        checkConfig();
+        crouchDef = config.getBoolean("crouch-descent", true);
+        glowCenter = config.getBoolean("center-light", false);
+        carpSize = config.getInt("default-size", 5);
+        carpMaterial = Material.getMaterial(loadString(config.getString("carpet-material", GLASS.name())));
+        if (carpMaterial == null)
+            carpMaterial = Material.matchMaterial(config.getString("carpet-material", GLASS.name()));
+        if (!MagicCarpet.getAcceptableCarpetMaterial().contains(carpMaterial)) {
+            carpMaterial = GLASS;
+            log.warning("Config error; Invaild carpet material.");
+        }
+        lightMaterial = Material.getMaterial(loadString(config.getString("light-material", GLOWSTONE.name())));
+        if (lightMaterial == null)
+            lightMaterial = Material.matchMaterial(config.getString("light-material", GLOWSTONE.name()));
+        if (!MagicCarpet.getAcceptableLightMaterial().contains(lightMaterial)) {
+            lightMaterial = GLOWSTONE;
+            log.warning("Config error; Invalid light material.");
+        }
+        maxCarpSize = config.getInt("max-size", 7);
+        if (carpSize > maxCarpSize) {
+            carpSize = 5;
+            maxCarpSize = 7;
+            log.warning("Config error; Default-size is larger than max-size.");
+        }
+        customCarpets = config.getBoolean("custom-carpets", false);
+        customLights = config.getBoolean("custom-lights", false);
+        saveCarpets = config.getBoolean("save-carpets", true);
+        lights = config.getBoolean("lights", false);
+        charge = config.getBoolean("charge", false);
+        chargeAmount = config.getDouble("charge-amount", 5.0);
+        changeLiquids = config.getString("change-liquids", "true");
+        if (!changeLiquids.equals("lava") && !changeLiquids.equals("water") && !changeLiquids.equals("false"))
+            changeLiquids = "true";
+        tools = config.getBoolean("tools", false);
+        chargeTime = config.getLong("charge-time", 1800);
+        chargePackages = config.getList("charge-packages", Arrays.asList("alpha:3600:5.0", "beta:7200:10.0"));
+        chargeTimeBased = config.getBoolean("charge-timebased", false);
+        magicEffect = config.getBoolean("magic", true);
+        pvp = config.getBoolean("pvp", false);
+        physics = config.getBoolean("physics-fun", false);
+        pvpHide = config.getBoolean("pvp-hide", true);
+    }
+
+    public static void checkConfig() {
+        boolean updated = false;
+        for (final Entry<String, Object> o : options.entrySet()) {
+            final String key = o.getKey();
+            if (!config.contains(key)) {
+                config.set(key, o.getValue());
+                updated = true;
+            }
+        }
+        try {
+            config.save(configFile);
+        } catch (final Exception e) {
+            log.warning("Unable to modify config.yml");
+        }
+        if (updated)
+            log.info("New options have been added to the config");
+    }
 }

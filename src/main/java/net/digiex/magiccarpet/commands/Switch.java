@@ -1,8 +1,10 @@
 package net.digiex.magiccarpet.commands;
 
 import net.digiex.magiccarpet.Carpet;
+import net.digiex.magiccarpet.Config;
 import net.digiex.magiccarpet.MagicCarpet;
 import net.digiex.magiccarpet.Permissions;
+import net.digiex.magiccarpet.plugins.Plugins;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,43 +29,37 @@ import org.bukkit.entity.Player;
  */
 public class Switch implements CommandExecutor {
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command command,
-			String label, String[] args) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage("Sorry, only players can use the carpet!");
-			return true;
-		}
-		Player player = (Player) sender;
-		if (MagicCarpet.getVault().isEnabled()) {
-			if (MagicCarpet.getMagicConfig().getChargeTimeBased()) {
-				if (MagicCarpet.getCarpets().getTime(player) <= 0L) {
-					player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
-					return true;
-				}
-			} else {
-				if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
-					player.sendMessage("You need to pay a one time fee before you can use Magic Carpet. Use /mcb");
-					return true;
-				}
-			}
-		} else {
-			if (!Permissions.canSwitch(player)) {
-				player.sendMessage("You do not have permission to use the magic light.");
-				return true;
-			}
-		}
-		Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
-		if (carpet == null || !carpet.isVisible()) {
-			player.sendMessage("You don't have a carpet yet, use /mc!");
-			return true;
-		}
-		MagicCarpet.getCarpets().toggleCrouch(player);
-		if (MagicCarpet.getCarpets().crouches(player)) {
-			player.sendMessage("You now crouch to descend");
-		} else {
-			player.sendMessage("You now look down to descend");
-		}
-		return true;
-	}
+    @Override
+    public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("Sorry, only players can use the carpet!");
+            return true;
+        }
+        final Player player = (Player) sender;
+        if (Plugins.isVaultEnabled()) {
+            if (Config.getChargeTimeBased()) {
+                if (MagicCarpet.getCarpets().getTime(player) <= 0L) {
+                    player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
+                    return true;
+                }
+            } else if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
+                player.sendMessage("You need to pay a one time fee before you can use Magic Carpet. Use /mcb");
+                return true;
+            }
+        } else if (!Permissions.canSwitch(player)) {
+            player.sendMessage("You do not have permission to use the magic light.");
+            return true;
+        }
+        final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+        if (carpet == null || !carpet.isVisible()) {
+            player.sendMessage("You don't have a carpet yet, use /mc!");
+            return true;
+        }
+        MagicCarpet.getCarpets().toggleCrouch(player);
+        if (MagicCarpet.getCarpets().crouches(player))
+            player.sendMessage("You now crouch to descend");
+        else
+            player.sendMessage("You now look down to descend");
+        return true;
+    }
 }
