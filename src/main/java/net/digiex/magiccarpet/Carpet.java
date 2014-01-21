@@ -399,6 +399,8 @@ public class Carpet {
             if (drawCarpet()) {
                 makeMagic(Color.BLUE);
                 who.sendMessage("Poof! The magic carpet appears below your feet!");
+            } else {
+                hidden = true;
             }
             MagicCarpet.getCarpets().update(who);
         }

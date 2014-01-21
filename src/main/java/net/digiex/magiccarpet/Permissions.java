@@ -5,6 +5,8 @@ import net.digiex.magiccarpet.plugins.WorldGuard;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 /*
  * Magic Carpet 2.4 Copyright (C) 2012-2014 Android, Celtic Minstrel, xzKinGzxBuRnzx
@@ -64,23 +66,21 @@ public final class Permissions {
         return hasPermission(player, t);
     }
 
-    public static boolean canNotPay(final Player player) {
-        return hasPermission(player, p);
-    }
-
     public static boolean canReload(final Player player) {
         return player.hasPermission(r);
+    }
+
+    public static boolean canNotPay(final Player player) {
+        return player.hasPermission(p);
+    }
+
+    public static boolean canFlyHere(final Location location) {
+        return !Plugins.isWorldGuardEnabled() ? true : WorldGuard.canFlyHere(location);
     }
 
     public static boolean canFlyAt(final Player player, final Integer size) {
         if (size == Config.getCarpSize())
             return true;
-        else if (player.hasPermission(a))
-            return true;
-        return hasPermission(player, i + size);
-    }
-
-    public static boolean canFlyHere(final Location location) {
-        return !Plugins.isWorldGuardEnabled() ? true : WorldGuard.canFlyHere(location);
+        return hasPermission(player, new Permission(i + size, PermissionDefault.OP).addParent(a, true).toString());
     }
 }
