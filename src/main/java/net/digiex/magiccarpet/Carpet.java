@@ -185,8 +185,6 @@ public class Carpet {
             return true;
         case VINE:
             return true;
-        case DOUBLE_PLANT:
-            return true;
         default:
             return false;
         }
