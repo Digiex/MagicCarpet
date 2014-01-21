@@ -48,6 +48,9 @@ permissions:
   magiccarpet.mct:
     description: Gives the player a ender chest and workbench for there carpet.
     default: op
+  magiccarpet.np:
+    description: Allows the player to never have to pay for the carpet.
+    default: op
   magiccarpet.*:
     description: Allows access to all MagicCarpet commands.
     default: op
