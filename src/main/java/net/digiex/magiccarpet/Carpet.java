@@ -34,15 +34,15 @@ public class Carpet {
         BlockState block;
         int dx, dy, dz;
 
-        public CarpetFibre(final int dx, final int dy, final int dz) {
+        CarpetFibre(final int dx, final int dy, final int dz) {
             this.dx = dx;
             this.dy = dy;
             this.dz = dz;
         }
 
         void set(final Block bl, final Material material) {
-            bl.setType(material);
             bl.setMetadata("Carpet", new FixedMetadataValue(plugin, who.getName()));
+            bl.setType(material);
         }
 
         void update() {
@@ -55,23 +55,17 @@ public class Carpet {
 
     private final MagicCarpet plugin = (MagicCarpet) Bukkit.getServer().getPluginManager().getPlugin("MagicCarpet");
 
-    public static Carpet create(final Player player) {
-        final Carpet carpet = new Carpet(player);
-        MagicCarpet.getCarpets().assign(player, carpet);
-        return carpet;
-    }
-
     private Block currentCentre;
     private int area = 0, rad = 0, radplsq = 0;
     private CarpetFibre[] fibres;
     private boolean hidden, falling, descending;
     private final Player who;
 
-    private Carpet(final Player player) {
+    public Carpet(final Player player) {
         setSize(5);
         who = player;
         currentCentre = player.getLocation().getBlock();
-        hidden = true;
+        MagicCarpet.getCarpets().assign(player, this);
     }
 
     private void drawCarpet() {

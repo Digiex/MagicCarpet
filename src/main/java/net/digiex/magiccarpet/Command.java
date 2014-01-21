@@ -39,7 +39,7 @@ public class Command implements CommandExecutor {
             return true;
         }
         if (carpet == null)
-            Carpet.create(player).show();
+            new Carpet(player).show();
         else if (carpet.isVisible())
             carpet.hide();
         else

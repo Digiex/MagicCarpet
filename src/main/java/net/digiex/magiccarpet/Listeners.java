@@ -46,7 +46,7 @@ public class Listeners implements Listener {
     public void onPlayerJoin(final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
         if (MagicCarpet.getCarpets().has(player))
-            Carpet.create(player).show();
+            new Carpet(player).show();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -93,11 +93,7 @@ public class Listeners implements Listener {
         final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
         if (carpet == null || !carpet.isVisible())
             return;
-        final Location to = event.getTo();
-        final Location from = event.getFrom();
-        if (from.getWorld() == to.getWorld() && from.distance(to) == 0)
-            return;
-        carpet.moveTo(to);
+        carpet.moveTo(event.getTo());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -184,6 +180,7 @@ public class Listeners implements Listener {
                 event.setCancelled(true);
                 c.setFalling(false);
             }
+        case PROJECTILE:
         case ENTITY_ATTACK:
             if (!(event instanceof EntityDamageByEntityEvent))
                 return;
@@ -198,7 +195,7 @@ public class Listeners implements Listener {
                 }
             }
             if (e.getDamager() instanceof Player) {
-                final Player player = (Player) e.getEntity();
+                final Player player = (Player) e.getDamager();
                 final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
                 if (carpet != null && carpet.isVisible()) {
                     carpet.hide();

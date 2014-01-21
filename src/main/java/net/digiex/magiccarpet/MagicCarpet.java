@@ -44,14 +44,6 @@ public class MagicCarpet extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new Listeners(), this);
     }
 
-    public static Storage getCarpets() {
-        return carpets;
-    }
-
-    public static Boolean canFly(final Player player) {
-        return player.hasPermission("magiccarpet.mc");
-    }
-
     @Override
     public void onDisable() {
         saveCarpets();
@@ -69,7 +61,15 @@ public class MagicCarpet extends JavaPlugin {
         log.info("is now enabled!");
     }
 
-    void saveCarpets() {
+    public static Storage getCarpets() {
+        return carpets;
+    }
+
+    public static boolean canFly(final Player player) {
+        return player.hasPermission("magiccarpet.mc");
+    }
+
+    public void saveCarpets() {
         final File carpetDat = carpetsFile();
         log.info("Saving carpets...");
         if (!carpetDat.exists())
@@ -89,7 +89,7 @@ public class MagicCarpet extends JavaPlugin {
         carpets.clear();
     }
 
-    void loadCarpets() {
+    public void loadCarpets() {
         final File carpetDat = carpetsFile();
         if (!carpetDat.exists())
             return;

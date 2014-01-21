@@ -23,10 +23,10 @@ import org.bukkit.entity.Player;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class Storage implements Serializable {
-    private static final long serialVersionUID = -7050427936329191014L;
+    private static final long serialVersionUID = -2070080026438450206L;
 
     private class CarpetEntry implements Serializable {
-        private static final long serialVersionUID = -3263203886057095731L;
+        private static final long serialVersionUID = -5947866865121964362L;
 
         public transient Carpet carpet;
         public boolean hasCarpet = false;
@@ -108,7 +108,7 @@ public class Storage implements Serializable {
         carpets.clear();
     }
 
-    void update(final Player player) {
+    public void update(final Player player) {
         final CarpetEntry entry = getEntry(player);
         if (entry == null)
             return;
@@ -119,7 +119,7 @@ public class Storage implements Serializable {
         entry.hasCarpet = entry.carpet.isVisible();
     }
 
-    boolean has(final Player player) {
+    public boolean has(final Player player) {
         final CarpetEntry entry = carpets.get(player.getName());
         if (entry == null)
             return false;
