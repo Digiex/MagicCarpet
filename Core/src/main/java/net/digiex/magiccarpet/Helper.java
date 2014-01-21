@@ -25,46 +25,38 @@ import org.bukkit.plugin.Plugin;
 
 public class Helper {
 
-	private static Abstraction nms;
+    private static Abstraction nms;
 
-	public Helper(MagicCarpet plugin) {
-		try {
-			Helper.nms = init(plugin);
-		} catch (Exception e) {
-			Helper.nms = null;
-		}
-	}
+    public Helper(final MagicCarpet plugin) {
+        try {
+            Helper.nms = init(plugin);
+        } catch (final Exception e) {
+            Helper.nms = null;
+        }
+    }
 
-	private Abstraction init(Plugin plugin) throws ClassNotFoundException,
-			IllegalArgumentException, SecurityException,
-			InstantiationException, IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException {
+    private Abstraction init(final Plugin plugin) throws ClassNotFoundException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-		String serverPackageName = plugin.getServer().getClass().getPackage()
-				.getName();
-		String pluginPackageName = plugin.getClass().getPackage().getName();
+        final String serverPackageName = plugin.getServer().getClass().getPackage().getName();
+        final String pluginPackageName = plugin.getClass().getPackage().getName();
 
-		String version = serverPackageName.substring(serverPackageName
-				.lastIndexOf('.') + 1);
+        final String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
 
-		final Class<?> clazz = Class.forName(pluginPackageName + ".nms."
-				+ version + ".Handler");
+        final Class<?> clazz = Class.forName(pluginPackageName + ".nms." + version + ".Handler");
 
-		if (Abstraction.class.isAssignableFrom(clazz)) {
-			nms = (Abstraction) clazz.getConstructor().newInstance();
-		} else {
-			throw new IllegalStateException("Class " + clazz.getName()
-					+ " does not implement NMS API");
-		}
+        if (Abstraction.class.isAssignableFrom(clazz))
+            nms = (Abstraction) clazz.getConstructor().newInstance();
+        else
+            throw new IllegalStateException("Class " + clazz.getName() + " does not implement NMS API");
 
-		return nms;
-	}
+        return nms;
+    }
 
-	public static Abstraction getHandler() {
-		return nms;
-	}
+    public static Abstraction getHandler() {
+        return nms;
+    }
 
-	public static boolean isEnabled() {
-		return (nms != null) ? true : false;
-	}
+    public static boolean isEnabled() {
+        return nms != null ? true : false;
+    }
 }

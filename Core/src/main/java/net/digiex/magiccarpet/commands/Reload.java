@@ -29,32 +29,30 @@ import org.bukkit.entity.Player;
  */
 public class Reload implements CommandExecutor {
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command command,
-			String commandLabel, String[] args) {
-		if (!(sender instanceof Player)) {
-			reload();
-			MagicCarpet.log().info("has been reloaded!");
-			return true;
-		} else if (sender instanceof Player) {
-			Player player = (Player) sender;
-			if (Permissions.canReload(player)) {
-				reload();
-				player.sendMessage("MagicCarpet has been reloaded!");
-			} else {
-				player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
-			}
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean onCommand(final CommandSender sender, final Command command, final String commandLabel, final String[] args) {
+        if (!(sender instanceof Player)) {
+            reload();
+            MagicCarpet.log().info("has been reloaded!");
+            return true;
+        } else if (sender instanceof Player) {
+            final Player player = (Player) sender;
+            if (Permissions.canReload(player)) {
+                reload();
+                player.sendMessage("MagicCarpet has been reloaded!");
+            } else
+                player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
+            return true;
+        }
+        return false;
+    }
 
-	private void reload() {
-		Config.loadSettings();
-		if (Plugins.isVaultEnabled()) {
-			Vault.getPackages().clear();
-			Vault.loadPackages();
-		}
-		MagicCarpet.getCarpets().checkCarpets();
-	}
+    private void reload() {
+        Config.loadSettings();
+        if (Plugins.isVaultEnabled()) {
+            Vault.getPackages().clear();
+            Vault.loadPackages();
+        }
+        MagicCarpet.getCarpets().checkCarpets();
+    }
 }

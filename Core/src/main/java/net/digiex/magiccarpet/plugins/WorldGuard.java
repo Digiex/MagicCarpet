@@ -1,6 +1,5 @@
 package net.digiex.magiccarpet.plugins;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import org.bukkit.Location;
@@ -27,32 +26,26 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
  */
 public class WorldGuard {
 
-	private static WorldGuardPlugin worldGuard;
+    private static WorldGuardPlugin worldGuard;
 
-	public WorldGuard(WorldGuardPlugin w) {
-		worldGuard = w;
-	}
+    public WorldGuard(final WorldGuardPlugin w) {
+        worldGuard = w;
+    }
 
-	public static boolean canFlyHere(Location location) {
-		try {
-			RegionManager regionManager = worldGuard.getRegionManager(location
-					.getWorld());
-			ApplicableRegionSet set = regionManager
-					.getApplicableRegions(location);
-			Set<String> flag = set
-					.getFlag(com.sk89q.worldguard.protection.flags.DefaultFlag.BLOCKED_CMDS);
-			for (Iterator<String> it = flag.iterator(); it.hasNext();) {
-				String blocked = it.next();
-				if (blocked == null) {
-					continue;
-				}
-				if (blocked.contains("/mc") || blocked.contains("/magiccarpet")) {
-					return false;
-				}
-			}
-		} catch (Exception e) {
-			return true;
-		}
-		return true;
-	}
+    public static boolean canFlyHere(final Location location) {
+        try {
+            final RegionManager regionManager = worldGuard.getRegionManager(location.getWorld());
+            final ApplicableRegionSet set = regionManager.getApplicableRegions(location);
+            final Set<String> flag = set.getFlag(com.sk89q.worldguard.protection.flags.DefaultFlag.BLOCKED_CMDS);
+            for (final String blocked : flag) {
+                if (blocked == null)
+                    continue;
+                if (blocked.contains("/mc") || blocked.contains("/magiccarpet"))
+                    return false;
+            }
+        } catch (final Exception e) {
+            return true;
+        }
+        return true;
+    }
 }
