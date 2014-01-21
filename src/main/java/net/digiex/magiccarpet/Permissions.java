@@ -39,6 +39,8 @@ public final class Permissions {
     private static boolean hasPermission(final Player player, final String permission) {
         if (MagicCarpet.getCarpets().wasGiven(player))
             return true;
+        if (player.hasPermission(a))
+            return true;
         if (Plugins.isVaultEnabled()) {
             if (player.hasPermission(p))
                 return true;
