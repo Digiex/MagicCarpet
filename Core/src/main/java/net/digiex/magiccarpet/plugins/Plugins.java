@@ -1,7 +1,6 @@
 package net.digiex.magiccarpet.plugins;
 
 import net.digiex.magiccarpet.MagicCarpet;
-import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -24,8 +23,8 @@ public final class Plugins {
 		if (p == null || !(p instanceof net.milkbowl.vault.Vault)) {
 			return;
 		}
-		RegisteredServiceProvider<Economy> rsp = Bukkit.getServer()
-				.getServicesManager().getRegistration(Economy.class);
+		RegisteredServiceProvider<net.milkbowl.vault.economy.Economy> rsp = Bukkit.getServer()
+				.getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
 		if (rsp == null) {
 			return;
 		}
