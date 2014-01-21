@@ -152,8 +152,15 @@ public class Carpet {
             else
                 fibre.setFast(bl, thread);
         }
-        hidden = false;
         return true;
+    }
+
+    void removeCarpet() {
+        for (final CarpetFibre fibre : fibres) {
+            if (fibre.block != null)
+                fibre.update();
+            fibre.block = null;
+        }
     }
 
     private boolean canReplace(final Material type) {
@@ -223,6 +230,7 @@ public class Carpet {
 
     public void hide(final String message) {
         if (!hidden) {
+            hidden = true;
             removeCarpet();
             makeMagic(Color.RED);
             MagicCarpet.getCarpets().update(who);
@@ -319,6 +327,7 @@ public class Carpet {
 
     public void hide() {
         if (!hidden) {
+            hidden = true;
             removeCarpet();
             makeMagic(Color.RED);
             MagicCarpet.getCarpets().update(who);
@@ -391,10 +400,12 @@ public class Carpet {
     public void show() {
         if (hidden) {
             currentCentre = who.getLocation().getBlock().getRelative(0, -1, 0);
+            hidden = false;
             if (drawCarpet()) {
                 makeMagic(Color.BLUE);
                 who.sendMessage("Poof! The magic carpet appears below your feet!");
-            }
+            } else
+                hidden = true;
             MagicCarpet.getCarpets().update(who);
         }
     }
@@ -445,15 +456,6 @@ public class Carpet {
             who.sendMessage("The carpet reacts to your words and suddenly changes!");
         }
         MagicCarpet.getCarpets().update(who);
-    }
-
-    void removeCarpet() {
-        for (final CarpetFibre fibre : fibres) {
-            if (fibre.block != null)
-                fibre.update();
-            fibre.block = null;
-        }
-        hidden = true;
     }
 
     public boolean canHaveData(final Material material) {
