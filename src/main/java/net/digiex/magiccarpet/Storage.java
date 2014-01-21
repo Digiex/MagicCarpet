@@ -23,116 +23,106 @@ import org.bukkit.entity.Player;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class Storage implements Serializable {
-	private static final long serialVersionUID = -7050427936329191014L;
+    private static final long serialVersionUID = -7050427936329191014L;
 
-	private class CarpetEntry implements Serializable {
-		private static final long serialVersionUID = -3263203886057095731L;
-		
-		public transient Carpet carpet;
-		public boolean hasCarpet = false;
-	}
+    private class CarpetEntry implements Serializable {
+        private static final long serialVersionUID = -3263203886057095731L;
 
-	private HashMap<String, CarpetEntry> carpets = new HashMap<String, CarpetEntry>();
+        public transient Carpet carpet;
+        public boolean hasCarpet = false;
+    }
 
-	private CarpetEntry getEntry(Player player) {
-		if (carpets.containsKey(player.getName())) {
-			return carpets.get(player.getName());
-		}
-		return null;
-	}
+    private final HashMap<String, CarpetEntry> carpets = new HashMap<String, CarpetEntry>();
 
-	public Iterable<Carpet> all() {
-		return new Iterable<Carpet>() {
-			@Override
-			public Iterator<Carpet> iterator() {
-				return new Iterator<Carpet>() {
-					private Iterator<CarpetEntry> iter = carpets.values()
-							.iterator();
-					private CarpetEntry toRemove = null;
+    private CarpetEntry getEntry(final Player player) {
+        if (carpets.containsKey(player.getName()))
+            return carpets.get(player.getName());
+        return null;
+    }
 
-					@Override
-					public boolean hasNext() {
-						return iter.hasNext();
-					}
+    public Iterable<Carpet> all() {
+        return new Iterable<Carpet>() {
+            @Override
+            public Iterator<Carpet> iterator() {
+                return new Iterator<Carpet>() {
+                    private final Iterator<CarpetEntry> iter = carpets.values().iterator();
+                    private CarpetEntry toRemove = null;
 
-					@Override
-					public Carpet next() {
-						toRemove = iter.next();
-						return toRemove.carpet;
-					}
+                    @Override
+                    public boolean hasNext() {
+                        return iter.hasNext();
+                    }
 
-					@Override
-					public void remove() {
-						if (toRemove == null) {
-							throw new IllegalStateException();
-						}
-						if (toRemove.carpet != null) {
-							toRemove.carpet.removeCarpet();
-						}
-						toRemove.carpet = null;
-					}
-				};
-			}
-		};
-	}
+                    @Override
+                    public Carpet next() {
+                        toRemove = iter.next();
+                        return toRemove.carpet;
+                    }
 
-	public void assign(Player player, Carpet carpet) {
-		CarpetEntry entry = getEntry(player);
-		if (entry == null) {
-			entry = new CarpetEntry();
-			carpets.put(player.getName(), entry);
-		}
-		if (entry.carpet != null) {
-			entry.carpet.removeCarpet();
-		}
-		entry.carpet = carpet;
-	}
+                    @Override
+                    public void remove() {
+                        if (toRemove == null)
+                            throw new IllegalStateException();
+                        if (toRemove.carpet != null)
+                            toRemove.carpet.removeCarpet();
+                        toRemove.carpet = null;
+                    }
+                };
+            }
+        };
+    }
 
-	public Carpet getCarpet(Player player) {
-		if (carpets.containsKey(player.getName())) {
-			return carpets.get(player.getName()).carpet;
-		}
-		return null;
-	}
+    public void assign(final Player player, final Carpet carpet) {
+        CarpetEntry entry = getEntry(player);
+        if (entry == null) {
+            entry = new CarpetEntry();
+            carpets.put(player.getName(), entry);
+        }
+        if (entry.carpet != null)
+            entry.carpet.removeCarpet();
+        entry.carpet = carpet;
+    }
 
-	public void remove(Player player) {
-		CarpetEntry entry = getEntry(player);
-		if (entry == null) {
-			return;
-		}
-		if (entry.carpet != null) {
-			entry.carpet.removeCarpet();
-			entry.carpet = null;
-		}
-	}
+    public Carpet getCarpet(final Player player) {
+        if (carpets.containsKey(player.getName()))
+            return carpets.get(player.getName()).carpet;
+        return null;
+    }
 
-	public void clear() {
-		for (CarpetEntry entry : carpets.values()) {
-			if (entry.carpet == null || !entry.carpet.isVisible()) {
-				continue;
-			}
-			entry.carpet.removeCarpet();
-		}
-		carpets.clear();
-	}
+    public void remove(final Player player) {
+        final CarpetEntry entry = getEntry(player);
+        if (entry == null)
+            return;
+        if (entry.carpet != null) {
+            entry.carpet.removeCarpet();
+            entry.carpet = null;
+        }
+    }
 
-	void update(Player player) {
-		CarpetEntry entry = getEntry(player);
-		if (entry == null) {
-			return;
-		}
-		if (entry.carpet == null) {
-			entry.hasCarpet = false;
-			return;
-		}
-		entry.hasCarpet = entry.carpet.isVisible();
-	}
+    public void clear() {
+        for (final CarpetEntry entry : carpets.values()) {
+            if (entry.carpet == null || !entry.carpet.isVisible())
+                continue;
+            entry.carpet.removeCarpet();
+        }
+        carpets.clear();
+    }
 
-	boolean has(Player player) {
-		CarpetEntry entry = carpets.get(player.getName());
-		if (entry == null) {
-			return false;
-		}
-		return entry.hasCarpet;
-	}
+    void update(final Player player) {
+        final CarpetEntry entry = getEntry(player);
+        if (entry == null)
+            return;
+        if (entry.carpet == null) {
+            entry.hasCarpet = false;
+            return;
+        }
+        entry.hasCarpet = entry.carpet.isVisible();
+    }
+
+    boolean has(final Player player) {
+        final CarpetEntry entry = carpets.get(player.getName());
+        if (entry == null)
+            return false;
+        return entry.hasCarpet;
+    }
 }

@@ -29,84 +29,80 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class MagicCarpet extends JavaPlugin {
 
-	private static Storage carpets = new Storage();
-	private Logger log;
+    private static Storage carpets = new Storage();
+    private Logger log;
 
-	private File carpetsFile() {
-		return new File(getDataFolder(), "carpets.dat");
-	}
+    private File carpetsFile() {
+        return new File(getDataFolder(), "carpets.dat");
+    }
 
-	private void registerCommands() {
-		getCommand("magiccarpet").setExecutor(new Command());
-	}
+    private void registerCommands() {
+        getCommand("magiccarpet").setExecutor(new Command());
+    }
 
-	private void registerEvents() {
-		getServer().getPluginManager()
-				.registerEvents(new Listeners(), this);
-	}
-	
-	public static Storage getCarpets() {
-		return carpets;
-	}
+    private void registerEvents() {
+        getServer().getPluginManager().registerEvents(new Listeners(), this);
+    }
 
-	public static Boolean canFly(Player player) {
-		return player.hasPermission("magiccarpet.mc");
-	}
+    public static Storage getCarpets() {
+        return carpets;
+    }
 
-	@Override
-	public void onDisable() {
-		saveCarpets();
-		log.info("is now disabled!");
-	}
+    public static Boolean canFly(final Player player) {
+        return player.hasPermission("magiccarpet.mc");
+    }
 
-	@Override
-	public void onEnable() {
-		log = getLogger();
-		if (!getDataFolder().exists()) {
-			getDataFolder().mkdirs();
-		}
-		loadCarpets();
-		registerEvents();
-		registerCommands();
-		log.info("is now enabled!");
-	}
+    @Override
+    public void onDisable() {
+        saveCarpets();
+        log.info("is now disabled!");
+    }
 
-	void saveCarpets() {
-		File carpetDat = carpetsFile();
-		log.info("Saving carpets...");
-		if (!carpetDat.exists()) {
-			try {
-				carpetDat.createNewFile();
-			} catch (IOException e) {
-				log.severe("Unable to create carpets.dat; IOException");
-			}
-		}
-		try {
-			FileOutputStream file = new FileOutputStream(carpetDat);
-			ObjectOutputStream out = new ObjectOutputStream(file);
-			out.writeObject(carpets);
-			out.close();
-		} catch (IOException e) {
-			log.warning("Error writing to carpets.dat; carpets data has not been saved!");
-		}
-		carpets.clear();
-	}
+    @Override
+    public void onEnable() {
+        log = getLogger();
+        if (!getDataFolder().exists())
+            getDataFolder().mkdirs();
+        loadCarpets();
+        registerEvents();
+        registerCommands();
+        log.info("is now enabled!");
+    }
 
-	void loadCarpets() {
-		File carpetDat = carpetsFile();
-		if (!carpetDat.exists()) {
-			return;
-		}
-		log.info("Loading carpets...");
-		try {
-			FileInputStream file = new FileInputStream(carpetDat);
-			ObjectInputStream in = new ObjectInputStream(file);
-			carpets = (Storage) in.readObject();
-			in.close();
-		} catch (IOException e) {
-			log.warning("Error loading carpets.dat; carpets data has not been loaded.");
-		} catch (ClassNotFoundException e) {
-			log.severe("CarpetStorage class not found! This should never happen!");
-		}
-	}
+    void saveCarpets() {
+        final File carpetDat = carpetsFile();
+        log.info("Saving carpets...");
+        if (!carpetDat.exists())
+            try {
+                carpetDat.createNewFile();
+            } catch (final IOException e) {
+                log.severe("Unable to create carpets.dat; IOException");
+            }
+        try {
+            final FileOutputStream file = new FileOutputStream(carpetDat);
+            final ObjectOutputStream out = new ObjectOutputStream(file);
+            out.writeObject(carpets);
+            out.close();
+        } catch (final IOException e) {
+            log.warning("Error writing to carpets.dat; carpets data has not been saved!");
+        }
+        carpets.clear();
+    }
+
+    void loadCarpets() {
+        final File carpetDat = carpetsFile();
+        if (!carpetDat.exists())
+            return;
+        log.info("Loading carpets...");
+        try {
+            final FileInputStream file = new FileInputStream(carpetDat);
+            final ObjectInputStream in = new ObjectInputStream(file);
+            carpets = (Storage) in.readObject();
+            in.close();
+        } catch (final IOException e) {
+            log.warning("Error loading carpets.dat; carpets data has not been loaded.");
+        } catch (final ClassNotFoundException e) {
+            log.severe("CarpetStorage class not found! This should never happen!");
+        }
+    }
 }

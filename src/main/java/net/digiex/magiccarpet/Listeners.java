@@ -42,216 +42,190 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
  */
 public class Listeners implements Listener {
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerJoin(PlayerJoinEvent event) {
-		Player player = event.getPlayer();
-		if (MagicCarpet.getCarpets().has(player)) {
-			Carpet.create(player).show();
-		}
-	}
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerJoin(final PlayerJoinEvent event) {
+        final Player player = event.getPlayer();
+        if (MagicCarpet.getCarpets().has(player))
+            Carpet.create(player).show();
+    }
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerQuit(PlayerQuitEvent event) {
-		MagicCarpet.getCarpets().remove(event.getPlayer());
-	}
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerQuit(final PlayerQuitEvent event) {
+        MagicCarpet.getCarpets().remove(event.getPlayer());
+    }
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onPlayerKick(PlayerKickEvent event) {
-		Player who = event.getPlayer();
-		Carpet carpet = MagicCarpet.getCarpets().getCarpet(who);
-		if (carpet != null && carpet.isVisible()) {
-			String reason = event.getReason();
-			if (reason != null
-					&& reason.equals("Flying is not enabled on this server")
-					&& who.isSneaking()) {
-				event.setCancelled(true);
-			}
-		}
-	}
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPlayerKick(final PlayerKickEvent event) {
+        final Player who = event.getPlayer();
+        final Carpet carpet = MagicCarpet.getCarpets().getCarpet(who);
+        if (carpet != null && carpet.isVisible()) {
+            final String reason = event.getReason();
+            if (reason != null && reason.equals("Flying is not enabled on this server") && who.isSneaking())
+                event.setCancelled(true);
+        }
+    }
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onPlayerMove(PlayerMoveEvent event) {
-		Player player = event.getPlayer();
-		Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
-		if (carpet == null || !carpet.isVisible()) {
-			return;
-		}
-		Location to = event.getTo();
-		Location from = event.getFrom();
-		if (from.getWorld() == to.getWorld() && from.distance(to) == 0) {
-			return;
-		}
-		to = to.clone();
-		if (player.isSneaking()) {
-			if (!carpet.isDescending()) {
-				to.setY(to.getY() - 1);
-			}
-			carpet.setDescending(true);
-		}
-		if (from.getY() > to.getY() && !carpet.isDescending()) {
-			to.setY(from.getY());
-		}
-		carpet.moveTo(to);
-		carpet.setDescending(false);
-	}
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPlayerMove(final PlayerMoveEvent event) {
+        final Player player = event.getPlayer();
+        final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+        if (carpet == null || !carpet.isVisible())
+            return;
+        Location to = event.getTo();
+        final Location from = event.getFrom();
+        if (from.getWorld() == to.getWorld() && from.distance(to) == 0)
+            return;
+        to = to.clone();
+        if (player.isSneaking()) {
+            if (!carpet.isDescending())
+                to.setY(to.getY() - 1);
+            carpet.setDescending(true);
+        }
+        if (from.getY() > to.getY() && !carpet.isDescending())
+            to.setY(from.getY());
+        carpet.moveTo(to);
+        carpet.setDescending(false);
+    }
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onPlayerTeleport(PlayerTeleportEvent event) {
-		Player player = event.getPlayer();
-		Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
-		if (carpet == null || !carpet.isVisible()) {
-			return;
-		}
-		Location to = event.getTo();
-		Location from = event.getFrom();
-		if (from.getWorld() == to.getWorld() && from.distance(to) == 0) {
-			return;
-		}
-		carpet.moveTo(to);
-	}
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPlayerTeleport(final PlayerTeleportEvent event) {
+        final Player player = event.getPlayer();
+        final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+        if (carpet == null || !carpet.isVisible())
+            return;
+        final Location to = event.getTo();
+        final Location from = event.getFrom();
+        if (from.getWorld() == to.getWorld() && from.distance(to) == 0)
+            return;
+        carpet.moveTo(to);
+    }
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
-		Player player = event.getPlayer();
-		Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
-		if (carpet == null || !carpet.isVisible()) {
-			return;
-		}
-		if (event.isSneaking()) {
-			carpet.setDescending(true);
-			carpet.descend();
-		}
-	}
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPlayerToggleSneak(final PlayerToggleSneakEvent event) {
+        final Player player = event.getPlayer();
+        final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+        if (carpet == null || !carpet.isVisible())
+            return;
+        if (event.isSneaking()) {
+            carpet.setDescending(true);
+            carpet.descend();
+        }
+    }
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onBlockPhysics(BlockPhysicsEvent event) {
-		Block block = event.getBlock();
-		switch (block.getType()) {
-		case SAND:
-			break;
-		case CACTUS:
-			break;
-		case VINE:
-			break;
-		default:
-			return;
-		}
-		for (BlockFace face : BlockFace.values()) {
-			if (block.getRelative(face).hasMetadata("Carpet")) {
-				event.setCancelled(true);
-				return;
-			}
-		}
-	}
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockPhysics(final BlockPhysicsEvent event) {
+        final Block block = event.getBlock();
+        switch (block.getType()) {
+        case SAND:
+            break;
+        case CACTUS:
+            break;
+        case VINE:
+            break;
+        default:
+            return;
+        }
+        for (final BlockFace face : BlockFace.values())
+            if (block.getRelative(face).hasMetadata("Carpet")) {
+                event.setCancelled(true);
+                return;
+            }
+    }
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onBlockForm(BlockFormEvent event) {
-		Block block = event.getBlock().getRelative(BlockFace.DOWN);
-		if (block.hasMetadata("Carpet")) {
-			event.setCancelled(true);
-		}
-	}
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockForm(final BlockFormEvent event) {
+        final Block block = event.getBlock().getRelative(BlockFace.DOWN);
+        if (block.hasMetadata("Carpet"))
+            event.setCancelled(true);
+    }
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onBlockBreak(BlockBreakEvent event) {
-		if (event.getBlock().hasMetadata("Carpet")) {
-			event.setCancelled(true);
-		}
-	}
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockBreak(final BlockBreakEvent event) {
+        if (event.getBlock().hasMetadata("Carpet"))
+            event.setCancelled(true);
+    }
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onBlockPistonExtend(BlockPistonExtendEvent event) {
-		for (Block block : event.getBlocks()) {
-			if (block.hasMetadata("Carpet")) {
-				event.setCancelled(true);
-				return;
-			}
-		}
-	}
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockPistonExtend(final BlockPistonExtendEvent event) {
+        for (final Block block : event.getBlocks())
+            if (block.hasMetadata("Carpet")) {
+                event.setCancelled(true);
+                return;
+            }
+    }
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onBlockPistonRetract(BlockPistonRetractEvent event) {
-		if (event.isSticky()) {
-			if (event.getRetractLocation().getBlock().hasMetadata("Carpet")) {
-				event.setCancelled(true);
-			}
-		}
-	}
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockPistonRetract(final BlockPistonRetractEvent event) {
+        if (event.isSticky())
+            if (event.getRetractLocation().getBlock().hasMetadata("Carpet"))
+                event.setCancelled(true);
+    }
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onEntityDamage(EntityDamageEvent event) {
-		if (!(event.getEntity() instanceof LivingEntity)) {
-			return;
-		}
-		switch (event.getCause()) {
-		case SUFFOCATION:
-			for (BlockFace face : BlockFace.values()) {
-				Block block = event.getEntity().getLocation().getBlock()
-						.getRelative(face);
-				if (block.hasMetadata("Carpet")) {
-					event.setCancelled(true);
-					return;
-				}
-			}
-		case FALL:
-			if (!(event.getEntity() instanceof Player)) {
-				return;
-			}
-			Carpet c = MagicCarpet.getCarpets().getCarpet(
-					(Player) event.getEntity());
-			if (c == null) {
-				return;
-			}
-			if (c.isVisible() || c.isFalling()) {
-				event.setCancelled(true);
-				c.setFalling(false);
-			}
-		case ENTITY_ATTACK:
-			if (!(event instanceof EntityDamageByEntityEvent)) {
-				return;
-			}
-			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-			if ((e.getEntity() instanceof Player)) {
-				Player player = (Player) e.getEntity();
-				Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
-				if (carpet != null && carpet.isVisible()) {
-					carpet.hide();
-					player.sendMessage("The carpet cannot be used while in PVP/PVE combat.");
-					event.setCancelled(true);
-				}
-			}
-			if ((e.getDamager() instanceof Player)) {
-				Player player = (Player) e.getEntity();
-				Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
-				if (carpet != null && carpet.isVisible()) {
-					carpet.hide();
-					player.sendMessage("The carpet cannot be used while in PVP/PVE combat.");
-					event.setCancelled(true);
-				}
-			}
-		default:
-			return;
-		}
-	}
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onEntityDamage(final EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof LivingEntity))
+            return;
+        switch (event.getCause()) {
+        case SUFFOCATION:
+            for (final BlockFace face : BlockFace.values()) {
+                final Block block = event.getEntity().getLocation().getBlock().getRelative(face);
+                if (block.hasMetadata("Carpet")) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        case FALL:
+            if (!(event.getEntity() instanceof Player))
+                return;
+            final Carpet c = MagicCarpet.getCarpets().getCarpet((Player) event.getEntity());
+            if (c == null)
+                return;
+            if (c.isVisible() || c.isFalling()) {
+                event.setCancelled(true);
+                c.setFalling(false);
+            }
+        case ENTITY_ATTACK:
+            if (!(event instanceof EntityDamageByEntityEvent))
+                return;
+            final EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
+            if (e.getEntity() instanceof Player) {
+                final Player player = (Player) e.getEntity();
+                final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+                if (carpet != null && carpet.isVisible()) {
+                    carpet.hide();
+                    player.sendMessage("The carpet cannot be used while in PVP/PVE combat.");
+                    event.setCancelled(true);
+                }
+            }
+            if (e.getDamager() instanceof Player) {
+                final Player player = (Player) e.getEntity();
+                final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+                if (carpet != null && carpet.isVisible()) {
+                    carpet.hide();
+                    player.sendMessage("The carpet cannot be used while in PVP/PVE combat.");
+                    event.setCancelled(true);
+                }
+            }
+        default:
+            return;
+        }
+    }
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onEntityExplode(EntityExplodeEvent event) {
-		for (Block block : event.blockList()) {
-			if (block.hasMetadata("Carpet")) {
-				event.setCancelled(true);
-				return;
-			}
-		}
-	}
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onEntityExplode(final EntityExplodeEvent event) {
+        for (final Block block : event.blockList())
+            if (block.hasMetadata("Carpet")) {
+                event.setCancelled(true);
+                return;
+            }
+    }
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onHangingingBreak(HangingBreakEvent event) {
-		for (BlockFace face : BlockFace.values()) {
-			if (event.getEntity().getLocation().getBlock().getRelative(face)
-					.hasMetadata("Carpet")) {
-				event.setCancelled(true);
-				return;
-			}
-		}
-	}
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onHangingingBreak(final HangingBreakEvent event) {
+        for (final BlockFace face : BlockFace.values())
+            if (event.getEntity().getLocation().getBlock().getRelative(face).hasMetadata("Carpet")) {
+                event.setCancelled(true);
+                return;
+            }
+    }
 }

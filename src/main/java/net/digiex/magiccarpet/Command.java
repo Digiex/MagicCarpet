@@ -22,33 +22,28 @@ import org.bukkit.entity.Player;
  */
 public class Command implements CommandExecutor {
 
-	@Override
-	public boolean onCommand(CommandSender sender, org.bukkit.command.Command command,
-			String label, String[] args) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage("Sorry, only players can use the carpet!");
-			return true;
-		}
-		Player player = (Player) sender;
-		Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
-		if (!MagicCarpet.canFly(player)) {
-			player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
-			return true;
-		}
-		if (player.getFallDistance() > 0
-				&& !player.getLocation().getBlock().isLiquid()) {
-			player.sendMessage("You can only activate the Magic Carpet while on solid ground.");
-			return true;
-		}
-		if (carpet == null) {
-			Carpet.create(player).show();
-		} else {
-			if (carpet.isVisible()) {
-				carpet.hide();
-			} else {
-				carpet.show();
-			}
-		}
-		return true;
-	}
+    @Override
+    public boolean onCommand(final CommandSender sender, final org.bukkit.command.Command command, final String label, final String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("Sorry, only players can use the carpet!");
+            return true;
+        }
+        final Player player = (Player) sender;
+        final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+        if (!MagicCarpet.canFly(player)) {
+            player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
+            return true;
+        }
+        if (player.getFallDistance() > 0 && !player.getLocation().getBlock().isLiquid()) {
+            player.sendMessage("You can only activate the Magic Carpet while on solid ground.");
+            return true;
+        }
+        if (carpet == null)
+            Carpet.create(player).show();
+        else if (carpet.isVisible())
+            carpet.hide();
+        else
+            carpet.show();
+        return true;
+    }
 }
