@@ -201,11 +201,13 @@ public class Listeners implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPistonExtend(final BlockPistonExtendEvent event) {
-        for (final Block block : event.getBlocks())
+        for (final BlockFace face : BlockFace.values()) {
+            final Block block = event.getBlock().getRelative(face);
             if (block.hasMetadata("Carpet")) {
                 event.setCancelled(true);
                 return;
             }
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
