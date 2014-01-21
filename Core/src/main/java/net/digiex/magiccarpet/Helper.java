@@ -36,19 +36,14 @@ public class Helper {
     }
 
     private Abstraction init(final Plugin plugin) throws ClassNotFoundException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
         final String serverPackageName = plugin.getServer().getClass().getPackage().getName();
         final String pluginPackageName = plugin.getClass().getPackage().getName();
-
         final String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
-
         final Class<?> clazz = Class.forName(pluginPackageName + ".nms." + version + ".Handler");
-
         if (Abstraction.class.isAssignableFrom(clazz))
             nms = (Abstraction) clazz.getConstructor().newInstance();
         else
             throw new IllegalStateException("Class " + clazz.getName() + " does not implement NMS API");
-
         return nms;
     }
 

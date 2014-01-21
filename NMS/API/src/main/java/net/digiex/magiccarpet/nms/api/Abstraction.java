@@ -26,12 +26,11 @@ import org.bukkit.World;
 
 public interface Abstraction {
 
-	public boolean setBlockFast(World world, int x, int y, int z,
-			Material material, byte data);
+    public boolean setBlockFast(World world, int x, int y, int z, Material material, byte data);
 
-	public void playFirework(Location loc, FireworkEffect effect);
-	
-	public EnumSet<Material> getAcceptableCarpetMaterial();
-	
-	public EnumSet<Material> getAcceptableLightMaterial();
+    public void playFirework(Location loc, FireworkEffect effect);
+
+    public EnumSet<Material> getAcceptableCarpetMaterial();
+
+    public EnumSet<Material> getAcceptableLightMaterial();
 }

@@ -209,10 +209,7 @@ public class Carpet {
 
     private void makeMagic(final Color color) {
         if (Config.getMagicEffect())
-            try {
-                Helper.getHandler().playFirework(getLocation(), FireworkEffect.builder().with(Type.BALL_LARGE).withColor(color).build());
-            } catch (final Exception e) {
-            }
+            Helper.getHandler().playFirework(getLocation(), FireworkEffect.builder().with(Type.BALL_LARGE).withColor(color).build());
     }
 
     private boolean canChangeLiquids(final String type) {
