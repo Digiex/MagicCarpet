@@ -1,7 +1,9 @@
 package net.digiex.magiccarpet.commands;
 
+import net.digiex.magiccarpet.Config;
 import net.digiex.magiccarpet.MagicCarpet;
 import net.digiex.magiccarpet.Permissions;
+import net.digiex.magiccarpet.plugins.Plugins;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -96,12 +98,12 @@ public class Carpet implements CommandExecutor {
 				new net.digiex.magiccarpet.Carpet(player).show();
 				return true;
 			}
-			if (MagicCarpet.getVault().isEnabled()) {
+			if (Plugins.isVaultEnabled()) {
 				if (Permissions.canNotPay(player)) {
 					new net.digiex.magiccarpet.Carpet(player).show();
 					return true;
 				}
-				if (MagicCarpet.getMagicConfig().getChargeTimeBased()) {
+				if (Config.getChargeTimeBased()) {
 					if (MagicCarpet.getCarpets().getTime(player) == 0L) {
 						player.sendMessage("You have ran out of time to use the Magic Carpet. Please refill using /mcb");
 						return true;
@@ -142,12 +144,12 @@ public class Carpet implements CommandExecutor {
 					carpet.show();
 					return true;
 				}
-				if (MagicCarpet.getVault().isEnabled()) {
+				if (Plugins.isVaultEnabled()) {
 					if (Permissions.canNotPay(player)) {
 						carpet.show();
 						return true;
 					}
-					if (MagicCarpet.getMagicConfig().getChargeTimeBased()) {
+					if (Config.getChargeTimeBased()) {
 						if (MagicCarpet.getCarpets().getTime(player) <= 0L) {
 							player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
 							return true;

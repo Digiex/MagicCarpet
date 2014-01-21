@@ -1,7 +1,10 @@
 package net.digiex.magiccarpet.commands;
 
+import net.digiex.magiccarpet.Config;
 import net.digiex.magiccarpet.MagicCarpet;
 import net.digiex.magiccarpet.Permissions;
+import net.digiex.magiccarpet.plugins.Plugins;
+import net.digiex.magiccarpet.plugins.Vault;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -31,7 +34,7 @@ public class Reload implements CommandExecutor {
 			String commandLabel, String[] args) {
 		if (!(sender instanceof Player)) {
 			reload();
-			MagicCarpet.getMagicLogger().info("has been reloaded!");
+			MagicCarpet.log().info("has been reloaded!");
 			return true;
 		} else if (sender instanceof Player) {
 			Player player = (Player) sender;
@@ -47,10 +50,10 @@ public class Reload implements CommandExecutor {
 	}
 
 	private void reload() {
-		MagicCarpet.getMagicConfig().loadSettings();
-		if (MagicCarpet.getVault().isEnabled()) {
-			MagicCarpet.getVault().getPackages().clear();
-			MagicCarpet.getVault().loadPackages();
+		Config.loadSettings();
+		if (Plugins.isVaultEnabled()) {
+			Vault.getPackages().clear();
+			Vault.loadPackages();
 		}
 		MagicCarpet.getCarpets().checkCarpets();
 	}

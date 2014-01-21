@@ -1,5 +1,8 @@
 package net.digiex.magiccarpet;
 
+import net.digiex.magiccarpet.plugins.Plugins;
+import net.digiex.magiccarpet.plugins.WorldGuard;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -35,11 +38,11 @@ public final class Permissions {
 		if (MagicCarpet.getCarpets().wasGiven(player)) {
 			return true;
 		}
-		if (MagicCarpet.getVault().isEnabled()) {
+		if (Plugins.isVaultEnabled()) {
 			if (player.hasPermission(p)) {
 				return true;
 			}
-			if (MagicCarpet.getMagicConfig().getChargeTimeBased()) {
+			if (Config.getChargeTimeBased()) {
 				return (MagicCarpet.getCarpets().getTime(player) <= 0L) ? false
 						: true;
 			} else {
@@ -74,7 +77,7 @@ public final class Permissions {
 	}
 
 	public static boolean canFlyAt(Player player, Integer size) {
-		if (size == MagicCarpet.getMagicConfig().getCarpSize()) {
+		if (size == Config.getCarpSize()) {
 			return true;
 		} else if (player.hasPermission(a)) {
 			return true;
@@ -83,7 +86,6 @@ public final class Permissions {
 	}
 
 	public static boolean canFlyHere(Location location) {
-		return (!MagicCarpet.getWorldGuard().isEnabled()) ? true : MagicCarpet
-				.getWorldGuard().canFlyHere(location);
+		return (!Plugins.isWorldGuardEnabled()) ? true : WorldGuard.canFlyHere(location);
 	}
 }

@@ -1,8 +1,10 @@
 package net.digiex.magiccarpet.commands;
 
 import net.digiex.magiccarpet.Carpet;
+import net.digiex.magiccarpet.Config;
 import net.digiex.magiccarpet.MagicCarpet;
 import net.digiex.magiccarpet.Permissions;
+import net.digiex.magiccarpet.plugins.Plugins;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -35,8 +37,8 @@ public class Switch implements CommandExecutor {
 			return true;
 		}
 		Player player = (Player) sender;
-		if (MagicCarpet.getVault().isEnabled()) {
-			if (MagicCarpet.getMagicConfig().getChargeTimeBased()) {
+		if (Plugins.isVaultEnabled()) {
+			if (Config.getChargeTimeBased()) {
 				if (MagicCarpet.getCarpets().getTime(player) <= 0L) {
 					player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
 					return true;

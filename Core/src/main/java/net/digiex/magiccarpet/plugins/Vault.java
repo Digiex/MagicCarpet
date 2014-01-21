@@ -3,14 +3,12 @@ package net.digiex.magiccarpet.plugins;
 import java.util.HashMap;
 
 import net.digiex.magiccarpet.Carpet;
+import net.digiex.magiccarpet.Config;
 import net.digiex.magiccarpet.MagicCarpet;
 import net.digiex.magiccarpet.Permissions;
 import net.milkbowl.vault.economy.Economy;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
 /*
  * Magic Carpet 2.4 Copyright (C) 2012-2014 Android, Celtic Minstrel, xzKinGzxBuRnzx
@@ -30,7 +28,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
  */
 public class Vault {
 
-	public class TimePackage {
+	public static class TimePackage {
 		private final String name;
 		private final long time;
 		private final double amount;
@@ -55,26 +53,13 @@ public class Vault {
 	}
 
 	private final MagicCarpet plugin;
-	private Economy vaultPlugin;
-	private HashMap<String, TimePackage> packages = new HashMap<String, TimePackage>();
+	private static Economy economy;
+	private static HashMap<String, TimePackage> packages = new HashMap<String, TimePackage>();
 
-	public Vault(MagicCarpet plugin) {
+	public Vault(MagicCarpet plugin, Economy eco) {
 		this.plugin = plugin;
+		economy = eco;
 		loadPackages();
-		loadVault();
-	}
-
-	private void loadVault() {
-		Plugin p = plugin.getServer().getPluginManager().getPlugin("Vault");
-		if (p == null || !(p instanceof net.milkbowl.vault.Vault)) {
-			return;
-		}
-		RegisteredServiceProvider<Economy> rsp = Bukkit.getServer()
-				.getServicesManager().getRegistration(Economy.class);
-		if (rsp == null) {
-			return;
-		}
-		vaultPlugin = rsp.getProvider();
 		startCharge();
 	}
 
@@ -82,8 +67,7 @@ public class Vault {
 		plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
 			@Override
 			public void run() {
-				if (!isEnabled()
-						|| !MagicCarpet.getMagicConfig().getChargeTimeBased()) {
+				if (!Config.getChargeTimeBased()) {
 					return;
 				}
 				for (Player player : plugin.getServer().getOnlinePlayers()) {
@@ -118,14 +102,9 @@ public class Vault {
 		}, 20L, 20L);
 	}
 
-	public boolean isEnabled() {
-		return (vaultPlugin != null && MagicCarpet.getMagicConfig().getCharge()) ? true
-				: false;
-	}
-
-	public void loadPackages() {
+	public static void loadPackages() {
 		try {
-			for (Object o : MagicCarpet.getMagicConfig().getChargePackages()) {
+			for (Object o : Config.getChargePackages()) {
 				String[] s = o.toString().split(":");
 				String name = s[0];
 				long time = Long.valueOf(s[1]);
@@ -133,58 +112,58 @@ public class Vault {
 				addPackage(name, time, amount);
 			}
 		} catch (NumberFormatException e) {
-			plugin.getLogger().severe(
+			MagicCarpet.log().severe(
 					"Unable to read charge-packages; defaulting.");
 			addPackage("alpha", 3600L, 5.0);
 			addPackage("beta", 7200L, 10.0);
 		}
 	}
 
-	public boolean add(String player, double amount) {
-		return vaultPlugin.depositPlayer(player, amount).transactionSuccess();
+	public static boolean add(String player, double amount) {
+		return economy.depositPlayer(player, amount).transactionSuccess();
 	}
 
-	public boolean subtract(String player, double amount) {
-		return vaultPlugin.withdrawPlayer(player, amount).transactionSuccess();
+	public static boolean subtract(String player, double amount) {
+		return economy.withdrawPlayer(player, amount).transactionSuccess();
 	}
 
-	public boolean hasEnough(String player, double amount) {
-		return vaultPlugin.has(player, amount);
+	public static boolean hasEnough(String player, double amount) {
+		return economy.has(player, amount);
 	}
 
-	public double balance(String player) {
-		return vaultPlugin.getBalance(player);
+	public static double balance(String player) {
+		return economy.getBalance(player);
 	}
 
-	public String format(double amount) {
-		return vaultPlugin.format(amount);
+	public static String format(double amount) {
+		return economy.format(amount);
 	}
 
-	public String getPluginName() {
-		if (vaultPlugin == null) {
+	public static String getPluginName() {
+		if (economy == null) {
 			return "";
 		} else {
-			return vaultPlugin.getName();
+			return economy.getName();
 		}
 	}
 
-	public String getCurrencyName() {
-		return vaultPlugin.currencyNameSingular();
+	public static String getCurrencyName() {
+		return economy.currencyNameSingular();
 	}
 
-	public String getCurrencyNamePlural() {
-		return vaultPlugin.currencyNamePlural();
+	public static String getCurrencyNamePlural() {
+		return economy.currencyNamePlural();
 	}
 
-	public long get(Player player) {
+	public static long get(Player player) {
 		return MagicCarpet.getCarpets().getTime(player);
 	}
 
-	public String getTime(Player player) {
+	public static String getTime(Player player) {
 		return getTime(get(player));
 	}
 
-	public String getTime(Long time) {
+	public static String getTime(Long time) {
 		long days = time / 86400L;
 		long remainder = time % 86400L;
 		long hours = remainder / 3600L;
@@ -210,7 +189,7 @@ public class Vault {
 		return s;
 	}
 
-	public void substractTime(Carpet carpet, long time) {
+	public static void substractTime(Carpet carpet, long time) {
 		Player player = carpet.getPlayer();
 		long rTime = get(player) - time;
 		if (rTime <= 0L) {
@@ -220,7 +199,7 @@ public class Vault {
 		MagicCarpet.getCarpets().setTime(player, rTime);
 	}
 
-	public boolean addTime(Player player, Long time, Double amount) {
+	public static boolean addTime(Player player, Long time, Double amount) {
 		long rTime = get(player) + time;
 		if (hasEnough(player.getName(), amount)) {
 			subtract(player.getName(), amount);
@@ -233,22 +212,22 @@ public class Vault {
 		return false;
 	}
 
-	public void addTime(Player player, Long time) {
+	public static void addTime(Player player, Long time) {
 		long rTime = get(player) + time;
 		MagicCarpet.getCarpets().setTime(player, rTime);
 		player.sendMessage("Console has given you " + getTime(time)
 				+ " of time to use Magic Carpet");
 	}
 
-	public HashMap<String, TimePackage> getPackages() {
+	public static HashMap<String, TimePackage> getPackages() {
 		return packages;
 	}
 
-	public TimePackage getPackage(String name) {
+	public static TimePackage getPackage(String name) {
 		return getPackages().get(name);
 	}
 
-	public void addPackage(String name, Long time, Double amount) {
+	public static void addPackage(String name, Long time, Double amount) {
 		packages.put(name, new TimePackage(name, time, amount));
 	}
 }

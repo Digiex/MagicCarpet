@@ -137,10 +137,6 @@ public class Carpet {
 		MagicCarpet.getCarpets().assign(player, this);
 	}
 
-	private Config getConfig() {
-		return MagicCarpet.getMagicConfig();
-	}
-
 	private boolean drawCarpet() {
 		if (!Permissions.canFly(who)) {
 			hide();
@@ -231,7 +227,7 @@ public class Carpet {
 	}
 
 	private void makeMagic(Color color) {
-		if (getConfig().getMagicEffect() && Helper.isEnabled()) {
+		if (Config.getMagicEffect()) {
 			try {
 				Helper.getHandler().playFirework(
 						getLocation(),
@@ -243,12 +239,12 @@ public class Carpet {
 	}
 
 	private boolean canChangeLiquids(String type) {
-		if (getConfig().getChangeLiquids().equals("false"))
+		if (Config.getChangeLiquids().equals("false"))
 			return false;
-		else if (getConfig().getChangeLiquids().equals("true"))
+		else if (Config.getChangeLiquids().equals("true"))
 			return true;
 		else
-			return getConfig().getChangeLiquids().equals(type);
+			return Config.getChangeLiquids().equals(type);
 	}
 
 	public void hide(String message) {
@@ -264,9 +260,9 @@ public class Carpet {
 	}
 
 	public void changeCarpet(int sz) {
-		if (sz % 2 == 0 || sz < 1 || sz > getConfig().getMaxCarpetSize()) {
+		if (sz % 2 == 0 || sz < 1 || sz > Config.getMaxCarpetSize()) {
 			who.sendMessage("The size must be an odd number from 1 to "
-					+ String.valueOf(getConfig().getMaxCarpetSize()) + ".");
+					+ String.valueOf(Config.getMaxCarpetSize()) + ".");
 			return;
 		}
 		if (sz == edge) {
@@ -287,7 +283,7 @@ public class Carpet {
 	}
 
 	public void changeCarpet(Material material) {
-		if (!getConfig().getCustomCarpets()) {
+		if (!Config.getCustomCarpets()) {
 			who.sendMessage("The carpet isn't allowed to change material.");
 			return;
 		}
@@ -306,7 +302,7 @@ public class Carpet {
 	}
 
 	public void changeCarpet(Material material, byte data) {
-		if (!getConfig().getCustomCarpets()) {
+		if (!Config.getCustomCarpets()) {
 			who.sendMessage("The carpet isn't allowed to change material.");
 			return;
 		}
@@ -365,8 +361,8 @@ public class Carpet {
 	}
 
 	public boolean isCustom() {
-		if (thread != getConfig().getCarpetMaterial()
-				|| shine != getConfig().getLightMaterial()) {
+		if (thread != Config.getCarpetMaterial()
+				|| shine != Config.getLightMaterial()) {
 			return true;
 		}
 		return false;
@@ -391,7 +387,7 @@ public class Carpet {
 	}
 
 	public void lightOn() {
-		if (!getConfig().getLights()) {
+		if (!Config.getLights()) {
 			who.sendMessage("The magic light is disabled");
 			return;
 		}
@@ -411,7 +407,7 @@ public class Carpet {
 	}
 
 	public void setLight(Material material) {
-		if (!getConfig().getCustomLights()) {
+		if (!Config.getCustomLights()) {
 			who.sendMessage("The magic light isn't allowed to change material.");
 			return;
 		}
@@ -466,7 +462,7 @@ public class Carpet {
 	}
 
 	public void toolsOn() {
-		if (!getConfig().getTools()) {
+		if (!Config.getTools()) {
 			who.sendMessage("The magic tools are not enabled.");
 			return;
 		}

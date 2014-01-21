@@ -9,8 +9,7 @@ import java.io.ObjectOutputStream;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
-import net.digiex.magiccarpet.plugins.Vault;
-import net.digiex.magiccarpet.plugins.WorldGuard;
+import net.digiex.magiccarpet.plugins.Plugins;
 
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,11 +33,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class MagicCarpet extends JavaPlugin {
 
 	private static Logger log;
-	private static Config config;
 	private static Storage carpets;
-
-	private static Vault vault;
-	private static WorldGuard worldGuard;
 
 	private boolean init;
 
@@ -104,7 +99,7 @@ public class MagicCarpet extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		if (init)
-			if (config.getSaveCarpets()) {
+			if (Config.getSaveCarpets()) {
 				saveCarpets();
 			} else {
 				for (Carpet c : carpets.all()) {
@@ -128,11 +123,10 @@ public class MagicCarpet extends JavaPlugin {
 		if (!getDataFolder().exists()) {
 			getDataFolder().mkdirs();
 		}
-		config = new Config(this);
+		new Config(this);
 		carpets = new Storage();
-		vault = new Vault(this);
-		worldGuard = new WorldGuard(this);
-		if (config.getSaveCarpets()) {
+		new Plugins(this);
+		if (Config.getSaveCarpets()) {
 			loadCarpets();
 		}
 		new Permissions();
@@ -185,20 +179,8 @@ public class MagicCarpet extends JavaPlugin {
 	public static Storage getCarpets() {
 		return carpets;
 	}
-
-	public static Config getMagicConfig() {
-		return config;
-	}
-
-	public static Vault getVault() {
-		return vault;
-	}
-
-	public static WorldGuard getWorldGuard() {
-		return worldGuard;
-	}
-
-	public static Logger getMagicLogger() {
+	
+	public static Logger log() {
 		return log;
 	}
 }

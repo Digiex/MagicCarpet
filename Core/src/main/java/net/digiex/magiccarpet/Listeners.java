@@ -119,12 +119,7 @@ public class Listeners implements Listener {
 		if (carpet == null || !carpet.isVisible()) {
 			return;
 		}
-		Location to = event.getTo();
-		Location from = event.getFrom();
-		if (from.getWorld() == to.getWorld() && from.distance(to) == 0) {
-			return;
-		}
-		carpet.moveTo(to);
+		carpet.moveTo(event.getTo());
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -174,7 +169,7 @@ public class Listeners implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPhysics(BlockPhysicsEvent event) {
 		Block block = event.getBlock();
-		if (!MagicCarpet.getMagicConfig().getPhysics()) {
+		if (!Config.getPhysics()) {
 			switch (block.getType()) {
 			case SAND:
 				break;
@@ -274,8 +269,9 @@ public class Listeners implements Listener {
 				event.setCancelled(true);
 				c.setFalling(false);
 			}
+		case PROJECTILE:
 		case ENTITY_ATTACK:
-			if (MagicCarpet.getMagicConfig().getPvp()) {
+			if (Config.getPvp()) {
 				return;
 			}
 			if (!(event instanceof EntityDamageByEntityEvent)) {
@@ -286,7 +282,7 @@ public class Listeners implements Listener {
 				Player player = (Player) e.getEntity();
 				Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
 				if (carpet != null && carpet.isVisible()) {
-					if (MagicCarpet.getMagicConfig().getPVPHide()) {
+					if (Config.getPVPHide()) {
 						carpet.hide();
 						player.sendMessage("The carpet cannot be used while in PVP/PVE combat.");
 					}
@@ -294,10 +290,10 @@ public class Listeners implements Listener {
 				}
 			}
 			if ((e.getDamager() instanceof Player)) {
-				Player player = (Player) e.getEntity();
+				Player player = (Player) e.getDamager();
 				Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
 				if (carpet != null && carpet.isVisible()) {
-					if (MagicCarpet.getMagicConfig().getPVPHide()) {
+					if (Config.getPVPHide()) {
 						carpet.hide();
 						player.sendMessage("The carpet cannot be used while in PVP/PVE combat.");
 					}

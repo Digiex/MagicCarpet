@@ -46,9 +46,6 @@ public class Helper {
 
 		String version = serverPackageName.substring(serverPackageName
 				.lastIndexOf('.') + 1);
-		if (version.equals("craftbukkit")) {
-			version = "pre";
-		}
 
 		final Class<?> clazz = Class.forName(pluginPackageName + ".nms."
 				+ version + ".Handler");
@@ -57,7 +54,7 @@ public class Helper {
 			nms = (Abstraction) clazz.getConstructor().newInstance();
 		} else {
 			throw new IllegalStateException("Class " + clazz.getName()
-					+ " does not implement NMSAbstraction");
+					+ " does not implement NMS API");
 		}
 
 		return nms;

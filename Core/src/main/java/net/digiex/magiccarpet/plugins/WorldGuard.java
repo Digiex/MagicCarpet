@@ -3,10 +3,7 @@ package net.digiex.magiccarpet.plugins;
 import java.util.Iterator;
 import java.util.Set;
 
-import net.digiex.magiccarpet.MagicCarpet;
-
 import org.bukkit.Location;
-import org.bukkit.plugin.Plugin;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
@@ -30,29 +27,13 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
  */
 public class WorldGuard {
 
-	private final MagicCarpet plugin;
-	private WorldGuardPlugin worldGuard;
+	private static WorldGuardPlugin worldGuard;
 
-	public WorldGuard(MagicCarpet plugin) {
-		this.plugin = plugin;
-		getWorldGuard();
+	public WorldGuard(WorldGuardPlugin w) {
+		worldGuard = w;
 	}
 
-	private void getWorldGuard() {
-		Plugin p = plugin.getServer().getPluginManager()
-				.getPlugin("WorldGuard");
-		if (p == null
-				|| !(p instanceof com.sk89q.worldguard.bukkit.WorldGuardPlugin)) {
-			return;
-		}
-		worldGuard = (WorldGuardPlugin) p;
-	}
-
-	public boolean isEnabled() {
-		return (worldGuard != null) ? true : false;
-	}
-
-	public boolean canFlyHere(Location location) {
+	public static boolean canFlyHere(Location location) {
 		try {
 			RegionManager regionManager = worldGuard.getRegionManager(location
 					.getWorld());
