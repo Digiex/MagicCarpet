@@ -40,14 +40,12 @@ public final class Permissions {
         if (MagicCarpet.getCarpets().wasGiven(player))
             return true;
         if (Plugins.isVaultEnabled()) {
-            if (player.hasPermission(p)) {
+            if (player.hasPermission(p))
                 return true;
-            }
-            if (Config.getChargeTimeBased()) {
+            if (Config.getChargeTimeBased())
                 return MagicCarpet.getCarpets().getTime(player) <= 0L ? false : true;
-            } else {
+            else
                 return MagicCarpet.getCarpets().hasPaidFee(player);
-            }
         }
         return player.hasPermission(permission);
     }
@@ -71,7 +69,7 @@ public final class Permissions {
     public static boolean canReload(final Player player) {
         return player.hasPermission(r);
     }
-    
+
     public static boolean canNotPay(final Player player) {
         return player.hasPermission(p);
     }
@@ -79,7 +77,7 @@ public final class Permissions {
     public static boolean canFlyHere(final Location location) {
         return !Plugins.isWorldGuardEnabled() ? true : WorldGuard.canFlyHere(location);
     }
-    
+
     public static boolean canFlyAt(final Player player, final Integer size) {
         if (size == Config.getCarpSize())
             return true;
