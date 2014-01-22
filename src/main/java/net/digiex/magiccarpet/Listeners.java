@@ -125,7 +125,7 @@ public class Listeners implements Listener {
         }
     }
 
-    /*@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockFade(final BlockFadeEvent event) {
         final Block block = event.getBlock();
         if (block.hasMetadata("Carpet")) {
@@ -137,7 +137,7 @@ public class Listeners implements Listener {
                 return;
             }
         }
-    }*/
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockForm(final BlockFormEvent event) {
