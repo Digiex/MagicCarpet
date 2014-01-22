@@ -67,7 +67,7 @@ public class Vault {
         plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
             @Override
             public void run() {
-                if (!Config.getChargeTimeBased())
+                if (!Config.getCharge() || !Config.getChargeTimeBased())
                     return;
                 for (final Player player : plugin.getServer().getOnlinePlayers()) {
                     final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);

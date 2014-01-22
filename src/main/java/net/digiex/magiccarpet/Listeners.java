@@ -1,5 +1,6 @@
 package net.digiex.magiccarpet;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -124,17 +125,19 @@ public class Listeners implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    /*@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockFade(final BlockFadeEvent event) {
-        for (final Carpet carpet : MagicCarpet.getCarpets().all()) {
-            if (carpet == null || !carpet.isVisible() || !carpet.hasLight())
-                continue;
-            if (carpet.touches(event.getBlock())) {
+        final Block block = event.getBlock();
+        if (block.hasMetadata("Carpet")) {
+            final String who = block.getMetadata("Carpet").get(0).asString();
+            final Player player = Bukkit.getPlayer(who);
+            final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+            if (carpet.touches(block)) {
                 event.setCancelled(true);
                 return;
             }
         }
-    }
+    }*/
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockForm(final BlockFormEvent event) {

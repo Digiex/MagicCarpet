@@ -1,5 +1,6 @@
 package net.digiex.magiccarpet.plugins;
 
+import net.digiex.magiccarpet.Config;
 import net.digiex.magiccarpet.MagicCarpet;
 
 import org.bukkit.Bukkit;
@@ -36,7 +37,7 @@ public final class Plugins {
     }
 
     public static boolean isVaultEnabled() {
-        return vault != null ? true : false;
+        return vault != null && Config.getCharge() ? true : false;
     }
 
     public static boolean isWorldGuardEnabled() {
