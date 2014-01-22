@@ -159,7 +159,7 @@ public class Storage implements Serializable {
                 entry.lightsOn = false;
             if (entry.tools && !Config.getTools())
                 entry.tools = false;
-            if (Plugins.isVaultEnabled() && Config.getCharge())
+            if (Plugins.isVaultEnabled())
                 if (Config.getChargeTimeBased()) {
                     if (entry.hasCarpet && entry.time <= 0L && !entry.given)
                         entry.hasCarpet = false;
