@@ -1,6 +1,5 @@
 package net.digiex.magiccarpet;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
