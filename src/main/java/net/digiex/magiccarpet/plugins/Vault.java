@@ -168,7 +168,7 @@ public class Vault {
             s = s + seconds + "S";
         if (s.equals(" ") || s.isEmpty())
             return "zero seconds";
-        return s;
+        return s.trim();
     }
 
     public static void substractTime(final Carpet carpet, final long time) {
