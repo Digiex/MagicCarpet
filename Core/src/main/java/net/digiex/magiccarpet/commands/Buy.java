@@ -65,7 +65,7 @@ public class Buy implements CommandExecutor {
                 sender.sendMessage("Economy support is not enabled.");
                 return true;
             }
-            if (Permissions.canNotPay(player)) {
+            if (Permissions.canNotPay(player) || MagicCarpet.getCarpets().wasGiven(player)) {
                 player.sendMessage("You don't need to use this. You have unlimited time to use MagicCarpet.");
                 return true;
             }

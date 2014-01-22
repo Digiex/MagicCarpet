@@ -79,31 +79,17 @@ public class Carpet implements CommandExecutor {
                 player.sendMessage("The magic carpet is not allowed in this area.");
                 return true;
             }
-            if (MagicCarpet.getCarpets().wasGiven(player)) {
-                new net.digiex.magiccarpet.Carpet(player).show();
-                return true;
-            }
-            if (Plugins.isVaultEnabled()) {
-                if (Permissions.canNotPay(player)) {
-                    new net.digiex.magiccarpet.Carpet(player).show();
-                    return true;
-                }
-                if (Config.getChargeTimeBased()) {
-                    if (MagicCarpet.getCarpets().getTime(player) == 0L) {
-                        player.sendMessage("You have ran out of time to use the Magic Carpet. Please refill using /mcb");
-                        return true;
-                    }
-                    new net.digiex.magiccarpet.Carpet(player).show();
-                    return true;
-                } else {
-                    if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
+            if (Plugins.isVaultEnabled() && !MagicCarpet.getCarpets().wasGiven(player))
+                if (!Permissions.canNotPay(player))
+                    if (Config.getChargeTimeBased()) {
+                        if (MagicCarpet.getCarpets().getTime(player) == 0L) {
+                            player.sendMessage("You have ran out of time to use the Magic Carpet. Please refill using /mcb");
+                            return true;
+                        }
+                    } else if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
                         player.sendMessage("You need to pay a one time fee before you can use Magic Carpet. Use /mcb.");
                         return true;
                     }
-                    new net.digiex.magiccarpet.Carpet(player).show();
-                    return true;
-                }
-            }
             if (!Permissions.canFly(player)) {
                 player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
                 return true;
@@ -124,31 +110,17 @@ public class Carpet implements CommandExecutor {
                     player.sendMessage("The magic carpet is not allowed in this area.");
                     return true;
                 }
-                if (MagicCarpet.getCarpets().wasGiven(player)) {
-                    carpet.show();
-                    return true;
-                }
-                if (Plugins.isVaultEnabled()) {
-                    if (Permissions.canNotPay(player)) {
-                        carpet.show();
-                        return true;
-                    }
-                    if (Config.getChargeTimeBased()) {
-                        if (MagicCarpet.getCarpets().getTime(player) <= 0L) {
-                            player.sendMessage("You've ran out of time to use the Magic Carpet. Please refill using /mcb");
-                            return true;
-                        }
-                        carpet.show();
-                        return true;
-                    } else {
-                        if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
+                if (Plugins.isVaultEnabled() && !MagicCarpet.getCarpets().wasGiven(player))
+                    if (!Permissions.canNotPay(player))
+                        if (Config.getChargeTimeBased()) {
+                            if (MagicCarpet.getCarpets().getTime(player) == 0L) {
+                                player.sendMessage("You have ran out of time to use the Magic Carpet. Please refill using /mcb");
+                                return true;
+                            }
+                        } else if (!MagicCarpet.getCarpets().hasPaidFee(player)) {
                             player.sendMessage("You need to pay a one time fee before you can use Magic Carpet. Use /mcb.");
                             return true;
                         }
-                        carpet.show();
-                        return true;
-                    }
-                }
                 if (!Permissions.canFly(player)) {
                     player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
                     return true;
