@@ -201,11 +201,6 @@ public class Listeners implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPistonExtend(final BlockPistonExtendEvent event) {
-        for (final Block block : event.getBlocks())
-            if (block.hasMetadata("Carpet")) {
-                event.setCancelled(true);
-                return;
-            }
         for (final BlockFace face : BlockFace.values()) {
             final Block block = event.getBlock().getRelative(face);
             if (block.hasMetadata("Carpet")) {
@@ -213,13 +208,35 @@ public class Listeners implements Listener {
                 return;
             }
         }
+        for (final Block block : event.getBlocks())
+            if (block.hasMetadata("Carpet")) {
+                event.setCancelled(true);
+                return;
+            }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPistonRetract(final BlockPistonRetractEvent event) {
-        if (event.isSticky())
-            if (event.getRetractLocation().getBlock().hasMetadata("Carpet"))
+        if (event.isSticky()) {
+            final Block block = event.getRetractLocation().getBlock();
+            if (block.hasMetadata("Carpet"))
                 event.setCancelled(true);
+            else {
+                final int radius = 3;
+                final int a = block.getX();
+                final int b = block.getY();
+                final int c = block.getZ();
+                for (int x = a - radius; x <= a + radius; x++)
+                    for (int y = b - radius; y <= b + radius; y++)
+                        for (int z = c - radius; z <= c + radius; z++) {
+                            final Block near = block.getWorld().getBlockAt(x, y, z);
+                            if (near.hasMetadata("Carpet")) {
+                                event.setCancelled(true);
+                                return;
+                            }
+                        }
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
