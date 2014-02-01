@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 
 import net.digiex.magiccarpet.plugins.Plugins;
 
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -88,9 +87,7 @@ public class MagicCarpet extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (init) {
-            getServer().getScheduler().cancelTasks(this);
-            HandlerList.unregisterAll(this);
+        if (init)
             if (Config.getSaveCarpets())
                 saveCarpets();
             else
@@ -99,7 +96,6 @@ public class MagicCarpet extends JavaPlugin {
                         continue;
                     c.removeCarpet();
                 }
-        }
         log.info("is now disabled!");
     }
 
