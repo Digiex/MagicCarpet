@@ -222,7 +222,7 @@ public class Listeners implements Listener {
             if (block.hasMetadata("Carpet"))
                 event.setCancelled(true);
             else {
-                final int radius = 3;
+                final int radius = 2;
                 final int a = block.getX();
                 final int b = block.getY();
                 final int c = block.getZ();
@@ -263,6 +263,7 @@ public class Listeners implements Listener {
                 c.setFalling(false);
             }
         case PROJECTILE:
+        case ENTITY_EXPLOSION:
         case ENTITY_ATTACK:
             if (Config.getPvp())
                 return;
