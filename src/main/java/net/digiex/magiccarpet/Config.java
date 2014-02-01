@@ -66,6 +66,7 @@ public final class Config {
         options.put("pvp", Config.pvp);
         options.put("physics-fun", Config.physics);
         options.put("pvp-hide", Config.pvpHide);
+        options.put("carpet-data", "white");
 
         if (configFile.exists())
             loadSettings();
@@ -94,6 +95,7 @@ public final class Config {
     private static boolean pvp = false;
     private static boolean physics = false;
     private static boolean pvpHide = true;
+    private static Byte carpetData = 0;
 
     private static String saveString(final String s) {
         return s.toLowerCase().replace("_", " ");
@@ -101,6 +103,43 @@ public final class Config {
 
     private static String loadString(final String s) {
         return s.toUpperCase().replace(" ", "_");
+    }
+
+    private static Byte getColor(final String data) {
+        if (data.equals("white"))
+            return (byte) 0;
+        else if (data.equals("orange"))
+            return (byte) 1;
+        else if (data.equals("magenta"))
+            return (byte) 2;
+        else if (data.equals("light blue"))
+            return (byte) 3;
+        else if (data.equals("yellow"))
+            return (byte) 4;
+        else if (data.equals("lime"))
+            return (byte) 5;
+        else if (data.equals("pink"))
+            return (byte) 6;
+        else if (data.equals("gray"))
+            return (byte) 7;
+        else if (data.equals("light gray"))
+            return (byte) 8;
+        else if (data.equals("cyan"))
+            return (byte) 9;
+        else if (data.equals("purple"))
+            return (byte) 10;
+        else if (data.equals("blue"))
+            return (byte) 11;
+        else if (data.equals("brown"))
+            return (byte) 12;
+        else if (data.equals("green"))
+            return (byte) 13;
+        else if (data.equals("red"))
+            return (byte) 14;
+        else if (data.equals("black"))
+            return (byte) 15;
+        else
+            return (byte) 0;
     }
 
     public static Material getCarpetMaterial() {
@@ -271,6 +310,14 @@ public final class Config {
         Config.pvpHide = pvpHide;
     }
 
+    public static Byte getCarpetData() {
+        return carpetData;
+    }
+
+    public static void setCarpetData(final byte carpetData) {
+        Config.carpetData = carpetData;
+    }
+
     public static void saveSettings() {
         for (final Entry<String, Object> o : options.entrySet())
             config.set(o.getKey(), o.getValue());
@@ -305,6 +352,7 @@ public final class Config {
             carpMaterial = GLASS;
             log.warning("Config error; Invaild carpet material.");
         }
+        carpetData = getColor(config.getString("carpet-data", carpetData.toString()));
         lightMaterial = Material.getMaterial(loadString(config.getString("light-material", GLOWSTONE.name())));
         if (lightMaterial == null)
             lightMaterial = Material.matchMaterial(config.getString("light-material", GLOWSTONE.name()));

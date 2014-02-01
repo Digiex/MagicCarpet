@@ -40,7 +40,6 @@ public class Storage implements Serializable {
         public boolean autoRenew = false;
         public boolean oneTimeFee = false;
         public String autoPackage = null;
-        public byte data = (byte) 0;
 
         public boolean crouch = Config.getCrouch();
         public int lastSize = Config.getCarpSize();
@@ -48,6 +47,7 @@ public class Storage implements Serializable {
         public boolean lightsOn = Config.getGlowing();
         public Material thread = Config.getCarpetMaterial();
         public long time = Config.getChargeTime();
+        public byte data = Config.getCarpetData();
     }
 
     private final HashMap<String, CarpetEntry> carpets = new HashMap<String, CarpetEntry>();
@@ -210,7 +210,7 @@ public class Storage implements Serializable {
     public boolean hasLight(final Player player) {
         final CarpetEntry entry = getEntry(player);
         if (entry == null)
-            return false;
+            return (Config.getLights()) ? Config.getGlowing() : false;
         return entry.lightsOn;
     }
 
@@ -240,7 +240,7 @@ public class Storage implements Serializable {
     public boolean hasTools(final Player player) {
         final CarpetEntry entry = getEntry(player);
         if (entry == null)
-            return false;
+            return Config.getTools();
         return entry.tools;
     }
 
@@ -305,7 +305,7 @@ public class Storage implements Serializable {
     public byte getData(final Player player) {
         final CarpetEntry entry = getEntry(player);
         if (entry == null)
-            return (byte) 0;
+            return Config.getCarpetData();
         return entry.data;
     }
 
