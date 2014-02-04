@@ -210,7 +210,7 @@ public class Storage implements Serializable {
     public boolean hasLight(final Player player) {
         final CarpetEntry entry = getEntry(player);
         if (entry == null)
-            return (Config.getLights()) ? Config.getGlowing() : false;
+            return Config.getLights() ? Config.getGlowing() : false;
         return entry.lightsOn;
     }
 
