@@ -29,13 +29,20 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>craftbukkit</artifactId>
-			<version>1.7.2-R0.1-SNAPSHOT</version>
+			<version>1.7.5-R0.1-SNAPSHOT</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>net.digiex</groupId>
 			<artifactId>magiccarpet-nms-api</artifactId>
 			<version>API</version>
+			<type>jar</type>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>net.digiex</groupId>
+			<artifactId>magiccarpet-nms-v1_7_R2</artifactId>
+			<version>v1_7_R2</version>
 			<type>jar</type>
 			<optional>true</optional>
 		</dependency>
