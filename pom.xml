@@ -23,11 +23,6 @@
         </repository>
     </repositories>
     
-    <ciManagement>
-        <system>Jenkins</system>
-        <url>http://kingburn.tk/</url>
-    </ciManagement>
-    
     <issueManagement>
         <system>GitHub Issues</system>
         <url>https://github.com/Digiex/MagicCarpet/issues</url>

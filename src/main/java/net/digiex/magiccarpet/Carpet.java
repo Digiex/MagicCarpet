@@ -230,7 +230,7 @@ public class Carpet {
             makeMagic(Color.RED);
             MagicCarpet.getCarpets().update(who);
             who.sendMessage(message);
-            if (who.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR)
+            if (!Config.getFallDamage() && who.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR)
                 falling = true;
         }
     }
@@ -327,7 +327,7 @@ public class Carpet {
             makeMagic(Color.RED);
             MagicCarpet.getCarpets().update(who);
             who.sendMessage("Poof! The magic carpet disappears.");
-            if (who.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR)
+            if (!Config.getFallDamage() && who.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR)
                 falling = true;
         }
     }
