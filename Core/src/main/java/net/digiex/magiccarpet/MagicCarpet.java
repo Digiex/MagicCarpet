@@ -106,6 +106,7 @@ public class MagicCarpet extends JavaPlugin {
         if (!Helper.isEnabled()) {
             log.severe("Unable to fully initialize; Please check this is the latest build.");
             getServer().getPluginManager().disablePlugin(this);
+            return;
         }
         if (!getDataFolder().exists())
             getDataFolder().mkdirs();
