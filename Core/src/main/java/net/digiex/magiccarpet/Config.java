@@ -66,7 +66,7 @@ public final class Config {
         options.put("pvp", Config.pvp);
         options.put("physics-fun", Config.physics);
         options.put("pvp-hide", Config.pvpHide);
-        options.put("carpet-data", "white");
+        options.put("carpet-color", "white");
         options.put("fall-damage", Config.fall);
 
         if (configFile.exists())
@@ -362,7 +362,7 @@ public final class Config {
             carpMaterial = GLASS;
             log.warning("Config error; Invaild carpet material.");
         }
-        carpetData = getColor(config.getString("carpet-data", carpetData.toString()));
+        carpetData = getColor(config.getString("carpet-color", carpetData.toString()));
         lightMaterial = Material.getMaterial(loadString(config.getString("light-material", GLOWSTONE.name())));
         if (lightMaterial == null)
             lightMaterial = Material.matchMaterial(config.getString("light-material", GLOWSTONE.name()));
