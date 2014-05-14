@@ -56,18 +56,7 @@ public class Listeners implements Listener {
         MagicCarpet.getCarpets().remove(event.getPlayer());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPlayerKick(final PlayerKickEvent event) {
-        final Player who = event.getPlayer();
-        final Carpet carpet = MagicCarpet.getCarpets().getCarpet(who);
-        if (carpet != null && carpet.isVisible()) {
-            final String reason = event.getReason();
-            if (reason != null && reason.equals("Flying is not enabled on this server") && who.isSneaking())
-                event.setCancelled(true);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerMove(final PlayerMoveEvent event) {
         final Player player = event.getPlayer();
         final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
@@ -97,7 +86,7 @@ public class Listeners implements Listener {
         carpet.setDescending(false);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
         final Player player = event.getPlayer();
         final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
@@ -106,7 +95,7 @@ public class Listeners implements Listener {
         carpet.moveTo(event.getTo());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerToggleSneak(final PlayerToggleSneakEvent event) {
         final Player player = event.getPlayer();
         final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
@@ -117,6 +106,17 @@ public class Listeners implements Listener {
         if (event.isSneaking()) {
             carpet.setDescending(true);
             carpet.descend();
+        }
+    }
+    
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerKick(final PlayerKickEvent event) {
+        final Player who = event.getPlayer();
+        final Carpet carpet = MagicCarpet.getCarpets().getCarpet(who);
+        if (carpet != null && carpet.isVisible()) {
+            final String reason = event.getReason();
+            if (reason != null && reason.toLowerCase().contains("flying") && who.isSneaking())
+                event.setCancelled(true);
         }
     }
 
