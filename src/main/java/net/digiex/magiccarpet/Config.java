@@ -97,7 +97,7 @@ public final class Config {
     private static boolean physics = false;
     private static boolean pvpHide = true;
     private static Byte carpetData = 0;
-    private static boolean fall = true;
+    private static boolean fall = false;
 
     private static String saveString(final String s) {
         return s.toLowerCase().replace("_", " ");
@@ -393,7 +393,7 @@ public final class Config {
         pvp = config.getBoolean("pvp", false);
         physics = config.getBoolean("physics-fun", false);
         pvpHide = config.getBoolean("pvp-hide", true);
-        fall = config.getBoolean("fall-damage", true);
+        fall = config.getBoolean("fall-damage", false);
     }
 
     public static void checkConfig() {
