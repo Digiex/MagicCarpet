@@ -42,30 +42,19 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
  */
 public class Listeners implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
         if (MagicCarpet.getCarpets().has(player))
             new Carpet(player).show();
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(final PlayerQuitEvent event) {
         MagicCarpet.getCarpets().remove(event.getPlayer());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPlayerKick(final PlayerKickEvent event) {
-        final Player who = event.getPlayer();
-        final Carpet carpet = MagicCarpet.getCarpets().getCarpet(who);
-        if (carpet != null && carpet.isVisible()) {
-            final String reason = event.getReason();
-            if (reason != null && reason.equals("Flying is not enabled on this server") && who.isSneaking())
-                event.setCancelled(true);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerMove(final PlayerMoveEvent event) {
         final Player player = event.getPlayer();
         final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
@@ -87,7 +76,7 @@ public class Listeners implements Listener {
         carpet.setDescending(false);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
         final Player player = event.getPlayer();
         final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
@@ -96,7 +85,7 @@ public class Listeners implements Listener {
         carpet.moveTo(event.getTo());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerToggleSneak(final PlayerToggleSneakEvent event) {
         final Player player = event.getPlayer();
         final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
@@ -107,8 +96,19 @@ public class Listeners implements Listener {
             carpet.descend();
         }
     }
+    
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerKick(final PlayerKickEvent event) {
+        final Player who = event.getPlayer();
+        final Carpet carpet = MagicCarpet.getCarpets().getCarpet(who);
+        if (carpet != null && carpet.isVisible()) {
+            final String reason = event.getReason();
+            if (reason != null && reason.equals("Flying is not enabled on this server") && who.isSneaking())
+                event.setCancelled(true);
+        }
+    }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onBlockPhysics(final BlockPhysicsEvent event) {
         final Block block = event.getBlock();
         switch (block.getType()) {
@@ -128,20 +128,20 @@ public class Listeners implements Listener {
             }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onBlockForm(final BlockFormEvent event) {
         final Block block = event.getBlock().getRelative(BlockFace.DOWN);
         if (block.hasMetadata("Carpet"))
             event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent event) {
         if (event.getBlock().hasMetadata("Carpet"))
             event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onBlockPistonExtend(final BlockPistonExtendEvent event) {
         for (final BlockFace face : BlockFace.values()) {
             final Block block = event.getBlock().getRelative(face);
@@ -157,7 +157,7 @@ public class Listeners implements Listener {
             }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onBlockPistonRetract(final BlockPistonRetractEvent event) {
         if (event.isSticky()) {
             final Block block = event.getRetractLocation().getBlock();
@@ -181,7 +181,7 @@ public class Listeners implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageEvent event) {
         if (!(event.getEntity() instanceof LivingEntity))
             return;
@@ -233,7 +233,7 @@ public class Listeners implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onEntityExplode(final EntityExplodeEvent event) {
         for (final Block block : event.blockList())
             if (block.hasMetadata("Carpet")) {
@@ -242,7 +242,7 @@ public class Listeners implements Listener {
             }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onHangingingBreak(final HangingBreakEvent event) {
         for (final BlockFace face : BlockFace.values())
             if (event.getEntity().getLocation().getBlock().getRelative(face).hasMetadata("Carpet")) {
