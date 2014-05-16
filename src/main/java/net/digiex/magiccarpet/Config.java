@@ -67,7 +67,8 @@ public final class Config {
         options.put("physics-fun", Config.physics);
         options.put("pvp-hide", Config.pvpHide);
         options.put("carpet-color", "white");
-        options.put("fall-damage", Config.fall);
+        options.put("fall", Config.fall);
+        options.put("drowning", Config.drowning);
 
         if (configFile.exists())
             loadSettings();
@@ -98,6 +99,7 @@ public final class Config {
     private static boolean pvpHide = true;
     private static Byte carpetData = 0;
     private static boolean fall = false;
+    private static boolean drowning = false;
 
     private static String saveString(final String s) {
         return s.toLowerCase().replace("_", " ");
@@ -327,6 +329,14 @@ public final class Config {
     public static void setFallDamage(final boolean fall) {
         Config.fall = fall;
     }
+    
+    public static boolean getDrowning() {
+        return fall;
+    }
+
+    public static void setDrowning(final boolean drowning) {
+        Config.drowning = drowning;
+    }
 
     public static void saveSettings() {
         for (final Entry<String, Object> o : options.entrySet())
@@ -393,7 +403,8 @@ public final class Config {
         pvp = config.getBoolean("pvp", false);
         physics = config.getBoolean("physics-fun", false);
         pvpHide = config.getBoolean("pvp-hide", true);
-        fall = config.getBoolean("fall-damage", false);
+        fall = config.getBoolean("fall", false);
+        drowning = config.getBoolean("drowning", false);
     }
 
     public static void checkConfig() {

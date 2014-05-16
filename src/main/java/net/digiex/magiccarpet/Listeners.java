@@ -246,6 +246,16 @@ public class Listeners implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageEvent event) {
         switch (event.getCause()) {
+        case DROWNING:
+        	if (event.getEntity() instanceof Player) {
+        		if (!Config.getDrowning()) {
+        			final Carpet carpet = MagicCarpet.getCarpets().getCarpet((Player) event.getEntity());
+        			if (carpet == null)
+        				return;
+        			if (carpet.isVisible())
+        				event.setCancelled(true);
+        		}
+        	}
         case SUFFOCATION:
             if (!(event.getEntity() instanceof LivingEntity))
                 return;
