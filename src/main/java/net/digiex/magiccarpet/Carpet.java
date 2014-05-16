@@ -41,7 +41,7 @@ public class Carpet {
         }
 
         void set(final Block bl, final Material material) {
-            bl.setMetadata("Carpet", new FixedMetadataValue(plugin, who.getName()));
+            bl.setMetadata("Carpet", new FixedMetadataValue(plugin, who.getUniqueId()));
             bl.setType(material);
         }
 

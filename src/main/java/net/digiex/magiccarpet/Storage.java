@@ -3,6 +3,7 @@ package net.digiex.magiccarpet;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
@@ -23,20 +24,20 @@ import org.bukkit.entity.Player;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class Storage implements Serializable {
-    private static final long serialVersionUID = -2070080026438450206L;
+	private static final long serialVersionUID = -2070080026438450206L;
 
-    private class CarpetEntry implements Serializable {
-        private static final long serialVersionUID = -5947866865121964362L;
-
-        public transient Carpet carpet;
+	private class CarpetEntry implements Serializable {
+		private static final long serialVersionUID = -5947866865121964362L;
+		
+		public transient Carpet carpet;
         public boolean hasCarpet = false;
     }
 
-    private final HashMap<String, CarpetEntry> carpets = new HashMap<String, CarpetEntry>();
+    private final HashMap<UUID, CarpetEntry> carpets = new HashMap<UUID, CarpetEntry>();
 
     private CarpetEntry getEntry(final Player player) {
-        if (carpets.containsKey(player.getName()))
-            return carpets.get(player.getName());
+        if (carpets.containsKey(player.getUniqueId()))
+            return carpets.get(player.getUniqueId());
         return null;
     }
 
@@ -76,7 +77,7 @@ public class Storage implements Serializable {
         CarpetEntry entry = getEntry(player);
         if (entry == null) {
             entry = new CarpetEntry();
-            carpets.put(player.getName(), entry);
+            carpets.put(player.getUniqueId(), entry);
         }
         if (entry.carpet != null)
             entry.carpet.removeCarpet();
@@ -84,8 +85,8 @@ public class Storage implements Serializable {
     }
 
     public Carpet getCarpet(final Player player) {
-        if (carpets.containsKey(player.getName()))
-            return carpets.get(player.getName()).carpet;
+        if (carpets.containsKey(player.getUniqueId()))
+            return carpets.get(player.getUniqueId()).carpet;
         return null;
     }
 
