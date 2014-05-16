@@ -44,12 +44,12 @@ public class Carpet {
         }
 
         void setFast(final Block bl, final Material material) {
-            bl.setMetadata("Carpet", new FixedMetadataValue(plugin, who.getName()));
+            bl.setMetadata("Carpet", new FixedMetadataValue(plugin, who.getUniqueId()));
             Helper.getHandler().setBlockFast(bl.getWorld(), bl.getX(), bl.getY(), bl.getZ(), material, (byte) 0);
         }
 
         void setFast(final Block bl, final Material material, final byte data) {
-            bl.setMetadata("Carpet", new FixedMetadataValue(plugin, who.getName()));
+            bl.setMetadata("Carpet", new FixedMetadataValue(plugin, who.getUniqueId()));
             Helper.getHandler().setBlockFast(bl.getWorld(), bl.getX(), bl.getY(), bl.getZ(), material, data);
         }
 

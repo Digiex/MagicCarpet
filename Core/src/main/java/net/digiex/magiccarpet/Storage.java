@@ -3,6 +3,7 @@ package net.digiex.magiccarpet;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.UUID;
 
 import net.digiex.magiccarpet.plugins.Plugins;
 import net.digiex.magiccarpet.plugins.Vault;
@@ -27,12 +28,12 @@ import org.bukkit.entity.Player;
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class Storage implements Serializable {
-    private static final long serialVersionUID = 3417318211816928412L;
+	private static final long serialVersionUID = -150416943675888683L;
 
-    private class CarpetEntry implements Serializable {
-        private static final long serialVersionUID = -365252387220826161L;
+	private class CarpetEntry implements Serializable {
+		private static final long serialVersionUID = -365252387220826161L;
 
-        public transient Carpet carpet;
+		public transient Carpet carpet;
 
         public boolean hasCarpet = false;
         public boolean given = false;
@@ -50,11 +51,11 @@ public class Storage implements Serializable {
         public byte data = Config.getCarpetData();
     }
 
-    private final HashMap<String, CarpetEntry> carpets = new HashMap<String, CarpetEntry>();
+    private final HashMap<UUID, CarpetEntry> carpets = new HashMap<UUID, CarpetEntry>();
 
     private CarpetEntry getEntry(final Player player) {
-        if (carpets.containsKey(player.getName()))
-            return carpets.get(player.getName());
+        if (carpets.containsKey(player.getUniqueId()))
+            return carpets.get(player.getUniqueId());
         return null;
     }
 
@@ -94,7 +95,7 @@ public class Storage implements Serializable {
         CarpetEntry entry = getEntry(player);
         if (entry == null) {
             entry = new CarpetEntry();
-            carpets.put(player.getName(), entry);
+            carpets.put(player.getUniqueId(), entry);
         }
         if (entry.carpet != null)
             entry.carpet.removeCarpet();
@@ -102,8 +103,8 @@ public class Storage implements Serializable {
     }
 
     public Carpet getCarpet(final Player player) {
-        if (carpets.containsKey(player.getName()))
-            return carpets.get(player.getName()).carpet;
+        if (carpets.containsKey(player.getUniqueId()))
+            return carpets.get(player.getUniqueId()).carpet;
         return null;
     }
 
@@ -232,7 +233,7 @@ public class Storage implements Serializable {
         CarpetEntry entry = getEntry(player);
         if (entry == null) {
             entry = new CarpetEntry();
-            carpets.put(player.getName(), entry);
+            carpets.put(player.getUniqueId(), entry);
         }
         entry.given = given;
     }
@@ -297,7 +298,7 @@ public class Storage implements Serializable {
         CarpetEntry entry = getEntry(player);
         if (entry == null) {
             entry = new CarpetEntry();
-            carpets.put(player.getName(), entry);
+            carpets.put(player.getUniqueId(), entry);
         }
         entry.oneTimeFee = paid;
     }
