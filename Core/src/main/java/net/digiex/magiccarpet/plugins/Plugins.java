@@ -10,13 +10,15 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 public final class Plugins {
 
     private final MagicCarpet plugin;
-    private static WorldGuard worldGuard;
     private static Vault vault;
+    private static WorldGuard worldGuard;
+    private static NoCheatPlus nocheatplus;
 
     public Plugins(final MagicCarpet plugin) {
         this.plugin = plugin;
-        getWorldGuard();
         getVault();
+        getWorldGuard();
+        getNoCheatPlus();
     }
 
     private void getVault() {
@@ -35,6 +37,13 @@ public final class Plugins {
             return;
         worldGuard = new WorldGuard((com.sk89q.worldguard.bukkit.WorldGuardPlugin) p);
     }
+    
+    private void getNoCheatPlus() {
+        final Plugin p = plugin.getServer().getPluginManager().getPlugin("NoCheatPlus");
+        if (p == null || !(p instanceof fr.neatmonster.nocheatplus.NoCheatPlus))
+            return;
+        nocheatplus = new NoCheatPlus();
+    }
 
     public static boolean isVaultEnabled() {
         return vault != null && Config.getCharge() ? true : false;
@@ -42,5 +51,9 @@ public final class Plugins {
 
     public static boolean isWorldGuardEnabled() {
         return worldGuard != null ? true : false;
+    }
+    
+    public static boolean isNoCheatPlusEnabled() {
+    	return nocheatplus != null ? true : false;
     }
 }

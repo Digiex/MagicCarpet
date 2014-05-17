@@ -6,7 +6,7 @@ description: Take yourself wonder by wonder on a carpet made of glass.
 database: false
 load: POSTWORLD
 authors: [Android, Celtic Minstrel, and xzKinGzxBuRnzx]
-softdepend: [WorldGuard, Vault]
+softdepend: [Vault, WorldGuard, NoCheatPlus]
 commands:
   magiccarpet:
     description: Take yourself wonder by wonder on a carpet made of glass.

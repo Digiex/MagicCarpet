@@ -14,6 +14,9 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import net.digiex.magiccarpet.plugins.NoCheatPlus;
+import net.digiex.magiccarpet.plugins.Plugins;
+
 /*
  * Magic Carpet 2.4 Copyright (C) 2012-2014 Android, Celtic Minstrel, xzKinGzxBuRnzx
  *
@@ -237,6 +240,8 @@ public class Carpet {
             who.sendMessage(message);
             if (!Config.getFall() && who.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR)
                 falling = true;
+            if (Plugins.isNoCheatPlusEnabled())
+            	NoCheatPlus.unexempt(who);
         }
     }
 
@@ -334,6 +339,8 @@ public class Carpet {
             who.sendMessage("Poof! The magic carpet disappears.");
             if (!Config.getFall() && who.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR)
                 falling = true;
+            if (Plugins.isNoCheatPlusEnabled())
+            	NoCheatPlus.unexempt(who);
         }
     }
 
@@ -407,6 +414,8 @@ public class Carpet {
             } else
                 hidden = true;
             MagicCarpet.getCarpets().update(who);
+            if (Plugins.isNoCheatPlusEnabled())
+            	NoCheatPlus.exempt(who);
         }
     }
 
