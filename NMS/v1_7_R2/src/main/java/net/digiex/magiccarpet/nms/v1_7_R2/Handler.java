@@ -97,6 +97,7 @@ public class Handler implements Abstraction {
         fm.addEffect(effect);
         fw.setFireworkMeta(fm);
         ((CraftWorld) world).getHandle().broadcastEntityEffect(((CraftEntity) fw).getHandle(), (byte) 17);
+        fw.detonate();
         fw.remove();
     }
 
