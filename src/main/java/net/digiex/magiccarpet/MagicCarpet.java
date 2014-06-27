@@ -98,38 +98,6 @@ public class MagicCarpet extends JavaPlugin {
         getServer().getPluginManager().registerEvents(listener, this);
     }
 
-    private void startStats() {
-        try {
-            final Metrics metrics = new Metrics(this);
-            final net.digiex.magiccarpet.Metrics.Graph graph = metrics.createGraph("Carpets");
-            graph.addPlotter(new Metrics.Plotter("Total") {
-                @Override
-                public int getValue() {
-                    int i = 0;
-                    for (@SuppressWarnings("unused")
-                    final Carpet carpet : carpets.all())
-                        i = i + 1;
-                    return i;
-                }
-            });
-            graph.addPlotter(new Metrics.Plotter("Current") {
-                @Override
-                public int getValue() {
-                    int i = 0;
-                    for (final Carpet carpet : carpets.all()) {
-                        if (carpet == null || !carpet.isVisible())
-                            continue;
-                        i = i + 1;
-                    }
-                    return i;
-                }
-            });
-            metrics.start();
-        } catch (final IOException e) {
-            log.warning("Failed to submit stats.");
-        }
-    }
-
     private File carpetsFile() {
         return new File(getDataFolder(), "carpets.dat");
     }
@@ -160,7 +128,6 @@ public class MagicCarpet extends JavaPlugin {
         new Permissions();
         registerEvents(new Listeners());
         registerCommands();
-        startStats();
         log.info("is now enabled!");
     }
 
