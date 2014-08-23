@@ -21,11 +21,6 @@
 		</repository>
 	</repositories>
 
-	<ciManagement>
-		<system>Jenkins</system>
-		<url>http://ci.dy.fi/</url>
-	</ciManagement>
-
 	<issueManagement>
 		<system>GitHub Issues</system>
 		<url>https://github.com/Digiex/MagicCarpetLite/issues</url>
