@@ -17,15 +17,10 @@
   
     <repositories>
         <repository>
-            <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/content/repositories/snapshots/</url>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public</url>
         </repository>
     </repositories>
-    
-    <ciManagement>
-        <system>Jenkins</system>
-        <url>http://ci.dy.fi/</url>
-    </ciManagement>
     
     <issueManagement>
         <system>GitHub Issues</system>
