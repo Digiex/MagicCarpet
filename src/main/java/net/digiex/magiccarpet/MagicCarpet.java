@@ -8,7 +8,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.logging.Logger;
 
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /*
@@ -29,20 +28,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class MagicCarpet extends JavaPlugin {
 
-    private static Storage carpets = new Storage();
     private Logger log;
-
-    private File carpetsFile() {
-        return new File(getDataFolder(), "carpets.dat");
-    }
-
-    private void registerCommands() {
-        getCommand("magiccarpet").setExecutor(new Command());
-    }
-
-    private void registerEvents() {
-        getServer().getPluginManager().registerEvents(new Listeners(), this);
-    }
+    private static Storage carpets = new Storage();
 
     @Override
     public void onDisable() {
@@ -61,16 +48,16 @@ public class MagicCarpet extends JavaPlugin {
         log.info("is now enabled!");
     }
 
-    public static Storage getCarpets() {
-        return carpets;
+    private void registerCommands() {
+        getCommand("magiccarpet").setExecutor(new Command());
     }
 
-    public static boolean canFly(final Player player) {
-        return player.hasPermission("magiccarpet.mc");
+    private void registerEvents() {
+        getServer().getPluginManager().registerEvents(new Listeners(), this);
     }
 
-    public void saveCarpets() {
-        final File carpetDat = carpetsFile();
+    private void saveCarpets() {
+        final File carpetDat = new File(getDataFolder(), "carpets.dat");
         log.info("Saving carpets...");
         if (!carpetDat.exists())
             try {
@@ -83,14 +70,14 @@ public class MagicCarpet extends JavaPlugin {
             final ObjectOutputStream out = new ObjectOutputStream(file);
             out.writeObject(carpets);
             out.close();
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             log.warning("Error writing to carpets.dat; carpets data has not been saved!");
         }
         carpets.clear();
     }
 
-    public void loadCarpets() {
-        final File carpetDat = carpetsFile();
+    private void loadCarpets() {
+        final File carpetDat = new File(getDataFolder(), "carpets.dat");
         if (!carpetDat.exists())
             return;
         log.info("Loading carpets...");
@@ -99,10 +86,12 @@ public class MagicCarpet extends JavaPlugin {
             final ObjectInputStream in = new ObjectInputStream(file);
             carpets = (Storage) in.readObject();
             in.close();
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             log.warning("Error loading carpets.dat; carpets data has not been loaded.");
-        } catch (final ClassNotFoundException e) {
-            log.severe("CarpetStorage class not found! This should never happen!");
         }
+    }
+    
+    public static Storage getCarpets() {
+        return carpets;
     }
 }

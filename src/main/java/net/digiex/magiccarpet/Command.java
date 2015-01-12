@@ -1,5 +1,6 @@
 package net.digiex.magiccarpet;
 
+import org.bukkit.GameMode;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -29,21 +30,23 @@ public class Command implements CommandExecutor {
             return true;
         }
         final Player player = (Player) sender;
-        final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
-        if (!MagicCarpet.canFly(player)) {
+        if (!player.hasPermission("magiccarpet.mc")) {
             player.sendMessage("You shout your command, but it falls on deaf ears. Nothing happens.");
             return true;
         }
-        if (player.getFallDistance() > 0 && !player.getLocation().getBlock().isLiquid()) {
+        if (player.getFallDistance() > 0 && !player.getLocation().getBlock().isLiquid() && player.getGameMode() == GameMode.SURVIVAL) {
             player.sendMessage("You can only activate the Magic Carpet while on solid ground.");
             return true;
         }
-        if (carpet == null)
-            new Carpet(player).show();
-        else if (carpet.isVisible())
-            carpet.hide();
-        else
-            carpet.show();
+        final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+        if (carpet == null) {
+        	new Carpet(player).show();
+        } else { 
+        	if (carpet.isVisible())
+        		carpet.hide();
+        	else
+        		carpet.show();
+        }
         return true;
     }
 }

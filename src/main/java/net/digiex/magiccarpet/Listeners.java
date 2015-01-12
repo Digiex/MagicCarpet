@@ -23,6 +23,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.util.Vector;
 
 /*
  * Magic Carpet 2.4 Copyright (C) 2012-2014 Android, Celtic Minstrel, xzKinGzxBuRnzx
@@ -64,16 +65,17 @@ public class Listeners implements Listener {
         final Location from = event.getFrom();
         if (from.getWorld() == to.getWorld() && from.distance(to) == 0)
             return;
+        if (player.getLocation().getBlock().isLiquid() && !player.getEyeLocation().getBlock().isLiquid() && to.getY() > from.getY())
+            player.setVelocity(player.getVelocity().add(new Vector(0, 0.2, 0)));
         to = to.clone();
         if (player.isSneaking()) {
             if (!carpet.isDescending())
-                to.setY(to.getY() - 1);
+            	to.setY(to.getY() - 1);
             carpet.setDescending(true);
         }
         if (from.getY() > to.getY() && !carpet.isDescending())
             to.setY(from.getY());
         carpet.moveTo(to);
-        carpet.setDescending(false);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -92,7 +94,6 @@ public class Listeners implements Listener {
         if (carpet == null || !carpet.isVisible())
             return;
         if (event.isSneaking()) {
-            carpet.setDescending(true);
             carpet.descend();
         }
     }

@@ -3,6 +3,7 @@ package net.digiex.magiccarpet;
 import static java.lang.Math.abs;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -58,7 +59,7 @@ public class Carpet {
     private Block currentCentre;
     private int area = 0, rad = 0, radplsq = 0;
     private CarpetFibre[] fibres;
-    private boolean hidden, falling, descending;
+    private boolean hidden = true, falling, descending;
     private final Player who;
 
     public Carpet(final Player player) {
@@ -69,7 +70,7 @@ public class Carpet {
     }
 
     private void drawCarpet() {
-        if (!MagicCarpet.canFly(who)) {
+        if (!who.hasPermission("magiccarpet.mc")) {
             hide();
             return;
         }
@@ -82,6 +83,8 @@ public class Carpet {
             fibre.block = bl.getState();
             fibre.set(bl, Material.GLASS);
         }
+        hidden = false;
+        descending = false;
     }
 
     private boolean canReplace(final Material type) {
@@ -125,6 +128,7 @@ public class Carpet {
     }
 
     public void descend() {
+    	descending = true;
         removeCarpet();
         currentCentre = currentCentre.getRelative(0, -1, 0);
         drawCarpet();
@@ -139,14 +143,14 @@ public class Carpet {
     }
 
     public void hide() {
-        if (!hidden) {
-            hidden = true;
-            removeCarpet();
-            MagicCarpet.getCarpets().update(who);
-            who.sendMessage("Poof! The magic carpet disappears.");
-            if (who.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR)
-                falling = true;
-        }
+    	if (hidden) {
+    		return;
+    	}
+    	removeCarpet();
+        MagicCarpet.getCarpets().update(who);
+        who.sendMessage("Poof! The magic carpet disappears.");
+        if (who.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR && who.getGameMode() == GameMode.SURVIVAL)
+            falling = true;
     }
 
     public boolean isVisible() {
@@ -160,19 +164,20 @@ public class Carpet {
     }
 
     public void show() {
-        if (hidden) {
-            currentCentre = who.getLocation().getBlock();
-            hidden = false;
-            drawCarpet();
-            MagicCarpet.getCarpets().update(who);
-            who.sendMessage("Poof! The magic carpet appears below your feet!");
-        }
+    	if (!hidden) {
+    		return;
+    	}
+    	currentCentre = who.getLocation().getBlock();
+    	drawCarpet();
+    	MagicCarpet.getCarpets().update(who);
+    	who.sendMessage("Poof! The magic carpet appears below your feet!");
     }
 
     public void removeCarpet() {
         for (final CarpetFibre fibre : fibres)
             if (fibre.block != null)
                 fibre.update();
+        hidden = true;
     }
 
     public boolean touches(final Block block) {

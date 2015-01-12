@@ -30,7 +30,7 @@ public class Storage implements Serializable {
 		private static final long serialVersionUID = -5947866865121964362L;
 		
 		public transient Carpet carpet;
-        public boolean hasCarpet = false;
+		public boolean hasCarpet = false;
     }
 
     private final HashMap<UUID, CarpetEntry> carpets = new HashMap<UUID, CarpetEntry>();
@@ -121,7 +121,7 @@ public class Storage implements Serializable {
     }
 
     public boolean has(final Player player) {
-        final CarpetEntry entry = carpets.get(player.getName());
+        final CarpetEntry entry = getEntry(player);
         if (entry == null)
             return false;
         return entry.hasCarpet;
