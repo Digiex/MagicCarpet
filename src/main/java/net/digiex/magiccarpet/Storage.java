@@ -1,5 +1,11 @@
 package net.digiex.magiccarpet;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,25 +29,31 @@ import org.bukkit.entity.Player;
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class Storage implements Serializable {
-	private static final long serialVersionUID = -2070080026438450206L;
+public class Storage {
 
-	private class CarpetEntry implements Serializable {
-		private static final long serialVersionUID = -5947866865121964362L;
-		
-		public transient Carpet carpet;
-		public boolean hasCarpet = false;
+    private static class CarpetEntry implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        public transient Carpet carpet;
+        public boolean hasCarpet = false;
     }
 
-    private final HashMap<UUID, CarpetEntry> carpets = new HashMap<UUID, CarpetEntry>();
+    private static HashMap<UUID, CarpetEntry> carpets = new HashMap<UUID, CarpetEntry>();
+    private final MagicCarpet magiccarpet;
+    private final File carpetDat;
 
-    private CarpetEntry getEntry(final Player player) {
+    Storage(final MagicCarpet plugin) {
+        magiccarpet = plugin;
+        carpetDat = new File(plugin.getDataFolder(), "carpets.dat");
+    }
+
+    private static CarpetEntry getEntry(final Player player) {
         if (carpets.containsKey(player.getUniqueId()))
             return carpets.get(player.getUniqueId());
         return null;
     }
 
-    public Iterable<Carpet> all() {
+    public static Iterable<Carpet> all() {
         return new Iterable<Carpet>() {
             @Override
             public Iterator<Carpet> iterator() {
@@ -65,7 +77,7 @@ public class Storage implements Serializable {
                         if (toRemove == null)
                             throw new IllegalStateException();
                         if (toRemove.carpet != null)
-                            toRemove.carpet.removeCarpet();
+                            toRemove.carpet.hide();
                         toRemove.carpet = null;
                     }
                 };
@@ -73,24 +85,52 @@ public class Storage implements Serializable {
         };
     }
 
-    public void assign(final Player player, final Carpet carpet) {
+    void saveCarpets() {
+        magiccarpet.getLogger().info("Saving carpets...");
+        if (!carpetDat.exists())
+            try {
+                carpetDat.createNewFile();
+            } catch (final IOException e) {
+                magiccarpet.getLogger().severe("Unable to create carpets.dat; IOException");
+            }
+        try {
+            final FileOutputStream file = new FileOutputStream(carpetDat);
+            final ObjectOutputStream out = new ObjectOutputStream(file);
+            out.writeObject(carpets);
+            out.close();
+        } catch (final Exception e) {
+            magiccarpet.getLogger().warning("Error writing to carpets.dat; carpets data has not been saved.");
+        }
+        clear();
+    }
+
+    @SuppressWarnings("unchecked")
+    void loadCarpets() {
+        if (!carpetDat.exists())
+            return;
+        magiccarpet.getLogger().info("Loading carpets...");
+        try {
+            final FileInputStream file = new FileInputStream(carpetDat);
+            final ObjectInputStream in = new ObjectInputStream(file);
+            carpets = (HashMap<UUID, CarpetEntry>) in.readObject();
+            in.close();
+        } catch (final Exception e) {
+            magiccarpet.getLogger().warning("Error loading carpets.dat; carpets data has not been loaded.");
+        }
+    }
+
+    static void assign(final Player player, final Carpet carpet) {
         CarpetEntry entry = getEntry(player);
         if (entry == null) {
             entry = new CarpetEntry();
             carpets.put(player.getUniqueId(), entry);
         }
         if (entry.carpet != null)
-            entry.carpet.removeCarpet();
+            entry.carpet.hide();
         entry.carpet = carpet;
     }
 
-    public Carpet getCarpet(final Player player) {
-        if (carpets.containsKey(player.getUniqueId()))
-            return carpets.get(player.getUniqueId()).carpet;
-        return null;
-    }
-
-    public void remove(final Player player) {
+    static void remove(final Player player) {
         final CarpetEntry entry = getEntry(player);
         if (entry == null)
             return;
@@ -100,16 +140,16 @@ public class Storage implements Serializable {
         }
     }
 
-    public void clear() {
+    static void clear() {
         for (final CarpetEntry entry : carpets.values()) {
             if (entry.carpet == null || !entry.carpet.isVisible())
                 continue;
-            entry.carpet.removeCarpet();
+            entry.carpet.hide();
         }
         carpets.clear();
     }
 
-    public void update(final Player player) {
+    static void update(final Player player) {
         final CarpetEntry entry = getEntry(player);
         if (entry == null)
             return;
@@ -120,10 +160,16 @@ public class Storage implements Serializable {
         entry.hasCarpet = entry.carpet.isVisible();
     }
 
-    public boolean has(final Player player) {
+    public static boolean has(final Player player) {
         final CarpetEntry entry = getEntry(player);
         if (entry == null)
             return false;
         return entry.hasCarpet;
+    }
+
+    public static Carpet getCarpet(final Player player) {
+        if (carpets.containsKey(player.getUniqueId()))
+            return carpets.get(player.getUniqueId()).carpet;
+        return null;
     }
 }

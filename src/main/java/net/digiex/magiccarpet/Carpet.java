@@ -2,7 +2,6 @@ package net.digiex.magiccarpet;
 
 import static java.lang.Math.abs;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -42,19 +41,17 @@ public class Carpet {
         }
 
         void set(final Block bl, final Material material) {
-            bl.setMetadata("Carpet", new FixedMetadataValue(plugin, who.getUniqueId()));
             bl.setType(material);
+            bl.setMetadata("Carpet", new FixedMetadataValue(MagicCarpet.getPlugin(), who.getUniqueId()));
         }
 
         void update() {
             if (!block.hasMetadata("Carpet"))
                 return;
+            block.removeMetadata("Carpet", MagicCarpet.getPlugin());
             block.update(true);
-            block.removeMetadata("Carpet", plugin);
         }
     }
-
-    private final MagicCarpet plugin = (MagicCarpet) Bukkit.getServer().getPluginManager().getPlugin("MagicCarpet");
 
     private Block currentCentre;
     private int area = 0, rad = 0, radplsq = 0;
@@ -66,7 +63,14 @@ public class Carpet {
         setSize(5);
         who = player;
         currentCentre = player.getLocation().getBlock();
-        MagicCarpet.getCarpets().assign(player, this);
+        Storage.assign(player, this);
+    }
+
+    void removeCarpet() {
+        for (final CarpetFibre fibre : fibres)
+            if (fibre.block != null)
+                fibre.update();
+        hidden = true;
     }
 
     private void drawCarpet() {
@@ -127,57 +131,36 @@ public class Carpet {
             }
     }
 
-    public void descend() {
-    	descending = true;
+    void descend() {
+        descending = true;
         removeCarpet();
         currentCentre = currentCentre.getRelative(0, -1, 0);
         drawCarpet();
     }
 
-    public Location getLocation() {
-        return currentCentre.getLocation();
-    }
-
-    public Player getPlayer() {
-        return who;
-    }
-
-    public void hide() {
-    	if (hidden) {
-    		return;
-    	}
-    	removeCarpet();
-        MagicCarpet.getCarpets().update(who);
-        who.sendMessage("Poof! The magic carpet disappears.");
-        if (who.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR && who.getGameMode() == GameMode.SURVIVAL)
-            falling = true;
-    }
-
-    public boolean isVisible() {
-        return !hidden;
-    }
-
-    public void moveTo(final Location to) {
+    void moveTo(final Location to) {
         removeCarpet();
         currentCentre = to.getBlock();
         drawCarpet();
     }
 
     public void show() {
-    	if (!hidden) {
-    		return;
-    	}
-    	currentCentre = who.getLocation().getBlock();
-    	drawCarpet();
-    	MagicCarpet.getCarpets().update(who);
-    	who.sendMessage("Poof! The magic carpet appears below your feet!");
+        if (!hidden)
+            return;
+        currentCentre = who.getLocation().getBlock();
+        drawCarpet();
+        Storage.update(who);
+        who.sendMessage("Poof! The magic carpet appears below your feet!");
     }
 
-    public void removeCarpet() {
-        for (final CarpetFibre fibre : fibres)
-            if (fibre.block != null)
-                fibre.update();
-        hidden = true;
+    public void hide() {
+        if (hidden)
+            return;
+        removeCarpet();
+        if (who.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR && who.getGameMode() == GameMode.SURVIVAL)
+            falling = true;
+        Storage.update(who);
+        who.sendMessage("Poof! The magic carpet disappears.");
     }
 
     public boolean touches(final Block block) {
@@ -190,19 +173,31 @@ public class Carpet {
         return true;
     }
 
-    public boolean isFalling() {
+    public boolean isVisible() {
+        return !hidden;
+    }
+
+    public Location getLocation() {
+        return currentCentre.getLocation();
+    }
+
+    public Player getPlayer() {
+        return who;
+    }
+
+    boolean isFalling() {
         return falling;
     }
 
-    public void setFalling(final boolean falling) {
+    void setFalling(final boolean falling) {
         this.falling = falling;
     }
 
-    public boolean isDescending() {
+    boolean isDescending() {
         return descending;
     }
 
-    public void setDescending(final boolean descending) {
+    void setDescending(final boolean descending) {
         this.descending = descending;
     }
 }

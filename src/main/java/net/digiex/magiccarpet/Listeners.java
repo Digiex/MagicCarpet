@@ -46,19 +46,19 @@ public class Listeners implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        if (MagicCarpet.getCarpets().has(player))
+        if (Storage.has(player))
             new Carpet(player).show();
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(final PlayerQuitEvent event) {
-        MagicCarpet.getCarpets().remove(event.getPlayer());
+        Storage.remove(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerMove(final PlayerMoveEvent event) {
         final Player player = event.getPlayer();
-        final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+        final Carpet carpet = Storage.getCarpet(player);
         if (carpet == null || !carpet.isVisible())
             return;
         Location to = event.getTo();
@@ -70,7 +70,7 @@ public class Listeners implements Listener {
         to = to.clone();
         if (player.isSneaking()) {
             if (!carpet.isDescending())
-            	to.setY(to.getY() - 1);
+                to.setY(to.getY() - 1);
             carpet.setDescending(true);
         }
         if (from.getY() > to.getY() && !carpet.isDescending())
@@ -80,8 +80,7 @@ public class Listeners implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
-        final Player player = event.getPlayer();
-        final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+        final Carpet carpet = Storage.getCarpet(event.getPlayer());
         if (carpet == null || !carpet.isVisible())
             return;
         carpet.moveTo(event.getTo());
@@ -89,19 +88,17 @@ public class Listeners implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerToggleSneak(final PlayerToggleSneakEvent event) {
-        final Player player = event.getPlayer();
-        final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+        final Carpet carpet = Storage.getCarpet(event.getPlayer());
         if (carpet == null || !carpet.isVisible())
             return;
-        if (event.isSneaking()) {
+        if (event.isSneaking())
             carpet.descend();
-        }
     }
-    
+
     @EventHandler(ignoreCancelled = true)
     public void onPlayerKick(final PlayerKickEvent event) {
         final Player who = event.getPlayer();
-        final Carpet carpet = MagicCarpet.getCarpets().getCarpet(who);
+        final Carpet carpet = Storage.getCarpet(who);
         if (carpet != null && carpet.isVisible()) {
             final String reason = event.getReason();
             if (reason != null && reason.equals("Flying is not enabled on this server") && who.isSneaking())
@@ -131,8 +128,7 @@ public class Listeners implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockForm(final BlockFormEvent event) {
-        final Block block = event.getBlock().getRelative(BlockFace.DOWN);
-        if (block.hasMetadata("Carpet"))
+        if (event.getBlock().getRelative(BlockFace.DOWN).hasMetadata("Carpet"))
             event.setCancelled(true);
     }
 
@@ -144,13 +140,11 @@ public class Listeners implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockPistonExtend(final BlockPistonExtendEvent event) {
-        for (final BlockFace face : BlockFace.values()) {
-            final Block block = event.getBlock().getRelative(face);
-            if (block.hasMetadata("Carpet")) {
+        for (final BlockFace face : BlockFace.values())
+            if (event.getBlock().getRelative(face).hasMetadata("Carpet")) {
                 event.setCancelled(true);
                 return;
             }
-        }
         for (final Block block : event.getBlocks())
             if (block.hasMetadata("Carpet")) {
                 event.setCancelled(true);
@@ -160,26 +154,12 @@ public class Listeners implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockPistonRetract(final BlockPistonRetractEvent event) {
-        if (event.isSticky()) {
-            final Block block = event.getRetractLocation().getBlock();
-            if (block.hasMetadata("Carpet"))
-                event.setCancelled(true);
-            else {
-                final int radius = 2;
-                final int a = block.getX();
-                final int b = block.getY();
-                final int c = block.getZ();
-                for (int x = a - radius; x <= a + radius; x++)
-                    for (int y = b - radius; y <= b + radius; y++)
-                        for (int z = c - radius; z <= c + radius; z++) {
-                            final Block near = block.getWorld().getBlockAt(x, y, z);
-                            if (near.hasMetadata("Carpet")) {
-                                event.setCancelled(true);
-                                return;
-                            }
-                        }
-            }
-        }
+        if (event.isSticky())
+            for (final Block block : event.getBlocks())
+                if (block.hasMetadata("Carpet")) {
+                    event.setCancelled(true);
+                    return;
+                }
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -188,17 +168,15 @@ public class Listeners implements Listener {
             return;
         switch (event.getCause()) {
         case SUFFOCATION:
-            for (final BlockFace face : BlockFace.values()) {
-                final Block block = event.getEntity().getLocation().getBlock().getRelative(face);
-                if (block.hasMetadata("Carpet")) {
+            for (final BlockFace face : BlockFace.values())
+                if (event.getEntity().getLocation().getBlock().getRelative(face).hasMetadata("Carpet")) {
                     event.setCancelled(true);
                     return;
                 }
-            }
         case FALL:
             if (!(event.getEntity() instanceof Player))
                 return;
-            final Carpet c = MagicCarpet.getCarpets().getCarpet((Player) event.getEntity());
+            final Carpet c = Storage.getCarpet((Player) event.getEntity());
             if (c == null)
                 return;
             if (c.isVisible() || c.isFalling()) {
@@ -213,7 +191,7 @@ public class Listeners implements Listener {
             final EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
             if (e.getEntity() instanceof Player) {
                 final Player player = (Player) e.getEntity();
-                final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+                final Carpet carpet = Storage.getCarpet(player);
                 if (carpet != null && carpet.isVisible()) {
                     carpet.hide();
                     player.sendMessage("The carpet cannot be used while in PVP/PVE combat.");
@@ -222,7 +200,7 @@ public class Listeners implements Listener {
             }
             if (e.getDamager() instanceof Player) {
                 final Player player = (Player) e.getDamager();
-                final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
+                final Carpet carpet = Storage.getCarpet(player);
                 if (carpet != null && carpet.isVisible()) {
                     carpet.hide();
                     player.sendMessage("The carpet cannot be used while in PVP/PVE combat.");

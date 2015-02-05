@@ -26,7 +26,7 @@ public class Command implements CommandExecutor {
     @Override
     public boolean onCommand(final CommandSender sender, final org.bukkit.command.Command command, final String label, final String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("Sorry, only players can use the carpet!");
+            sender.sendMessage("Sorry, only players can use the carpet.");
             return true;
         }
         final Player player = (Player) sender;
@@ -35,18 +35,16 @@ public class Command implements CommandExecutor {
             return true;
         }
         if (player.getFallDistance() > 0 && !player.getLocation().getBlock().isLiquid() && player.getGameMode() == GameMode.SURVIVAL) {
-            player.sendMessage("You can only activate the Magic Carpet while on solid ground.");
+            player.sendMessage("You cannot activate the Magic Carpet while in mid-air.");
             return true;
         }
-        final Carpet carpet = MagicCarpet.getCarpets().getCarpet(player);
-        if (carpet == null) {
-        	new Carpet(player).show();
-        } else { 
-        	if (carpet.isVisible())
-        		carpet.hide();
-        	else
-        		carpet.show();
-        }
+        final Carpet carpet = Storage.getCarpet(player);
+        if (carpet == null)
+            new Carpet(player).show();
+        else if (carpet.isVisible())
+            carpet.hide();
+        else
+            carpet.show();
         return true;
     }
 }
