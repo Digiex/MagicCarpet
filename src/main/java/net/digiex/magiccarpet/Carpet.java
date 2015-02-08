@@ -42,13 +42,13 @@ public class Carpet {
 
         void set(final Block bl, final Material material) {
             bl.setType(material);
-            bl.setMetadata("Carpet", new FixedMetadataValue(MagicCarpet.getPlugin(), who.getUniqueId()));
+            bl.setMetadata("Carpet", new FixedMetadataValue(MagicCarpet.getInstance(), who.getUniqueId()));
         }
 
         void update() {
             if (!block.hasMetadata("Carpet"))
                 return;
-            block.removeMetadata("Carpet", MagicCarpet.getPlugin());
+            block.removeMetadata("Carpet", MagicCarpet.getInstance());
             block.update(true);
         }
     }
@@ -138,7 +138,7 @@ public class Carpet {
         drawCarpet();
     }
 
-    void moveTo(final Location to) {
+    public void moveTo(final Location to) {
         removeCarpet();
         currentCentre = to.getBlock();
         drawCarpet();

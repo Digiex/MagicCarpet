@@ -53,7 +53,7 @@ public class Storage {
         return null;
     }
 
-    public static Iterable<Carpet> all() {
+    static Iterable<Carpet> all() {
         return new Iterable<Carpet>() {
             @Override
             public Iterator<Carpet> iterator() {
@@ -160,7 +160,7 @@ public class Storage {
         entry.hasCarpet = entry.carpet.isVisible();
     }
 
-    public static boolean has(final Player player) {
+    static boolean has(final Player player) {
         final CarpetEntry entry = getEntry(player);
         if (entry == null)
             return false;
