@@ -39,12 +39,10 @@ public class Storage {
     }
 
     private static HashMap<UUID, CarpetEntry> carpets = new HashMap<UUID, CarpetEntry>();
-    private final MagicCarpet magiccarpet;
-    private final File carpetDat;
+    private static File carpetDat;
 
-    Storage(final MagicCarpet plugin) {
-        magiccarpet = plugin;
-        carpetDat = new File(plugin.getDataFolder(), "carpets.dat");
+    Storage() {
+        carpetDat = new File(MagicCarpet.getInstance().getDataFolder(), "carpets.dat");
     }
 
     private static CarpetEntry getEntry(final Player player) {
@@ -85,13 +83,13 @@ public class Storage {
         };
     }
 
-    void saveCarpets() {
-        magiccarpet.getLogger().info("Saving carpets...");
+    static void saveCarpets() {
+        MagicCarpet.log.info("Saving carpets...");
         if (!carpetDat.exists())
             try {
                 carpetDat.createNewFile();
             } catch (final IOException e) {
-                magiccarpet.getLogger().severe("Unable to create carpets.dat; IOException");
+                MagicCarpet.log.severe("Unable to create carpets.dat; IOException");
             }
         try {
             final FileOutputStream file = new FileOutputStream(carpetDat);
@@ -99,23 +97,23 @@ public class Storage {
             out.writeObject(carpets);
             out.close();
         } catch (final Exception e) {
-            magiccarpet.getLogger().warning("Error writing to carpets.dat; carpets data has not been saved.");
+            MagicCarpet.log.warning("Error writing to carpets.dat; carpets data has not been saved.");
         }
         clear();
     }
 
     @SuppressWarnings("unchecked")
-    void loadCarpets() {
+    static void loadCarpets() {
         if (!carpetDat.exists())
             return;
-        magiccarpet.getLogger().info("Loading carpets...");
+        MagicCarpet.log.info("Loading carpets...");
         try {
             final FileInputStream file = new FileInputStream(carpetDat);
             final ObjectInputStream in = new ObjectInputStream(file);
             carpets = (HashMap<UUID, CarpetEntry>) in.readObject();
             in.close();
         } catch (final Exception e) {
-            magiccarpet.getLogger().warning("Error loading carpets.dat; carpets data has not been loaded.");
+            MagicCarpet.log.warning("Error loading carpets.dat; carpets data has not been loaded.");
         }
     }
 

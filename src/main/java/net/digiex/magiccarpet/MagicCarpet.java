@@ -22,14 +22,12 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class MagicCarpet extends JavaPlugin {
 
-    private Logger log;
+    static Logger log;
     private static MagicCarpet instance;
-    private final Storage carpets = new Storage(this);
 
     @Override
     public void onDisable() {
-        carpets.saveCarpets();
-        log.info("is now disabled.");
+        Storage.saveCarpets();
     }
 
     @Override
@@ -38,10 +36,9 @@ public class MagicCarpet extends JavaPlugin {
         log = getLogger();
         if (!getDataFolder().exists())
             getDataFolder().mkdirs();
-        carpets.loadCarpets();
+        Storage.loadCarpets();
         registerEvents();
         registerCommands();
-        log.info("is now enabled!");
     }
 
     private void registerCommands() {
@@ -54,5 +51,9 @@ public class MagicCarpet extends JavaPlugin {
 
     static MagicCarpet getInstance() {
         return instance;
+    }
+    
+    static Logger log() {
+        return log;
     }
 }
