@@ -41,8 +41,8 @@ public class Storage {
     private static HashMap<UUID, CarpetEntry> carpets = new HashMap<UUID, CarpetEntry>();
     private static File carpetDat;
 
-    Storage() {
-        carpetDat = new File(MagicCarpet.getInstance().getDataFolder(), "carpets.dat");
+    Storage(final MagicCarpet plugin) {
+        carpetDat = new File(plugin.getDataFolder(), "carpets.dat");
     }
 
     private static CarpetEntry getEntry(final Player player) {
@@ -83,7 +83,7 @@ public class Storage {
         };
     }
 
-    static void saveCarpets() {
+    void saveCarpets() {
         MagicCarpet.log.info("Saving carpets...");
         if (!carpetDat.exists())
             try {
@@ -103,7 +103,7 @@ public class Storage {
     }
 
     @SuppressWarnings("unchecked")
-    static void loadCarpets() {
+    void loadCarpets() {
         if (!carpetDat.exists())
             return;
         MagicCarpet.log.info("Loading carpets...");

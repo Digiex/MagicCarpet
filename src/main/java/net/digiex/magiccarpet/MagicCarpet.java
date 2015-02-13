@@ -24,10 +24,11 @@ public class MagicCarpet extends JavaPlugin {
 
     static Logger log;
     private static MagicCarpet instance;
+    private final Storage storage = new Storage(this);
 
     @Override
     public void onDisable() {
-        Storage.saveCarpets();
+        storage.saveCarpets();
     }
 
     @Override
@@ -36,7 +37,7 @@ public class MagicCarpet extends JavaPlugin {
         log = getLogger();
         if (!getDataFolder().exists())
             getDataFolder().mkdirs();
-        Storage.loadCarpets();
+        storage.loadCarpets();
         registerEvents();
         registerCommands();
     }
