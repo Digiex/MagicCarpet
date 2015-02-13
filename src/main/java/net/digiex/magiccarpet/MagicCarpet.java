@@ -52,7 +52,7 @@ public class MagicCarpet extends JavaPlugin {
     static MagicCarpet getInstance() {
         return instance;
     }
-    
+
     static Logger log() {
         return log;
     }
